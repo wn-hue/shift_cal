@@ -1421,6 +1421,7 @@
         let config = {
             hireDate: '',
             totalLeave: 0,
+            leaveByYear: {},
             baseHourly: 0,
             ordinaryHourly: 0,
             baseHours: 209,
@@ -1586,18 +1587,19 @@
                 let holHtml = shift.holidayName ? `<div class="holiday-bar">${shift.holidayName}</div>` : '';
                 let subHtml = shift.subName ? `<div class="sub-tag">${shift.subName}</div>` : '';
                 
-                let memoHtml = '';
-                if (dayMemos[dateStr]) {
-                    memoHtml = `<div class="memo-tag" title="${dayMemos[dateStr]}">${dayMemos[dateStr]}</div>`;
-                }
-
                 cell.innerHTML = `
                     <span class="day-num">${d}</span>
                     ${holHtml}
                     <div class="shift-badge ${badgeClass}">${shift.name}</div>
                     ${subHtml}
-                    ${memoHtml}
                 `;
+                if (dayMemos[dateStr]) {
+                    const memo = document.createElement('div');
+                    memo.className = 'memo-tag';
+                    memo.title = dayMemos[dateStr];
+                    memo.textContent = dayMemos[dateStr];
+                    cell.appendChild(memo);
+                }
                 grid.appendChild(cell);
             }
 
@@ -1830,18 +1832,21 @@
             return { leave: leaveDays, desc: desc };
         }
 
+        function getGrantedLeave(year) {
+            if (Object.prototype.hasOwnProperty.call(config.leaveByYear, year)) {
+                return config.leaveByYear[year];
+            }
+            return calculateFiscalYearLeave(config.hireDate, year).leave;
+        }
+
         function onHireDateChange() {
             const hireVal = document.getElementById('input-hire-date').value;
+            if (hireVal !== config.hireDate) {
+                // 이전 입사일을 기준으로 입력한 연도별 수동 부여량은 재사용하지 않는다.
+                config.leaveByYear = {};
+            }
             config.hireDate = hireVal;
-            document.getElementById('input-hire-date').value = hireVal;
             document.getElementById('inp-hire-date').value = hireVal;
-
-            const res = calculateFiscalYearLeave(hireVal, currentCalDate.getFullYear());
-            config.totalLeave = res.leave;
-            document.getElementById('input-total-leave').value = res.leave;
-
-            const infoBox = document.getElementById('leave-calc-info-box');
-            if (infoBox) infoBox.innerHTML = `📌 <strong>${res.desc}</strong>`;
 
             if (hireVal) {
                 const hy = parseInt(hireVal.split('-')[0], 10);
@@ -1854,8 +1859,8 @@
                 updateRetroStatusText(null);
             }
 
-            saveConfig();
             updateLeaveStats();
+            saveConfig();
             calculatePayrollFromInputs();
         }
 
@@ -1867,20 +1872,28 @@
 
         function updateLeaveStats() {
             let used = 0;
-            const currentYearStr = currentCalDate.getFullYear().toString();
+            const year = currentCalDate.getFullYear();
+            const currentYearStr = year.toString();
 
             Object.entries(overrides).forEach(([dateStr, val]) => {
-                if (dateStr.startsWith(currentYearStr)) {
+                if (dateStr.startsWith(currentYearStr + '-')) {
                     if (val === 'LEAVE') used += 1.0;
                     else if (val === 'HALF_PRE' || val === 'HALF_POST' || val === 'HALF_LEAVE') used += 0.5;
                 }
             });
 
-            const total = config.totalLeave;
+            const auto = calculateFiscalYearLeave(config.hireDate, year);
+            const manual = Object.prototype.hasOwnProperty.call(config.leaveByYear, year);
+            const total = getGrantedLeave(year);
             const remain = Math.max(0, total - used);
             const dailyRate = config.ordinaryHourly * 8;
             const totalLeavePay = remain * dailyRate;
 
+            const infoBox = document.getElementById('leave-calc-info-box');
+            if (infoBox) {
+                // 입사일은 date 입력값이며 계산 안내는 앱에서 생성한 문자열이다.
+                infoBox.textContent = `📅 ${year}년 연차: ${auto.desc}${manual ? ' (해당 연도 수동 부여량 적용)' : ''} · 이전 연도 잔여 연차는 이월하지 않습니다.`;
+            }
             const qRemain = document.getElementById('quick-remain-leave');
             if (qRemain) qRemain.innerText = remain;
 
@@ -1893,7 +1906,15 @@
         }
 
         function saveLeaveConfig() {
-            config.totalLeave = parseFloat(document.getElementById('input-total-leave').value) || 0;
+            const year = currentCalDate.getFullYear();
+            const input = document.getElementById('input-total-leave');
+            const value = Number(input.value);
+            if (!Number.isFinite(value) || value < 0) {
+                alert('총 부여 연차는 0 이상의 숫자로 입력해 주세요.');
+                updateLeaveStats();
+                return;
+            }
+            config.leaveByYear[year] = value;
             saveConfig();
             updateLeaveStats();
         }
@@ -2151,6 +2172,7 @@
 
             document.getElementById('inp-bonus-check').checked = (payMonthNum % 2 === 0);
             calculatePayrollFromInputs();
+            updateLeaveStats();
         }
 
         /* 급여 계산 엔진 (문법 에러 완벽 제거) */
@@ -2369,9 +2391,6 @@
             if (config.hireDate) {
                 document.getElementById('input-hire-date').value = config.hireDate;
                 document.getElementById('inp-hire-date').value = config.hireDate;
-                const res = calculateFiscalYearLeave(config.hireDate, currentCalDate.getFullYear());
-                const infoBox = document.getElementById('leave-calc-info-box');
-                if (infoBox) infoBox.innerHTML = `📌 <strong>${res.desc}</strong>`;
                 
                 const hy = parseInt(config.hireDate.split('-')[0], 10);
                 updateRetroStatusText(config.applyRetroPay ? hy : -1);
@@ -2381,7 +2400,10 @@
                 updateRetroStatusText(-1);
             }
 
-            document.getElementById('input-total-leave').value = config.totalLeave;
+            // 기존 단일 totalLeave 값은 연도를 알 수 없으므로 새해로 이월하지 않는다.
+            config.leaveByYear = config.leaveByYear && typeof config.leaveByYear === 'object' &&
+                !Array.isArray(config.leaveByYear) ? config.leaveByYear : {};
+            document.getElementById('input-total-leave').value = getGrantedLeave(currentCalDate.getFullYear());
             document.getElementById('input-base-hourly').value = config.baseHourly;
             document.getElementById('input-ordinary-hourly').value = config.ordinaryHourly;
             document.getElementById('input-base-hours').value = config.baseHours;
@@ -2398,7 +2420,7 @@
         function resetDefaults() {
             if (confirm('모든 설정값을 기본값(0)으로 초기화하시겠습니까?')) {
                 config = {
-                    hireDate: '', totalLeave: 0, baseHourly: 0, ordinaryHourly: 0,
+                    hireDate: '', totalLeave: 0, leaveByYear: {}, baseHourly: 0, ordinaryHourly: 0,
                     baseHours: 209, dutyPay: 0, seniorityPay: 0, applyRetroPay: false, holidayBonus: 0
                 };
                 syncedUnpaidDays = 0;
