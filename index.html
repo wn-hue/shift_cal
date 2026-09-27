@@ -1278,6 +1278,7 @@
             </div>
 
             <div style="font-size:12px; font-weight:700; color:#3c4043; margin-bottom:6px;">근무 변경 옵션</div>
+            <div style="font-size:11px; color:#64748b; line-height:1.5; margin-bottom:10px;">무급 한도: 달력 월별 무급휴무 1회 또는 무급반차 2회 · 특근은 근무조와 전날 야간근무를 확인합니다.</div>
             <div class="modal-btn-grid">
                 <button class="opt-btn day-sp" onclick="setDayOverride('SPECIAL_DAY')">
                     <span>☀️ 주간 특근</span>
@@ -1949,8 +1950,65 @@
             closeModalDirect();
         }
 
+        // 무급휴무 1회 또는 무급반차 2회를 한 달의 한도로 계산한다.
+        function unpaidUnits(type) {
+            if (type === 'UNPAID_OFF') return 2;
+            if (type === 'UNPAID_HALF_PRE' || type === 'UNPAID_HALF_POST' || type === 'UNPAID_HALF') return 1;
+            return 0;
+        }
+
+        function isNightWork(shift) {
+            return shift.type === 'NIGHT' || shift.type === 'SPECIAL_NIGHT' ||
+                ((shift.type === 'NO_OT' || shift.type === 'HALF_PRE' || shift.type === 'HALF_POST' ||
+                  shift.type === 'UNPAID_HALF_PRE' || shift.type === 'UNPAID_HALF_POST') &&
+                 shift.origType === 'NIGHT');
+        }
+
+        function validateDayOverride(dateStr, type) {
+            if (type === null) return '';
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const date = new Date(year, month - 1, day);
+            const baseType = getBaseShift(date, currentGroup).type;
+
+            if (type === 'SPECIAL_NIGHT' && baseType === 'DAY') {
+                return '주간 근무일에는 야간 특근을 지정할 수 없습니다.';
+            }
+            if (type === 'SPECIAL_DAY' && baseType === 'NIGHT') {
+                return '야간 근무일에는 주간 특근을 지정할 수 없습니다.';
+            }
+
+            const previousDate = new Date(year, month - 1, day - 1);
+            if (type === 'SPECIAL_DAY' && isNightWork(getActualShift(previousDate, currentGroup))) {
+                return '전날 야간 근무가 끝난 직후에는 주간 특근을 지정할 수 없습니다.';
+            }
+            // 뒤늦게 전날을 야간 특근으로 바꾸어도 이미 지정된 다음 날 주간 특근을 보호한다.
+            const nextDate = new Date(year, month - 1, day + 1);
+            const nextKey = toDateKey(nextDate.getFullYear(), nextDate.getMonth(), nextDate.getDate());
+            if (type === 'SPECIAL_NIGHT' && overrides[nextKey] === 'SPECIAL_DAY') {
+                return '다음 날 주간 특근이 지정되어 있어 전날에 야간 특근을 지정할 수 없습니다.';
+            }
+
+            const units = unpaidUnits(type);
+            if (units) {
+                const monthPrefix = dateStr.slice(0, 7) + '-';
+                let used = 0;
+                for (const [key, value] of Object.entries(overrides)) {
+                    if (key.startsWith(monthPrefix) && key !== dateStr) used += unpaidUnits(value);
+                }
+                if (used + units > 2) {
+                    return '같은 달 무급 한도는 무급휴무 1회 또는 무급반차 2회입니다.';
+                }
+            }
+            return '';
+        }
+
         function setDayOverride(type) {
             if (!selectedDateStr) return;
+            const reason = validateDayOverride(selectedDateStr, type);
+            if (reason) {
+                alert(reason);
+                return;
+            }
             if (type === null) delete overrides[selectedDateStr];
             else overrides[selectedDateStr] = type;
 
