@@ -2385,7 +2385,18 @@
         function loadConfig() {
             let saved = localStorage.getItem('shift_salary_config_master');
             if (saved) {
-                try { config = { ...config, ...JSON.parse(saved) }; } catch (e) {}
+                try {
+                    const previous = JSON.parse(saved);
+                    config = { ...config, ...previous };
+                    // 이전 버전은 부여 연도를 저장하지 않았다. 2026년 기존 입력값만 보존한다.
+                    // 이후 연도는 입사일 기준으로 새로 계산하여 잔여 연차가 이월되지 않게 한다.
+                    if (!Object.prototype.hasOwnProperty.call(previous, 'leaveByYear') &&
+                        currentCalDate.getFullYear() === 2026 &&
+                        Number.isFinite(Number(previous.totalLeave)) && Number(previous.totalLeave) >= 0) {
+                        config.leaveByYear = { 2026: Number(previous.totalLeave) };
+                        saveConfig();
+                    }
+                } catch (e) {}
             }
             
             if (config.hireDate) {
