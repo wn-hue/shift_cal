@@ -1,0 +1,36 @@
+name: GitHub Pages에 앱 배포
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 저장소 파일 받기
+        uses: actions/checkout@v6
+      - name: GitHub Pages 준비
+        uses: actions/configure-pages@v5
+      - name: 웹앱 파일 준비
+        run: node scripts/prepare-web.mjs
+      - name: 앱 파일 묶기
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: www
+      - name: GitHub Pages에 공개
+        id: deployment
+        uses: actions/deploy-pages@v4

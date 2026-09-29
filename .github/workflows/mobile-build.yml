@@ -1,0 +1,70 @@
+name: Android와 iPhone 앱 검사
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  android:
+    name: Android 설치 파일 만들기
+    runs-on: ubuntu-latest
+    steps:
+      - name: 저장소 파일 받기
+        uses: actions/checkout@v6
+      - name: Node.js 준비
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: pnpm 준비
+        run: npm install --global pnpm@11.25.0
+      - name: Java 준비
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Android 도구 준비
+        uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools platforms;android-36 build-tools;36.0.0
+      - name: 앱에 필요한 파일 설치
+        run: pnpm install --frozen-lockfile
+      - name: Android 프로젝트 동기화
+        run: pnpm run sync
+      - name: Android 설치 파일 생성
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+      - name: Android 설치 파일 보관
+        uses: actions/upload-artifact@v4
+        with:
+          name: shift-cal-android-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+  ios:
+    name: iPhone 앱 프로젝트 검사
+    runs-on: macos-latest
+    steps:
+      - name: 저장소 파일 받기
+        uses: actions/checkout@v6
+      - name: Node.js 준비
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: pnpm 준비
+        run: npm install --global pnpm@11.25.0
+      - name: 앱에 필요한 파일 설치
+        run: pnpm install --frozen-lockfile
+      - name: iPhone 프로젝트 동기화
+        run: pnpm run sync
+      - name: iPhone 시뮬레이터용 검사
+        run: >-
+          xcodebuild
+          -project ios/App/App.xcodeproj
+          -scheme App
+          -sdk iphonesimulator
+          -configuration Debug
+          CODE_SIGNING_ALLOWED=NO
+          build

@@ -11,7 +11,9 @@
     <meta name="apple-mobile-web-app-title" content="교대근무">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="교대근무 일정, 연차와 예상 급여를 한 곳에서 관리하는 오프라인 지원 앱">
 
+    <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" sizes="512x512" href="./apple-touch-icon.png?v=1">
     <link rel="icon" type="image/png" href="./apple-touch-icon.png?v=1">
 
@@ -131,6 +133,43 @@
         .header-chip:active { transform: scale(0.95); }
         .header-chip.today-chip { background: #e8f0fe; color: #1a73e8; border-color: #c2e7ff; }
         .header-chip.leave-chip { background: #e6f4ea; color: #137333; border-color: #ceead6; }
+        .header-chip[hidden] { display: none; }
+
+        .data-action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .data-action-btn {
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: var(--text-main);
+            border-radius: 10px;
+            padding: 11px 8px;
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .data-action-btn:active { transform: scale(0.98); }
+        .data-action-btn.install-action {
+            grid-column: span 2;
+            background: #fff7ed;
+            color: #c2410c;
+            border-color: #fed7aa;
+        }
+
+        .app-note {
+            margin-top: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #fff7ed;
+            color: #9a3412;
+            font-size: 11.5px;
+            line-height: 1.55;
+        }
 
         .group-select-wrapper {
             position: relative;
@@ -1129,11 +1168,28 @@
             </div>
 
             <div class="card">
+                <div class="card-header"><span>내 자료 보관</span></div>
+                <div style="font-size:12px; color:var(--text-sub); line-height:1.6;">
+                    입력한 근무 변경, 메모, 급여와 연차 설정은 이 기기에만 저장됩니다. 휴대폰 교체나 브라우저 정리에 대비해 백업 파일을 보관하세요.
+                </div>
+                <div class="data-action-grid">
+                    <button class="data-action-btn install-action" id="install-app-btn" onclick="installApp()">📲 이 기기에 앱 설치</button>
+                    <button class="data-action-btn" onclick="exportAppData()">⬇️ 백업 저장</button>
+                    <button class="data-action-btn" onclick="document.getElementById('data-import-input').click()">⬆️ 백업 불러오기</button>
+                </div>
+                <input id="data-import-input" type="file" accept="application/json,.json" onchange="importAppData(event)" hidden>
+                <div class="app-note">
+                    급여와 연차 계산은 예상값입니다. 실제 지급액과 적용 규정은 회사 급여명세서와 담당 부서에서 확인하세요.
+                </div>
+            </div>
+
+            <div class="card">
                 <div class="card-header"><span>회계연도 연차 및 급여 규정 안내</span></div>
                 <div style="font-size: 12px; color: var(--text-sub); line-height: 1.65;">
                     • <strong>회계연도 기준(매년 1월 1일):</strong> 전사원이 동일하게 매년 1월 1일 기준으로 연차가 일괄 정산 및 부여됩니다.<br>
                     • <strong>1년 미만 신입사원:</strong> 짝수달 상여금(50%) 대신 매월 300,000원의 신입 지원금이 지급됩니다.<br>
                     • <strong>월급일 및 명세서:</strong> 25일이 공휴일/주말일 경우 직전 영업일에 입금되며, 명세서는 입금일 하루 전 영업일에 발송 알림이 표시됩니다.<br>
+                    • <strong>공휴일 자료 범위:</strong> 현재 공휴일과 명절 연휴는 2027년까지 등록되어 있습니다. 이후 연도는 자료 추가가 필요합니다.<br>
                     • <strong>저장 및 초기화:</strong> 입력하신 모든 시급, 연차, 수당, 메모 설정은 💾 [설정 저장] 버튼을 통해 브라우저에 안전하게 보존됩니다.
                 </div>
             </div>
@@ -2428,6 +2484,128 @@
             localStorage.setItem('shift_salary_config_master', JSON.stringify(config));
         }
 
+        function getStoredAppData() {
+            const data = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('shift_')) data[key] = localStorage.getItem(key);
+            }
+            return data;
+        }
+
+        async function exportAppData() {
+            const backup = {
+                app: 'shift_cal',
+                version: 1,
+                exportedAt: new Date().toISOString(),
+                data: getStoredAppData()
+            };
+            const backupText = JSON.stringify(backup, null, 2);
+            const filename = `교대근무-백업-${toDateKey(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())}.json`;
+            const capacitor = window.Capacitor;
+
+            if (capacitor?.isNativePlatform?.()) {
+                try {
+                    const { Filesystem, Share } = capacitor.Plugins;
+                    const result = await Filesystem.writeFile({
+                        path: filename,
+                        data: backupText,
+                        directory: 'CACHE',
+                        encoding: 'utf8'
+                    });
+                    await Share.share({
+                        title: '교대근무 자료 백업',
+                        text: '휴대폰 교체나 앱 재설치에 대비해 이 파일을 보관하세요.',
+                        url: result.uri,
+                        dialogTitle: '백업 파일 저장 또는 공유'
+                    });
+                } catch (error) {
+                    alert('백업 파일을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+                }
+                return;
+            }
+
+            const blob = new Blob([backupText], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        function importAppData(event) {
+            const input = event.target;
+            const file = input.files && input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function() {
+                try {
+                    const backup = JSON.parse(reader.result);
+                    if (!backup || backup.app !== 'shift_cal' || !backup.data || typeof backup.data !== 'object') {
+                        throw new Error('invalid backup');
+                    }
+                    const entries = Object.entries(backup.data).filter(([key, value]) =>
+                        key.startsWith('shift_') && typeof value === 'string'
+                    );
+                    if (entries.length === 0) throw new Error('empty backup');
+                    if (!confirm(`백업 자료 ${entries.length}개를 불러오시겠습니까? 현재 저장된 같은 항목은 바뀝니다.`)) return;
+
+                    entries.forEach(([key, value]) => localStorage.setItem(key, value));
+                    alert('백업 자료를 불러왔습니다. 화면을 새로 시작합니다.');
+                    window.location.reload();
+                } catch (error) {
+                    alert('올바른 교대근무 백업 파일이 아닙니다.');
+                } finally {
+                    input.value = '';
+                }
+            };
+            reader.onerror = function() {
+                input.value = '';
+                alert('백업 파일을 읽지 못했습니다.');
+            };
+            reader.readAsText(file);
+        }
+
+        let deferredInstallPrompt = null;
+
+        function updateInstallButton() {
+            const button = document.getElementById('install-app-btn');
+            if (!button) return;
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            const isNativeApp = window.Capacitor?.isNativePlatform?.() === true;
+            button.hidden = isStandalone || isNativeApp;
+        }
+
+        async function installApp() {
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                await deferredInstallPrompt.userChoice;
+                deferredInstallPrompt = null;
+                updateInstallButton();
+                return;
+            }
+            if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+                alert('Safari 아래의 공유 버튼을 누른 뒤 “홈 화면에 추가”를 선택하세요.');
+            } else {
+                alert('브라우저 메뉴에서 “앱 설치” 또는 “홈 화면에 추가”를 선택하세요. 설치 메뉴가 없으면 공개된 앱 주소로 다시 접속해 주세요.');
+            }
+        }
+
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredInstallPrompt = event;
+            updateInstallButton();
+        });
+
+        window.addEventListener('appinstalled', () => {
+            deferredInstallPrompt = null;
+            updateInstallButton();
+        });
+
         function resetDefaults() {
             if (confirm('모든 설정값을 기본값(0)으로 초기화하시겠습니까?')) {
                 config = {
@@ -2435,9 +2613,9 @@
                     baseHours: 209, dutyPay: 0, seniorityPay: 0, applyRetroPay: false, holidayBonus: 0
                 };
                 syncedUnpaidDays = 0;
-                localStorage.removeItem('shift_salary_config_master');
-                localStorage.removeItem('shift_day_memos');
+                Object.keys(getStoredAppData()).forEach(key => localStorage.removeItem(key));
                 dayMemos = {};
+                overrides = {};
 
                 document.getElementById('input-hire-date').value = '';
                 document.getElementById('inp-hire-date').value = '';
@@ -2537,8 +2715,13 @@
             syncFromCalendar();
             initCalendarSwipe();
             initSalarySwipe();
+            updateInstallButton();
 
             checkPayslipPopup();
+
+            if (!window.Capacitor?.isNativePlatform?.() && 'serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            }
         };
     </script>
 </body>
