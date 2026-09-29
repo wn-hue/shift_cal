@@ -1,0 +1,19 @@
+{
+  "name": "교대근무 - 교대 캘린더 & 급여 계산기",
+  "short_name": "교대근무",
+  "description": "교대근무 일정, 연차와 예상 급여를 한 곳에서 관리합니다.",
+  "lang": "ko-KR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a73e8",
+  "icons": [
+    {
+      "src": "./apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
