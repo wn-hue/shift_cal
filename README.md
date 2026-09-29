@@ -16,3 +16,24 @@ GitHub Pages 주소를 휴대폰에서 연 뒤 설치합니다.
 입력한 자료는 사용 중인 기기의 브라우저에만 저장됩니다. `연차 & 설정` 화면의 `백업 저장`으로 파일을 내려받아 보관할 수 있습니다.
 
 급여와 연차 계산 결과는 예상값입니다. 실제 지급액과 적용 규정은 회사 급여명세서와 담당 부서에서 확인해야 합니다.
+
+## Android와 iPhone 앱
+
+이 저장소에는 Android와 iPhone용 앱 프로젝트가 함께 들어 있습니다. 두 앱은 같은 화면과 계산 기능을 사용합니다.
+
+- Android 프로젝트: `android` 폴더
+- iPhone 프로젝트: `ios` 폴더
+- 앱 이름: `교대근무`
+- 앱 식별자: `com.wnhue.shiftcal`
+
+GitHub의 `Android와 iPhone 앱 검사`가 Android 설치 파일을 자동으로 만들고, iPhone 프로젝트가 정상적으로 열리는지 검사합니다.
+
+### Android에서 시험하기
+
+GitHub의 Actions 화면에서 완료된 `Android와 iPhone 앱 검사`를 열고 `shift-cal-android-apk` 파일을 내려받습니다. 압축을 푼 뒤 Android 휴대폰에서 APK를 설치합니다.
+
+### iPhone에서 시험하기
+
+iPhone 앱을 기기에 설치하거나 App Store에 제출하려면 Mac과 Xcode가 필요합니다. Mac에서 `ios/App/App.xcodeproj`를 열고 Apple 계정을 선택한 뒤 연결한 iPhone에서 실행합니다.
+
+스토어 공개 전에는 앱 설명, 개인정보 처리방침 주소, 화면 사진, 연락처와 개발자 계정이 추가로 필요합니다.

@@ -2493,18 +2493,43 @@
             return data;
         }
 
-        function exportAppData() {
+        async function exportAppData() {
             const backup = {
                 app: 'shift_cal',
                 version: 1,
                 exportedAt: new Date().toISOString(),
                 data: getStoredAppData()
             };
-            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const backupText = JSON.stringify(backup, null, 2);
+            const filename = `교대근무-백업-${toDateKey(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())}.json`;
+            const capacitor = window.Capacitor;
+
+            if (capacitor?.isNativePlatform?.()) {
+                try {
+                    const { Filesystem, Share } = capacitor.Plugins;
+                    const result = await Filesystem.writeFile({
+                        path: filename,
+                        data: backupText,
+                        directory: 'CACHE',
+                        encoding: 'utf8'
+                    });
+                    await Share.share({
+                        title: '교대근무 자료 백업',
+                        text: '휴대폰 교체나 앱 재설치에 대비해 이 파일을 보관하세요.',
+                        url: result.uri,
+                        dialogTitle: '백업 파일 저장 또는 공유'
+                    });
+                } catch (error) {
+                    alert('백업 파일을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+                }
+                return;
+            }
+
+            const blob = new Blob([backupText], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `교대근무-백업-${toDateKey(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())}.json`;
+            link.download = filename;
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -2551,7 +2576,8 @@
             const button = document.getElementById('install-app-btn');
             if (!button) return;
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-            button.hidden = isStandalone;
+            const isNativeApp = window.Capacitor?.isNativePlatform?.() === true;
+            button.hidden = isStandalone || isNativeApp;
         }
 
         async function installApp() {
@@ -2693,7 +2719,7 @@
 
             checkPayslipPopup();
 
-            if ('serviceWorker' in navigator) {
+            if (!window.Capacitor?.isNativePlatform?.() && 'serviceWorker' in navigator) {
                 navigator.serviceWorker.register('./sw.js').catch(() => {});
             }
         };
