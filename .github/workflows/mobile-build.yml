@@ -34,7 +34,9 @@ jobs:
         run: pnpm run sync
       - name: Android 설치 파일 생성
         working-directory: android
-        run: ./gradlew assembleDebug
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
       - name: Android 설치 파일 보관
         uses: actions/upload-artifact@v4
         with:
