@@ -26,6 +26,8 @@ jobs:
           java-version: 21
       - name: Android 도구 준비
         uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools platforms;android-36 build-tools;36.0.0
       - name: 앱에 필요한 파일 설치
         run: pnpm install --frozen-lockfile
       - name: Android 프로젝트 동기화
