@@ -68,6 +68,7 @@ function openCalendarIntegration() {
     document.getElementById('calendar-export-period').value = 'year';
     updateCalendarExportRange();
     document.getElementById('modal-calendar-link').classList.add('active');
+    if(window.GoogleSync){GoogleSync.render();GoogleSync.refreshStatus();}
 }
 function closeCalendarIntegration(event) {
     if (!event || event.target.id === 'modal-calendar-link') {

@@ -258,6 +258,12 @@
         #calendar-feed-url { font-size: 16px; font-weight: 400; }
         #calendar-export-status { min-height: 20px; color: var(--primary); font-size: 12px; line-height: 1.6; margin-top: 12px; }
         #modal-calendar-link input[type='date'], #modal-calendar-link select { font-size: 16px; }
+        .google-event-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 4px; border-bottom:1px solid var(--cal-line); font-size:13px; }
+        .google-event-row > div { min-width:0; overflow-wrap:anywhere; }
+        .google-review-row { padding:12px; margin:10px 0; border:1px solid #fed7aa; border-radius:10px; background:#fffbeb; font-size:13px; }
+        [hidden] { display:none !important; }
+        #google-sync-status { font-size:12px; color:var(--primary); line-height:1.6; margin-top:10px; }
+        #google-personal-form input, #google-personal-form textarea { font-size:16px; }
 
         /* 캘린더 그리드 */
         .calendar-card {
@@ -897,6 +903,7 @@
                 <div class="cal-grid" id="calendar-grid"></div>
             </div>
             <button class="calendar-link-entry" onclick="openCalendarIntegration()">📅 구글 · 애플 캘린더 연결 <span style="float:right;" aria-hidden="true">›</span></button>
+            <div id="google-personal-list" class="card" style="padding:12px;" hidden></div>
         </section>
 
         <!-- 2. 급여 계산기 화면 -->
@@ -1279,7 +1286,53 @@
                 <button type="button" class="nav-arrow-btn" aria-label="닫기" onclick="closeCalendarIntegration()">✕</button>
             </div>
             <div class="card" style="padding:12px;">
-                <strong style="font-size:14px;">기본 근무표 구독</strong>
+                <strong id="google-sync-badge" style="font-size:14px;">구글 양방향 연결</strong>
+                <p id="google-sync-user" class="calendar-link-copy">연결 상태 확인 중…</p>
+                <p class="calendar-link-copy">구글 전용 캘린더에 근무표·메모·개인 일정을 저장합니다. 웹앱 변경은 저장 후 반영하고, 구글·아이폰에서 바꾼 내용은 웹앱을 열면 가져옵니다. 열린 동안에는 약 30초마다 확인합니다.</p>
+                <a id="google-sync-login" class="btn-save" style="display:block;text-align:center;text-decoration:none;" href="/api/google-calendar?action=login" hidden>구글 계정 연결</a>
+                <div id="google-sync-controls" hidden>
+                    <div class="calendar-link-actions">
+                        <button id="google-sync-enable" class="btn-save" onclick="GoogleSync.enable()">이달 근무표 연결 시작</button>
+                        <button class="btn-reset-data" onclick="GoogleSync.connectYear()">이 연도 전체 연결</button>
+                        <button class="btn-reset-data" onclick="GoogleSync.openPersonal()">개인 일정 만들기</button>
+                        <button class="btn-reset-data" onclick="GoogleSync.sync()">지금 동기화</button>
+                    </div>
+                    <details class="calendar-link-help"><summary>연결 관리</summary>
+                        <div class="calendar-link-actions"><button class="btn-reset-data" onclick="GoogleSync.stop()">자동 동기화 중지</button><button class="btn-reset-data" onclick="GoogleSync.disconnect()">이 기기 연결 해제</button></div>
+                        <button class="btn-reset-data" onclick="GoogleSync.relink()">이달 제외 일정 다시 검토</button>
+                        <p>중지·해제해도 구글에 저장된 일정은 남습니다. Google 계정의 앱 권한을 완전히 취소하려면 Google 계정 → 보안 → 연결된 앱에서 해제하세요.</p>
+                    </details>
+                </div>
+                <div id="google-sync-setup" hidden>
+                    <p id="google-sync-setup-message" class="calendar-link-copy"></p>
+                    <details class="calendar-link-help"><summary>관리자 최초 설정</summary>
+                        <p>Google Cloud에서 Calendar API를 켜고 웹 애플리케이션 OAuth 클라이언트를 만드세요. 개인 테스트에서는 본인 이메일을 테스트 사용자로 등록합니다.</p>
+                        <p>승인된 리디렉션 URI: <code id="google-sync-redirect" style="display:block;overflow-wrap:anywhere;"></code></p>
+                        <p>Vercel 프로젝트에 GOOGLE_CALENDAR_CLIENT_ID, GOOGLE_CALENDAR_CLIENT_SECRET, GOOGLE_CALENDAR_SESSION_SECRET(32자 이상 무작위 값), APP_URL(웹앱의 https 주소)을 등록하고 재배포하세요. 비밀 키는 코드·채팅에 붙여 넣지 마세요.</p>
+                        <a href="https://github.com/wn-hue/shift_cal/blob/main/GOOGLE_CALENDAR_SETUP.md" target="_blank" rel="noopener noreferrer">설정 순서 자세히 보기</a>
+                    </details>
+                </div>
+                <div id="google-sync-status" role="status" aria-live="polite"></div>
+                <div id="google-sync-review"></div>
+                <div id="google-personal-form" class="card" style="margin:12px 0 0;padding:12px;" hidden>
+                    <strong>개인 일정</strong>
+                    <input id="google-personal-id" type="hidden"><input id="google-personal-etag" type="hidden"><input id="google-personal-group" type="hidden">
+                    <div class="input-group" style="margin:10px 0;"><label for="google-personal-title">제목</label><input id="google-personal-title" maxlength="2000" placeholder="예: 병원 예약"></div>
+                    <div class="two-cols"><div class="input-group"><label for="google-personal-day">시작일</label><input id="google-personal-day" type="date"></div><div class="input-group"><label for="google-personal-end-day">종료일</label><input id="google-personal-end-day" type="date"></div></div>
+                    <label class="toggle-box"><span>종일 일정</span><input id="google-personal-allday" type="checkbox" checked onchange="document.getElementById('google-personal-time-fields').hidden=this.checked"></label>
+                    <div id="google-personal-time-fields" class="two-cols" hidden><div class="input-group"><label for="google-personal-start">시작 시간</label><input id="google-personal-start" type="time" value="09:00"></div><div class="input-group"><label for="google-personal-end">종료 시간</label><input id="google-personal-end" type="time" value="10:00"></div></div>
+                    <div class="input-group"><label for="google-personal-memo">메모</label><textarea id="google-personal-memo" rows="3" maxlength="16000"></textarea></div>
+                    <div class="calendar-link-actions"><button class="btn-save" onclick="GoogleSync.savePersonal()">구글에 저장</button><button class="btn-reset-data" onclick="document.getElementById('google-personal-form').hidden=true">취소</button></div>
+                    <button id="google-personal-delete" class="btn-reset-data" onclick="GoogleSync.savePersonal(true)" hidden>개인 일정 삭제</button>
+                </div>
+                <details class="calendar-link-help"><summary>아이폰 기본 캘린더에서 사용하기</summary>
+                    <p>아이폰 설정 → 앱 → 캘린더 → 캘린더 계정 → 계정 추가 → Google에서 같은 계정을 연결하고 캘린더를 켜세요. 기본 캘린더 앱에서 <b>Shift_cal A/B/C조</b>를 선택합니다. 일정을 만들 때도 이 캘린더를 저장 위치로 선택해야 웹앱에 표시됩니다. 별도 iCloud 캘린더의 일정은 포함되지 않습니다.</p>
+                    <p>근무 종류를 구글에서 바꿀 때는 제목을 연차, 반차(전), 반차(후), 주간 특근, 야간 특근 등으로 지정하세요. 근태 변경·동시 수정·근무표 삭제는 웹앱에서 확인한 뒤 적용합니다. 단순 메모 변경과 개인 일정은 자동으로 가져옵니다.</p>
+                    <p>연결된 달의 근무표를 동기화합니다. 다른 달을 보면 그 달도 연결하며, 연도 전체 연결 버튼으로 한 해를 미리 보낼 수 있습니다. 기존 읽기 전용 구독은 캘린더 앱에서 숨기거나 구독을 해제하면 중복 표시를 피할 수 있습니다.</p>
+                </details>
+            </div>
+            <div class="card" style="padding:12px;">
+                <strong style="font-size:14px;">이전 방식 · 읽기 전용 근무표 구독</strong>
                 <p class="calendar-link-copy">선택한 조의 주간·야간·휴무를 종일 일정으로 표시합니다. 야간은 근무 시작일에 표시됩니다. 현재 웹앱에 등록된 회사 휴무일과 교대 주기를 따릅니다.</p>
                 <div class="calendar-link-actions">
                     <a id="calendar-apple-subscribe" class="btn-save" href="#">애플 캘린더 구독</a>
@@ -1675,6 +1728,7 @@
             }
 
             updateLeaveStats();
+            if(window.GoogleSync)GoogleSync.viewChanged();
         }
 
         /* 캘린더 및 급여계산기 공용 연/월 선택 피커 모달 제어 */
@@ -1849,6 +1903,7 @@
             currentPayDate = new Date(currentCalDate.getFullYear(), currentCalDate.getMonth(), 1);
             renderCalendar();
             syncFromCalendar();
+            if(window.GoogleSync)GoogleSync.changed();
         }
 
         function setGroup(grp) {
@@ -1859,6 +1914,7 @@
             loadOverrides();
             renderCalendar();
             syncFromCalendar();
+            if(window.GoogleSync)GoogleSync.groupChanged();
         }
 
         function calculateFiscalYearLeave(hireDateStr, targetYear) {
@@ -2029,6 +2085,7 @@
                 dayMemos[selectedDateStr] = val.trim();
             }
             localStorage.setItem('shift_day_memos', JSON.stringify(dayMemos));
+            if(window.GoogleSync)GoogleSync.changed(selectedDateStr);
             renderCalendar();
             closeModalDirect();
         }
@@ -2103,6 +2160,7 @@
 
         function saveOverrides() {
             localStorage.setItem(`shift_overrides_${currentGroup}`, JSON.stringify(overrides));
+            if(window.GoogleSync)GoogleSync.changed(selectedDateStr);
         }
 
         function loadOverrides() {
@@ -2604,5 +2662,7 @@
         };
     </script>
     <script src="./calendar-integration.js?v=1"></script>
+    <script src="./google-sync-core.js?v=2"></script>
+    <script src="./google-sync.js?v=2"></script>
 </body>
 </html>
