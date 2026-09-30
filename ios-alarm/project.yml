@@ -1,0 +1,46 @@
+name: ShiftCalAlarms
+options:
+  deploymentTarget:
+    iOS: '26.0'
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    DEVELOPMENT_TEAM: ''
+targets:
+  ShiftCalAlarms:
+    type: application
+    platform: iOS
+    sources: [Sources]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.wnhue.shiftcal.alarms
+        MARKETING_VERSION: '1.0'
+        CURRENT_PROJECT_VERSION: '1'
+        TARGETED_DEVICE_FAMILY: '1'
+        GENERATE_INFOPLIST_FILE: YES
+    info:
+      path: Generated/Info.plist
+      properties:
+        CFBundleDisplayName: 교대근무 알람
+        NSCalendarsFullAccessUsageDescription: 선택한 근무 캘린더를 읽어 주간·야간 근무별 알람을 예약합니다. 캘린더의 일정은 수정하지 않습니다.
+        NSAlarmKitUsageDescription: 주간·주특 06시 30분, 야간·야특 18시 30분에 근무 알람을 울립니다.
+        UILaunchScreen: {}
+        UIBackgroundModes: [fetch]
+        BGTaskSchedulerPermittedIdentifiers: [com.wnhue.shiftcal.alarms.refresh]
+  ShiftCalAlarmsTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [Tests]
+    dependencies:
+      - target: ShiftCalAlarms
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.wnhue.shiftcal.alarms.tests
+schemes:
+  ShiftCalAlarms:
+    build:
+      targets:
+        ShiftCalAlarms: all
+    test:
+      targets: [ShiftCalAlarmsTests]
