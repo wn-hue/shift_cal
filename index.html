@@ -855,9 +855,6 @@
         .estimate-note { font-size:12px; color:var(--text-sub); line-height:1.7; margin:12px 0; }
         .estimate-row { display:flex; justify-content:space-between; gap:12px; padding:8px 0; font-size:14px; }
         .estimate-net { border-top:1px solid var(--border); margin-top:8px; font-size:18px; font-weight:800; color:var(--primary); }
-        #payroll-estimate-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px; }
-        .estimate-field { font-size:12px; color:var(--text-sub); }
-        .estimate-field input { box-sizing:border-box; width:100%; padding:10px; margin-top:5px; border:1px solid var(--border); border-radius:8px; font:inherit; color:var(--text-main); background:var(--bg-card,#fff); }
         #payroll-estimate-panel [hidden], #payroll-estimate-panel[hidden] { display:none; }
     </style>
 </head>
@@ -953,28 +950,13 @@
                     <span>예상 세금·보험 공제 <span id="payroll-estimate-state">OFF</span></span>
                     <input type="checkbox" id="payroll-estimate-toggle" role="switch" aria-controls="payroll-estimate-panel">
                 </label>
-                <p class="estimate-note">기본 OFF · ON으로 켜면 예상 공제액과 실수령액을 확인할 수 있습니다.</p>
+                <p class="estimate-note">ON으로 켜면 예상 공제액과 실수령액을 바로 확인할 수 있습니다. 기본 OFF.</p>
                 <div id="payroll-estimate-panel" hidden>
-                    <p class="estimate-note"><strong>세금과 보험 공제액은 추정값입니다.</strong> 기준 명세서의 항목별 공제 비율을 현재 세전 총 지급액(상여 포함)에 적용한 단순 추정입니다. 실제 세액표, 부양가족, 비과세 금액, 보험 기준소득·보수, 정산 등에 따라 실제 금액과 다를 수 있습니다. 대출·식대 등 별도 공제는 포함하지 않습니다.</p>
-                    <div id="payroll-estimate-error" class="estimate-note" role="alert" hidden>기준 파일을 불러오거나 금액을 입력해주세요. 기준 지급액은 1원 이상, 공제액은 0원 이상의 정수로 입력해주세요. 공제 합계는 기준 지급액을 넘을 수 없습니다.</div>
-                    <div id="payroll-estimate-results" aria-live="polite">
-                        <div class="estimate-row"><span>예상 근로소득세</span><span id="estimate-income">0 원</span></div>
-                        <div class="estimate-row"><span>예상 지방소득세</span><span id="estimate-local">0 원</span></div>
-                        <div class="estimate-row"><span>예상 연금</span><span id="estimate-pension">0 원</span></div>
-                        <div class="estimate-row"><span>예상 건강보험</span><span id="estimate-health">0 원</span></div>
-                        <div class="estimate-row"><span>예상 고용보험</span><span id="estimate-employment">0 원</span></div>
-                        <div class="estimate-row"><strong>예상 공제 합계</strong><strong id="estimate-total">0 원</strong></div>
+                    <div aria-live="polite">
+                        <div class="estimate-row"><strong>예상 세금·보험 공제</strong><strong id="estimate-total">0 원</strong></div>
                         <div class="estimate-row estimate-net"><span>예상 실수령액</span><span id="estimate-net">0 원</span></div>
                     </div>
-                    <details id="payroll-estimate-settings" style="margin-top:14px;">
-                        <summary style="cursor:pointer; font-size:13px; font-weight:700;">공제 추정 기준 수정</summary>
-                        <p class="estimate-note">본인 명세서의 지급액·공제액을 입력하거나 기준 파일을 불러오세요. 금액은 서버에 전송하지 않고 이 기기에서만 계산합니다. 수정한 기준은 이 브라우저에 저장됩니다. 페이지를 다시 열면 스위치는 OFF로 시작합니다.</p>
-                        <label class="estimate-field" for="payroll-estimate-import">기준 명세서 파일 불러오기 (JSON)</label>
-                        <input type="file" id="payroll-estimate-import" accept=".json,application/json" style="width:100%;margin-top:8px;">
-                        <p class="estimate-note" id="payroll-estimate-import-status" role="status"></p>
-                        <div id="payroll-estimate-fields"></div>
-                        <button type="button" id="payroll-estimate-reset" style="margin-top:12px;padding:8px 12px;">공제 추정 기준 초기화</button>
-                    </details>
+                    <p class="estimate-note"><strong>추정값입니다.</strong> 세전 총 지급액(상여 포함)의 18%를 세금·보험 공제액으로 계산한 단순 예상입니다. 법정 요율이나 실제 세액표를 적용한 금액이 아니며, 실제 공제액·실수령액과 다를 수 있습니다.</p>
                 </div>
             </div>
 
@@ -2680,7 +2662,7 @@
             checkPayslipPopup();
         };
     </script>
-    <script src="./payroll-estimate.js?v=1"></script>
+    <script src="./payroll-estimate.js?v=2"></script>
     <script src="./calendar-integration.js?v=2"></script>
     <script src="./google-sync-core.js?v=2"></script>
     <script src="./google-sync.js?v=2"></script>
