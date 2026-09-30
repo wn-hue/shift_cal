@@ -79,5 +79,12 @@
             try { localStorage.setItem(storageKey, JSON.stringify(candidate)); } catch (_) { /* Session still works. */ }
         }
     });
+    document.getElementById('payroll-estimate-reset').addEventListener('click', () => {
+        inputs.forEach(input => { input.value = ''; });
+        profile = { ...defaults };
+        try { localStorage.removeItem(storageKey); } catch (_) { /* Session still resets. */ }
+        document.getElementById('payroll-estimate-import-status').textContent = '공제 추정 기준을 초기화했습니다.';
+        render();
+    });
     render();
 })(typeof globalThis !== 'undefined' ? globalThis : this);
