@@ -57,13 +57,8 @@
 })(globalThis);
 
 /* These handlers access the existing app's schedule; payroll rules are unchanged. */
-function getCalendarFeedURL() {
-    return `https://raw.githubusercontent.com/wn-hue/shift_cal/main/calendars/${currentGroup}.ics`;
-}
 function openCalendarIntegration() {
     document.getElementById('calendar-link-group').textContent = `${currentGroup}조`;
-    document.getElementById('calendar-feed-url').value = getCalendarFeedURL();
-    document.getElementById('calendar-apple-subscribe').href = getCalendarFeedURL().replace(/^https:/, 'webcal:');
     document.getElementById('calendar-export-status').textContent = '';
     document.getElementById('calendar-export-period').value = 'year';
     updateCalendarExportRange();
@@ -81,17 +76,6 @@ function updateCalendarExportRange() {
     document.getElementById('calendar-export-start').value = toDateKey(year, period === 'month' ? month : 0, 1);
     document.getElementById('calendar-export-end').value = period === 'month' ?
         toDateKey(year, month, new Date(year, month + 1, 0).getDate()) : toDateKey(year, 11, 31);
-}
-async function copyCalendarFeedURL() {
-    const input = document.getElementById('calendar-feed-url');
-    const status = document.getElementById('calendar-export-status');
-    try {
-        await navigator.clipboard.writeText(getCalendarFeedURL());
-        status.textContent = '구독 주소를 복사했습니다.';
-    } catch (_) {
-        input.focus(); input.select(); input.setSelectionRange(0, input.value.length);
-        status.textContent = '주소를 길게 눌러 복사해 주세요.';
-    }
 }
 function downloadCalendarFile(events, filename, name) {
     const blob = new Blob([ShiftCalendarLink.serialize(events, name)], { type: 'text/calendar;charset=utf-8' });
