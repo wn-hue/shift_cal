@@ -50,6 +50,8 @@ struct AlarmView: View {
                     if model.busy { ProgressView("알람 갱신 중") }
                     Button("근무표 및 알람 지금 갱신") { Task { _ = await model.refresh() } }
                         .disabled(model.busy)
+                    Button("1분 뒤 테스트 알람") { Task { await model.testAlarm() } }
+                        .disabled(model.busy || !model.enabled || !model.alarmGranted)
                     if let last = model.lastRefresh {
                         Text("마지막 근무표 확인: \(Self.formatter.string(from: last))").font(.footnote)
                     }

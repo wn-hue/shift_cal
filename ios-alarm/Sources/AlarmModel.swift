@@ -158,4 +158,21 @@ final class AlarmModel: ObservableObject {
             backgroundNote = "백그라운드 갱신을 요청할 수 없습니다. 근무 변경 후 앱을 열어 갱신해 주세요."
         }
     }
+
+    func testAlarm() async {
+        guard enabled, alarmGranted, !busy else {
+            message = "먼저 자동 알람을 켜고 알람 권한을 허용해 주세요."
+            return
+        }
+        busy = true
+        defer { busy = false }
+        do {
+            let backend = SystemAlarmBackend()
+            let id = UUID(uuidString: "6E290FF0-3E30-4B1A-91FA-1F9886F03480")!
+            if try backend.currentIDs().contains(id) { try backend.cancel(id: id) }
+            let plan = PlannedAlarm(key: "test", title: "교대근무 테스트 알람", date: Date(timeIntervalSinceNow: 60))
+            try await backend.schedule(id: id, plan: plan)
+            message = "1분 뒤 테스트 알람을 예약했습니다. iPhone을 잠근 뒤 소리가 울리는지 확인하세요."
+        } catch { message = "테스트 알람 예약 실패: \(error.localizedDescription)" }
+    }
 }
