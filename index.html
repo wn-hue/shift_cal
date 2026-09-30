@@ -249,6 +249,16 @@
         .gcal-chip-btn.stat-btn { background: #f8fafc; color: #1e293b; border-color: #cbd5e1; }
         .gcal-chip-btn.today-btn { background: #e8f0fe; color: #1a73e8; border-color: #c2e7ff; }
 
+        .calendar-link-entry { width: 100%; margin-bottom: 12px; padding: 10px 12px; text-align: left; border: 1px solid var(--border); border-radius: 10px; background: #f8fafc; color: var(--primary); font-size: 13px; font-weight: 700; cursor: pointer; }
+        .calendar-link-copy { font-size: 12px; line-height: 1.65; color: var(--text-sub); margin: 8px 0 12px; }
+        .calendar-link-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 10px 0; }
+        .calendar-link-actions > a, .calendar-link-actions > button { display: flex; align-items: center; justify-content: center; text-align: center; text-decoration: none; min-height: 44px; font-size: 13px; }
+        .calendar-link-help { font-size: 12px; line-height: 1.65; margin-top: 10px; }
+        .calendar-link-help summary { cursor: pointer; font-weight: 700; }
+        #calendar-feed-url { font-size: 16px; font-weight: 400; }
+        #calendar-export-status { min-height: 20px; color: var(--primary); font-size: 12px; line-height: 1.6; margin-top: 12px; }
+        #modal-calendar-link input[type='date'], #modal-calendar-link select { font-size: 16px; }
+
         /* 캘린더 그리드 */
         .calendar-card {
             background: #ffffff;
@@ -886,6 +896,7 @@
                 </div>
                 <div class="cal-grid" id="calendar-grid"></div>
             </div>
+            <button class="calendar-link-entry" onclick="openCalendarIntegration()">📅 구글 · 애플 캘린더 연결 <span style="float:right;" aria-hidden="true">›</span></button>
         </section>
 
         <!-- 2. 급여 계산기 화면 -->
@@ -1260,6 +1271,52 @@
         </div>
     </div>
 
+    <!-- Calendar subscriptions contain public base schedules only. Personal data stays local. -->
+    <div class="modal-overlay" id="modal-calendar-link" onclick="closeCalendarIntegration(event)">
+        <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="calendar-link-title" onclick="event.stopPropagation()">
+            <div class="modal-title">
+                <span id="calendar-link-title">캘린더 연결 · <span id="calendar-link-group">C조</span></span>
+                <button type="button" class="nav-arrow-btn" aria-label="닫기" onclick="closeCalendarIntegration()">✕</button>
+            </div>
+            <div class="card" style="padding:12px;">
+                <strong style="font-size:14px;">기본 근무표 구독</strong>
+                <p class="calendar-link-copy">선택한 조의 주간·야간·휴무를 종일 일정으로 표시합니다. 야간은 근무 시작일에 표시됩니다. 현재 웹앱에 등록된 회사 휴무일과 교대 주기를 따릅니다.</p>
+                <div class="calendar-link-actions">
+                    <a id="calendar-apple-subscribe" class="btn-save" href="#">애플 캘린더 구독</a>
+                    <a class="btn-reset-data" href="https://calendar.google.com/calendar/u/0/r/settings/addbyurl" target="_blank" rel="noopener noreferrer">구글 캘린더 연결</a>
+                </div>
+                <div class="input-group">
+                    <label for="calendar-feed-url">구독 주소</label>
+                    <input id="calendar-feed-url" type="text" readonly onclick="this.select()" spellcheck="false" autocomplete="off">
+                </div>
+                <button class="btn-reset-data" style="width:100%;margin-top:8px;" onclick="copyCalendarFeedURL()">구독 주소 복사</button>
+                <details class="calendar-link-help" open>
+                    <summary>연결 방법</summary>
+                    <p><b>애플:</b> 위 구독 버튼을 누르고 추가하세요. 버튼이 열리지 않으면 기본 캘린더 → 캘린더 → 캘린더 추가 → 구독 캘린더 추가에서 복사한 주소를 입력하세요. 홈 화면 웹앱에서는 Safari로 열어 시도하세요.</p>
+                    <p><b>구글:</b> 주소를 복사하고 컴퓨터의 Google Calendar → 설정 → 캘린더 추가 → URL로 추가에 붙여 넣으세요. 처음 구독은 컴퓨터 웹브라우저에서 진행해야 합니다.</p>
+                    <p>추가 후에는 캘린더 앱에서 일정을 볼 수 있습니다. 조를 바꾸면 새 조를 구독하고 기존 조의 구독을 해제하세요. 같은 조를 두 번 구독하면 중복으로 보일 수 있습니다.</p>
+                    <a href="https://support.google.com/calendar/answer/37100?hl=ko" target="_blank" rel="noopener noreferrer">구글 안내</a> · <a href="https://support.apple.com/ko-kr/102301" target="_blank" rel="noopener noreferrer">애플 안내</a>
+                </details>
+            </div>
+            <div class="info-card" style="margin-top:0;">기본 근무표 구독에는 이 기기에서 입력한 <b>연차·반차·개인 특근·O.T 해제·메모</b>가 반영되지 않습니다. 개인 일정은 아래 파일로 가져오거나 날짜를 눌러 하루씩 추가하세요. 구독 일정은 읽기 전용이며 갱신 시점은 캘린더 서비스가 결정합니다.</div>
+            <strong style="font-size:14px;">내 변경사항 포함해서 가져오기</strong>
+            <p class="calendar-link-copy">현재 저장된 근무 변경을 포함한 ICS 파일을 만듭니다. 가져온 뒤 변경한 일정은 자동 갱신되지 않습니다. 기본 구독과 함께 사용하거나 같은 파일을 반복해서 가져오면 중복될 수 있으므로 별도 캘린더에 가져오는 것을 권장합니다.</p>
+            <div class="input-group" style="margin-bottom:12px;">
+                <label for="calendar-export-period">기간 빠르게 선택</label>
+                <select id="calendar-export-period" onchange="updateCalendarExportRange()"><option value="year">달력에서 보고 있는 연도</option><option value="month">달력에서 보고 있는 월</option></select>
+            </div>
+            <div class="two-cols">
+                <div class="input-group"><label for="calendar-export-start">시작일</label><input id="calendar-export-start" type="date"></div>
+                <div class="input-group"><label for="calendar-export-end">종료일</label><input id="calendar-export-end" type="date"></div>
+            </div>
+            <label class="toggle-box" for="calendar-export-off"><span>휴무 일정 포함</span><input id="calendar-export-off" type="checkbox" checked></label>
+            <label class="toggle-box" for="calendar-export-memo"><span>저장된 개인 메모 포함</span><input id="calendar-export-memo" type="checkbox"></label>
+            <button class="btn-save" style="width:100%;" onclick="exportPersonalCalendar()">내 일정 파일(ICS) 만들기</button>
+            <p class="calendar-link-copy">구글: 컴퓨터의 설정 → 가져오기/내보내기에서 ICS 파일을 선택하세요. 애플: 파일이 바로 열리지 않으면 파일을 메일로 보내 첨부파일을 열거나 Mac 캘린더의 파일 → 가져오기를 이용하세요.</p>
+            <div id="calendar-export-status" role="status" aria-live="polite"></div>
+        </div>
+    </div>
+
     <!-- 모달: 근태 및 메모 변경 (반차 전/후 & 무급반차 전/후 포함) -->
     <div class="modal-overlay" id="modal-override" onclick="closeModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
@@ -1277,6 +1334,11 @@
                 <button class="btn-save" style="width:100%; margin-top:8px; padding:9px 0; font-size:13px;" onclick="saveMemoDirect()">💾 메모 저장 및 닫기</button>
             </div>
 
+            <div class="calendar-link-actions">
+                <button class="btn-reset-data" onclick="addSelectedToGoogleCalendar()">구글에 하루 추가</button>
+                <button class="btn-reset-data" onclick="exportSelectedCalendarDay()">하루 일정(ICS)</button>
+            </div>
+            <p class="calendar-link-copy">저장된 근무와 메모를 추가합니다. 메모 수정 중이면 먼저 저장하세요. 추가 화면에서 저장 또는 가져오기를 완료해야 반영됩니다.</p>
             <div style="font-size:12px; font-weight:700; color:#3c4043; margin-bottom:6px;">근무 변경 옵션</div>
             <div style="font-size:11px; color:#64748b; line-height:1.5; margin-bottom:10px;">무급 한도: 달력 월별 무급휴무 1회 또는 무급반차 2회 · 특근은 근무조와 전날 야간근무를 확인합니다.</div>
             <div class="modal-btn-grid">
@@ -2541,5 +2603,6 @@
             checkPayslipPopup();
         };
     </script>
+    <script src="./calendar-integration.js?v=1"></script>
 </body>
 </html>
