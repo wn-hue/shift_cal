@@ -855,7 +855,7 @@
         .estimate-note { font-size:12px; color:var(--text-sub); line-height:1.7; margin:12px 0; }
         .estimate-row { display:flex; justify-content:space-between; gap:12px; padding:8px 0; font-size:14px; }
         .estimate-net { border-top:1px solid var(--border); margin-top:8px; font-size:18px; font-weight:800; color:var(--primary); }
-        #payroll-estimate-panel [hidden], #payroll-estimate-panel[hidden] { display:none; }
+        #payroll-estimate-panel [hidden], #payroll-estimate-panel[hidden], #payroll-sms-apply[hidden] { display:none; }
     </style>
 </head>
 <body>
@@ -951,13 +951,30 @@
                     <input type="checkbox" id="payroll-estimate-toggle" role="switch" aria-controls="payroll-estimate-panel">
                 </label>
                 <p class="estimate-note">ON으로 켜면 예상 공제액과 실수령액을 바로 확인할 수 있습니다. 기본 OFF.</p>
+                <p class="estimate-note" id="payroll-estimate-basis"></p>
                 <div id="payroll-estimate-panel" hidden>
                     <div aria-live="polite">
                         <div class="estimate-row"><strong>예상 세금·보험 공제</strong><strong id="estimate-total">0 원</strong></div>
                         <div class="estimate-row estimate-net"><span>예상 실수령액</span><span id="estimate-net">0 원</span></div>
                     </div>
-                    <p class="estimate-note"><strong>추정값입니다.</strong> 세전 총 지급액(상여 포함)의 18%를 세금·보험 공제액으로 계산한 단순 예상입니다. 법정 요율이나 실제 세액표를 적용한 금액이 아니며, 실제 공제액·실수령액과 다를 수 있습니다.</p>
+                    <p class="estimate-note"><strong>추정값입니다.</strong> 세전 총 지급액(상여 포함)에 공제 비율을 적용한 단순 예상입니다. 법정 요율이나 실제 세액표를 적용한 금액이 아니며, 실제 공제액·실수령액과 다를 수 있습니다.</p>
                 </div>
+            </div>
+
+            <div class="card">
+                <details id="payroll-sms-details">
+                    <summary style="cursor:pointer;font-weight:700;">급여 문자 붙여넣기로 자동 설정</summary>
+                    <p class="estimate-note">임금명세서 문자 전체를 붙여넣으세요. 시급·직책·근속수당과 공제 비율을 인식합니다. 문자는 서버에 전송하지 않으며 이름·사번·원문은 저장하지 않습니다. 근무일수·상여·기타 일회성 지급액은 기존 계산을 유지합니다.</p>
+                    <label for="payroll-sms-text" style="font-size:13px;">급여 문자 내용</label>
+                    <textarea id="payroll-sms-text" maxlength="30000" rows="7" placeholder="기본시급, 통상시급, 지급내역, 공제내역이 포함된 문자를 붙여넣으세요." style="display:block;width:100%;margin:8px 0;padding:12px;border:1px solid var(--border);border-radius:8px;font:inherit;"></textarea>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <button type="button" id="payroll-sms-read" class="btn-save" style="padding:10px 14px;">금액 인식</button>
+                        <button type="button" id="payroll-sms-apply" class="btn-save" style="padding:10px 14px;" hidden>인식한 금액 적용</button>
+                        <button type="button" id="payroll-sms-clear" style="padding:10px 14px;">입력 지우기</button>
+                    </div>
+                    <p class="estimate-note" id="payroll-sms-status" role="status"></p>
+                    <div id="payroll-sms-preview" style="white-space:pre-wrap;font-size:14px;line-height:1.8;"></div>
+                </details>
             </div>
 
             <div class="card">
@@ -2545,6 +2562,17 @@
             document.getElementById('inp-retro-check').checked = config.applyRetroPay;
         }
 
+        function applyPayrollStatement(wages) {
+            const next = { ...config };
+            for (const key of ['baseHourly', 'ordinaryHourly', 'dutyPay', 'seniorityPay']) {
+                if (Number.isSafeInteger(wages[key]) && wages[key] >= 0) next[key] = wages[key];
+            }
+            localStorage.setItem('shift_salary_config_master', JSON.stringify(next));
+            config = next;
+            loadConfig();
+            calculatePayrollFromInputs();
+        }
+
         function saveConfig() {
             localStorage.setItem('shift_salary_config_master', JSON.stringify(config));
         }
@@ -2662,7 +2690,8 @@
             checkPayslipPopup();
         };
     </script>
-    <script src="./payroll-estimate.js?v=2"></script>
+    <script src="./payroll-sms.js?v=1"></script>
+    <script src="./payroll-estimate.js?v=3"></script>
     <script src="./calendar-integration.js?v=2"></script>
     <script src="./google-sync-core.js?v=2"></script>
     <script src="./google-sync.js?v=2"></script>

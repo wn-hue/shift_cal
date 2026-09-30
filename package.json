@@ -3,5 +3,5 @@
   "private": true,
   "version": "2.0.0",
   "engines": { "node": "24.x" },
-  "scripts": { "test": "node scripts/test-calendars.cjs && node scripts/test-google-sync.cjs && node scripts/test-payroll-estimate.cjs" }
+  "scripts": { "test": "node scripts/test-calendars.cjs && node scripts/test-google-sync.cjs && node scripts/test-payroll-estimate.cjs && node scripts/test-payroll-sms.cjs" }
 }
