@@ -856,6 +856,44 @@
         .estimate-row { display:flex; justify-content:space-between; gap:12px; padding:8px 0; font-size:14px; }
         .estimate-net { border-top:1px solid var(--border); margin-top:8px; font-size:18px; font-weight:800; color:var(--primary); }
         #payroll-estimate-panel [hidden], #payroll-estimate-panel[hidden], #payroll-sms-apply[hidden] { display:none; }
+        .payroll-summary { padding:18px 20px; }
+        .estimate-title { display:block; font-size:15px; font-weight:800; color:var(--text-main); }
+        .estimate-caption { display:block; margin-top:4px; font-size:12px; font-weight:400; color:var(--text-sub); }
+        .estimate-switch { display:flex; align-items:center; gap:9px; }
+        .estimate-state { font-size:11px; font-weight:600; color:var(--text-sub); }
+        .estimate-toggle input { appearance:none; -webkit-appearance:none; position:relative; width:44px; height:26px; border:0; border-radius:20px; background:#d4d9e0; cursor:pointer; transition:background .15s; flex-shrink:0; }
+        .estimate-toggle input::before { content:''; position:absolute; top:3px; left:3px; width:20px; height:20px; background:#fff; border-radius:50%; box-shadow:0 1px 3px #0002; transition:transform .15s; }
+        .estimate-toggle input:checked { background:var(--primary); }
+        .estimate-toggle input:checked::before { transform:translateX(18px); }
+        .estimate-toggle input:focus-visible, .sms-open-btn:focus-visible { outline:3px solid #a5c8ff; outline-offset:3px; }
+        .estimate-amounts { margin-top:18px; }
+        .estimate-net { padding-top:14px; }
+        .estimate-note { margin:10px 0 0; font-size:11px; }
+        .estimate-disclaimer { margin-top:4px; color:var(--text-sub); font-size:11px; line-height:1.6; }
+        .estimate-footer { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:14px; padding-top:12px; border-top:1px solid #eef0f3; }
+        .sms-open-btn { display:flex; align-items:center; gap:12px; padding:2px 0; border:0; background:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer; }
+        .sms-open-btn span { font-size:20px; line-height:16px; }
+        .estimate-applied { font-size:11px; color:var(--text-sub); }
+        .sms-dialog { width:calc(100% - 24px); max-width:520px; max-height:calc(100dvh - 40px); margin:auto; padding:24px; border:0; border-radius:20px; overflow:auto; background:#fff; color:var(--text-main); box-shadow:0 20px 60px #0003; }
+        .sms-dialog::backdrop { background:#11182766; }
+        .sms-dialog-header { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:24px; }
+        .sms-dialog-header h2 { font-size:20px; font-weight:800; }
+        .sms-dialog-header p { font-size:12px; color:var(--text-sub); margin-top:6px; }
+        .sms-close-btn { width:32px; height:32px; border:0; border-radius:50%; background:#f1f3f5; color:#64748b; font-size:24px; cursor:pointer; flex-shrink:0; }
+        .sms-input-label { font-size:13px; font-weight:600; }
+        .sms-textarea { display:block; width:100%; margin-top:8px; padding:14px; border:1px solid var(--border); border-radius:12px; background:#fafbfc; font:inherit; font-size:14px; line-height:1.6; resize:vertical; }
+        .sms-textarea:focus { outline:2px solid #c2d8ff; border-color:var(--primary); }
+        .sms-privacy { margin-top:8px; font-size:11px; line-height:1.6; color:var(--text-sub); }
+        .sms-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+        .sms-primary-btn, .sms-clear-btn { min-height:42px; padding:10px 16px; border:0; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; }
+        .sms-primary-btn { background:var(--primary); color:#fff; flex:1; }
+        .sms-clear-btn { background:#f1f3f5; color:var(--text-main); }
+        .sms-status { font-size:12px; color:var(--text-sub); line-height:1.6; margin-top:12px; }
+        .sms-status:empty, .sms-preview:empty { display:none; }
+        .sms-preview { white-space:pre-wrap; padding:14px; margin-top:12px; border-radius:12px; background:#f6f8fb; font-size:13px; line-height:1.9; }
+        .sms-help { margin-top:20px; font-size:12px; color:var(--text-sub); }
+        .sms-help summary { cursor:pointer; }
+        .sms-help p { line-height:1.7; margin-top:8px; }
     </style>
 </head>
 <body>
@@ -945,36 +983,23 @@
                 </div>
             </div>
 
-            <div class="card" id="payroll-estimate-card">
+            <div class="card payroll-summary" id="payroll-estimate-card">
                 <label class="estimate-toggle" for="payroll-estimate-toggle">
-                    <span>예상 세금·보험 공제 <span id="payroll-estimate-state">OFF</span></span>
-                    <input type="checkbox" id="payroll-estimate-toggle" role="switch" aria-controls="payroll-estimate-panel">
+                    <span><span class="estimate-title">예상 실수령액</span><span class="estimate-caption">세금·보험 공제 적용</span></span>
+                    <span class="estimate-switch"><span id="payroll-estimate-state" class="estimate-state">OFF</span><input type="checkbox" id="payroll-estimate-toggle" role="switch" aria-controls="payroll-estimate-panel"></span>
                 </label>
-                <p class="estimate-note">ON으로 켜면 예상 공제액과 실수령액을 바로 확인할 수 있습니다. 기본 OFF.</p>
-                <p class="estimate-note" id="payroll-estimate-basis"></p>
                 <div id="payroll-estimate-panel" hidden>
-                    <div aria-live="polite">
-                        <div class="estimate-row"><strong>예상 세금·보험 공제</strong><strong id="estimate-total">0 원</strong></div>
+                    <div class="estimate-amounts" aria-live="polite">
+                        <div class="estimate-row"><span>예상 공제액</span><strong id="estimate-total">0 원</strong></div>
                         <div class="estimate-row estimate-net"><span>예상 실수령액</span><span id="estimate-net">0 원</span></div>
                     </div>
-                    <p class="estimate-note"><strong>추정값입니다.</strong> 세전 총 지급액(상여 포함)에 공제 비율을 적용한 단순 예상입니다. 법정 요율이나 실제 세액표를 적용한 금액이 아니며, 실제 공제액·실수령액과 다를 수 있습니다.</p>
+                    <p class="estimate-note" id="payroll-estimate-basis"></p>
+                    <p class="estimate-disclaimer">추정값이며 실제 공제액·실수령액과 다를 수 있습니다.</p>
                 </div>
-            </div>
-
-            <div class="card">
-                <details id="payroll-sms-details">
-                    <summary style="cursor:pointer;font-weight:700;">급여 문자 붙여넣기로 자동 설정</summary>
-                    <p class="estimate-note">임금명세서 문자 전체를 붙여넣으세요. 시급·직책·근속수당과 공제 비율을 인식합니다. 문자는 서버에 전송하지 않으며 이름·사번·원문은 저장하지 않습니다. 근무일수·상여·기타 일회성 지급액은 기존 계산을 유지합니다.</p>
-                    <label for="payroll-sms-text" style="font-size:13px;">급여 문자 내용</label>
-                    <textarea id="payroll-sms-text" maxlength="30000" rows="7" placeholder="기본시급, 통상시급, 지급내역, 공제내역이 포함된 문자를 붙여넣으세요." style="display:block;width:100%;margin:8px 0;padding:12px;border:1px solid var(--border);border-radius:8px;font:inherit;"></textarea>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                        <button type="button" id="payroll-sms-read" class="btn-save" style="padding:10px 14px;">금액 인식</button>
-                        <button type="button" id="payroll-sms-apply" class="btn-save" style="padding:10px 14px;" hidden>인식한 금액 적용</button>
-                        <button type="button" id="payroll-sms-clear" style="padding:10px 14px;">입력 지우기</button>
-                    </div>
-                    <p class="estimate-note" id="payroll-sms-status" role="status"></p>
-                    <div id="payroll-sms-preview" style="white-space:pre-wrap;font-size:14px;line-height:1.8;"></div>
-                </details>
+                <div class="estimate-footer">
+                    <button type="button" id="payroll-sms-open" class="sms-open-btn">급여 문자로 설정 <span aria-hidden="true">›</span></button>
+                    <span id="payroll-sms-applied" class="estimate-applied" role="status"></span>
+                </div>
             </div>
 
             <div class="card">
@@ -1256,6 +1281,24 @@
             </div>
         </div>
     </div>
+
+    <dialog id="payroll-sms-dialog" class="sms-dialog" aria-labelledby="payroll-sms-title">
+        <div class="sms-dialog-header">
+            <div><h2 id="payroll-sms-title">급여 문자로 설정</h2><p>붙여넣고, 확인하고, 적용하세요.</p></div>
+            <button type="button" id="payroll-sms-close" class="sms-close-btn" aria-label="급여 문자 설정 닫기">×</button>
+        </div>
+        <label for="payroll-sms-text" class="sms-input-label">임금명세서 문자</label>
+        <textarea id="payroll-sms-text" maxlength="30000" rows="6" placeholder="받은 급여 문자를 전체 복사해 여기에 붙여넣으세요." class="sms-textarea"></textarea>
+        <p class="sms-privacy">기기 안에서 처리하며 이름·사번·원문은 저장하지 않습니다.</p>
+        <div class="sms-actions">
+            <button type="button" id="payroll-sms-read" class="sms-primary-btn">금액 인식</button>
+            <button type="button" id="payroll-sms-apply" class="sms-primary-btn" hidden>확인한 금액 적용</button>
+            <button type="button" id="payroll-sms-clear" class="sms-clear-btn">지우기</button>
+        </div>
+        <p id="payroll-sms-status" class="sms-status" role="status"></p>
+        <div id="payroll-sms-preview" class="sms-preview"></div>
+        <details class="sms-help"><summary>어떤 항목이 적용되나요?</summary><p>기본시급·통상시급·직책·근속수당과 공제 비율을 적용합니다. 근무일수·상여·일회성 지급액은 기존 계산을 유지합니다. 공제는 총 지급액에 명세서의 공제 비율을 적용하는 단순 추정이며, 실제 세액표에 따른 금액과 다를 수 있습니다.</p></details>
+    </dialog>
 
     <!-- 모달: 연/월 선택 피커 (캘린더 & 급여계산기 공용) -->
     <div class="modal-overlay" id="modal-year-month-picker" onclick="closeYearMonthPicker(event)">
@@ -2691,7 +2734,7 @@
         };
     </script>
     <script src="./payroll-sms.js?v=1"></script>
-    <script src="./payroll-estimate.js?v=3"></script>
+    <script src="./payroll-estimate.js?v=4"></script>
     <script src="./calendar-integration.js?v=2"></script>
     <script src="./google-sync-core.js?v=2"></script>
     <script src="./google-sync.js?v=2"></script>

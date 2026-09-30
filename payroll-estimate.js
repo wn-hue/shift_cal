@@ -18,6 +18,11 @@
     const toggle = document.getElementById('payroll-estimate-toggle'), panel = document.getElementById('payroll-estimate-panel');
     const text = document.getElementById('payroll-sms-text'), status = document.getElementById('payroll-sms-status');
     const preview = document.getElementById('payroll-sms-preview'), apply = document.getElementById('payroll-sms-apply');
+    const dialog = document.getElementById('payroll-sms-dialog');
+    const openButton = document.getElementById('payroll-sms-open');
+    openButton.addEventListener('click', () => { dialog.showModal(); text.focus(); });
+    document.getElementById('payroll-sms-close').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => openButton.focus());
     const labels = {baseHourly:'기본시급', ordinaryHourly:'통상시급', dutyPay:'직책수당', seniorityPay:'근속수당'};
     let currentGross = 0, profile = null, parsed = null;
     try { const saved = JSON.parse(localStorage.getItem(storageKey)); if (validProfile(saved)) profile = saved; } catch (_) {}
@@ -58,7 +63,9 @@
             if (parsed.profile) { profile = parsed.profile; try { localStorage.setItem(storageKey, JSON.stringify(profile)); } catch (_) {} }
             render(); root.calculatePayrollFromInputs();
             text.value = ''; clearPreview();
-            status.textContent = '적용했습니다. 시급·수당은 급여 설정에 반영했으며, 예상 공제는 ON으로 켜면 적용됩니다. 원문·이름·사번은 저장하지 않습니다.';
+            status.textContent = '';
+            document.getElementById('payroll-sms-applied').textContent = '설정 적용됨';
+            dialog.close();
         } catch (_) { status.textContent = '저장하지 못했습니다. 브라우저 저장공간 설정을 확인해주세요.'; }
     });
     document.getElementById('payroll-sms-clear').addEventListener('click', () => { text.value = ''; clearPreview(); status.textContent = ''; });
