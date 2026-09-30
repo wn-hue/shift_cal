@@ -2,7 +2,7 @@
 
 구현 코드와 API를 배포한 뒤, 웹앱 운영자가 아래 최초 설정을 완료해야 실제 구글 계정 연결이 작동합니다. Google Cloud 계정 접근 및 해당 Vercel 프로젝트의 환경변수 수정 권한이 필요합니다. 비밀 키는 GitHub나 채팅에 올리지 않습니다.
 
-현재 저장소의 웹앱 주소: **https://h-go1945.vercel.app**. 다른 운영 도메인을 사용한다면 아래 두 주소를 그 도메인으로 바꿉니다.
+구글 연결에 사용할 운영 웹앱 주소: **https://h-lyart-ten.vercel.app**. 이 주소에서 API 응답을 확인했습니다. 같은 프로젝트의 `https://h-go1945.vercel.app` 주소는 Vercel 로그인 보호가 적용되어 있으므로, 아래 OAuth 리디렉션과 `APP_URL`은 접근 가능한 운영 주소로 통일합니다. 다른 운영 도메인을 사용한다면 두 주소를 함께 변경합니다.
 
 ## 1. Google Cloud 설정
 
@@ -21,7 +21,7 @@
 7. 승인된 리디렉션 URI(Authorized redirect URIs)에 다음 주소를 **쿼리까지 정확하게** 등록합니다.
 
    ```text
-   https://h-go1945.vercel.app/api/google-calendar?action=callback
+   https://h-lyart-ten.vercel.app/api/google-calendar?action=callback
    ```
 
 8. Client ID와 Client secret을 확인합니다. 서버에서 사용하는 웹 클라이언트이므로 JavaScript origin 등록은 필수가 아닙니다.
@@ -35,7 +35,7 @@ Vercel에서 이 저장소와 연결된 프로젝트 → **Settings → Environm
 | `GOOGLE_CALENDAR_CLIENT_ID` | 위에서 만든 웹 OAuth Client ID |
 | `GOOGLE_CALENDAR_CLIENT_SECRET` | 위에서 만든 Client secret. 서버 전용 비밀 값 |
 | `GOOGLE_CALENDAR_SESSION_SECRET` | 최소 32자 무작위 비밀 값. 권장: 암호학적 난수 32바이트의 64자리 hex |
-| `APP_URL` | `https://h-go1945.vercel.app` (경로·쿼리 없이, 운영 주소와 일치) |
+| `APP_URL` | `https://h-lyart-ten.vercel.app` (경로·쿼리 없이, 운영 주소와 일치) |
 
 세션 비밀 값은 개발용 Node.js에서 아래 명령으로 생성할 수 있습니다. 결과를 Vercel 환경변수에만 등록하세요.
 
