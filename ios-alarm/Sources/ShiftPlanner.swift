@@ -24,8 +24,10 @@ enum ShiftPlanner {
     }
 
     static func hour(for event: ShiftEvent, includeHalf: Bool) -> Int? {
-        guard event.allDay, event.notes.replacingOccurrences(of: "\r\n", with: "\n")
-            .hasPrefix("Shift_cal 근무 일정\n메모:\n") else { return nil }
+        let notes = event.notes.replacingOccurrences(of: "\r\n", with: "\n")
+        let marker = "Shift_cal 근무 일정\n메모:"
+        // Some calendar providers trim the final newline when the memo is empty.
+        guard event.allDay, notes == marker || notes.hasPrefix(marker + "\n") else { return nil }
         let title = event.title.replacingOccurrences(of: "^[ABC]조\\s*", with: "", options: .regularExpression)
         if title.range(of: "^(무급 반차|무반|반차)\\(", options: .regularExpression) != nil {
             guard includeHalf else { return nil }

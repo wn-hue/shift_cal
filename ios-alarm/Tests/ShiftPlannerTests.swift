@@ -56,4 +56,11 @@ final class ShiftPlannerTests: XCTestCase {
         XCTAssertTrue(ShiftPlanner.plans(events: [event("A조 연차 · 주간")], now: now).isEmpty)
         XCTAssertTrue(ShiftPlanner.plans(events: [], now: now).isEmpty)
     }
+
+    func testCalendarProviderNewlineNormalization() {
+        let now = date("2026-10-01T00:00:00+09:00")
+        for notes in ["Shift_cal 근무 일정\n메모:", "Shift_cal 근무 일정\r\n메모:\r\n메모 내용"] {
+            XCTAssertEqual(ShiftPlanner.plans(events: [event("A조 주간", notes: notes)], now: now).count, 1)
+        }
+    }
 }
