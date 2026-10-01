@@ -55,7 +55,9 @@ assert.equal(elem('row-gross-pay').innerText,gross.toLocaleString('ko-KR'));asse
 assert.equal(elem('tr-payment-subtotal').hidden,true);
 evaluate('applyPayrollStatement({dutyPay:30000,seniorityPay:40000})');
 elem('payroll-sms-text').value='성명 합성테스트\n사번 123456\n기본시급 10,100\n통상시급 12,100\n지급내역\n소계(ⓐ) 2,000,000\n공제내역\n소계(ⓑ) 300,000';
-click('payroll-sms-read');click('payroll-sms-apply');
+click('payroll-sms-read');
+assert.equal(/직책|근속/.test(elem('payroll-sms-preview').textContent),false,'Absent allowances must also be omitted from the SMS preview');
+click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),10100);assert.equal(evaluate('config.ordinaryHourly'),12100);
 assert.equal(evaluate('config.dutyPay'),0);assert.equal(evaluate('config.seniorityPay'),0);
 for(const id of ['tr-duty-pay','tr-seniority-pay','duty-pay-setting','seniority-pay-setting','wage-allowance-settings'])assert.equal(elem(id).hidden,true,'Absent allowances must disappear after applying a new complete statement: '+id);

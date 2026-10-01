@@ -71,7 +71,9 @@
         clearPreview();
         try {
             parsed = root.PayrollSMS.parse(text.value);
-            const lines = Object.entries(parsed.wages).map(([key, value]) => labels[key] + ': ' + fmt(value));
+            const lines = Object.entries(parsed.wages)
+                .filter(([key, value]) => !['dutyPay', 'seniorityPay'].includes(key) || value > 0)
+                .map(([key, value]) => labels[key] + ': ' + fmt(value));
             const deductionLabels = {income:'근로소득세',local:'지방소득세',pension:'연금',health:'건강보험',employment:'고용보험',care:'장기요양보험'};
             for (const [key, value] of Object.entries(parsed.deductions)) lines.push(deductionLabels[key] + ': ' + fmt(value));
             if (parsed.profile) lines.push('기준 총 지급액: ' + fmt(parsed.profile.gross), '기준 공제 합계: ' + fmt(parsed.profile.total),
