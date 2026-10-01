@@ -77,7 +77,7 @@ function colorId(value) { if(typeof value !== 'string' || !/^(?:[1-9]|10|11)$/.t
 async function ownedCalendar(token, id, sub, group) {
     if (typeof id !== 'string' || id.length > 512) throw new ApiError(400,'CALENDAR_ID','캘린더를 확인하세요.');
     const cal = await google(token, `/calendars/${encodeURIComponent(id)}`);
-    if (cal.description !== marker(sub, group)) throw new ApiError(403,'CALENDAR','Shift_cal 전용 캘린더만 연결할 수 있습니다.');
+    if (cal.description !== marker(sub, group)) throw new ApiError(403,'CALENDAR','앱 전용 캘린더만 연결할 수 있습니다.');
     return cal;
 }
 async function findCalendar(token, session, group) {
@@ -91,7 +91,7 @@ async function findCalendar(token, session, group) {
         page = data.nextPageToken || '';
         if (++rounds >= 20 && page) throw new ApiError(413,'CALENDAR_LIMIT','캘린더 목록이 너무 많습니다.');
     } while (page);
-    return google(token, '/calendars', 'POST', { summary:`Shift_cal ${group}조`, description:marker(session.sub, group), timeZone:'Asia/Seoul' });
+    return google(token, '/calendars', 'POST', { summary:`Shift_calander ${group}조`, description:marker(session.sub, group), timeZone:'Asia/Seoul' });
 }
 function eventBody(input, group, id, existing = null) {
     if (!input || typeof input !== 'object' || typeof input.summary !== 'string' || !input.summary.trim() || input.summary.length > 2000 ||

@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>교대근무 - 교대 캘린더 & 급여 계산기</title>
+    <title>Shift_calander · 교대 캘린더 & 급여 계산기</title>
 
     <!-- iOS Safari & Android 홈 화면 추가 (단독 PWA 앱 규격) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="교대근무">
+    <meta name="apple-mobile-web-app-title" content="Shift_calander">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#ffffff">
+    <meta name="application-name" content="Shift_calander">
+    <meta name="description" content="Shift_calander는 교대 근무표, 예상 급여와 연차를 관리하고 Google Calendar 및 본인 Google 계정과 동기화하는 개인용 웹앱입니다.">
 
     <link rel="apple-touch-icon" sizes="512x512" href="./apple-touch-icon.png?v=1">
     <link rel="icon" type="image/png" href="./apple-touch-icon.png?v=1">
@@ -906,7 +908,7 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=5">
+    <link rel="stylesheet" href="./calendar-ui.css?v=6">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -999,7 +1001,7 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card payroll-input-card">
                 <div class="card-header">
                     <span>출근 · 수당</span>
                     <div style="display:flex; gap:8px; align-items:center;">
@@ -1064,16 +1066,18 @@
                 </div>
 
                 <div class="btn-action-group">
-                    <button class="btn-save" onclick="manualSaveData()">💾 입력값 저장</button>
-                    <button class="btn-reset-data" onclick="resetDefaults()">🔄 초기화(기본값)</button>
+                    <button class="btn-save" onclick="manualSaveData()">입력값 저장</button>
+                    <button class="btn-reset-data" onclick="resetDefaults()">초기화</button>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">
+            <details class="card payroll-disclosure" id="payroll-payment-details">
+                <summary>
                     <span id="payroll-details-label">지급 상세 내역 (세전)</span>
-                    <span id="bonus-badge" style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: #faf5ff; color: #7c3aed; font-weight: 800;">짝수달 상여</span>
-                </div>
+                    <span class="payroll-disclosure-state"><span class="when-closed">자세히 보기</span><span class="when-open">간략히 보기</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+                </summary>
+                <div class="payroll-detail-content">
+                    <div class="payroll-detail-meta"><span>항목별 지급액 · 단위 원</span><span id="bonus-badge">짝수달 상여</span></div>
                 <table class="pay-table">
                     <tbody>
                         <tr><td>기본</td><td class="num" id="row-base-pay">0</td></tr>
@@ -1106,8 +1110,9 @@
                         <tr class="total-row"><td id="row-pay-label">소계 ⓐ (세전)</td><td class="num" id="row-gross-pay" style="color:var(--primary); font-size:14px;">0</td></tr>
                     </tbody>
                 </table>
-                <button type="button" class="sms-open-btn" style="margin-top:12px;" onclick="triggerPayslipPopupManual()">명세서 알림 미리보기 ›</button>
-            </div>
+                    <button type="button" class="sms-open-btn" onclick="triggerPayslipPopupManual()">명세서 알림 미리보기 ›</button>
+                </div>
+            </details>
         </section>
 
         <!-- 3. 연차 & 설정 화면 -->
@@ -1271,7 +1276,7 @@
     </dialog>
 
     <dialog id="account-management-dialog" class="sms-dialog account-drawer" aria-labelledby="account-management-title">
-        <div class="drawer-top"><h2 id="account-management-title">메뉴</h2><button type="button" id="account-management-close" class="icon-button" aria-label="메뉴 닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+        <div class="drawer-top"><h2 id="account-management-title">Shift_calander · 메뉴</h2><button type="button" id="account-management-close" class="icon-button" aria-label="메뉴 닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
         <div class="drawer-profile">
             <span class="drawer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg></span>
             <div class="drawer-profile-content">
@@ -1445,7 +1450,7 @@
                     <button id="google-personal-delete" class="btn-reset-data" onclick="GoogleSync.savePersonal(true)" hidden>개인 일정 삭제</button>
                 </div>
                 <details class="calendar-link-help"><summary>아이폰 기본 캘린더에서 사용하기</summary>
-                    <p>아이폰 설정 → 앱 → 캘린더 → 캘린더 계정 → 계정 추가 → Google에서 같은 계정을 연결하고 캘린더를 켜세요. 기본 캘린더 앱에서 <b>Shift_cal A/B/C조</b>를 선택합니다. 일정을 만들 때도 이 캘린더를 저장 위치로 선택해야 웹앱에 표시됩니다. 별도 iCloud 캘린더의 일정은 포함되지 않습니다.</p>
+                    <p>아이폰 설정 → 앱 → 캘린더 → 캘린더 계정 → 계정 추가 → Google에서 같은 계정을 연결하고 캘린더를 켜세요. 기본 캘린더 앱에서 <b>앱 전용 A/B/C조 캘린더</b>를 선택합니다. 일정을 만들 때도 이 캘린더를 저장 위치로 선택해야 웹앱에 표시됩니다. 별도 iCloud 캘린더의 일정은 포함되지 않습니다.</p>
                     <p>근무 종류를 구글에서 바꿀 때는 제목을 연차, 반차(전), 반차(후), 주간 특근, 야간 특근 등으로 지정하세요. 근태 변경·동시 수정·근무표 삭제는 웹앱에서 확인한 뒤 적용합니다. 단순 메모 변경과 개인 일정은 자동으로 가져옵니다.</p>
                     <p>연결된 달의 근무표를 동기화합니다. 다른 달을 보면 그 달도 연결하며, 연도 전체 연결 버튼으로 한 해를 미리 보낼 수 있습니다. 기존 읽기 전용 구독은 캘린더 앱에서 숨기거나 구독을 해제하면 중복 표시를 피할 수 있습니다.</p>
                 </details>

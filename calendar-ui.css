@@ -169,3 +169,57 @@ input[type="number"], input[readonly], .num, .stat-value, .hero-amount, .sub-val
 .menu-leave-summary strong { font-variant-numeric:tabular-nums; color:#198266; }
 .account-drawer .account-hint { margin:0 0 6px; }
 @media(max-width:380px) { .settings-dialog .two-cols { grid-template-columns:1fr; } }
+
+/* Payroll uses the same quiet, colored settings language as annual leave. */
+#view-payroll .card, #view-payroll .salary-hero { border:1px solid #ededed; box-shadow:none; border-radius:20px; padding:20px; margin-bottom:16px; }
+#view-payroll .salary-hero { background:#f8fcfa; border-color:#dceee5; color:#292929; }
+#view-payroll .period-tag { background:#eaf1fa; color:#486da0; font-size:11px; border-radius:6px; padding:5px 8px; margin-bottom:14px; }
+#view-payroll .hero-label { color:#718079; font-size:12px; font-weight:500; }
+#view-payroll .hero-amount { color:#198266; font-size:clamp(28px,7vw,34px); font-weight:700; letter-spacing:-.7px; margin:6px 0 20px; overflow-wrap:anywhere; }
+#view-payroll .hero-subgrid { border-top:1px solid #dceee5; gap:16px; padding-top:16px; }
+#view-payroll .hero-subgrid .sub-val { font-size:18px; font-weight:650; margin-top:6px; overflow-wrap:anywhere; }
+#view-payroll #hero-regular-pay { color:#477fbd !important; }
+#view-payroll #hero-bonus-pay { color:#8670a6 !important; }
+#view-payroll .payroll-summary { background:#fafafa; }
+#view-payroll .estimate-title { font-size:15px; font-weight:650; color:#292929; }
+#view-payroll .estimate-caption { font-size:11px; color:#848484; }
+#view-payroll .estimate-footer { margin-top:0; }
+#view-payroll .estimate-footer:has(.estimate-applied:empty) { display:none; }
+#view-payroll .estimate-net, #view-payroll #estimate-net { color:#198266; }
+#view-payroll .payroll-input-card { background:#fafbff; border-color:#e4e9f7; }
+#view-payroll .card-header { margin-bottom:18px; padding-bottom:0; border-bottom:0; font-size:17px; font-weight:650; color:#202020; }
+#view-payroll .card-header > span:first-child::before { content:''; display:inline-block; width:5px; height:14px; margin-right:8px; border-radius:3px; background:#6a82c0; vertical-align:-1px; }
+#view-payroll .input-group { min-width:0; }
+#view-payroll .input-group label { font-size:12px; color:#777; font-weight:500; }
+#view-payroll .input-group input { font-size:14px; border-color:#e4e7ef; border-radius:10px; background:#fff; color:#292929; min-height:42px; font-weight:500; }
+#view-payroll .input-group input[readonly] { background:#f0f3f8 !important; color:#657182 !important; border-color:#e4e7ef !important; }
+#view-payroll .two-cols { gap:12px; }
+#view-payroll .toggle-box { background:#f0f3fb; border-color:#e4e9f7; border-radius:12px; }
+#view-payroll .toggle-box label { color:#57647b; font-size:12px; font-weight:500; }
+#view-payroll .btn-action-group { grid-template-columns:1fr auto; gap:10px; border-top:0; padding-top:0; margin-top:18px; }
+#view-payroll .btn-save, #view-payroll .btn-reset-data { min-height:44px; padding:10px 20px; border-radius:999px; font-size:13px; font-weight:600; }
+#view-payroll .btn-save { background:#198266; }
+#view-payroll .btn-reset-data { background:#eee; border:0; color:#666; }
+#view-payroll .gcal-topbar { background:transparent; border:0; box-shadow:none; padding:0 0 8px; }
+#view-payroll .month-title-btn { font-size:18px; font-weight:650; }
+#view-payroll .today-btn { border:1px solid #e4e7ef; border-radius:999px; background:#fff; color:#657182; }
+#view-payroll .payroll-disclosure { background:#fafafa; }
+.payroll-disclosure > summary { display:flex; align-items:center; justify-content:space-between; gap:10px; list-style:none; cursor:pointer; color:#292929; font-size:15px; font-weight:650; }
+.payroll-disclosure > summary::-webkit-details-marker { display:none; }
+.payroll-disclosure > summary:focus-visible { outline:2px solid var(--primary); outline-offset:6px; border-radius:4px; }
+.payroll-disclosure-state { display:flex; align-items:center; gap:4px; flex-shrink:0; font-size:11px; font-weight:500; color:#7e8482; }
+.payroll-disclosure-state svg { width:16px; height:16px; transition:transform .15s ease; }
+.payroll-disclosure .when-open { display:none; }
+.payroll-disclosure[open] .when-closed { display:none; }
+.payroll-disclosure[open] .when-open { display:inline; }
+.payroll-disclosure[open] .payroll-disclosure-state svg { transform:rotate(180deg); }
+.payroll-detail-content { border-top:1px solid #e6ebe8; margin-top:16px; padding-top:16px; }
+.payroll-detail-meta { display:flex; justify-content:space-between; gap:8px; font-size:11px; color:#848484; margin-bottom:8px; }
+#bonus-badge { background:#f1ecf8; color:#8670a6; border-radius:6px; padding:3px 7px; font-weight:600; }
+#view-payroll .pay-table td { padding:12px 4px; color:#636b66; font-size:13px; }
+#view-payroll .pay-table td.num { color:#292929; font-weight:600; }
+#view-payroll .pay-table tr.total-row { background:#eef7f4; border-color:#dceee5; }
+#view-payroll #row-gross-pay { color:#198266 !important; font-size:16px !important; }
+#view-payroll .pay-table .bonus-row { background:#f4f0fa; }
+#view-payroll .payroll-detail-content > .sms-open-btn { margin-top:16px; border-radius:999px; padding:8px 12px; color:#657182; background:#eef1f5; font-size:12px; font-weight:500; }
+@media(prefers-reduced-motion:reduce) { .payroll-disclosure-state svg { transition:none; } }
