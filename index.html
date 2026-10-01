@@ -1084,7 +1084,7 @@
 
             <div class="card">
                 <div class="card-header">
-                    <span>지급 상세 내역 (세전)</span>
+                    <span id="payroll-details-label">지급 상세 내역 (세전)</span>
                     <span id="bonus-badge" style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: #faf5ff; color: #7c3aed; font-weight: 800;">짝수달 상여</span>
                 </div>
                 <table class="pay-table">
@@ -2623,6 +2623,7 @@
                 localStorage.removeItem('shift_salary_config_master');
                 localStorage.removeItem('shift_day_memos');
                 dayMemos = {};
+                if(window.PayrollEstimate?.clearReference)PayrollEstimate.clearReference();
 
                 document.getElementById('input-hire-date').value = '';
                 document.getElementById('inp-hire-date').value = '';

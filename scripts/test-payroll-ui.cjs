@@ -41,6 +41,8 @@ assert.equal(elem('payroll-sms-text').value,'');assert.ok(![...saved.values()].j
 elem('payroll-estimate-toggle').checked=true;for(const f of elem('payroll-estimate-toggle').handlers.change)f();
 assert.match(elem('payroll-estimate-basis').textContent,/15.00%/);
 elem('payroll-sms-text').value='another private draft';ctx.PayrollEstimate.open();elem('payroll-sms-dialog').close();assert.equal(elem('payroll-sms-text').value,'');
+evaluate('renderCalendar=()=>{};resetDefaults()');assert.equal(saved.get('shift_payroll_sms_reference_v1'),undefined);assert.equal(evaluate('config.baseHourly'),0);
+assert.match(elem('payroll-estimate-basis').textContent,/18%/);
 assert.equal(/inp-retro-check|disp-retro-status|toggleRetroCheck|근속수당 가산/.test(html),false);
 for(const id of ['input-base-hourly','input-ordinary-hourly'])assert.match(html.match(new RegExp('<input[^>]+id="'+id+'"[^>]*>'))[0],/\breadonly\b/);
 assert.ok(html.includes('1일 연차 단가:</span>'));

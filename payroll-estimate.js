@@ -39,6 +39,7 @@
         document.getElementById('hero-pay-label').textContent = toggle.checked ? '총 지급액 (세후 추정)' : '총 지급액 (세전 합계)';
         document.getElementById('hero-gross-pay').innerText = fmt(amount);
         document.getElementById('row-pay-label').textContent = toggle.checked ? '총 지급액 (세후 추정)' : '총 지급액 (세전)';
+        document.getElementById('payroll-details-label').textContent = toggle.checked ? '지급 상세 내역 (공제 적용)' : '지급 상세 내역 (세전)';
         document.getElementById('row-gross-pay').innerText = amount.toLocaleString('ko-KR');
         document.getElementById('tr-estimated-deduction').hidden = !toggle.checked;
         document.getElementById('row-estimated-deduction').innerText = '−' + result.total.toLocaleString('ko-KR');
@@ -58,6 +59,11 @@
     function clearPreview() { parsed = null; apply.hidden = true; preview.textContent = ''; }
     function clearDraft() { text.value='';clearPreview();status.textContent=''; }
     api.clearDraft = () => { clearDraft(); if(dialog.open)dialog.close(); };
+    api.clearReference = () => {
+        localStorage.removeItem(storageKey);profile=null;api.clearDraft();render();
+        document.getElementById('payroll-sms-applied').textContent='';
+        if(window.AccountSync)AccountSync.changed();
+    };
     text.addEventListener('input', () => { clearPreview(); status.textContent = ''; });
     document.getElementById('payroll-sms-read').addEventListener('click', () => {
         clearPreview();
