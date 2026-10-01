@@ -8,8 +8,8 @@ function event(memo='',title='C조 주간 1일차') {
         extendedProperties:{private:{app:'shift_cal_v2',kind:'shift',group:'C',originDate:'2026-09-09',override:'BASE'}}};
 }
 const value=C.local(), original=event(), record={id:original.id,etag:original.etag,signature:C.signature(original),summary:original.summary,local:value};
-assert.equal(C.colorId({type:'DAY'}),'5');assert.equal(C.colorId({type:'NIGHT'}),'9');assert.equal(C.colorId({type:'OFF'}),'8');
-assert.equal(C.colorId({type:'SPECIAL_NIGHT'}),'9');assert.equal(C.colorId({type:'HALF_POST',origType:'NIGHT'}),'9');assert.equal(C.colorId({type:'LEAVE'}),'2');
+assert.equal(C.colorId({type:'DAY'}),'5');assert.equal(C.colorId({type:'NIGHT'}),'4');assert.equal(C.colorId({type:'OFF'}),null);
+assert.equal(C.colorId({type:'SPECIAL_NIGHT'}),'4');assert.equal(C.colorId({type:'HALF_POST',origType:'NIGHT'}),'4');assert.equal(C.colorId({type:'LEAVE'}),'2');
 assert.equal(C.signature({...original,colorId:'9'}),C.signature(original),'Color changes must not be treated as attendance or memo changes');
 assert.equal(C.plan(value,null,null,original),'insert');
 assert.equal(C.plan(value,null,original,original),'adopt');
@@ -44,6 +44,7 @@ assert.equal(S.unseal(S.seal({...session,exp:1},secret),secret),null);
 assert.equal(S.eventBody(original,'C',original.id).extendedProperties.private.override,'BASE');
 assert.equal(S.eventBody({...original,colorId:'5'},'C',original.id).colorId,'5');
 assert.equal(S.eventBody(original,'C',original.id).visibility,'private');
+assert.equal(S.eventBody({...original,colorId:null},'C',original.id).colorId,null);
 assert.throws(()=>S.eventBody({...original,colorId:'999'},'C',original.id));
 assert.throws(()=>S.eventBody({...original,end:{date:'2026-09-09'}},'C',original.id));
 assert.throws(()=>S.eventBody(original,'A',original.id));
@@ -124,6 +125,7 @@ async function run() {
         res=await invoke('write',{body:colorInput});assert.equal(res.result.results[0].ok,true);
         const colorPatch=JSON.parse(calls.filter(c=>c.options.method==='PATCH').at(-1).options.body);
         assert.deepEqual(colorPatch,{colorId:'9',visibility:'private'},'Color migration must preserve remote titles, memos, dates and attendance metadata');
+        const defaultColor=copy(colorInput);defaultColor.operations[0].colorId=null;res=await invoke('write',{body:defaultColor});assert.equal(res.result.results[0].ok,true);assert.deepEqual(JSON.parse(calls.filter(c=>c.options.method==='PATCH').at(-1).options.body),{colorId:null,visibility:'private'},'Clear off-day color without changing schedule or memo');
         const invalidColor=copy(colorInput);invalidColor.operations[0].colorId='99';res=await invoke('write',{body:invalidColor});assert.equal(res.result.results[0].status,400);
         mode='race';res=await invoke('write',{body:colorInput});assert.equal(res.result.results[0].status,412);mode='normal';
         const stale=copy(input);stale.operations[0].etag='"old"';

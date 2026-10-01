@@ -194,7 +194,7 @@
                 const action=C.plan(value,record,remote,body);
                 if (action==='adopt') {
                     remember(g,key,remote,value);
-                    if(remote.colorId!==body.colorId || remote.visibility!=='private')operations.push({key,value,op:{type:'color',id:remote.id,colorId:body.colorId,etag:remote.etag}});
+                    if((remote.colorId ?? null)!==body.colorId || remote.visibility!=='private')operations.push({key,value,op:{type:'color',id:remote.id,colorId:body.colorId,etag:remote.etag}});
                 }
                 else if (action==='insert' || action==='patch') operations.push({key,value,op:{type:action,id:body.id,event:body,...(remote?.etag?{etag:remote.etag}:{})}});
                 else if (action==='deleted') queueReview(g,key,'deleted',remote,'구글에서 일정이 삭제되었습니다. 근태·급여 기록은 그대로 유지됩니다. 삭제를 유지할지 선택하세요.');
@@ -207,7 +207,7 @@
                     else {
                         applyLocal(key,analysis.value); remember(g,key,remote,analysis.value);
                         const next=desired(key,remote.id);
-                        if(remote.colorId!==next.colorId || remote.visibility!=='private')operations.push({key,value:analysis.value,op:{type:'color',id:remote.id,colorId:next.colorId,etag:remote.etag}});
+                        if((remote.colorId ?? null)!==next.colorId || remote.visibility!=='private')operations.push({key,value:analysis.value,op:{type:'color',id:remote.id,colorId:next.colorId,etag:remote.etag}});
                     }
                 }
             }
@@ -221,7 +221,7 @@
         } finally {
             busy=false;
             if (currentGroup!==group) changed();
-            else if(!rangeOverride && g.paletteVersion!==1) migrateColors();
+            else if(!rangeOverride && g.paletteVersion!==2) migrateColors();
         }
     }
     async function migrateColors() {
@@ -241,7 +241,7 @@
                     const analysis=analyzeRemote(key,remote,record);
                     if(!analysis.valid)continue;
                     const colorId=C.colorId(shiftFor(key,analysis.value.override));
-                    if(remote.colorId!==colorId || remote.visibility!=='private')operations.push({type:'color',id:remote.id,colorId,etag:remote.etag});
+                    if((remote.colorId ?? null)!==colorId || remote.visibility!=='private')operations.push({type:'color',id:remote.id,colorId,etag:remote.etag});
                 }
                 for(let i=0;i<operations.length;i+=10) {
                     if(currentGroup!==group || auth?.user?.id!==userId || !g.enabled || (window.AccountSync && !AccountSync.ready))return;
@@ -252,7 +252,7 @@
                     // Remote attendance/memo edits must still be reviewed next run.
                 }
             }
-            g.paletteVersion=1;save();status('색상 적용 완료 · 주간 노랑 · 야간 파랑 · 휴무 회색');
+            g.paletteVersion=2;save();status('색상 적용 완료 · 주간 연노랑 · 야간 연분홍 · 휴무 기본색');
         } catch(e){status(e.message);}finally{busy=false;if(currentGroup!==group)changed();}
     }
     function changed() {

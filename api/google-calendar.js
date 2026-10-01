@@ -73,7 +73,7 @@ function marker(sub, group) { return `Shift_cal v2 | ${sub} | ${group}`; }
 function groupOf(value) { if (!['A','B','C'].includes(value)) throw new ApiError(400,'GROUP','근무조를 확인하세요.'); return value; }
 function dateOK(value) { return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(value + 'T00:00:00Z')) && new Date(value + 'T00:00:00Z').toISOString().slice(0,10) === value; }
 function safeId(id) { if (typeof id !== 'string' || !/^[a-z0-9_]{5,1024}$/.test(id)) throw new ApiError(400,'EVENT_ID','일정 ID를 확인하세요.'); return id; }
-function colorId(value) { if(typeof value !== 'string' || !/^(?:[1-9]|10|11)$/.test(value))throw new ApiError(400,'COLOR','일정 색상을 확인하세요.');return value; }
+function colorId(value) { if(value === null)return null; if(typeof value !== 'string' || !/^(?:[1-9]|10|11)$/.test(value))throw new ApiError(400,'COLOR','일정 색상을 확인하세요.');return value; }
 async function ownedCalendar(token, id, sub, group) {
     if (typeof id !== 'string' || id.length > 512) throw new ApiError(400,'CALENDAR_ID','캘린더를 확인하세요.');
     const cal = await google(token, `/calendars/${encodeURIComponent(id)}`);
