@@ -42,7 +42,7 @@
         const value = type === null ? localValue(key) : C.local(type,memo);
         const shift = shiftFor(key,value.override);
         const event = ShiftCalendarLink.makeEvent(key,currentGroup,shift);
-        return {id,summary:event.title,description:C.PREFIX+value.memo,start:{date:key},end:{date:ShiftCalendarLink.nextDay(key)},
+        return {id,summary:event.title,description:C.PREFIX+value.memo,colorId:C.colorId(shift),start:{date:key},end:{date:ShiftCalendarLink.nextDay(key)},
             extendedProperties:{private:{app:'shift_cal_v2',group:currentGroup,kind:'shift',originDate:key,override:value.override}}};
     }
     function baseId(key) { return 'sc2'+currentGroup.toLowerCase()+key.replace(/-/g,''); }
@@ -192,7 +192,10 @@
                 }
                 const body=desired(key,record?.id || remote?.id || baseId(key));
                 const action=C.plan(value,record,remote,body);
-                if (action==='adopt') remember(g,key,remote,value);
+                if (action==='adopt') {
+                    remember(g,key,remote,value);
+                    if(remote.colorId!==body.colorId || remote.visibility!=='private')operations.push({key,value,op:{type:'color',id:remote.id,colorId:body.colorId,etag:remote.etag}});
+                }
                 else if (action==='insert' || action==='patch') operations.push({key,value,op:{type:action,id:body.id,event:body,...(remote?.etag?{etag:remote.etag}:{})}});
                 else if (action==='deleted') queueReview(g,key,'deleted',remote,'구글에서 일정이 삭제되었습니다. 근태·급여 기록은 그대로 유지됩니다. 삭제를 유지할지 선택하세요.');
                 else if (action==='conflict') queueReview(g,key,'conflict',remote);
@@ -201,7 +204,11 @@
                     if (!analysis.valid) queueReview(g,key,'unrecognized',remote,analysis.reason);
                     else if (analysis.value.override!==value.override) queueReview(g,key,'attendance',remote,'근무 종류가 변경되었습니다. 적용하면 근태·급여 계산에 반영됩니다.');
                     else if (!C.equal(value,localValue(key))) continue;
-                    else { applyLocal(key,analysis.value); remember(g,key,remote,analysis.value); }
+                    else {
+                        applyLocal(key,analysis.value); remember(g,key,remote,analysis.value);
+                        const next=desired(key,remote.id);
+                        if(remote.colorId!==next.colorId || remote.visibility!=='private')operations.push({key,value:analysis.value,op:{type:'color',id:remote.id,colorId:next.colorId,etag:remote.etag}});
+                    }
                 }
             }
             save(); await writeOperations(g,operations);
@@ -214,7 +221,39 @@
         } finally {
             busy=false;
             if (currentGroup!==group) changed();
+            else if(!rangeOverride && g.paletteVersion!==1) migrateColors();
         }
+    }
+    async function migrateColors() {
+        if(busy || !auth?.connected || !groupState()?.enabled || (window.AccountSync && !AccountSync.ready))return;
+        busy=true;const group=currentGroup,g=groupState(),userId=auth.user.id;
+        status('연결된 근무 일정의 색상을 적용하고 있습니다…');
+        try {
+            const months=[...new Set(Object.keys(g.records).map(key=>key.slice(0,7)))].sort();
+            for(const month of months) {
+                if(currentGroup!==group || auth?.user?.id!==userId || !g.enabled || (window.AccountSync && !AccountSync.ready))return;
+                const [y,m]=month.split('-').map(Number), start=month+'-01',end=dateKey(new Date(y,m,1));
+                const {items}=await api('read',{group,calendarId:g.calendarId,start,end});
+                const operations=[];
+                for(const remote of items) {
+                    const key=C.origin(remote), record=g.records[key];
+                    if(!record || g.excluded[key] || g.pending[key] || remote.status==='cancelled' || remote.id!==record.id || remote.start?.date!==key)continue;
+                    const analysis=analyzeRemote(key,remote,record);
+                    if(!analysis.valid)continue;
+                    const colorId=C.colorId(shiftFor(key,analysis.value.override));
+                    if(remote.colorId!==colorId || remote.visibility!=='private')operations.push({type:'color',id:remote.id,colorId,etag:remote.etag});
+                }
+                for(let i=0;i<operations.length;i+=10) {
+                    if(currentGroup!==group || auth?.user?.id!==userId || !g.enabled || (window.AccountSync && !AccountSync.ready))return;
+                    const {results}=await api('write',{group,calendarId:g.calendarId,operations:operations.slice(i,i+10)});
+                    const failed=results.find(result=>!result.ok);
+                    if(failed)throw Error(failed.message || '색상을 적용하지 못했습니다. 다음 동기화에서 다시 확인합니다.');
+                    // Style changes leave content comparison baselines untouched.
+                    // Remote attendance/memo edits must still be reviewed next run.
+                }
+            }
+            g.paletteVersion=1;save();status('색상 적용 완료 · 주간 노랑 · 야간 파랑 · 휴무 회색');
+        } catch(e){status(e.message);}finally{busy=false;if(currentGroup!==group)changed();}
     }
     function changed() {
         if(suppressed) return;

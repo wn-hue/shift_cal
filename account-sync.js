@@ -58,6 +58,7 @@
         if(window.GoogleSync)GoogleSync.groupChanged();
     }
     function disconnected() {
+        if(window.PayrollEstimate?.clearDraft)PayrollEstimate.clearDraft();
         if(auth?.connected)localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(snapshot()));
         ++epoch;clearTimeout(timer);pending=null;baseline=null;
         restore(C.normalize({}));localStorage.removeItem(ownerKey);auth=null;api.ready=true;renderAuth();
@@ -154,6 +155,7 @@
             if(!auth.connected){api.ready=true;status('기기에 저장 중');return;}
             const owner=localStorage.getItem(ownerKey);
             if(owner && owner!==auth.user.id) {
+                if(window.PayrollEstimate?.clearDraft)PayrollEstimate.clearDraft();
                 localStorage.setItem(cachePrefix+owner,JSON.stringify(snapshot()));
                 const cached=JSON.parse(localStorage.getItem(cachePrefix+auth.user.id)||'null');
                 restore(cached||C.normalize({}));

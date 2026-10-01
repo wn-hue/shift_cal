@@ -3,6 +3,11 @@
     const PREFIX = 'Shift_cal 근무 일정\n메모:\n';
     const equal = (a,b) => JSON.stringify(a) === JSON.stringify(b);
     function local(override,memo) { return {override:override || 'BASE',memo:memo || ''}; }
+    function colorId(shift) {
+        if(shift.type === 'LEAVE')return '2';
+        if(['OFF','FORCED_OFF','UNPAID_OFF'].includes(shift.type))return '8';
+        return shift.type === 'NIGHT' || shift.type === 'SPECIAL_NIGHT' || shift.origType === 'NIGHT' ? '9' : '5';
+    }
     function signature(event) {
         if (!event || event.status === 'cancelled') return null;
         return JSON.stringify({summary:event.summary || '',description:event.description || '',start:event.start,end:event.end,
@@ -38,6 +43,6 @@
         // Schedule rules can change even when the user's override and memo do not.
         return localChanged || signature(desired) !== record.signature ? 'patch':'adopt';
     }
-    root.GoogleSyncCore = {PREFIX,equal,local,signature,origin,memo,infer,plan};
+    root.GoogleSyncCore = {PREFIX,equal,local,colorId,signature,origin,memo,infer,plan};
     if (typeof module !== 'undefined') module.exports = root.GoogleSyncCore;
 })(globalThis);

@@ -73,6 +73,7 @@ function marker(sub, group) { return `Shift_cal v2 | ${sub} | ${group}`; }
 function groupOf(value) { if (!['A','B','C'].includes(value)) throw new ApiError(400,'GROUP','근무조를 확인하세요.'); return value; }
 function dateOK(value) { return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(value + 'T00:00:00Z')) && new Date(value + 'T00:00:00Z').toISOString().slice(0,10) === value; }
 function safeId(id) { if (typeof id !== 'string' || !/^[a-z0-9_]{5,1024}$/.test(id)) throw new ApiError(400,'EVENT_ID','일정 ID를 확인하세요.'); return id; }
+function colorId(value) { if(typeof value !== 'string' || !/^(?:[1-9]|10|11)$/.test(value))throw new ApiError(400,'COLOR','일정 색상을 확인하세요.');return value; }
 async function ownedCalendar(token, id, sub, group) {
     if (typeof id !== 'string' || id.length > 512) throw new ApiError(400,'CALENDAR_ID','캘린더를 확인하세요.');
     const cal = await google(token, `/calendars/${encodeURIComponent(id)}`);
@@ -115,7 +116,7 @@ function eventBody(input, group, id, existing = null) {
     const privateProps = { ...(existing?.extendedProperties?.private || {}), app:'shift_cal_v2', group, kind:props.kind };
     if (props.kind === 'shift') Object.assign(privateProps, { originDate:props.originDate, override:props.override });
     return { summary:input.summary.trim(), description:input.description || '', ...range,
-        extendedProperties:{private:privateProps}, ...(props.kind === 'shift' ? { transparency:'transparent' } : {}) };
+        extendedProperties:{private:privateProps}, ...(input.colorId !== undefined ? {colorId:colorId(input.colorId)} : {}), ...(props.kind === 'shift' ? { transparency:'transparent',visibility:'private' } : {}) };
 }
 async function listEvents(token, id, body) {
     if (!dateOK(body.start) || !dateOK(body.end) || body.end <= body.start || Date.parse(body.end) - Date.parse(body.start) > 62 * 86400000) throw new ApiError(400,'RANGE','조회 기간은 최대 두 달입니다.');
@@ -148,7 +149,7 @@ async function writes(token, calendarId, group, operations) {
         const chunk = await Promise.all(operations.slice(i,i+3).map(async op => {
             try {
                 const id = safeId(op.id), path = `/calendars/${encodeURIComponent(calendarId)}/events`;
-                if (!['insert','patch','delete'].includes(op.type)) throw new ApiError(400,'OPERATION','지원하지 않는 변경입니다.');
+                if (!['insert','patch','color','delete'].includes(op.type)) throw new ApiError(400,'OPERATION','지원하지 않는 변경입니다.');
                 if (op.type === 'insert') {
                     if (!/^(sc2[a-c]\d{8}(?:r[a-f0-9]{16})?|scp[a-f0-9]{32})$/.test(id)) throw new ApiError(400,'EVENT_ID','새 일정 ID를 확인하세요.');
                     const data = eventBody(op.event, group, id);
@@ -159,6 +160,11 @@ async function writes(token, calendarId, group, operations) {
                 const old = await google(token, `${path}/${encodeURIComponent(id)}`);
                 if (old.etag !== op.etag) throw new ApiError(412,'CONFLICT','일정이 다른 곳에서 변경되었습니다.');
                 if (old.recurrence || old.recurringEventId) throw new ApiError(409,'RECURRING','반복 일정은 구글 캘린더에서 수정하세요.');
+                if (op.type === 'color') {
+                    if(old.extendedProperties?.private?.app !== 'shift_cal_v2' || old.extendedProperties.private.kind !== 'shift' || old.extendedProperties.private.group !== group)throw new ApiError(403,'COLOR_OWNER','앱 근무 일정의 색상만 변경할 수 있습니다.');
+                    const event=await google(token,`${path}/${encodeURIComponent(id)}`,'PATCH',{colorId:colorId(op.colorId),visibility:'private'},op.etag);
+                    return {id,ok:true,event};
+                }
                 if (op.type === 'delete') {
                     if (old.extendedProperties?.private?.kind === 'shift' || /^sc2[a-c]\d{8}/.test(id)) throw new ApiError(400,'SHIFT_DELETE','근무 일정 삭제는 구글 캘린더에서 진행하고 웹앱에서 확인하세요.');
                     await google(token, `${path}/${encodeURIComponent(id)}`, 'DELETE', undefined, op.etag);

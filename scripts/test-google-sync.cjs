@@ -8,6 +8,9 @@ function event(memo='',title='C조 주간 1일차') {
         extendedProperties:{private:{app:'shift_cal_v2',kind:'shift',group:'C',originDate:'2026-09-09',override:'BASE'}}};
 }
 const value=C.local(), original=event(), record={id:original.id,etag:original.etag,signature:C.signature(original),summary:original.summary,local:value};
+assert.equal(C.colorId({type:'DAY'}),'5');assert.equal(C.colorId({type:'NIGHT'}),'9');assert.equal(C.colorId({type:'OFF'}),'8');
+assert.equal(C.colorId({type:'SPECIAL_NIGHT'}),'9');assert.equal(C.colorId({type:'HALF_POST',origType:'NIGHT'}),'9');assert.equal(C.colorId({type:'LEAVE'}),'2');
+assert.equal(C.signature({...original,colorId:'9'}),C.signature(original),'Color changes must not be treated as attendance or memo changes');
 assert.equal(C.plan(value,null,null,original),'insert');
 assert.equal(C.plan(value,null,original,original),'adopt');
 assert.equal(C.plan(C.local('BASE','local'),record,original,event('local')),'patch');
@@ -39,6 +42,9 @@ assert.equal(S.unseal(encrypted,'another-secret'),null);
 assert.equal(S.unseal(encrypted.slice(0,-4)+'AAAA',secret),null);
 assert.equal(S.unseal(S.seal({...session,exp:1},secret),secret),null);
 assert.equal(S.eventBody(original,'C',original.id).extendedProperties.private.override,'BASE');
+assert.equal(S.eventBody({...original,colorId:'5'},'C',original.id).colorId,'5');
+assert.equal(S.eventBody(original,'C',original.id).visibility,'private');
+assert.throws(()=>S.eventBody({...original,colorId:'999'},'C',original.id));
 assert.throws(()=>S.eventBody({...original,end:{date:'2026-09-09'}},'C',original.id));
 assert.throws(()=>S.eventBody(original,'A',original.id));
 assert.throws(()=>S.eventBody(original,'C',original.id,{recurrence:['RRULE:FREQ=DAILY']}));
@@ -114,6 +120,12 @@ async function run() {
         assert.equal(res.result.items.length,3);assert.ok(res.result.items.some(e=>e.id==='sc2c20260910'&&e.status==='cancelled'));
         const input={group:'C',calendarId:'cal-1',operations:[{id:original.id,type:'patch',etag:'"v1"',event:event('new memo')}]};
         res=await invoke('write',{body:input});assert.equal(res.result.results[0].ok,true);
+        const colorInput={group:'C',calendarId:'cal-1',operations:[{id:original.id,type:'color',colorId:'9',etag:'"v1"'}]};
+        res=await invoke('write',{body:colorInput});assert.equal(res.result.results[0].ok,true);
+        const colorPatch=JSON.parse(calls.filter(c=>c.options.method==='PATCH').at(-1).options.body);
+        assert.deepEqual(colorPatch,{colorId:'9',visibility:'private'},'Color migration must preserve remote titles, memos, dates and attendance metadata');
+        const invalidColor=copy(colorInput);invalidColor.operations[0].colorId='99';res=await invoke('write',{body:invalidColor});assert.equal(res.result.results[0].status,400);
+        mode='race';res=await invoke('write',{body:colorInput});assert.equal(res.result.results[0].status,412);mode='normal';
         const stale=copy(input);stale.operations[0].etag='"old"';
         res=await invoke('write',{body:stale});assert.equal(res.result.results[0].status,412);
         mode='race';res=await invoke('write',{body:input});assert.equal(res.result.results[0].status,412);mode='normal';
@@ -122,7 +134,7 @@ async function run() {
         mode='foreign';res=await invoke('read',{body:{group:'C',calendarId:'cal-1',start:'2026-09-01',end:'2026-10-01'}});assert.equal(res.statusCode,403);mode='normal';
         res=await invoke('logout');assert.match(res.headers['Set-Cookie'][0],/Max-Age=0/);
         assert.ok(!calls.some(c=>c.url.pathname.includes('/primary')));
-        console.log('PASS: merge/conflict/deletion model, baseline changes, title parsing, encrypted sessions, OAuth state/PKCE, CSRF, calendar ownership, pagination, moved/deleted lookups, ETag races, protected shift deletion.');
+        console.log('PASS: shift colors, private events, safe color-only migration, merge/conflicts, OAuth/CSRF, ownership, pagination, ETag races and protected deletion.');
     } finally {
         global.fetch=fetchOriginal;
         for(const k of envKeys){if(previous[k]===undefined)delete process.env[k];else process.env[k]=previous[k];}
