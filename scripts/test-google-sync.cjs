@@ -8,8 +8,8 @@ function event(memo='',title='C조 주간 1일차') {
         extendedProperties:{private:{app:'shift_cal_v2',kind:'shift',group:'C',originDate:'2026-09-09',override:'BASE'}}};
 }
 const value=C.local(), original=event(), record={id:original.id,etag:original.etag,signature:C.signature(original),summary:original.summary,local:value};
-assert.equal(C.colorId({type:'DAY'}),'5');assert.equal(C.colorId({type:'NIGHT'}),'4');assert.equal(C.colorId({type:'OFF'}),null);
-assert.equal(C.colorId({type:'SPECIAL_NIGHT'}),'4');assert.equal(C.colorId({type:'HALF_POST',origType:'NIGHT'}),'4');assert.equal(C.colorId({type:'LEAVE'}),'2');
+assert.equal(C.colorId({type:'DAY'}),'5');assert.equal(C.colorId({type:'NIGHT'}),'1');assert.equal(C.colorId({type:'OFF'}),null);
+assert.equal(C.colorId({type:'SPECIAL_NIGHT'}),'1');assert.equal(C.colorId({type:'HALF_POST',origType:'NIGHT'}),'1');assert.equal(C.colorId({type:'LEAVE'}),'2');
 assert.equal(C.signature({...original,colorId:'9'}),C.signature(original),'Color changes must not be treated as attendance or memo changes');
 assert.equal(C.plan(value,null,null,original),'insert');
 assert.equal(C.plan(value,null,original,original),'adopt');

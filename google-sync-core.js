@@ -6,7 +6,7 @@
     function colorId(shift) {
         if(shift.type === 'LEAVE')return '2';
         if(['OFF','FORCED_OFF','UNPAID_OFF'].includes(shift.type))return null;
-        return shift.type === 'NIGHT' || shift.type === 'SPECIAL_NIGHT' || shift.origType === 'NIGHT' ? '4' : '5';
+        return shift.type === 'NIGHT' || shift.type === 'SPECIAL_NIGHT' || shift.origType === 'NIGHT' ? '1' : '5';
     }
     function signature(event) {
         if (!event || event.status === 'cancelled') return null;

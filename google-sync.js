@@ -221,7 +221,7 @@
         } finally {
             busy=false;
             if (currentGroup!==group) changed();
-            else if(!rangeOverride && g.paletteVersion!==2) migrateColors();
+            else if(!rangeOverride && g.paletteVersion!==3) migrateColors();
         }
     }
     async function migrateColors() {
@@ -252,7 +252,7 @@
                     // Remote attendance/memo edits must still be reviewed next run.
                 }
             }
-            g.paletteVersion=2;save();status('색상 적용 완료 · 주간 연노랑 · 야간 연분홍 · 휴무 기본색');
+            g.paletteVersion=3;save();status('색상 적용 완료 · 주간 병아리색 · 야간 연보라 · 휴무 기본색');
         } catch(e){status(e.message);}finally{busy=false;if(currentGroup!==group)changed();}
     }
     function changed() {
