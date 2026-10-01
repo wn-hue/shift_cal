@@ -48,9 +48,14 @@ body[data-view="calendar"] .reference-header { margin-bottom:0; }
 .shift-badge.no-ot.night { background:#354355; color:white; border:0; }
 .sub-tag { font-size:9px; line-height:1.35; font-weight:500; margin-top:0; color:#8d6970; }
 .memo-tag { background:none; border:0; border-radius:0; padding:1px; font-size:10px; line-height:1.4; color:#686d75; text-align:left; font-weight:400; letter-spacing:0; width:100%; }
-.bottom-nav { padding-top:8px; padding-bottom:calc(8px + env(safe-area-inset-bottom)); border-color:#eceff2; }
-.nav-item { font-size:11px; font-weight:500; gap:5px; color:#91979e; min-height:44px; }
+.bottom-nav { max-width:760px; margin:0 auto; padding:4px 12px calc(6px + env(safe-area-inset-bottom)); border:1px solid #ededed; border-bottom:0; border-radius:24px 24px 0 0; box-shadow:0 -3px 14px #00000004; }
+.nav-item { font-size:11px; font-weight:500; color:#424242; min-height:56px; padding:0; transition:none; -webkit-tap-highlight-color:transparent; }
+.nav-item.active { color:#202020; font-weight:600; }
+.nav-visual { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-width:82px; padding:7px 10px; border-radius:17px; line-height:1.4; }
+.nav-item:active .nav-visual { background:#ececed; transform:scale(.96); }
 .nav-item svg { width:25px; height:25px; }
+.nav-filled, .nav-item.active .nav-outline { display:none; }
+.nav-item.active .nav-filled { display:initial; }
 .account-drawer { position:fixed; inset:0 auto 0 0; width:calc(100% - 56px); max-width:380px; height:100dvh; max-height:100dvh; margin:0; padding:calc(20px + env(safe-area-inset-top)) 22px calc(20px + env(safe-area-inset-bottom)); border:0; border-radius:0; box-shadow:none; overflow:auto; }
 .account-drawer[open] { display:flex; flex-direction:column; animation:drawer-in .18s ease-out; }
 .account-drawer::backdrop { background:#0009; }
@@ -75,33 +80,43 @@ body[data-view="calendar"] .reference-header { margin-bottom:0; }
 .drawer-action .drawer-value { margin-left:auto; color:#969ca3; font-size:12px; }
 .drawer-footer { margin-top:auto; border-top:1px solid #edf0f2; padding-top:18px; }
 .drawer-footer a { color:#8a9099; font-size:12px; text-decoration:none; }
-#view-leave .card { border:1px solid #e8edf2; box-shadow:none; border-radius:18px; padding:20px; margin-bottom:14px; }
-#view-leave .card-header { margin-bottom:18px; padding-bottom:0; border-bottom:0; font-size:16px; }
-.settings-year { font-size:12px; font-weight:600; padding:5px 9px; border-radius:7px; background:#f0f4f8; color:#66778a; }
-#view-leave .leave-stat-grid { gap:8px; margin-top:0; }
-#view-leave .leave-stat-box { background:#f5f7fa; border:0; padding:16px 4px; border-radius:12px; }
-#view-leave .leave-stat-box .stat-label { font-size:11px; color:#788595; }
-#view-leave .leave-stat-box .stat-value { font-size:24px; font-weight:750; color:#354355; }
-#view-leave .leave-remaining { background:#edf5fb; }
-#view-leave .leave-remaining .stat-label, #view-leave .leave-remaining .stat-value { color:#187fcc; }
-.leave-money-summary { display:grid; grid-template-columns:1fr 1.5fr; gap:12px; align-items:center; padding:18px 0; }
-.leave-money-unit, .leave-money-total { display:flex; flex-direction:column; gap:6px; min-width:0; }
-.leave-money-unit > span, .leave-money-total > span:first-child { color:#788595; font-size:12px; }
-.leave-money-unit strong { color:#354355; font-size:16px; font-weight:650; }
-.leave-money-total { text-align:right; }
-.leave-money-total #val-total-leave-pay { color:#187fcc; font-size:22px; font-weight:750; overflow-wrap:anywhere; }
-.leave-edit-settings { border-top:1px solid #e9edf1; }
-.leave-edit-settings summary { cursor:pointer; min-height:44px; padding:14px 0 6px; color:#657487; font-size:13px; font-weight:600; }
-.leave-edit-settings summary:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
-.leave-edit-settings .two-cols { margin-top:14px; }
+#view-leave .card { border:1px solid #ededed; background:#fafafa; box-shadow:none; border-radius:20px; padding:20px; margin-bottom:16px; }
+#view-leave .card-header { margin-bottom:16px; padding-bottom:0; border-bottom:0; font-size:17px; font-weight:650; color:#202020; }
+.settings-year { font-size:12px; font-weight:500; color:#848484; }
+#view-leave .leave-stat-grid { gap:0; margin:0 0 12px; }
+#view-leave .leave-stat-box { background:none; border:0; padding:12px 4px; border-radius:0; }
+#view-leave .leave-stat-box + .leave-stat-box { border-left:1px solid #e8e8e8; }
+#view-leave .leave-stat-box .stat-label { font-size:12px; font-weight:500; color:#777; }
+#view-leave .leave-stat-box .stat-value { font-size:25px; font-weight:650; color:#292929; }
+#view-leave .leave-remaining .stat-value { font-weight:750; }
+.leave-money-summary { display:flex; flex-direction:column; gap:14px; padding:16px 0 20px; border-top:1px solid #e8e8e8; }
+.leave-money-unit, .leave-money-total { display:flex; justify-content:space-between; align-items:baseline; gap:16px; width:100%; min-width:0; }
+.leave-money-unit > span, .leave-money-total > span:first-child { color:#777; font-size:13px; }
+.leave-money-unit strong { color:#292929; font-size:16px; font-weight:600; text-align:right; }
+.leave-money-total #val-total-leave-pay { color:#202020; font-size:20px; font-weight:650; text-align:right; overflow-wrap:anywhere; }
+.leave-edit-settings { border-top:1px solid #e8e8e8; padding-top:16px; }
+.leave-edit-settings h3 { color:#555; font-size:13px; font-weight:600; margin:0 0 12px; }
+.leave-edit-settings .two-cols { margin:0; }
 #view-leave .input-group { min-width:0; }
-#view-leave .input-group label { color:#748295; font-size:12px; font-weight:500; }
-#view-leave .input-group input { min-width:0; border-color:#e5ebf1; border-radius:10px; font-size:15px; color:#354355; padding:12px; }
-#view-leave .input-group input[readonly] { border:0; font-weight:650; }
-#view-leave .account-hint { font-size:11px; margin:4px 0 18px; color:#8894a2; }
-#view-leave .btn-action-group { gap:8px; margin-top:0; padding-top:16px; border-top:1px solid #edf0f4; }
-#view-leave .btn-save, #view-leave .btn-reset-data { border-radius:10px; min-height:42px; font-size:12px; }
-#view-leave .btn-reset-data { background:#f3f6f9; color:#7a8796; }
+#view-leave .input-group label { color:#777; font-size:12px; font-weight:500; }
+#view-leave .input-group input { min-width:0; border-color:#e4e4e4; border-radius:10px; font-size:14px; color:#292929; padding:11px 10px; background:#fff; }
+#view-leave .input-group input[readonly] { border:0; border-radius:0; font-size:15px; font-weight:600; background:transparent; text-align:right; padding:11px 0; }
+#view-leave .wage-settings-card .two-cols { display:flex; flex-direction:column; gap:0; margin:0; }
+#view-leave .wage-settings-card .input-group { display:grid; grid-template-columns:minmax(0,1fr) minmax(100px,1fr); align-items:center; border-bottom:1px solid #e8e8e8; }
+#view-leave .wage-settings-card .input-group label { font-size:13px; margin:0; }
+#view-leave .wage-settings-card .sms-open-btn { color:#292929; background:#eee; padding:8px 12px; min-height:40px; border-radius:999px; font-weight:500; }
+#view-leave .account-hint { font-size:11px; margin:12px 0 18px; color:#848484; }
+#view-leave .btn-action-group { grid-template-columns:1fr auto; gap:10px; margin-top:0; padding-top:0; border-top:0; }
+#view-leave .btn-save, #view-leave .btn-reset-data { border-radius:999px; min-height:44px; font-size:13px; font-weight:600; padding:10px 20px; }
+#view-leave .btn-save { background:#202020; }
+#view-leave .btn-save:active { background:#444; }
+#view-leave .btn-reset-data { background:#eee; border:0; color:#666; }
+input[type="number"], #disp-ot-hours, #disp-unpaid-days, #disp-unpaid-deduction { text-align:right; }
+.two-cols > .input-group { display:flex; flex-direction:column; }
+.two-cols > .input-group input { margin-top:auto; }
+label[for="inp-hire-date"] { white-space:normal; overflow:visible; line-height:1.4; }
+.salary-hero .hero-label, .salary-hero .hero-amount, .salary-hero .sub-val { text-align:right; }
+input[type="number"], input[readonly], .num, .stat-value, .hero-amount, .sub-val, .estimate-row, .estimate-net, .leave-money-summary, .day-num { font-variant-numeric:tabular-nums lining-nums; }
 .pay-table td { padding:12px 0; }
 .pay-table .num { font-variant-numeric:tabular-nums; }
 #tr-attendance-deduction .num, #row-estimated-deduction { color:#b75464; }

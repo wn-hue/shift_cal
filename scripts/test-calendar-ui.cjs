@@ -1,8 +1,8 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const html=fs.readFileSync(require.resolve('../index.html'),'utf8'),elements=new Map();
-function element(){return {style:{},dataset:{},attributes:{},children:[],_html:'',hidden:false,
+function element(){const classes=new Set();return {style:{},dataset:{},attributes:{},children:[],_html:'',hidden:false,
     set innerHTML(v){this._html=v;this.children=[]},get innerHTML(){return this._html},
-    setAttribute(k,v){this.attributes[k]=v},appendChild(e){this.children.push(e)},classList:{add(){},remove(){}}};}
+    setAttribute(k,v){this.attributes[k]=v},appendChild(e){this.children.push(e)},classList:{add(c){classes.add(c)},remove(c){classes.delete(c)},contains(c){return classes.has(c)}}};}
 for(const m of html.matchAll(/\bid="([^"]+)"/g)){assert.ok(!elements.has(m[1]),'IDs remain unique: '+m[1]);elements.set(m[1],element());}
 const ctx={document:{body:element(),getElementById:id=>elements.get(id),createElement:element},window:null,TextEncoder,URLSearchParams,Date};
 ctx.window=ctx;vm.createContext(ctx);
@@ -24,4 +24,18 @@ run("currentCalDate=new Date(2026,4,1);renderCalendar()");assert.equal(grid.chil
 run("currentCalDate=new Date(2028,1,1);renderCalendar()");assert.equal(grid.children.filter(e=>e.attributes.role==='button').length,29);
 ctx.ShiftUI.showView('leave');assert.equal(ctx.document.body.dataset.view,'leave');assert.equal(elements.get('cal-month-title-btn').hidden,true);assert.equal(elements.get('header-calendar-actions').hidden,true);
 ctx.ShiftUI.showView('calendar');assert.equal(elements.get('cal-month-title-btn').hidden,false);assert.equal(elements.get('header-view-title').hidden,true);
+ctx.document.querySelectorAll=selector=>(selector==='.nav-item'?['bnav-cal','bnav-pay','bnav-leave']:['view-calendar','view-payroll','view-leave']).map(id=>elements.get(id));
+ctx.scrollTo=()=>{};run('syncFromCalendar=()=>{}');
+const navIds=['bnav-cal','bnav-pay','bnav-leave'];
+for(const [view,id] of [['calendar','bnav-cal'],['payroll','bnav-pay'],['leave','bnav-leave']]){
+    run(`switchView('${view}')`);
+    assert.ok(elements.get('view-'+view).classList.contains('active'));
+    assert.deepEqual(navIds.filter(id=>elements.get(id).classList.contains('active')),[id]);
+    assert.deepEqual(navIds.filter(id=>elements.get(id).attributes['aria-current']==='page'),[id]);
+}
+let animations=0,cancelled=0,reducedMotion=false;
+const visual={getAnimations:()=>[{cancel:()=>cancelled++}],animate:(frames,options)=>{animations++;assert.equal(frames.at(-1).backgroundColor,'transparent');assert.ok(options.duration<500)}};
+ctx.matchMedia=()=>({matches:reducedMotion});
+ctx.ShiftUI.tap({querySelector:()=>visual});assert.equal(animations,1);assert.equal(cancelled,1);
+reducedMotion=true;ctx.ShiftUI.tap({querySelector:()=>visual});assert.equal(animations,1,'Reduced motion must keep navigation functional without the tap animation');
 console.log('PASS: calendar month/week layout, leap month, short shift labels, holiday types, accessible day actions, safe memo text and view-aware header.');
