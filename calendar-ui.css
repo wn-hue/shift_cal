@@ -160,7 +160,10 @@ input[type="number"], input[readonly], .num, .stat-value, .hero-amount, .sub-val
 .settings-dialog { padding:22px; border:0; border-radius:22px; max-width:440px; width:calc(100% - 32px); max-height:85dvh; overflow:auto; }
 .settings-dialog::backdrop { background:#0007; }
 .settings-dialog .two-cols { gap:12px; }
-.settings-dialog .input-group input { width:100%; box-sizing:border-box; text-align:right; font-variant-numeric:tabular-nums; }
+.settings-dialog .input-group input { display:block; width:100%; min-width:0; height:46px; min-height:46px; box-sizing:border-box; padding:10px 12px; font-size:16px; line-height:24px; text-align:right; font-variant-numeric:tabular-nums; }
+.settings-dialog .input-group input[type="date"] { text-align:left; }
+.settings-dialog input[type="date"]::-webkit-date-and-time-value { min-height:24px; text-align:left; }
+.settings-dialog input[type="date"]::-webkit-datetime-edit { padding:0; }
 .settings-dialog .number-unit-field input { padding-right:32px; }
 .settings-dialog h3 { font-size:14px; margin:18px 0 12px; color:#4e625a; }
 .settings-dialog .btn-save { width:100%; margin-top:20px; background:#198266; }
