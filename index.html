@@ -930,8 +930,8 @@
         <!-- 1. 교대 캘린더 화면 -->
         <aside id="first-use-guide" class="first-use-guide" aria-labelledby="first-use-title" hidden>
             <strong id="first-use-title">내 근무표를 시작해 보세요</strong>
-            <p id="first-use-copy">입사년월일과 급여 기준을 설정하면 연차·예상 급여를 확인할 수 있어요.</p>
-            <div><button type="button" onclick="SettingsUI.openMenu('leave')">입사년월일 설정</button><button type="button" onclick="SettingsUI.openMenu('salary')">급여 설정</button></div>
+            <p id="first-use-copy">교대조·입사년월일·급여 기준을 설정하면 내 근무표와 연차·예상 급여를 확인할 수 있어요.</p>
+            <div><button type="button" onclick="SettingsUI.openMenu('group')">교대조 설정</button><button type="button" onclick="SettingsUI.openMenu('leave')">입사년월일 설정</button><button type="button" onclick="SettingsUI.openMenu('salary')">급여 설정</button></div>
         </aside>
         <section id="view-calendar" class="view-page active">
             <div class="calendar-month-controls">
@@ -1297,12 +1297,12 @@
             <p class="account-hint">로그인은 선택 사항입니다. 연결하면 근무 변경·메모·연차·급여 설정을 본인 Google Drive의 앱 전용 공간에 저장합니다. <a href="./privacy.html">이용·삭제 안내</a></p>
             <div id="account-setup-help" class="account-hint" hidden>관리자가 Google Cloud에서 Google Drive API를 사용 설정해야 합니다. 사용 설정 후 ‘지금 동기화’를 눌러주세요.</div>
         </div>
-        <div class="drawer-section">
+        <div class="drawer-section" id="menu-group-settings">
             <div class="drawer-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M16 4a3 3 0 0 1 0 6M18 14a5 5 0 0 1 4 5v2"/></svg><span>내 근무표</span></div>
             <p class="drawer-company">3조 2교대</p>
             <div class="group-select-wrapper">
                 <select id="group-select" class="group-select" aria-label="근무조 선택" onchange="setGroup(this.value)">
-                    <option value="A">A조</option><option value="B">B조</option><option value="C" selected>C조</option>
+                    <option value="" disabled selected>교대조 선택</option><option value="A">A조</option><option value="B">B조</option><option value="C">C조</option>
                 </select>
             </div>
         </div>
@@ -1345,7 +1345,7 @@
         </div>
         <p id="payroll-sms-status" class="sms-status" role="status"></p>
         <div id="payroll-sms-preview" class="sms-preview"></div>
-        <details class="sms-help"><summary>어떤 항목이 적용되나요?</summary><p>급여 문자에서는 기본시급·통상시급·직책·근속수당과 급여 공제율을 적용합니다. 상여 문자에서는 상여금 공제율만 적용하며 시급·수당은 바꾸지 않습니다. 비워둔 칸의 기존 설정은 유지됩니다. 급여와 상여 공제는 각 명세서의 공제 합계 ÷ 지급 합계로 따로 추정합니다. 기준이 없으면 각각 기본 예상 공제율 18%를 사용합니다. 상여 지급액·근무일수 계산은 기존 규칙을 유지하며 추정 공제액은 실제 세액과 다를 수 있습니다.</p></details>
+        <details class="sms-help"><summary>어떤 항목이 적용되나요?</summary><p>급여 문자에서는 시급·수당·급여 공제 기준을 적용합니다. 상여 문자에서는 상여금 공제율만 적용하며 시급·수당은 바꾸지 않습니다. 비워둔 칸의 기존 설정은 유지됩니다. 급여와 상여 공제는 각 명세서의 공제 합계 ÷ 지급 합계로 따로 추정합니다. 기준이 없으면 각각 기본 예상 공제율 18%를 사용합니다. 상여 지급액·근무일수 계산은 기존 규칙을 유지하며 추정 공제액은 실제 세액과 다를 수 있습니다.</p></details>
     </dialog>
 
     <!-- 모달: 연/월 선택 피커 (캘린더 & 급여계산기 공용) -->
@@ -2093,7 +2093,7 @@
             document.getElementById('stat-remain-leave').innerText = `${remain}일`;
             document.getElementById('val-leave-daily-rate').innerText = `${fmt(dailyRate)}원`;
             document.getElementById('val-total-leave-pay').innerText = `${fmt(totalLeavePay)}원`;
-            if (window.SettingsUI) SettingsUI.refresh({hireDate:config.hireDate,baseHourly:config.baseHourly,ordinaryHourly:config.ordinaryHourly,year,total,used,remain});
+            if (window.SettingsUI) SettingsUI.refresh({group:localStorage.getItem('shift_active_group'),hireDate:config.hireDate,baseHourly:config.baseHourly,ordinaryHourly:config.ordinaryHourly,year,total,used,remain});
         }
 
         function saveLeaveConfig() {
@@ -2601,7 +2601,7 @@
             config = { hireDate:'', totalLeave:0, leaveByYear:{}, baseHourly:0, ordinaryHourly:0, baseHours:209, dutyPay:0, seniorityPay:0, applyRetroPay:false, holidayBonus:0 };
             const group = localStorage.getItem('shift_active_group');
             currentGroup = ['A','B','C'].includes(group) ? group : 'C';
-            document.getElementById('group-select').value = currentGroup;
+            document.getElementById('group-select').value = ['A','B','C'].includes(group) ? group : '';
             loadConfig(); loadOverrides(); renderCalendar(); syncFromCalendar(); updateLeaveStats();
             if(window.PayrollEstimate?.reloadReference)PayrollEstimate.reloadReference();
         }
@@ -2710,7 +2710,7 @@
                 currentGroup = savedGroup;
             }
             const sel = document.getElementById('group-select');
-            if (sel) sel.value = currentGroup;
+            if (sel) sel.value = ['A','B','C'].includes(savedGroup) ? savedGroup : '';
 
             const today = new Date();
             currentCalDate = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -2732,7 +2732,7 @@
     <script src="./google-sync-core.js?v=3"></script>
     <script src="./account-data-core.js?v=2"></script>
     <script src="./calendar-ui.js?v=2"></script>
-    <script src="./settings-ui.js?v=1"></script>
+    <script src="./settings-ui.js?v=2"></script>
     <script src="./account-sync.js?v=4"></script>
     <script src="./google-sync.js?v=4"></script>
 </body>
