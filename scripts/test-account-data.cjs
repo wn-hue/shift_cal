@@ -107,3 +107,6 @@ async function run(){try{
     console.log('PASS: account schema/privacy, merge/deletion, immutable race retention, stale rejection, fork resolution, idempotency, pagination, account isolation, Drive setup errors, OAuth storage scope and CSRF enforcement.');
 }finally{global.fetch=fetchOriginal;for(const k of keys){if(oldEnv[k]===undefined)delete process.env[k];else process.env[k]=oldEnv[k];}}}
 run().catch(e=>{console.error(e);process.exit(1);});
+
+assert.deepEqual(C.normalize({shift_bonus_sms_reference_v1:{gross:1000000,total:50000}}).shift_bonus_sms_reference_v1,{gross:1000000,total:50000});
+assert.throws(()=>C.normalize({shift_bonus_sms_reference_v1:{gross:100,total:101}}));

@@ -1,6 +1,6 @@
 (function (root) {
     'use strict';
-    const keys = ['shift_salary_config_master','shift_active_group','shift_day_memos','shift_overrides_A','shift_overrides_B','shift_overrides_C','shift_payroll_sms_reference_v1'];
+    const keys = ['shift_salary_config_master','shift_active_group','shift_day_memos','shift_overrides_A','shift_overrides_B','shift_overrides_C','shift_payroll_sms_reference_v1','shift_bonus_sms_reference_v1'];
     const types = new Set(['SPECIAL_DAY','SPECIAL_NIGHT','LEAVE','NO_OT','HALF_PRE','HALF_POST','UNPAID_HALF_PRE','UNPAID_HALF_POST','UNPAID_OFF','FORCED_OFF']);
     const object = x => x !== null && typeof x === 'object' && !Array.isArray(x);
     function dateOK(x) { return typeof x === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(x) && Number.isFinite(Date.parse(x+'T00:00:00Z')) && new Date(x+'T00:00:00Z').toISOString().slice(0,10) === x; }
@@ -27,7 +27,7 @@
                     } else if (!Number.isFinite(v) || v < 0 || v > 1000000000) throw Error('급여 설정을 확인하세요.');
                     safe[k] = v;
                 }
-            } else if (key === 'shift_payroll_sms_reference_v1') {
+            } else if (['shift_payroll_sms_reference_v1','shift_bonus_sms_reference_v1'].includes(key)) {
                 if (Object.keys(value).some(k => !['gross','total'].includes(k)) || !Number.isSafeInteger(value.gross) || value.gross <= 0 || value.gross > 1000000000 || !Number.isSafeInteger(value.total) || value.total < 0 || value.total > value.gross) throw Error('공제 기준을 확인하세요.');
                 safe.gross = value.gross; safe.total = value.total;
             } else {

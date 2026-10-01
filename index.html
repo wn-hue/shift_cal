@@ -888,6 +888,7 @@
         .sms-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
         .sms-primary-btn, .sms-clear-btn { min-height:42px; padding:10px 16px; border:0; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; }
         .sms-primary-btn { background:var(--primary); color:#fff; flex:1; }
+        .sms-primary-btn:disabled { opacity:.45; cursor:default; }
         .sms-clear-btn { background:#f1f3f5; color:var(--text-main); }
         .sms-status { font-size:12px; color:var(--text-sub); line-height:1.6; margin-top:12px; }
         .sms-status:empty, .sms-preview:empty { display:none; }
@@ -909,7 +910,6 @@
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
     <link rel="stylesheet" href="./calendar-ui.css?v=6">
-    <link rel="stylesheet" href="./branding.css?v=1">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -926,10 +926,6 @@
             </div>
         </header>
 
-        <aside class="app-brand-summary" aria-label="Shift_calander 소개">
-            <div class="app-brand-line"><a class="app-brand-name" href="./about.html">Shift_calander</a><span>교대근무 · 예상 급여 · 연차 관리</span></div>
-            <nav class="app-policy-links" aria-label="앱 안내"><a href="./about.html">소개 · 문의</a><a href="./privacy.html">개인정보처리방침</a><a href="./terms.html">이용약관</a></nav>
-        </aside>
 
         <!-- 1. 교대 캘린더 화면 -->
         <aside id="first-use-guide" class="first-use-guide" aria-labelledby="first-use-title" hidden>
@@ -979,11 +975,11 @@
                 <div class="hero-amount" id="hero-gross-pay">0 원</div>
                 <div class="hero-subgrid">
                     <div>
-                        <div class="hero-label">월 급여 (세전)</div>
+                        <div class="hero-label" id="hero-regular-label">월 급여 (세전)</div>
                         <div class="sub-val" id="hero-regular-pay" style="color: #38bdf8;">0 원</div>
                     </div>
                     <div>
-                        <div class="hero-label">상여금 / 지원금 (세전)</div>
+                        <div class="hero-label" id="hero-bonus-label">상여금 / 지원금 (세전)</div>
                         <div class="sub-val" id="hero-bonus-pay" style="color: #c084fc;">0 원</div>
                     </div>
                 </div>
@@ -996,7 +992,9 @@
                 </label>
                 <div id="payroll-estimate-panel" hidden>
                     <div class="estimate-amounts" aria-live="polite">
-                        <div class="estimate-row"><span>예상 공제액</span><strong id="estimate-total">0 원</strong></div>
+                        <div class="estimate-row"><span>급여·지원금 예상 공제</span><strong id="estimate-regular-deduction">0 원</strong></div>
+                        <div class="estimate-row" id="estimate-bonus-row" hidden><span>상여금 예상 공제</span><strong id="estimate-bonus-deduction">0 원</strong></div>
+                        <div class="estimate-row"><span>전체 예상 공제액</span><strong id="estimate-total">0 원</strong></div>
                         <div class="estimate-row estimate-net"><span>예상 실수령액</span><span id="estimate-net">0 원</span></div>
                     </div>
                     <p class="estimate-note" id="payroll-estimate-basis"></p>
@@ -1227,11 +1225,11 @@
                 <div style="font-size:28px; font-weight:900; color:#38bdf8; margin:6px 0 10px 0;" id="payslip-modal-gross">0 원</div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; border-top:1px solid #334155; padding-top:10px; font-size:12px;">
                     <div>
-                        <span style="color:#94a3b8;">월 급여 (세전)</span><br>
+                        <span id="payslip-modal-regular-label" style="color:#94a3b8;">월 급여 (세전)</span><br>
                         <strong style="color:#38bdf8; font-size:13px;" id="payslip-modal-regular">0 원</strong>
                     </div>
                     <div>
-                        <span style="color:#94a3b8;">상여금 / 지원금 (세전)</span><br>
+                        <span id="payslip-modal-bonus-label" style="color:#94a3b8;">상여금 / 지원금 (세전)</span><br>
                         <strong style="color:#c084fc; font-size:13px;" id="payslip-modal-bonus">0 원</strong>
                     </div>
                 </div>
@@ -1319,7 +1317,7 @@
         <div class="drawer-section" id="menu-salary-settings">
             <div class="drawer-section-label">급여 설정</div>
             <p class="account-hint">급여 문자에서 시급·수당·공제 기준을 적용합니다.</p>
-            <button type="button" id="payroll-sms-open" class="drawer-action"><span>급여 문자 붙여넣기</span><span class="drawer-value">›</span></button>
+            <button type="button" id="payroll-sms-open" class="drawer-action"><span>급여 · 상여 문자 설정</span><span class="drawer-value">›</span></button>
         </div>
         <div class="drawer-footer"><a href="./about.html" target="_blank" rel="noopener">앱 소개 · 문의</a> · <a href="./privacy.html" target="_blank" rel="noopener">개인정보처리방침</a> · <a href="./terms.html" target="_blank" rel="noopener">서비스 이용약관</a></div>
     </dialog>
@@ -1333,20 +1331,21 @@
 
     <dialog id="payroll-sms-dialog" class="sms-dialog" aria-labelledby="payroll-sms-title">
         <div class="sms-dialog-header">
-            <div><h2 id="payroll-sms-title">급여 문자로 설정</h2><p>붙여넣고, 확인하고, 적용하세요.</p></div>
+            <div><h2 id="payroll-sms-title">급여 · 상여 문자로 설정</h2><p>각 문자를 붙여넣고 한 번에 적용하세요.</p></div>
             <button type="button" id="payroll-sms-close" class="sms-close-btn" aria-label="급여 문자 설정 닫기">×</button>
         </div>
-        <label for="payroll-sms-text" class="sms-input-label">임금명세서 문자</label>
-        <textarea id="payroll-sms-text" maxlength="30000" rows="6" placeholder="받은 급여 문자를 전체 복사해 여기에 붙여넣으세요." class="sms-textarea"></textarea>
+        <label for="payroll-sms-text" class="sms-input-label">급여 문자</label>
+        <textarea id="payroll-sms-text" maxlength="30000" rows="4" placeholder="급여 문자를 지급·공제내역까지 붙여넣으세요." class="sms-textarea"></textarea>
+        <label for="payroll-bonus-sms-text" class="sms-input-label" style="margin-top:16px">상여금 문자 (선택)</label>
+        <textarea id="payroll-bonus-sms-text" maxlength="30000" rows="4" placeholder="상여금 문자를 지급·공제내역까지 붙여넣으세요. 없으면 비워두세요." class="sms-textarea"></textarea>
         <p class="sms-privacy">문자는 이 기기에서 인식하며 이름·사번·원문은 저장·전송하지 않습니다. 적용한 금액만 저장하고, 구글 계정 저장을 연결하면 금액도 본인 계정에 저장합니다. <a href="./privacy.html" target="_blank" rel="noopener">저장 안내</a></p>
         <div class="sms-actions">
-            <button type="button" id="payroll-sms-read" class="sms-primary-btn">금액 인식</button>
-            <button type="button" id="payroll-sms-apply" class="sms-primary-btn" hidden>확인한 금액 적용</button>
+            <button type="button" id="payroll-sms-apply" class="sms-primary-btn" disabled>설정 적용</button>
             <button type="button" id="payroll-sms-clear" class="sms-clear-btn">지우기</button>
         </div>
         <p id="payroll-sms-status" class="sms-status" role="status"></p>
         <div id="payroll-sms-preview" class="sms-preview"></div>
-        <details class="sms-help"><summary>어떤 항목이 적용되나요?</summary><p>기본시급·통상시급·직책·근속수당과 공제 비율을 적용합니다. 근무일수·상여·일회성 지급액은 기존 계산을 유지합니다. 공제는 총 지급액에 명세서의 공제 비율을 적용하는 단순 추정이며, 실제 세액표에 따른 금액과 다를 수 있습니다.</p></details>
+        <details class="sms-help"><summary>어떤 항목이 적용되나요?</summary><p>급여 문자에서는 기본시급·통상시급·직책·근속수당과 급여 공제율을 적용합니다. 상여 문자에서는 상여금 공제율만 적용하며 시급·수당은 바꾸지 않습니다. 비워둔 칸의 기존 설정은 유지됩니다. 급여와 상여 공제는 각 명세서의 공제 합계 ÷ 지급 합계로 따로 추정합니다. 기준이 없으면 각각 기본 예상 공제율 18%를 사용합니다. 상여 지급액·근무일수 계산은 기존 규칙을 유지하며 추정 공제액은 실제 세액과 다를 수 있습니다.</p></details>
     </dialog>
 
     <!-- 모달: 연/월 선택 피커 (캘린더 & 급여계산기 공용) -->
@@ -2478,7 +2477,7 @@
             document.getElementById('row-attendance-deduction').innerText = '−' + fmt(totalUnpaidDeduction);
             document.getElementById('row-entry-bonus').innerText = fmt(entryBonus);
             document.getElementById('row-gross-pay').innerText = fmt(grandGross);
-            if (window.PayrollEstimate) window.PayrollEstimate.update(grandGross);
+            if (window.PayrollEstimate) window.PayrollEstimate.update(grandGross, {regular:regularGross,bonus:bonusPay,support:entryBonus});
         }
 
         function checkPayslipPopup() {
@@ -2728,10 +2727,10 @@
         };
     </script>
     <script src="./payroll-sms.js?v=2"></script>
-    <script src="./payroll-estimate.js?v=9"></script>
+    <script src="./payroll-estimate.js?v=10"></script>
     <script src="./calendar-integration.js?v=3"></script>
     <script src="./google-sync-core.js?v=3"></script>
-    <script src="./account-data-core.js?v=1"></script>
+    <script src="./account-data-core.js?v=2"></script>
     <script src="./calendar-ui.js?v=2"></script>
     <script src="./settings-ui.js?v=1"></script>
     <script src="./account-sync.js?v=4"></script>
