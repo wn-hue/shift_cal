@@ -909,6 +909,7 @@
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
     <link rel="stylesheet" href="./calendar-ui.css?v=6">
+    <link rel="stylesheet" href="./branding.css?v=1">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -924,6 +925,11 @@
                 <button type="button" class="icon-button" onclick="openMonthStatsModal()" aria-label="월 근무 통계" title="근무 통계"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16v-4M12 16V7M17 16V9"/></svg></button>
             </div>
         </header>
+
+        <aside class="app-brand-summary" aria-label="Shift_calander 소개">
+            <div class="app-brand-line"><a class="app-brand-name" href="./about.html">Shift_calander</a><span>교대근무 · 예상 급여 · 연차 관리</span></div>
+            <nav class="app-policy-links" aria-label="앱 안내"><a href="./about.html">소개 · 문의</a><a href="./privacy.html">개인정보처리방침</a><a href="./terms.html">이용약관</a></nav>
+        </aside>
 
         <!-- 1. 교대 캘린더 화면 -->
         <aside id="first-use-guide" class="first-use-guide" aria-labelledby="first-use-title" hidden>
@@ -1290,7 +1296,7 @@
                 <button type="button" id="account-sync-now" class="sms-primary-btn" hidden>지금 동기화</button>
                 <button type="button" id="account-logout" class="sms-clear-btn" hidden>로그아웃</button>
             </div>
-            <p class="account-hint">근무 변경·메모·연차·급여 설정을 본인 계정에 저장합니다. 오프라인에서는 기기에 임시 저장합니다.</p>
+            <p class="account-hint">로그인은 선택 사항입니다. 연결하면 근무 변경·메모·연차·급여 설정을 본인 Google Drive의 앱 전용 공간에 저장합니다. <a href="./privacy.html">이용·삭제 안내</a></p>
             <div id="account-setup-help" class="account-hint" hidden>관리자가 Google Cloud에서 Google Drive API를 사용 설정해야 합니다. 사용 설정 후 ‘지금 동기화’를 눌러주세요.</div>
         </div>
         <div class="drawer-section">
@@ -1315,7 +1321,7 @@
             <p class="account-hint">급여 문자에서 시급·수당·공제 기준을 적용합니다.</p>
             <button type="button" id="payroll-sms-open" class="drawer-action"><span>급여 문자 붙여넣기</span><span class="drawer-value">›</span></button>
         </div>
-        <div class="drawer-footer"><a href="./privacy.html" target="_blank" rel="noopener">개인정보 및 저장 안내</a> · <a href="./terms.html" target="_blank" rel="noopener">서비스 이용약관</a></div>
+        <div class="drawer-footer"><a href="./about.html" target="_blank" rel="noopener">앱 소개 · 문의</a> · <a href="./privacy.html" target="_blank" rel="noopener">개인정보처리방침</a> · <a href="./terms.html" target="_blank" rel="noopener">서비스 이용약관</a></div>
     </dialog>
 
     <dialog id="account-conflict-dialog" class="sms-dialog" aria-labelledby="account-conflict-title">
