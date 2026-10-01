@@ -906,7 +906,7 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=1">
+    <link rel="stylesheet" href="./calendar-ui.css?v=2">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1075,32 +1075,34 @@
                 </div>
                 <table class="pay-table">
                     <tbody>
-                        <tr><td>기본급 (209h)</td><td class="num" id="row-base-pay">0</td></tr>
-                        <tr><td>직책수당</td><td class="num" id="row-duty-pay">0</td></tr>
-                        <tr><td>근속수당</td><td class="num" id="row-seniority-pay">0</td></tr>
-                        <tr><td>연장수당 (통상×1.5×연장h)</td><td class="num" id="row-ot-pay">0</td></tr>
-                        <tr><td>야간수당 (통상×0.5×7.0h)</td><td class="num" id="row-night-pay">0</td></tr>
-                        <tr><td>휴일수당 (통상×1.5×8.0h)</td><td class="num" id="row-hol-pay">0</td></tr>
-                        <tr><td>휴일연장수당 (통상×2.0×2.5h)</td><td class="num" id="row-hol-ot-pay">0</td></tr>
-                        <tr><td>휴일야간수당 (통상×0.5×7.0h)</td><td class="num" id="row-hol-night-pay">0</td></tr>
-                        <tr style="background:#f0fdf4;">
-                            <td><strong>명절근무수당</strong></td>
-                            <td class="num" id="row-holiday-bonus" style="color:#166534; font-weight:800;">0</td>
-                        </tr>
-                        <tr style="background:#fefce8;" id="tr-other-pay" hidden>
-                            <td><strong id="label-other-pay">기타지급액</strong></td>
-                            <td class="num" id="row-other-pay" style="color:#b45309; font-weight:800;">0</td>
-                        </tr>
+                        <tr><td>기본</td><td class="num" id="row-base-pay">0</td></tr>
+                        <tr id="tr-duty-pay" hidden><td>직책</td><td class="num" id="row-duty-pay">0</td></tr>
+                        <tr id="tr-seniority-pay" hidden><td>근속</td><td class="num" id="row-seniority-pay">0</td></tr>
+                        <tr><td>연장</td><td class="num" id="row-ot-pay">0</td></tr>
+                        <tr><td>야간</td><td class="num" id="row-night-pay">0</td></tr>
+                        <tr><td>휴근</td><td class="num" id="row-hol-pay">0</td></tr>
+                        <tr><td>휴연</td><td class="num" id="row-hol-ot-pay">0</td></tr>
+                        <tr><td>휴야</td><td class="num" id="row-hol-night-pay">0</td></tr>
                         <tr class="bonus-row" id="tr-bonus-pay">
-                            <td>상여금</td>
+                            <td>상여</td>
                             <td class="num" id="row-bonus-pay">0</td>
+                        </tr>
+                        <tr id="tr-other-pay" hidden>
+                            <td id="label-other-pay">기타</td>
+                            <td class="num" id="row-other-pay">0</td>
+                        </tr>
+                        <tr id="tr-holiday-bonus" hidden>
+                            <td>명절근무수당</td>
+                            <td class="num" id="row-holiday-bonus">0</td>
                         </tr>
                         <tr style="background:#fdf2f8; display:none;" id="tr-entry-bonus">
                             <td><strong>신입 지원금 (1년 미만 매월 30만)</strong></td>
                             <td class="num" id="row-entry-bonus" style="color:#db2777; font-weight:800;">300,000</td>
                         </tr>
-                        <tr id="tr-estimated-deduction" hidden><td>예상 공제액 (추정)</td><td class="num" id="row-estimated-deduction">0</td></tr>
-                        <tr class="total-row"><td id="row-pay-label">총 지급액 (세전)</td><td class="num" id="row-gross-pay" style="color:var(--primary); font-size:14px;">0</td></tr>
+                        <tr id="tr-attendance-deduction" hidden><td>근태공제</td><td class="num" id="row-attendance-deduction">0</td></tr>
+                        <tr id="tr-payment-subtotal" hidden><td>소계 ⓐ (세전)</td><td class="num" id="row-payment-subtotal">0</td></tr>
+                        <tr id="tr-estimated-deduction" hidden><td>공제 소계 ⓑ (추정)</td><td class="num" id="row-estimated-deduction">0</td></tr>
+                        <tr class="total-row"><td id="row-pay-label">소계 ⓐ (세전)</td><td class="num" id="row-gross-pay" style="color:var(--primary); font-size:14px;">0</td></tr>
                     </tbody>
                 </table>
                 <button type="button" class="sms-open-btn" style="margin-top:12px;" onclick="triggerPayslipPopupManual()">명세서 알림 미리보기 ›</button>
@@ -1109,25 +1111,10 @@
 
         <!-- 3. 연차 & 설정 화면 -->
         <section id="view-leave" class="view-page">
-            <div class="card">
+            <div class="card leave-overview">
                 <div class="card-header">
-                    <span>회계연도 기준 연차 자동 계산</span>
-                    <span style="font-size: 11px; color: var(--leave-color); font-weight: bold;">매년 1월 1일 정산</span>
-                </div>
-
-                <div class="two-cols">
-                    <div class="input-group">
-                        <label>입사년월일 선택</label>
-                        <input type="date" id="input-hire-date" onchange="onHireDateChange()">
-                    </div>
-                    <div class="input-group">
-                        <label>총 부여 연차 (자동/수정)</label>
-                        <input type="number" id="input-total-leave" value="0" step="0.5" min="0" onchange="saveLeaveConfig()" placeholder="예: 19">
-                    </div>
-                </div>
-
-                <div class="info-card" id="leave-calc-info-box">
-                    📅 <strong>회계연도 기준(매년 1월 1일 정산):</strong> 입사일을 선택하면 자동 계산됩니다.
+                    <span>내 연차</span>
+                    <span id="leave-year-label" class="settings-year">2026년</span>
                 </div>
 
                 <div class="leave-stat-grid">
@@ -1139,42 +1126,52 @@
                         <div class="stat-label">사용 연차</div>
                         <div class="stat-value" style="color:#ea580c;" id="stat-used-leave">0일</div>
                     </div>
-                    <div class="leave-stat-box">
+                    <div class="leave-stat-box leave-remaining">
                         <div class="stat-label">잔여 연차</div>
-                        <div class="stat-value" style="color:var(--leave-color);" id="stat-remain-leave">0일</div>
+                        <div class="stat-value" id="stat-remain-leave">0일</div>
                     </div>
                 </div>
 
-                <div style="background: #e6f4ea; border: 1px solid #ceead6; border-radius: 12px; padding: 14px; margin-top: 14px;">
-                    <div style="font-size: 12px; color: #137333; margin-bottom: 6px;">미사용 연차수당 공식: 8시간 × 통상시급 × 잔여일수</div>
-                    <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 6px;">
-                        <span>1일 연차 단가:</span>
+                <div class="leave-money-summary">
+                    <div class="leave-money-unit">
+                        <span>수당</span>
                         <strong id="val-leave-daily-rate">0원</strong>
                     </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 800; color: #137333;">
-                        <span>총 예상 연차수당:</span>
+                    <div class="leave-money-total">
+                        <span>예상 연차수당</span>
                         <span id="val-total-leave-pay">0원</span>
                     </div>
                 </div>
+                <details class="leave-edit-settings">
+                    <summary>연차 설정</summary>
+                    <div class="two-cols">
+                        <div class="input-group">
+                            <label for="input-hire-date">입사일</label>
+                            <input type="date" id="input-hire-date" onchange="onHireDateChange()">
+                        </div>
+                        <div class="input-group">
+                            <label for="input-total-leave">총 연차</label>
+                            <input type="number" id="input-total-leave" value="0" step="0.5" min="0" onchange="saveLeaveConfig()" placeholder="예: 19">
+                        </div>
+                    </div>
+                </details>
             </div>
 
-            <div class="card">
+            <div class="card wage-settings-card">
                 <div class="card-header">
-                    <span>급여 기준 단가 설정</span>
-                    <button style="border: none; background: none; color: var(--primary); font-size: 11px; font-weight: bold; cursor: pointer;" onclick="resetDefaults()">기본값(0) 복원</button>
+                    <span>급여 기준</span>
+                    <button type="button" class="sms-open-btn" onclick="PayrollEstimate.open()">급여 문자 적용 ›</button>
                 </div>
                 <div class="two-cols">
                     <div class="input-group">
-                        <label>기준 기본시급</label>
+                        <label for="input-base-hourly">기본시급</label>
                         <input type="number" id="input-base-hourly" value="0" readonly aria-describedby="wage-sms-hint" style="background:#f8fafc;">
                     </div>
                     <div class="input-group">
-                        <label>통상임금(시급)</label>
+                        <label for="input-ordinary-hourly">통상시급</label>
                         <input type="number" id="input-ordinary-hourly" value="0" readonly aria-describedby="wage-sms-hint" style="background:#f8fafc;">
                     </div>
                 </div>
-                <p id="wage-sms-hint" class="account-hint">시급·직책수당·근속수당은 급여 문자에서 인식한 금액으로만 설정합니다.</p>
-                <button type="button" class="sms-open-btn" onclick="PayrollEstimate.open()">급여 문자로 설정 ›</button>
                 <div id="wage-allowance-settings" class="two-cols" hidden>
                     <div id="duty-pay-setting" class="input-group" hidden>
                         <label for="input-duty-pay">직책수당 (원)</label>
@@ -1185,22 +1182,13 @@
                         <input type="number" id="input-seniority-pay" value="0" readonly aria-describedby="wage-sms-hint" style="background:#f8fafc;">
                     </div>
                 </div>
-
+                <p id="wage-sms-hint" class="account-hint">금액은 급여 문자로만 변경할 수 있어요.</p>
                 <div class="btn-action-group">
-                    <button class="btn-save" onclick="manualSaveData()">💾 설정 저장</button>
-                    <button class="btn-reset-data" onclick="resetDefaults()">🔄 초기화(기본값)</button>
+                    <button class="btn-save" onclick="manualSaveData()">설정 저장</button>
+                    <button class="btn-reset-data" onclick="resetDefaults()">초기화</button>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header"><span>회계연도 연차 및 급여 규정 안내</span></div>
-                <div style="font-size: 12px; color: var(--text-sub); line-height: 1.65;">
-                    • <strong>회계연도 기준(매년 1월 1일):</strong> 전사원이 동일하게 매년 1월 1일 기준으로 연차가 일괄 정산 및 부여됩니다.<br>
-                    • <strong>1년 미만 신입사원:</strong> 짝수달 상여금(50%) 대신 매월 300,000원의 신입 지원금이 지급됩니다.<br>
-                    • <strong>월급일 및 명세서:</strong> 25일이 공휴일/주말일 경우 직전 영업일에 입금되며, 명세서는 입금일 하루 전 영업일에 발송 알림이 표시됩니다.<br>
-                    • <strong>저장:</strong> 설정과 메모는 기기에 저장하며, 계정 저장을 연결한 경우 본인의 구글 계정에도 저장합니다.
-                </div>
-            </div>
         </section>
     </div>
 
@@ -2055,18 +2043,12 @@
                 }
             });
 
-            const auto = calculateFiscalYearLeave(config.hireDate, year);
-            const manual = Object.prototype.hasOwnProperty.call(config.leaveByYear, year);
             const total = getGrantedLeave(year);
             const remain = Math.max(0, total - used);
             const dailyRate = config.ordinaryHourly * 8;
             const totalLeavePay = remain * dailyRate;
 
-            const infoBox = document.getElementById('leave-calc-info-box');
-            if (infoBox) {
-                // 입사일은 date 입력값이며 계산 안내는 앱에서 생성한 문자열이다.
-                infoBox.textContent = `📅 ${year}년 연차: ${auto.desc}${manual ? ' (해당 연도 수동 부여량 적용)' : ''} · 이전 연도 잔여 연차는 이월하지 않습니다.`;
-            }
+            document.getElementById('leave-year-label').textContent = `${year}년`;
             const qRemain = document.getElementById('quick-remain-leave');
             if (qRemain) qRemain.innerText = remain;
 
@@ -2440,18 +2422,23 @@
             document.getElementById('hero-regular-pay').innerText = `${fmt(regularGross)} 원`;
             document.getElementById('hero-bonus-pay').innerText = `${fmt(bonusPay + entryBonus)} 원`;
 
-            document.getElementById('row-base-pay').innerText = fmt(basicPay);
-            document.getElementById('row-duty-pay').innerText = fmt(dutyPay);
-            document.getElementById('row-seniority-pay').innerText = fmt(seniorityPay);
+            document.getElementById('row-base-pay').innerText = fmt(rawBasicPay);
+            document.getElementById('row-duty-pay').innerText = fmt(rawDutyPay);
+            document.getElementById('row-seniority-pay').innerText = fmt(rawSeniorityPay);
+            document.getElementById('tr-duty-pay').hidden = !(rawDutyPay > 0);
+            document.getElementById('tr-seniority-pay').hidden = !(rawSeniorityPay > 0);
             document.getElementById('row-ot-pay').innerText = fmt(otPay);
             document.getElementById('row-night-pay').innerText = fmt(nightPay);
             document.getElementById('row-hol-pay').innerText = fmt(holPay);
             document.getElementById('row-hol-ot-pay').innerText = fmt(holOtPay);
             document.getElementById('row-hol-night-pay').innerText = fmt(holNightPay);
             document.getElementById('row-holiday-bonus').innerText = fmt(holidayBonus);
+            document.getElementById('tr-holiday-bonus').hidden = !(holidayBonus > 0);
             document.getElementById('row-other-pay').innerText = fmt(otherPay);
             document.getElementById('tr-other-pay').hidden = otherPay <= 0;
-            document.getElementById('row-bonus-pay').innerText = fmt(bonusPay);
+            document.getElementById('row-bonus-pay').innerText = fmt(bonusPay + totalUnpaidDeduction - basicDeduction - dutyDeduction - seniorityDeduction);
+            document.getElementById('tr-attendance-deduction').hidden = !(totalUnpaidDeduction > 0);
+            document.getElementById('row-attendance-deduction').innerText = '−' + fmt(totalUnpaidDeduction);
             document.getElementById('row-entry-bonus').innerText = fmt(entryBonus);
             document.getElementById('row-gross-pay').innerText = fmt(grandGross);
             if (window.PayrollEstimate) window.PayrollEstimate.update(grandGross);
@@ -2601,8 +2588,6 @@
 
                 document.getElementById('input-hire-date').value = '';
                 document.getElementById('inp-hire-date').value = '';
-                const infoBox = document.getElementById('leave-calc-info-box');
-                if (infoBox) infoBox.innerHTML = '📅 <strong>회계연도 기준(매년 1월 1일 정산):</strong> 입사일을 선택하면 자동 계산됩니다.';
 
                 loadConfig();
                 updateLeaveStats();
@@ -2703,8 +2688,8 @@
             checkPayslipPopup();
         };
     </script>
-    <script src="./payroll-sms.js?v=1"></script>
-    <script src="./payroll-estimate.js?v=6"></script>
+    <script src="./payroll-sms.js?v=2"></script>
+    <script src="./payroll-estimate.js?v=7"></script>
     <script src="./calendar-integration.js?v=3"></script>
     <script src="./google-sync-core.js?v=3"></script>
     <script src="./account-data-core.js?v=1"></script>

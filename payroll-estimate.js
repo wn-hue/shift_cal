@@ -38,7 +38,9 @@
         const amount = toggle.checked ? result.net : result.gross;
         document.getElementById('hero-pay-label').textContent = toggle.checked ? '총 지급액 (세후 추정)' : '총 지급액 (세전 합계)';
         document.getElementById('hero-gross-pay').innerText = fmt(amount);
-        document.getElementById('row-pay-label').textContent = toggle.checked ? '총 지급액 (세후 추정)' : '총 지급액 (세전)';
+        document.getElementById('row-pay-label').textContent = toggle.checked ? '차감지급 ⓐ−ⓑ (세후 추정)' : '소계 ⓐ (세전)';
+        document.getElementById('tr-payment-subtotal').hidden = !toggle.checked;
+        document.getElementById('row-payment-subtotal').innerText = result.gross.toLocaleString('ko-KR');
         document.getElementById('payroll-details-label').textContent = toggle.checked ? '지급 상세 내역 (공제 적용)' : '지급 상세 내역 (세전)';
         document.getElementById('row-gross-pay').innerText = amount.toLocaleString('ko-KR');
         document.getElementById('tr-estimated-deduction').hidden = !toggle.checked;

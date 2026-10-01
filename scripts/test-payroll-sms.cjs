@@ -9,6 +9,12 @@ assert.equal(result.deductions.health,70000);
 assert.equal(estimate(2000000,result.profile).net,1700000);
 assert.equal(estimate(1000000,result.profile).total,150000);
 assert.deepEqual(parse('기본시급:\n10,000원').wages,{baseHourly:10000});
+assert.deepEqual(parse('기본시급 10,000\n지급내역\n기본 2,090,000\n소계(ⓐ) 2,090,000').wages,
+    {baseHourly:10000,dutyPay:0,seniorityPay:0},'A complete payment section without allowances clears previous allowance values');
+assert.deepEqual(parse('기본시급 10,000\n지급내역\n기본 2,090,000').wages,
+    {baseHourly:10000},'A partial statement cannot establish absent allowances');
+assert.deepEqual(parse('기본시급 10,000\n지급내역\n직책 읽을수없음\n소계(ⓐ) 2,090,000').wages,
+    {baseHourly:10000,seniorityPay:0},'An unreadable allowance must not silently replace a saved amount with zero');
 assert.throws(() => parse(sample + '\n기본시급 20,000'), /섞여/);
 assert.throws(() => parse('이름 테스트\n사번 123'), /인식/);
 assert.throws(() => parse('기본시급 1,00'), /인식/);

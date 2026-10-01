@@ -4,7 +4,8 @@
     function parse(text) {
         if (typeof text !== 'string' || text.length > 30000) throw new Error('문자는 30,000자 이내로 붙여넣어주세요.');
         const wages = {}, deductions = {}, warnings = [];
-        let section = '', gross, statedTotal;
+        let section = '', gross, statedTotal, hasPaySection = false;
+        const seenAllowances = new Set();
         const definitions = [
             ['baseHourly', /^(?:기본시급|기준 기본시급)/, 'wage'],
             ['ordinaryHourly', /^(?:통상시급|통상임금\(시급\))/, 'wage'],
@@ -31,7 +32,7 @@
         const totals = {};
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
-            if (/^지급내역/.test(line)) { section = 'pay'; continue; }
+            if (/^지급내역/.test(line)) { section = 'pay'; hasPaySection = true; continue; }
             if (/^공제내역/.test(line)) { section = 'deduct'; continue; }
             const sum = line.match(/^(소계(?:\([^)]*\))?|총\s*지급액|지급\s*합계|공제\s*합계|총\s*공제액)/);
             if (sum) {
@@ -42,6 +43,7 @@
             for (const [key, pattern, kind] of definitions) {
                 const m = line.match(pattern);
                 if (!m || (kind === 'pay' && section === 'deduct')) continue;
+                if (kind === 'pay') seenAllowances.add(key);
                 const rest = line.slice(m[0].length).replace(/^\s*[:：]\s*/, '');
                 const value = amount(rest.trim() ? rest : (lines[i + 1] || ''));
                 if (value !== null) assign(kind === 'deduct' ? deductions : wages, key, value);
@@ -49,6 +51,13 @@
         }
         gross = totals.pay;
         statedTotal = totals.deduct;
+        // Only a complete payment section establishes that an omitted allowance is absent.
+        // Partial wage snippets and unreadable allowance amounts must not erase saved values.
+        if (hasPaySection && Number.isSafeInteger(gross)) {
+            for (const key of ['dutyPay', 'seniorityPay']) {
+                if (!seenAllowances.has(key)) wages[key] = 0;
+            }
+        }
         const knownTotal = deductionKeys.reduce((sum, key) => sum + (deductions[key] || 0), 0);
         let profile = null;
         if (gross > 0 && Number.isSafeInteger(statedTotal) && statedTotal <= gross && statedTotal >= knownTotal) {
