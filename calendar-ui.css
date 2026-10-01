@@ -136,3 +136,36 @@ input[type="number"], input[readonly], .num, .stat-value, .hero-amount, .sub-val
 @media(min-width:600px) { .cal-day { padding:7px 6px; } .day-num { font-size:15px; } .shift-badge { width:42px; height:42px; font-size:20px; } .shift-badge.special, .shift-badge.half, .shift-badge.leave { font-size:15px; } .holiday-bar { font-size:10px; } }
 @media(max-width:360px) { .reference-header { gap:4px; } .icon-button { width:36px; } .reference-header .month-title-btn { font-size:25px; } .shift-badge { width:32px; height:32px; } }
 @media(prefers-reduced-motion:reduce) { .account-drawer[open] { animation:none; } }
+
+/* Shared calendar/statistics palette. Yellow numbers sit on a dark pill for contrast. */
+:root { --shift-day:#ffdf67; --shift-night:#354355; --shift-off:#f06474; --shift-special-day:#31b8bd; --shift-special-night:#647ddb; --shift-leave:#227755; }
+.shift-badge.day, .shift-badge.no-ot.day { background:var(--shift-day); }
+.shift-badge.night, .shift-badge.no-ot.night { background:var(--shift-night); }
+.shift-badge.off { color:var(--shift-off) !important; }
+.shift-badge.special-day { background:var(--shift-special-day); }
+.shift-badge.special-night { background:var(--shift-special-night); }
+.shift-badge.leave, .shift-badge.half { color:var(--shift-leave); }
+#modal-pill-day { color:var(--shift-day) !important; background:var(--shift-night); border-radius:10px; padding:4px 10px; display:inline-block; }
+#modal-pill-night { color:var(--shift-night) !important; }
+#modal-pill-off { color:var(--shift-off) !important; }
+#modal-pill-special { color:var(--shift-special-day) !important; }
+#modal-pill-leave { color:var(--shift-leave) !important; }
+.first-use-guide { background:#eef7f4; border:1px solid #dceee5; border-radius:16px; padding:16px; margin:4px 0 14px; }
+.first-use-guide[hidden] { display:none; }
+.first-use-guide strong { color:#19674f; font-size:15px; }
+.first-use-guide p { color:#5b7068; font-size:13px; line-height:1.6; margin:6px 0 12px; }
+.first-use-guide > div { display:flex; gap:8px; flex-wrap:wrap; }
+.first-use-guide button { border:1px solid #cce3da; border-radius:20px; padding:9px 14px; color:#19674f; background:white; font-weight:650; cursor:pointer; }
+.first-use-guide button[hidden] { display:none; }
+.settings-dialog { padding:22px; border:0; border-radius:22px; max-width:440px; width:calc(100% - 32px); max-height:85dvh; overflow:auto; }
+.settings-dialog::backdrop { background:#0007; }
+.settings-dialog .two-cols { gap:12px; }
+.settings-dialog .input-group input { width:100%; box-sizing:border-box; text-align:right; font-variant-numeric:tabular-nums; }
+.settings-dialog .number-unit-field input { padding-right:32px; }
+.settings-dialog h3 { font-size:14px; margin:18px 0 12px; color:#4e625a; }
+.settings-dialog .btn-save { width:100%; margin-top:20px; background:#198266; }
+.menu-leave-summary { display:flex; flex-wrap:wrap; gap:12px; padding:14px; border-radius:12px; background:#eef7f4; font-size:13px; color:#516a60; }
+.menu-leave-summary > :first-child { width:100%; color:#198266; font-weight:700; }
+.menu-leave-summary strong { font-variant-numeric:tabular-nums; color:#198266; }
+.account-drawer .account-hint { margin:0 0 6px; }
+@media(max-width:380px) { .settings-dialog .two-cols { grid-template-columns:1fr; } }

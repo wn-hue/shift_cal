@@ -20,10 +20,10 @@
     const preview = document.getElementById('payroll-sms-preview'), apply = document.getElementById('payroll-sms-apply');
     const dialog = document.getElementById('payroll-sms-dialog');
     const openButton = document.getElementById('payroll-sms-open');
-    api.open = () => { dialog.showModal(); text.focus(); };
+    api.open = () => { const menu=document.getElementById('account-management-dialog');if(menu?.open)menu.close();dialog.showModal(); text.focus(); };
     openButton.addEventListener('click', api.open);
     document.getElementById('payroll-sms-close').addEventListener('click', () => dialog.close());
-    dialog.addEventListener('close', () => { clearDraft();openButton.focus(); });
+    dialog.addEventListener('close', () => { clearDraft();document.getElementById('account-menu-button')?.focus(); });
     const labels = {baseHourly:'기본시급', ordinaryHourly:'통상시급', dutyPay:'직책수당', seniorityPay:'근속수당'};
     let currentGross = 0, profile = null, parsed = null;
     try { const saved = JSON.parse(localStorage.getItem(storageKey)); if (validProfile(saved)) profile = saved; } catch (_) {}
