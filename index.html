@@ -906,7 +906,7 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=3">
+    <link rel="stylesheet" href="./calendar-ui.css?v=4">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1151,7 +1151,10 @@
                         </div>
                         <div class="input-group">
                             <label for="input-total-leave">총 연차</label>
-                            <input type="number" id="input-total-leave" value="0" step="0.5" min="0" onchange="saveLeaveConfig()" placeholder="예: 19">
+                            <div class="number-unit-field">
+                                <input type="number" id="input-total-leave" value="0" step="0.5" min="0" onchange="saveLeaveConfig()" placeholder="예: 19" aria-describedby="total-leave-unit">
+                                <span id="total-leave-unit">일</span>
+                            </div>
                         </div>
                     </div>
                 </div>

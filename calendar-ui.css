@@ -81,22 +81,33 @@ body[data-view="calendar"] .reference-header { margin-bottom:0; }
 .drawer-footer { margin-top:auto; border-top:1px solid #edf0f2; padding-top:18px; }
 .drawer-footer a { color:#8a9099; font-size:12px; text-decoration:none; }
 #view-leave .card { border:1px solid #ededed; background:#fafafa; box-shadow:none; border-radius:20px; padding:20px; margin-bottom:16px; }
+#view-leave .leave-overview { background:#f8fcfa; border-color:#dceee5; }
+#view-leave .wage-settings-card { background:#fafbff; border-color:#e4e9f7; }
 #view-leave .card-header { margin-bottom:16px; padding-bottom:0; border-bottom:0; font-size:17px; font-weight:650; color:#202020; }
-.settings-year { font-size:12px; font-weight:500; color:#848484; }
+#view-leave .card-header > span:first-child::before { content:''; display:inline-block; width:5px; height:14px; margin-right:8px; border-radius:3px; background:#258568; vertical-align:-1px; }
+#view-leave .wage-settings-card .card-header > span:first-child::before { background:#6a82c0; }
+.settings-year { font-size:12px; font-weight:500; color:#486da0; background:#eaf1fa; border-radius:6px; padding:4px 8px; }
 #view-leave .leave-stat-grid { gap:0; margin:0 0 12px; }
 #view-leave .leave-stat-box { background:none; border:0; padding:12px 4px; border-radius:0; }
 #view-leave .leave-stat-box + .leave-stat-box { border-left:1px solid #e8e8e8; }
 #view-leave .leave-stat-box .stat-label { font-size:12px; font-weight:500; color:#777; }
 #view-leave .leave-stat-box .stat-value { font-size:25px; font-weight:650; color:#292929; }
-#view-leave .leave-remaining .stat-value { font-weight:750; }
+#view-leave .leave-stat-box:first-child .stat-value { color:#477fbd; }
+#view-leave .leave-stat-box:nth-child(2) .stat-value { color:#a86c37; }
+#view-leave .leave-remaining .stat-value { font-weight:750; color:#198266; }
 .leave-money-summary { display:flex; flex-direction:column; gap:14px; padding:16px 0 20px; border-top:1px solid #e8e8e8; }
 .leave-money-unit, .leave-money-total { display:flex; justify-content:space-between; align-items:baseline; gap:16px; width:100%; min-width:0; }
 .leave-money-unit > span, .leave-money-total > span:first-child { color:#777; font-size:13px; }
 .leave-money-unit strong { color:#292929; font-size:16px; font-weight:600; text-align:right; }
-.leave-money-total #val-total-leave-pay { color:#202020; font-size:20px; font-weight:650; text-align:right; overflow-wrap:anywhere; }
+.leave-money-total #val-total-leave-pay { color:#198266; font-size:20px; font-weight:650; text-align:right; overflow-wrap:anywhere; }
 .leave-edit-settings { border-top:1px solid #e8e8e8; padding-top:16px; }
 .leave-edit-settings h3 { color:#555; font-size:13px; font-weight:600; margin:0 0 12px; }
 .leave-edit-settings .two-cols { margin:0; }
+.number-unit-field { position:relative; min-width:0; margin-top:auto; }
+#view-leave .input-group .number-unit-field input { padding-right:32px; }
+.number-unit-field span { position:absolute; top:50%; right:12px; transform:translateY(-50%); font-size:14px; color:#737f79; pointer-events:none; }
+.number-unit-field input::-webkit-inner-spin-button, .number-unit-field input::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+.number-unit-field input { -moz-appearance:textfield; }
 #view-leave .input-group { min-width:0; }
 #view-leave .input-group label { color:#777; font-size:12px; font-weight:500; }
 #view-leave .input-group input { min-width:0; border-color:#e4e4e4; border-radius:10px; font-size:14px; color:#292929; padding:11px 10px; background:#fff; }
@@ -104,18 +115,18 @@ body[data-view="calendar"] .reference-header { margin-bottom:0; }
 #view-leave .wage-settings-card .two-cols { display:flex; flex-direction:column; gap:0; margin:0; }
 #view-leave .wage-settings-card .input-group { display:grid; grid-template-columns:minmax(0,1fr) minmax(100px,1fr); align-items:center; border-bottom:1px solid #e8e8e8; }
 #view-leave .wage-settings-card .input-group label { font-size:13px; margin:0; }
-#view-leave .wage-settings-card .sms-open-btn { color:#292929; background:#eee; padding:8px 12px; min-height:40px; border-radius:999px; font-weight:500; }
+#view-leave .wage-settings-card .sms-open-btn { color:#386598; background:#eaf0fb; padding:8px 12px; min-height:40px; border-radius:999px; font-weight:500; }
 #view-leave .account-hint { font-size:11px; margin:12px 0 18px; color:#848484; }
 #view-leave .btn-action-group { grid-template-columns:1fr auto; gap:10px; margin-top:0; padding-top:0; border-top:0; }
 #view-leave .btn-save, #view-leave .btn-reset-data { border-radius:999px; min-height:44px; font-size:13px; font-weight:600; padding:10px 20px; }
-#view-leave .btn-save { background:#202020; }
-#view-leave .btn-save:active { background:#444; }
+#view-leave .btn-save { background:#198266; }
+#view-leave .btn-save:active { background:#12634c; }
 #view-leave .btn-reset-data { background:#eee; border:0; color:#666; }
 input[type="number"], #disp-ot-hours, #disp-unpaid-days, #disp-unpaid-deduction { text-align:right; }
 .two-cols > .input-group { display:flex; flex-direction:column; }
 .two-cols > .input-group input { margin-top:auto; }
 label[for="inp-hire-date"] { white-space:normal; overflow:visible; line-height:1.4; }
-.salary-hero .hero-label, .salary-hero .hero-amount, .salary-hero .sub-val { text-align:right; }
+.salary-hero .hero-label, .salary-hero .hero-amount, .salary-hero .sub-val { text-align:left; }
 input[type="number"], input[readonly], .num, .stat-value, .hero-amount, .sub-val, .estimate-row, .estimate-net, .leave-money-summary, .day-num { font-variant-numeric:tabular-nums lining-nums; }
 .pay-table td { padding:12px 0; }
 .pay-table .num { font-variant-numeric:tabular-nums; }
