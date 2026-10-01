@@ -42,6 +42,10 @@ async function run(){
     const a=device(server),b=device(server);await a.start();await b.start();
     assert.equal(a.element('account-management-dialog').open,false);
     await a.click('account-menu-button');assert.equal(a.element('account-management-dialog').open,true);
+    const drawer=a.element('account-management-dialog');drawer.getBoundingClientRect=()=>({left:0,right:320,top:0,bottom:800});
+    drawer.handlers.click({target:drawer,clientX:30,clientY:60});assert.equal(drawer.open,true);
+    drawer.handlers.click({target:drawer,clientX:400,clientY:60});assert.equal(drawer.open,false);
+    await a.click('account-menu-button');
     await a.click('account-management-close');assert.equal(a.element('account-management-dialog').open,false);
     const callback=device({});callback.ctx.location.search='?cloud=connected';await callback.start();
     assert.equal(callback.element('account-management-dialog').open,true,'OAuth return opens account management');

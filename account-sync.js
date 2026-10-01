@@ -172,6 +172,12 @@
     }
     $('account-menu-button').addEventListener('click',openManager);
     $('account-management-close').addEventListener('click',()=>$('account-management-dialog').close());
+    $('account-management-dialog').addEventListener('click',event=>{
+        const dialog=$('account-management-dialog');
+        if(event.target!==dialog)return;
+        const box=dialog.getBoundingClientRect();
+        if(event.clientX<box.left || event.clientX>box.right || event.clientY<box.top || event.clientY>box.bottom)dialog.close();
+    });
     $('account-sync-now').addEventListener('click',()=>{if(pending)showConflict(pending.versions,'사용할 데이터를 선택해주세요.');else sync();});
     $('account-use-local').addEventListener('click',()=>resolve(null));
     $('account-conflict-close').addEventListener('click',()=>$('account-conflict-dialog').close());
