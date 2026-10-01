@@ -894,6 +894,13 @@
         .sms-help { margin-top:20px; font-size:12px; color:var(--text-sub); }
         .sms-help summary { cursor:pointer; }
         .sms-help p { line-height:1.7; margin-top:8px; }
+        .account-email { font-size:13px; line-height:1.6; overflow-wrap:anywhere; }
+        .account-status { font-size:12px; line-height:1.7; color:var(--text-sub); margin-top:6px; }
+        .account-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+        .account-login { padding:11px 16px; min-height:42px; border:1px solid var(--border); border-radius:10px; text-decoration:none; color:var(--text-main); background:white; font-size:13px; font-weight:600; }
+        .account-hint { font-size:11px; line-height:1.7; color:var(--text-sub); margin-top:12px; }
+        .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
+        .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
 </head>
 <body>
@@ -1119,6 +1126,18 @@
 
         <!-- 3. 연차 & 설정 화면 -->
         <section id="view-leave" class="view-page">
+            <div class="card account-card">
+                <div class="card-header"><span>구글 계정 저장</span></div>
+                <p id="account-email" class="account-email">로그인하면 다른 기기에서도 이어서 사용할 수 있습니다.</p>
+                <p id="account-sync-status" class="account-status" role="status">기기에 저장 중</p>
+                <div class="account-actions">
+                    <a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1">Google로 로그인</a>
+                    <button type="button" id="account-sync-now" class="sms-primary-btn" hidden>지금 동기화</button>
+                    <button type="button" id="account-logout" class="sms-clear-btn" hidden>로그아웃</button>
+                </div>
+                <p class="account-hint">근무 변경·메모·연차·급여 설정을 계정에 자동 저장합니다. 오프라인에서는 기기에 임시 저장합니다.</p>
+                <div id="account-setup-help" class="account-hint" hidden>관리자가 Google Cloud에서 Google Drive API를 사용 설정해야 합니다. 사용 설정 후 ‘지금 동기화’를 눌러주세요.</div>
+            </div>
             <div class="card">
                 <div class="card-header">
                     <span>회계연도 기준 연차 자동 계산</span>
@@ -1282,6 +1301,13 @@
             </div>
         </div>
     </div>
+
+    <dialog id="account-conflict-dialog" class="sms-dialog" aria-labelledby="account-conflict-title">
+        <div class="sms-dialog-header"><div><h2 id="account-conflict-title">사용할 데이터 선택</h2><p>기기와 계정의 데이터가 다릅니다.</p></div><button type="button" id="account-conflict-close" class="sms-close-btn" aria-label="데이터 선택 닫기">×</button></div>
+        <p class="account-hint">한쪽 데이터를 자동으로 덮어쓰지 않습니다. 사용할 데이터를 선택하면 이후 변경사항은 자동 저장됩니다. 동시 저장 기록은 보관됩니다.</p>
+        <div id="account-conflict-choices" class="account-choices"></div>
+        <button type="button" id="account-use-local" class="sms-clear-btn" style="width:100%;margin-top:12px;">현재 기기 데이터 사용</button>
+    </dialog>
 
     <dialog id="payroll-sms-dialog" class="sms-dialog" aria-labelledby="payroll-sms-title">
         <div class="sms-dialog-header">
@@ -1972,6 +1998,7 @@
             const sel = document.getElementById('group-select');
             if (sel) sel.value = grp;
             localStorage.setItem('shift_active_group', grp);
+            if(window.AccountSync)AccountSync.changed();
             loadOverrides();
             renderCalendar();
             syncFromCalendar();
@@ -2113,7 +2140,7 @@
         function manualSaveData() {
             saveLeaveConfig();
             saveWageConfig();
-            alert("💾 모든 입력값과 설정이 안전하게 저장되었습니다!");
+            alert(window.AccountSync ? "입력값을 기기에 저장했습니다. 구글 계정 연결 시 자동으로 동기화합니다." : "입력값을 기기에 저장했습니다.");
         }
 
         function openOverrideModal(dateStr, dateObj, currentShift) {
@@ -2146,6 +2173,7 @@
                 dayMemos[selectedDateStr] = val.trim();
             }
             localStorage.setItem('shift_day_memos', JSON.stringify(dayMemos));
+            if(window.AccountSync)AccountSync.changed();
             if(window.GoogleSync)GoogleSync.changed(selectedDateStr);
             renderCalendar();
             closeModalDirect();
@@ -2221,6 +2249,7 @@
 
         function saveOverrides() {
             localStorage.setItem(`shift_overrides_${currentGroup}`, JSON.stringify(overrides));
+            if(window.AccountSync)AccountSync.changed();
             if(window.GoogleSync)GoogleSync.changed(selectedDateStr);
         }
 
@@ -2612,13 +2641,24 @@
                 if (Number.isSafeInteger(wages[key]) && wages[key] >= 0) next[key] = wages[key];
             }
             localStorage.setItem('shift_salary_config_master', JSON.stringify(next));
+            if(window.AccountSync)AccountSync.changed();
             config = next;
             loadConfig();
             calculatePayrollFromInputs();
         }
 
+        function refreshAccountData() {
+            config = { hireDate:'', totalLeave:0, leaveByYear:{}, baseHourly:0, ordinaryHourly:0, baseHours:209, dutyPay:0, seniorityPay:0, applyRetroPay:false, holidayBonus:0 };
+            const group = localStorage.getItem('shift_active_group');
+            currentGroup = ['A','B','C'].includes(group) ? group : 'C';
+            document.getElementById('group-select').value = currentGroup;
+            loadConfig(); loadOverrides(); renderCalendar(); syncFromCalendar(); updateLeaveStats();
+            if(window.PayrollEstimate?.reloadReference)PayrollEstimate.reloadReference();
+        }
+
         function saveConfig() {
             localStorage.setItem('shift_salary_config_master', JSON.stringify(config));
+            if(window.AccountSync)AccountSync.changed();
         }
 
         function resetDefaults() {
@@ -2641,6 +2681,7 @@
                 updateLeaveStats();
                 syncFromCalendar();
                 renderCalendar();
+                if(window.AccountSync)AccountSync.changed();
                 alert("🔄 초기화되었습니다.");
             }
         }
@@ -2735,9 +2776,11 @@
         };
     </script>
     <script src="./payroll-sms.js?v=1"></script>
-    <script src="./payroll-estimate.js?v=4"></script>
+    <script src="./payroll-estimate.js?v=5"></script>
     <script src="./calendar-integration.js?v=2"></script>
     <script src="./google-sync-core.js?v=2"></script>
-    <script src="./google-sync.js?v=2"></script>
+    <script src="./account-data-core.js?v=1"></script>
+    <script src="./account-sync.js?v=1"></script>
+    <script src="./google-sync.js?v=3"></script>
 </body>
 </html>

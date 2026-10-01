@@ -69,6 +69,7 @@
             if (value.override === 'BASE') delete overrides[key]; else overrides[key] = value.override;
             if (value.memo) dayMemos[key] = value.memo; else delete dayMemos[key];
             saveOverrides(); localStorage.setItem('shift_day_memos',JSON.stringify(dayMemos));
+            if(window.AccountSync)AccountSync.changed();
         } finally { suppressed = false; }
     }
     function queueReview(g,key,kind,remote,reason) {
@@ -158,7 +159,7 @@
         catch (e) { status(e.message); return null; }
     }
     async function sync(rangeOverride=null) {
-        if (busy || !auth?.connected || !groupState()?.enabled || document.hidden) return;
+        if (busy || !auth?.connected || !groupState()?.enabled || document.hidden || (window.AccountSync && !AccountSync.ready)) return;
         busy=true; const group=currentGroup, g=groupState();
         status('구글 일정과 변경사항을 확인하고 있습니다…');
         try {
@@ -255,7 +256,7 @@
     }
     async function disconnect() {
         if(busy||!auth?.connected)return;
-        try {await api('logout');auth.connected=false;state=null;render();status('이 기기의 연결을 해제했습니다. 구글에 저장된 일정은 유지됩니다.');}
+        try {await api('logout');auth.connected=false;state=null;if(window.AccountSync)AccountSync.disconnected();render();status('이 기기의 연결을 해제했습니다. 구글에 저장된 일정은 유지됩니다.');}
         catch(e){status(e.message);}
     }
     function stop() { const g=groupState();if(g){g.enabled=false;save();render();status('자동 동기화를 중지했습니다. 구글 일정은 그대로 남습니다.');} }

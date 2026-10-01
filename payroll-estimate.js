@@ -39,6 +39,11 @@
         document.getElementById('estimate-net').textContent = fmt(result.net);
     }
     api.update = gross => { currentGross = gross; render(); };
+    api.reloadReference = () => {
+        profile = null;
+        try { const saved=JSON.parse(localStorage.getItem(storageKey));if(validProfile(saved))profile=saved; } catch (_) {}
+        render();
+    };
     toggle.checked = false; toggle.addEventListener('change', render);
     function clearPreview() { parsed = null; apply.hidden = true; preview.textContent = ''; }
     text.addEventListener('input', () => { clearPreview(); status.textContent = ''; });
@@ -61,6 +66,7 @@
         try {
             if (Object.keys(parsed.wages).length) root.applyPayrollStatement(parsed.wages);
             if (parsed.profile) { profile = parsed.profile; try { localStorage.setItem(storageKey, JSON.stringify(profile)); } catch (_) {} }
+            if(window.AccountSync)AccountSync.changed();
             render(); root.calculatePayrollFromInputs();
             text.value = ''; clearPreview();
             status.textContent = '';
