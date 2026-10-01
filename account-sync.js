@@ -4,6 +4,9 @@
     const ownerKey='shift_account_owner_v1', basePrefix='shift_account_base_v1_', cachePrefix='shift_account_cache_v1_';
     let auth=null, baseline=null, parents=[], busy=false, suppressed=false, timer=null, pending=null, epoch=0;
     const api=window.AccountSync={ready:false,changed,sessionChanged:init,disconnected};
+    function openManager() {
+        if(!$('account-management-dialog').open)$('account-management-dialog').showModal();
+    }
     function snapshot() {
         return C.normalize(Object.fromEntries(C.keys.map(k=>[k,k==='shift_active_group'?localStorage.getItem(k):JSON.parse(localStorage.getItem(k)||'null')])));
     }
@@ -167,6 +170,8 @@
             status('구글 계정 데이터 확인 중…');if(busy)timer=setTimeout(sync,1000);else await sync();
         } catch(e){api.ready=false;status(e.message||'구글 계정을 확인하지 못했습니다. 기기 저장은 계속 사용할 수 있습니다.');}
     }
+    $('account-menu-button').addEventListener('click',openManager);
+    $('account-management-close').addEventListener('click',()=>$('account-management-dialog').close());
     $('account-sync-now').addEventListener('click',()=>{if(pending)showConflict(pending.versions,'사용할 데이터를 선택해주세요.');else sync();});
     $('account-use-local').addEventListener('click',()=>resolve(null));
     $('account-conflict-close').addEventListener('click',()=>$('account-conflict-dialog').close());
@@ -181,5 +186,5 @@
     window.addEventListener('storage',event=>{if(event.key===ownerKey){api.ready=false;init();}else if(C.keys.includes(event.key)){window.refreshAccountData();changed();}});
     window.addEventListener('online',()=>sync());
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync();});
-    window.addEventListener('load',()=>{if(new URLSearchParams(location.search).get('cloud')==='connected')window.switchView('leave');init();setInterval(()=>{if(!document.hidden)sync();},60000);});
+    window.addEventListener('load',()=>{if(new URLSearchParams(location.search).get('cloud')==='connected')openManager();init();setInterval(()=>{if(!document.hidden)sync();},60000);});
 })();

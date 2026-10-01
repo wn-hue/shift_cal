@@ -40,6 +40,11 @@ function device(server,{local={},user='A',connected=true,cloudConnected=true}={}
 async function run(){
     const server={A:[version(memo({'2026-10-01':'original'}))],B:[version(memo({'2026-10-09':'other account'}))]};
     const a=device(server),b=device(server);await a.start();await b.start();
+    assert.equal(a.element('account-management-dialog').open,false);
+    await a.click('account-menu-button');assert.equal(a.element('account-management-dialog').open,true);
+    await a.click('account-management-close');assert.equal(a.element('account-management-dialog').open,false);
+    const callback=device({});callback.ctx.location.search='?cloud=connected';await callback.start();
+    assert.equal(callback.element('account-management-dialog').open,true,'OAuth return opens account management');
     assert.equal(a.snapshot().shift_day_memos['2026-10-01'],'original');
     a.change('shift_day_memos',{'2026-10-01':'original','2026-10-02':'a edit'});await a.tick();
     b.change('shift_day_memos',{'2026-10-01':'original','2026-10-03':'b edit'});await b.tick();

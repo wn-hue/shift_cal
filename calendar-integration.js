@@ -1,4 +1,4 @@
-/* Shared iCalendar serialization for browser exports and public feeds. */
+/* Shared calendar serialization retained for feed generation and event helpers. */
 (function (root) {
     'use strict';
     const encoder = new TextEncoder();
@@ -59,9 +59,6 @@
 /* These handlers access the existing app's schedule; payroll rules are unchanged. */
 function openCalendarIntegration() {
     document.getElementById('calendar-link-group').textContent = `${currentGroup}조`;
-    document.getElementById('calendar-export-status').textContent = '';
-    document.getElementById('calendar-export-period').value = 'year';
-    updateCalendarExportRange();
     document.getElementById('modal-calendar-link').classList.add('active');
     if(window.GoogleSync){GoogleSync.render();GoogleSync.refreshStatus();}
 }
@@ -70,49 +67,10 @@ function closeCalendarIntegration(event) {
         document.getElementById('modal-calendar-link').classList.remove('active');
     }
 }
-function updateCalendarExportRange() {
-    const year = currentCalDate.getFullYear(), month = currentCalDate.getMonth();
-    const period = document.getElementById('calendar-export-period').value;
-    document.getElementById('calendar-export-start').value = toDateKey(year, period === 'month' ? month : 0, 1);
-    document.getElementById('calendar-export-end').value = period === 'month' ?
-        toDateKey(year, month, new Date(year, month + 1, 0).getDate()) : toDateKey(year, 11, 31);
-}
-function downloadCalendarFile(events, filename, name) {
-    const blob = new Blob([ShiftCalendarLink.serialize(events, name)], { type: 'text/calendar;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url; anchor.download = filename;
-    document.body.appendChild(anchor); anchor.click(); anchor.remove();
-    // Safari may read the blob after the click handler has returned.
-    setTimeout(() => URL.revokeObjectURL(url), 60000);
-}
 function validCalendarDate(key) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) return false;
     const date = new Date(`${key}T00:00:00Z`);
     return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === key;
-}
-function exportPersonalCalendar() {
-    const start = document.getElementById('calendar-export-start').value;
-    const end = document.getElementById('calendar-export-end').value;
-    const status = document.getElementById('calendar-export-status');
-    if (!validCalendarDate(start) || !validCalendarDate(end) || start > end) {
-        status.textContent = '시작일과 종료일을 올바르게 선택해 주세요.'; return;
-    }
-    const count = Math.round((Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86400000) + 1;
-    if (count > 1096) { status.textContent = '한 번에 최대 3년까지 내보낼 수 있습니다.'; return; }
-    const includeOff = document.getElementById('calendar-export-off').checked;
-    const includeMemo = document.getElementById('calendar-export-memo').checked;
-    const events = [];
-    for (let key = start; key <= end; key = ShiftCalendarLink.nextDay(key)) {
-        const [y, m, d] = key.split('-').map(Number);
-        const shift = getActualShift(new Date(y, m - 1, d), currentGroup);
-        const memo = includeMemo ? dayMemos[key] || '' : '';
-        if (shift.type === 'OFF' && !includeOff && !memo) continue;
-        events.push(ShiftCalendarLink.makeEvent(key, currentGroup, shift, memo));
-    }
-    if (!events.length) { status.textContent = '선택한 기간에 내보낼 일정이 없습니다.'; return; }
-    downloadCalendarFile(events, `Shift_cal_${currentGroup}_${start}_${end}.ics`, `Shift_cal ${currentGroup}조 개인 일정`);
-    status.textContent = `${events.length}개 일정 파일을 만들었습니다. 캘린더에 가져오기를 완료해 주세요.`;
 }
 function getSelectedCalendarEvent() {
     if (!selectedDateStr) return null;
@@ -127,8 +85,4 @@ function addSelectedToGoogleCalendar() {
         dates: `${ShiftCalendarLink.dateValue(event.start)}/${ShiftCalendarLink.dateValue(event.end)}`,
         details: event.description, ctz: 'Asia/Seoul' });
     window.open(`https://calendar.google.com/calendar/render?${params}`, '_blank', 'noopener,noreferrer');
-}
-function exportSelectedCalendarDay() {
-    const event = getSelectedCalendarEvent();
-    if (event) downloadCalendarFile([event], `Shift_cal_${currentGroup}_${selectedDateStr}.ics`, `Shift_cal ${currentGroup}조`);
 }

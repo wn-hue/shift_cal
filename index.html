@@ -256,7 +256,6 @@
         .calendar-link-help { font-size: 12px; line-height: 1.65; margin-top: 10px; }
         .calendar-link-help summary { cursor: pointer; font-weight: 700; }
         #calendar-feed-url { font-size: 16px; font-weight: 400; }
-        #calendar-export-status { min-height: 20px; color: var(--primary); font-size: 12px; line-height: 1.6; margin-top: 12px; }
         #modal-calendar-link input[type='date'], #modal-calendar-link select { font-size: 16px; }
         .google-event-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 4px; border-bottom:1px solid var(--cal-line); font-size:13px; }
         .google-event-row > div { min-width:0; overflow-wrap:anywhere; }
@@ -894,6 +893,11 @@
         .sms-help { margin-top:20px; font-size:12px; color:var(--text-sub); }
         .sms-help summary { cursor:pointer; }
         .sms-help p { line-height:1.7; margin-top:8px; }
+        .account-menu-button { display:flex; align-items:center; justify-content:center; width:36px; height:36px; flex-shrink:0; border:1px solid #dbe5f4; border-radius:10px; background:#eef4ff; color:var(--primary); cursor:pointer; }
+        .account-menu-button:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+        .account-dialog { max-width:420px; }
+        #wage-allowance-settings[hidden], #wage-allowance-settings > [hidden] { display:none; }
+        @media (max-width:420px) { .brand-title { display:none; } .app-header { gap:6px; } .header-chip { padding:5px 8px; font-size:11px; } }
         .account-email { font-size:13px; line-height:1.6; overflow-wrap:anywhere; }
         .account-status { font-size:12px; line-height:1.7; color:var(--text-sub); margin-top:6px; }
         .account-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
@@ -908,7 +912,9 @@
         <!-- 최상단 헤더 바 -->
         <header class="app-header">
             <div class="brand-box">
-                <div class="brand-logo">교대</div>
+                <button type="button" id="account-menu-button" class="account-menu-button" aria-label="구글 계정 관리" title="구글 계정 관리" aria-haspopup="dialog" aria-controls="account-management-dialog">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg>
+                </button>
                 <div class="brand-title">교대근무</div>
             </div>
 
@@ -1123,19 +1129,6 @@
 
         <!-- 3. 연차 & 설정 화면 -->
         <section id="view-leave" class="view-page">
-            <div class="card account-card">
-                <div class="card-header"><span>구글 계정 저장</span></div>
-                <p id="account-email" class="account-email">로그인하면 다른 기기에서도 이어서 사용할 수 있습니다.</p>
-                <p id="account-sync-status" class="account-status" role="status">기기에 저장 중</p>
-                <div class="account-actions">
-                    <a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1">Google로 로그인</a>
-                    <button type="button" id="account-sync-now" class="sms-primary-btn" hidden>지금 동기화</button>
-                    <button type="button" id="account-logout" class="sms-clear-btn" hidden>로그아웃</button>
-                </div>
-                <p class="account-hint">근무 변경·메모·연차·급여 설정을 계정에 자동 저장합니다. 오프라인에서는 기기에 임시 저장합니다.</p>
-                <p class="account-hint"><a href="./privacy.html" target="_blank" rel="noopener">개인정보 및 저장 안내</a></p>
-                <div id="account-setup-help" class="account-hint" hidden>관리자가 Google Cloud에서 Google Drive API를 사용 설정해야 합니다. 사용 설정 후 ‘지금 동기화’를 눌러주세요.</div>
-            </div>
             <div class="card">
                 <div class="card-header">
                     <span>회계연도 기준 연차 자동 계산</span>
@@ -1200,22 +1193,16 @@
                         <input type="number" id="input-ordinary-hourly" value="0" readonly aria-describedby="wage-sms-hint" style="background:#f8fafc;">
                     </div>
                 </div>
-                <p id="wage-sms-hint" class="account-hint">기본시급·통상시급은 급여 문자에서 인식한 금액으로만 설정합니다.</p>
+                <p id="wage-sms-hint" class="account-hint">시급·직책수당·근속수당은 급여 문자에서 인식한 금액으로만 설정합니다.</p>
                 <button type="button" class="sms-open-btn" onclick="PayrollEstimate.open()">급여 문자로 설정 ›</button>
-                <div class="two-cols">
-                    <div class="input-group">
-                        <label>월 기준시간</label>
-                        <input type="number" id="input-base-hours" value="209" onchange="saveWageConfig()">
+                <div id="wage-allowance-settings" class="two-cols" hidden>
+                    <div id="duty-pay-setting" class="input-group" hidden>
+                        <label for="input-duty-pay">직책수당 (원)</label>
+                        <input type="number" id="input-duty-pay" value="0" readonly aria-describedby="wage-sms-hint" style="background:#f8fafc;">
                     </div>
-                    <div class="input-group">
-                        <label>직책수당 (원)</label>
-                        <input type="number" id="input-duty-pay" value="0" step="1000" onchange="saveWageConfig()" placeholder="예: 70000">
-                    </div>
-                </div>
-                <div class="two-cols">
-                    <div class="input-group">
-                        <label>근속수당 (원)</label>
-                        <input type="number" id="input-seniority-pay" value="0" step="1000" onchange="saveWageConfig()" placeholder="예: 70000">
+                    <div id="seniority-pay-setting" class="input-group" hidden>
+                        <label for="input-seniority-pay">근속수당 (원)</label>
+                        <input type="number" id="input-seniority-pay" value="0" readonly aria-describedby="wage-sms-hint" style="background:#f8fafc;">
                     </div>
                 </div>
 
@@ -1297,6 +1284,20 @@
             </div>
         </div>
     </div>
+
+    <dialog id="account-management-dialog" class="sms-dialog account-dialog" aria-labelledby="account-management-title">
+        <div class="sms-dialog-header"><div><h2 id="account-management-title">구글 계정 관리</h2><p>로그인 · 계정 저장</p></div><button type="button" id="account-management-close" class="sms-close-btn" aria-label="구글 계정 관리 닫기">×</button></div>
+                <p id="account-email" class="account-email">로그인하면 다른 기기에서도 이어서 사용할 수 있습니다.</p>
+                <p id="account-sync-status" class="account-status" role="status">기기에 저장 중</p>
+                <div class="account-actions">
+                    <a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1">Google로 로그인</a>
+                    <button type="button" id="account-sync-now" class="sms-primary-btn" hidden>지금 동기화</button>
+                    <button type="button" id="account-logout" class="sms-clear-btn" hidden>로그아웃</button>
+                </div>
+                <p class="account-hint">근무 변경·메모·연차·급여 설정을 계정에 자동 저장합니다. 오프라인에서는 기기에 임시 저장합니다.</p>
+                <p class="account-hint"><a href="./privacy.html" target="_blank" rel="noopener">개인정보 및 저장 안내</a></p>
+                <div id="account-setup-help" class="account-hint" hidden>관리자가 Google Cloud에서 Google Drive API를 사용 설정해야 합니다. 사용 설정 후 ‘지금 동기화’를 눌러주세요.</div>
+    </dialog>
 
     <dialog id="account-conflict-dialog" class="sms-dialog" aria-labelledby="account-conflict-title">
         <div class="sms-dialog-header"><div><h2 id="account-conflict-title">사용할 데이터 선택</h2><p>기기와 계정의 데이터가 다릅니다.</p></div><button type="button" id="account-conflict-close" class="sms-close-btn" aria-label="데이터 선택 닫기">×</button></div>
@@ -1435,21 +1436,7 @@
                     <p>연결된 달의 근무표를 동기화합니다. 다른 달을 보면 그 달도 연결하며, 연도 전체 연결 버튼으로 한 해를 미리 보낼 수 있습니다. 기존 읽기 전용 구독은 캘린더 앱에서 숨기거나 구독을 해제하면 중복 표시를 피할 수 있습니다.</p>
                 </details>
             </div>
-            <strong style="font-size:14px;">내 변경사항 포함해서 가져오기</strong>
-            <p class="calendar-link-copy">현재 저장된 근무 변경을 포함한 ICS 파일을 만듭니다. 가져온 뒤 변경한 일정은 자동 갱신되지 않습니다. Google 동기화와 함께 사용하거나 같은 파일을 반복해서 가져오면 중복될 수 있으므로 별도 캘린더에 가져오는 것을 권장합니다.</p>
-            <div class="input-group" style="margin-bottom:12px;">
-                <label for="calendar-export-period">기간 빠르게 선택</label>
-                <select id="calendar-export-period" onchange="updateCalendarExportRange()"><option value="year">달력에서 보고 있는 연도</option><option value="month">달력에서 보고 있는 월</option></select>
-            </div>
-            <div class="two-cols">
-                <div class="input-group"><label for="calendar-export-start">시작일</label><input id="calendar-export-start" type="date"></div>
-                <div class="input-group"><label for="calendar-export-end">종료일</label><input id="calendar-export-end" type="date"></div>
-            </div>
-            <label class="toggle-box" for="calendar-export-off"><span>휴무 일정 포함</span><input id="calendar-export-off" type="checkbox" checked></label>
-            <label class="toggle-box" for="calendar-export-memo"><span>저장된 개인 메모 포함</span><input id="calendar-export-memo" type="checkbox"></label>
-            <button class="btn-save" style="width:100%;" onclick="exportPersonalCalendar()">내 일정 파일(ICS) 만들기</button>
-            <p class="calendar-link-copy">구글: 컴퓨터의 설정 → 가져오기/내보내기에서 ICS 파일을 선택하세요. 애플: 파일이 바로 열리지 않으면 파일을 메일로 보내 첨부파일을 열거나 Mac 캘린더의 파일 → 가져오기를 이용하세요.</p>
-            <div id="calendar-export-status" role="status" aria-live="polite"></div>
+
         </div>
     </div>
 
@@ -1472,7 +1459,6 @@
 
             <div class="calendar-link-actions">
                 <button class="btn-reset-data" onclick="addSelectedToGoogleCalendar()">구글에 하루 추가</button>
-                <button class="btn-reset-data" onclick="exportSelectedCalendarDay()">하루 일정(ICS)</button>
             </div>
             <p class="calendar-link-copy">저장된 근무와 메모를 추가합니다. 메모 수정 중이면 먼저 저장하세요. 추가 화면에서 저장 또는 가져오기를 완료해야 반영됩니다.</p>
             <div style="font-size:12px; font-weight:700; color:#3c4043; margin-bottom:6px;">근무 변경 옵션</div>
@@ -2118,9 +2104,6 @@
         }
 
         function saveWageConfig() {
-            config.baseHours = parseFloat(document.getElementById('input-base-hours').value) || 209;
-            config.dutyPay = parseFloat(document.getElementById('input-duty-pay').value) || 0;
-            config.seniorityPay = parseFloat(document.getElementById('input-seniority-pay').value) || 0;
             config.holidayBonus = parseFloat(document.getElementById('inp-holiday-bonus').value) || 0;
             saveConfig();
             updateLeaveStats();
@@ -2580,9 +2563,11 @@
             document.getElementById('input-total-leave').value = getGrantedLeave(currentCalDate.getFullYear());
             document.getElementById('input-base-hourly').value = config.baseHourly;
             document.getElementById('input-ordinary-hourly').value = config.ordinaryHourly;
-            document.getElementById('input-base-hours').value = config.baseHours;
             document.getElementById('input-duty-pay').value = config.dutyPay;
             document.getElementById('input-seniority-pay').value = config.seniorityPay;
+            document.getElementById('duty-pay-setting').hidden = !(config.dutyPay > 0);
+            document.getElementById('seniority-pay-setting').hidden = !(config.seniorityPay > 0);
+            document.getElementById('wage-allowance-settings').hidden = !(config.dutyPay > 0 || config.seniorityPay > 0);
             document.getElementById('inp-holiday-bonus').value = config.holidayBonus || 0;
             config.applyRetroPay = !!config.hireDate && parseInt(config.hireDate.slice(0,4),10) < 2020;
         }
@@ -2730,10 +2715,10 @@
     </script>
     <script src="./payroll-sms.js?v=1"></script>
     <script src="./payroll-estimate.js?v=6"></script>
-    <script src="./calendar-integration.js?v=2"></script>
+    <script src="./calendar-integration.js?v=3"></script>
     <script src="./google-sync-core.js?v=3"></script>
     <script src="./account-data-core.js?v=1"></script>
-    <script src="./account-sync.js?v=2"></script>
+    <script src="./account-sync.js?v=3"></script>
     <script src="./google-sync.js?v=4"></script>
 </body>
 </html>
