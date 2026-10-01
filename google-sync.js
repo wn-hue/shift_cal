@@ -143,14 +143,14 @@
         el('google-sync-controls').hidden=!connected;
         el('google-sync-setup').hidden=configured;
         el('google-sync-user').textContent=connected ? auth.user.email+' · '+currentGroup+'조':'구글 계정 연결 전';
-        el('google-sync-enable').textContent=g?.enabled ? '이달 근무표 동기화':'이달 근무표 연결 시작';
+        el('google-sync-enable').textContent='동기화';
         if (auth && !configured) {
             el('google-sync-setup-message').textContent='관리자 최초 설정이 필요합니다. '+(auth.missing?.length ? '미설정: '+auth.missing.join(', '):'Vercel 서버 설정을 확인하세요.');
             el('google-sync-redirect').textContent=auth.redirectUri || location.origin+'/api/google-calendar?action=callback';
         }
-        el('google-sync-badge').textContent=g?.enabled ? '구글 양방향 연결 중':'구글 양방향 연결';
+        el('google-sync-badge').textContent=g?.enabled ? '구글 동기화 사용 중':'구글 캘린더 동기화';
         const entry=document.querySelector('.calendar-link-entry');
-        if(entry)entry.textContent='📅 구글 · 애플 캘린더 연결'+(g&&Object.keys(g.pending).length ? ` · 변경 확인 ${Object.keys(g.pending).length}건`:'')+' ›';
+        if(entry)entry.textContent='📅 구글 · 애플 캘린더 동기화'+(g&&Object.keys(g.pending).length ? ` · 변경 확인 ${Object.keys(g.pending).length}건`:'')+' ›';
         renderReview(); renderPersonal();
     }
     async function refreshStatus() {
@@ -214,7 +214,7 @@
             save(); await writeOperations(g,operations);
             if (currentGroup===group) { renderCalendar(); syncFromCalendar(); }
             g.lastSync=new Date().toISOString(); save(); render();
-            status(Object.keys(g.pending).length ? '동기화했습니다. 아래 변경 확인이 필요합니다.':'양방향 동기화 완료 · '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}));
+            status(Object.keys(g.pending).length ? '동기화했습니다. 아래 변경 확인이 필요합니다.':'동기화 완료 · '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}));
         } catch(e) {
             status(e.message); save(); render();
             if(e.status===401) {auth.connected=false;state=null;render();}
@@ -299,17 +299,10 @@
         catch(e){status(e.message);}
     }
     function stop() { const g=groupState();if(g){g.enabled=false;save();render();status('자동 동기화를 중지했습니다. 구글 일정은 그대로 남습니다.');} }
-    async function connectYear() {
-        if(busy||!auth?.connected)return;
-        if(!groupState()?.enabled)await enable();
-        if(!groupState()?.enabled)return;
-        const group=currentGroup,year=currentCalDate.getFullYear();
-        for(let month=0;month<12;month++) {
-            if(currentGroup!==group||!groupState()?.enabled)break;
-            status(`${year}년 ${month+1}월 근무표를 연결하고 있습니다…`);
-            await sync({start:toDateKey(year,month,1),end:dateKey(new Date(year,month+1,1))});
-        }
-        await sync();
+    async function synchronize() {
+        if (busy || !auth?.connected) return;
+        if (groupState()?.enabled) await sync();
+        else await enable();
     }
     function relink() {
         const g=groupState();if(!g)return;
@@ -320,7 +313,7 @@
     function groupChanged(){if(el('google-personal-form'))el('google-personal-form').hidden=true;render();changed();}
     function viewChanged(){const tag=currentGroup+'-'+dateKey(currentCalDate).slice(0,7);if(tag!==viewTag){viewTag=tag;render();changed();}}
     function openPersonal(event=null) {
-        if(!groupState()?.enabled){status('먼저 이달 근무표 연결을 시작하세요.');return;}
+        if(!groupState()?.enabled){status('먼저 동기화를 눌러 주세요.');return;}
         el('google-personal-form').hidden=false;
         el('google-personal-id').value=event?.id || '';
         el('google-personal-etag').value=event?.etag || '';
@@ -373,8 +366,8 @@
         document.addEventListener('visibilitychange',()=>{if(!document.hidden){refreshStatus().then(()=>sync());}});
         window.addEventListener('focus',()=>changed());
         const result=new URLSearchParams(location.search).get('google');
-        if(result){openCalendarIntegration();status(result==='connected'?'구글 계정을 연결했습니다. 이달 근무표 연결을 시작하세요.':result==='denied'?'구글 연결을 취소했습니다.':'구글 인증에 실패했습니다. 관리자 설정과 권한을 확인하세요.');history.replaceState(null,'',location.pathname+location.hash);}
+        if(result){openCalendarIntegration();status(result==='connected'?'구글 계정으로 로그인했습니다. 동기화를 눌러 주세요.':result==='denied'?'구글 연결을 취소했습니다.':'구글 인증에 실패했습니다. 관리자 설정과 권한을 확인하세요.');history.replaceState(null,'',location.pathname+location.hash);}
     }
-    window.GoogleSync={init,refreshStatus,render,sync,changed,enable,connectYear,relink,groupChanged,viewChanged,disconnect,stop,resolve,openPersonal,savePersonal};
+    window.GoogleSync={init,refreshStatus,render,sync,changed,enable,synchronize,relink,groupChanged,viewChanged,disconnect,stop,resolve,openPersonal,savePersonal};
     window.addEventListener('load',()=>init());
 })();
