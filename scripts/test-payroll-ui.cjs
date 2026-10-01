@@ -59,6 +59,7 @@ click('payroll-sms-read');
 assert.equal(/직책|근속/.test(elem('payroll-sms-preview').textContent),false,'Absent allowances must also be omitted from the SMS preview');
 click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),10100);assert.equal(evaluate('config.ordinaryHourly'),12100);
+assert.equal(elem('val-leave-daily-rate').innerText,'96,800원','Applying an SMS must immediately recalculate the leave allowance');
 assert.equal(evaluate('config.dutyPay'),0);assert.equal(evaluate('config.seniorityPay'),0);
 for(const id of ['tr-duty-pay','tr-seniority-pay','duty-pay-setting','seniority-pay-setting','wage-allowance-settings'])assert.equal(elem(id).hidden,true,'Absent allowances must disappear after applying a new complete statement: '+id);
 assert.equal(elem('payroll-sms-text').value,'');assert.ok(![...saved.values()].join('').includes('합성테스트'));assert.ok(![...saved.values()].join('').includes('123456'));
