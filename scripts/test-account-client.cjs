@@ -44,6 +44,13 @@ async function run(){
     await a.click('account-menu-button');assert.equal(a.element('account-management-dialog').open,true);
     const drawer=a.element('account-management-dialog');drawer.getBoundingClientRect=()=>({left:0,right:320,top:0,bottom:800});
     drawer.handlers.click({target:drawer,clientX:30,clientY:60});assert.equal(drawer.open,true);
+    // Native select releases or synthetic clicks must not dismiss the drawer.
+    drawer.handlers.click({target:drawer,clientX:0,clientY:0});assert.equal(drawer.open,true);
+    drawer.handlers.pointerdown({target:a.element('group-select'),clientX:30,clientY:300});
+    drawer.handlers.click({target:drawer,clientX:400,clientY:60});assert.equal(drawer.open,true);
+    drawer.handlers.pointerdown({target:drawer,clientX:400,clientY:60});
+    drawer.handlers.pointercancel();drawer.handlers.click({target:drawer,clientX:400,clientY:60});assert.equal(drawer.open,true);
+    drawer.handlers.pointerdown({target:drawer,clientX:400,clientY:60});
     drawer.handlers.click({target:drawer,clientX:400,clientY:60});assert.equal(drawer.open,false);
     await a.click('account-menu-button');
     await a.click('account-management-close');assert.equal(a.element('account-management-dialog').open,false);

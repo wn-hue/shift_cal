@@ -910,7 +910,7 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=9">
+    <link rel="stylesheet" href="./calendar-ui.css?v=10">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1302,13 +1302,10 @@
         <div class="drawer-section" id="menu-group-settings">
             <div class="drawer-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M16 4a3 3 0 0 1 0 6M18 14a5 5 0 0 1 4 5v2"/></svg><span>내 근무표</span></div>
             <p class="drawer-company">3조 2교대</p>
-            <select id="group-select" hidden aria-hidden="true" tabindex="-1" onchange="setGroup(this.value)">
-                <option value="" disabled selected>교대조 선택</option><option value="A">A조</option><option value="B">B조</option><option value="C">C조</option>
-            </select>
-            <div class="group-choice-list" role="group" aria-label="근무조 선택">
-                <button type="button" id="group-choice-A" aria-pressed="false" onclick="setGroup('A')">A조</button>
-                <button type="button" id="group-choice-B" aria-pressed="false" onclick="setGroup('B')">B조</button>
-                <button type="button" id="group-choice-C" aria-pressed="false" onclick="setGroup('C')">C조</button>
+            <div class="group-select-wrapper">
+                <select id="group-select" class="group-select" aria-label="근무조 선택" aria-describedby="group-selection-status" onchange="setGroup(this.value)">
+                    <option value="" disabled selected>교대조 선택</option><option value="A">A조</option><option value="B">B조</option><option value="C">C조</option>
+                </select>
             </div>
             <p id="group-selection-status" class="group-selection-status" role="status" aria-live="polite">교대조를 선택해 주세요.</p>
         </div>
@@ -2734,8 +2731,8 @@
     <script src="./google-sync-core.js?v=5"></script>
     <script src="./account-data-core.js?v=2"></script>
     <script src="./calendar-ui.js?v=2"></script>
-    <script src="./settings-ui.js?v=3"></script>
-    <script src="./account-sync.js?v=6"></script>
+    <script src="./settings-ui.js?v=4"></script>
+    <script src="./account-sync.js?v=7"></script>
     <script src="./google-sync.js?v=9"></script>
 </body>
 </html>
