@@ -45,7 +45,7 @@
         const connected=!!auth?.connected;
         $('account-email').textContent=connected?auth.user.email:'로그인하면 다른 기기에서도 이어서 사용할 수 있습니다.';
         $('account-login').hidden=!!auth?.cloudConnected;
-        $('account-login').textContent=connected?'계정 저장 연결':'Google로 로그인';
+        $('account-login').setAttribute('aria-label',connected?'Google 계정 저장 연결':'Google로 로그인');
         $('account-sync-now').hidden=!auth?.cloudConnected;
         $('account-logout').hidden=!connected;
     }
@@ -151,7 +151,7 @@
             status('동기화 실패 · '+(e.message||'기기 데이터는 유지됩니다.'),'error');
             $('account-setup-help').hidden=e.code!=='DRIVE_SETUP';
             if(e.status>=400 && e.status<500)api.ready=false;
-            if(['RECONNECT','DRIVE_PERMISSION'].includes(e.code)){$('account-login').hidden=false;$('account-login').textContent='구글 계정 다시 연결';}
+            if(['RECONNECT','DRIVE_PERMISSION'].includes(e.code)){$('account-login').hidden=false;$('account-login').setAttribute('aria-label','Google 계정 다시 연결');}
             if(e.code==='CLOUD_CONFLICT') {clearTimeout(timer);timer=setTimeout(sync,1000);}
         } finally {
             setBusy(false);

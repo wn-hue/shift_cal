@@ -905,7 +905,9 @@
         .account-email { font-size:13px; line-height:1.6; overflow-wrap:anywhere; }
         .account-status { font-size:12px; line-height:1.7; color:var(--text-sub); margin-top:6px; }
         .account-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
-        .account-login { padding:11px 16px; min-height:42px; border:1px solid var(--border); border-radius:10px; text-decoration:none; color:var(--text-main); background:white; font-size:13px; font-weight:600; }
+        .account-login { display:inline-flex; padding:0; border:0; border-radius:4px; text-decoration:none; background:transparent; vertical-align:middle; }
+        .google-login-image { display:block; width:180px; height:40px; }
+        .account-login:focus-visible { outline:2px solid #30343b; outline-offset:3px; }
         .account-hint { font-size:11px; line-height:1.7; color:var(--text-sub); margin-top:12px; }
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
@@ -1214,7 +1216,7 @@
         <div class="drawer-profile">
             <span class="drawer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg></span>
             <div class="drawer-profile-content">
-                <a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1">Google로 로그인</a>
+                <a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1" aria-label="Google로 로그인" aria-describedby="account-permission-notice"><img class="google-login-image" src="./google-signin.png" width="180" height="40" alt="" aria-hidden="true"></a>
                 <p id="account-email" class="account-email">다른 기기에서도 이어서 사용하세요.</p>
             </div>
         </div>
@@ -1225,7 +1227,7 @@
                 <button type="button" id="account-sync-now" class="sms-primary-btn" hidden>지금 동기화</button>
                 <button type="button" id="account-logout" class="sms-clear-btn" hidden>로그아웃</button>
             </div>
-            <p class="account-hint">로그인은 선택 사항입니다. 연결하면 근무 변경·메모·연차·급여 설정을 본인 Google Drive의 앱 전용 공간에 저장합니다. <a href="./privacy.html">이용·삭제 안내</a></p>
+            <p id="account-permission-notice" class="account-hint">로그인은 선택 사항입니다. 계정 확인, 앱 캘린더 관리·목록 조회와 Drive 앱 전용 저장 권한을 요청합니다. 설정은 본인 계정에 저장되며, 캘린더 반영은 동기화를 시작할 때 진행됩니다. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p>
             <div id="account-setup-help" class="account-hint" hidden>관리자가 Google Cloud에서 Google Drive API를 사용 설정해야 합니다. 사용 설정 후 ‘지금 동기화’를 눌러주세요.</div>
         </div>
         </div>
@@ -1449,7 +1451,8 @@
                 <strong id="google-sync-badge" style="font-size:14px;">구글 캘린더 동기화</strong>
                 <p id="google-sync-user" class="calendar-link-copy">동기화 상태 확인 중…</p>
                 <p class="calendar-link-copy">구글 전용 캘린더에 근무표·메모·개인 일정을 저장합니다. 웹앱 변경은 저장 후 반영하고, 구글·아이폰에서 바꾼 내용은 웹앱을 열면 가져옵니다. 열린 동안에는 약 30초마다 확인합니다.</p>
-                <a id="google-sync-login" class="btn-save" style="display:block;text-align:center;text-decoration:none;" href="/api/google-calendar?action=login" hidden>구글 계정 연결</a>
+                <a id="google-sync-login" class="account-login" href="/api/google-calendar?action=login" aria-label="Google 계정으로 캘린더 연결" aria-describedby="calendar-permission-notice" hidden><img class="google-login-image" src="./google-signin.png" width="180" height="40" alt="" aria-hidden="true"></a>
+                <p id="calendar-permission-notice" class="account-hint">계정 확인, 캘린더 목록 조회와 앱이 만든 캘린더의 일정 관리 권한을 요청합니다. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p>
                 <div id="google-sync-controls" hidden>
                     <div class="calendar-link-actions">
                         <button id="google-sync-enable" class="btn-save" onclick="GoogleSync.synchronize()">동기화</button>
@@ -2767,7 +2770,7 @@
     <script src="./calendar-ui.js?v=5"></script>
     <script src="./today-menu.js?v=3"></script>
     <script src="./settings-ui.js?v=5"></script>
-    <script src="./account-sync.js?v=8"></script>
+    <script src="./account-sync.js?v=9"></script>
     <script src="./google-sync.js?v=9"></script>
 </body>
 </html>
