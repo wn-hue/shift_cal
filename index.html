@@ -912,7 +912,7 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=15">
+    <link rel="stylesheet" href="./calendar-ui.css?v=16">
     <link rel="stylesheet" href="./today-menu.css?v=2">
 </head>
 <body data-view="calendar">
@@ -1288,45 +1288,43 @@
 
     <!-- 모달: 월급 명세서 알림 -->
     <div class="modal-overlay" id="modal-payslip-alert" onclick="closePayslipModal(event)">
-        <div class="modal-sheet" onclick="event.stopPropagation()">
-            <div style="text-align:center; margin-bottom:14px;">
-                <div style="font-size:38px; margin-bottom:4px;">💌</div>
-                <div style="font-size:18px; font-weight:800; color:#202124;" id="payslip-modal-title">9월 급여명세서 발송일</div>
-                <div style="font-size:12px; color:#5f6368; margin-top:2px;">오늘은 이번 달 월급명세서가 교부되는 날입니다!</div>
+        <div class="modal-sheet payslip-sheet" role="dialog" aria-modal="true" aria-labelledby="payslip-modal-title" aria-describedby="payslip-modal-caption" onclick="event.stopPropagation()">
+            <div class="payslip-header">
+                <div>
+                    <span class="payslip-eyebrow">급여 안내</span>
+                    <h2 id="payslip-modal-title">9월 급여명세서 발송일</h2>
+                    <p id="payslip-modal-caption">예상 급여와 지급 일정을 확인하세요.</p>
+                </div>
+                <button type="button" class="payslip-close" aria-label="명세서 닫기" onclick="closePayslipModalDirect()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
             </div>
-            
-            <div style="background:linear-gradient(135deg, #1e293b, #0f172a); color:#fff; border-radius:14px; padding:18px; margin-bottom:14px; text-align:center;">
-                <div id="payslip-modal-pay-label" style="font-size:12px; color:#94a3b8; font-weight:600;">예상 총 지급액 (세전)</div>
-                <div style="font-size:28px; font-weight:900; color:#38bdf8; margin:6px 0 10px 0;" id="payslip-modal-gross">0 원</div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; border-top:1px solid #334155; padding-top:10px; font-size:12px;">
+
+            <div class="payslip-summary">
+                <div class="payslip-pay-label" id="payslip-modal-pay-label">예상 총 지급액 (세전)</div>
+                <div class="payslip-total" id="payslip-modal-gross">0 원</div>
+                <div class="payslip-breakdown">
                     <div>
-                        <span id="payslip-modal-regular-label" style="color:#94a3b8;">월 급여 (세전)</span><br>
-                        <strong style="color:#38bdf8; font-size:13px;" id="payslip-modal-regular">0 원</strong>
+                        <span id="payslip-modal-regular-label">월 급여 (세전)</span>
+                        <strong id="payslip-modal-regular">0 원</strong>
                     </div>
                     <div>
-                        <span id="payslip-modal-bonus-label" style="color:#94a3b8;">상여금 / 지원금 (세전)</span><br>
-                        <strong style="color:#c084fc; font-size:13px;" id="payslip-modal-bonus">0 원</strong>
+                        <span id="payslip-modal-bonus-label">상여금 / 지원금 (세전)</span>
+                        <strong id="payslip-modal-bonus">0 원</strong>
                     </div>
                 </div>
             </div>
 
-            <div style="background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:12px; font-size:12px; line-height:1.65; margin-bottom:16px;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                    <span style="color:var(--text-sub);">🗓️ 급여 산정기간:</span>
-                    <strong id="payslip-modal-period" style="color:var(--text-main);">08.16 ~ 09.15</strong>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                    <span style="color:var(--text-sub);">💰 월급 입금 예정일:</span>
-                    <strong id="payslip-modal-payday" style="color:#1a73e8;">2026년 9월 23일 (수)</strong>
-                </div>
-                <div id="payslip-modal-holiday-note" style="font-size:11px; color:#ea580c; margin-top:4px; font-weight:700;">
-                    ※ 25일이 휴일이므로 직전 영업일에 입금됩니다.
-                </div>
+            <div class="payslip-schedule">
+                <dl>
+                    <div><dt>급여 산정기간</dt><dd id="payslip-modal-period">08.16 ~ 09.15</dd></div>
+                    <div><dt>월급 입금 예정일</dt><dd id="payslip-modal-payday">2026년 9월 23일 (수)</dd></div>
+                </dl>
+                <p id="payslip-modal-holiday-note">※ 25일이 휴일이므로 직전 영업일에 입금됩니다.</p>
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1.3fr; gap:10px;">
-                <button class="btn-reset-data" onclick="closePayslipModalDirect()">확인</button>
-                <button class="btn-save" onclick="goToPayrollFromPayslip()">상세 명세 보기</button>
+            <p class="payslip-estimate-note">금액은 개인 확인용 추정값이며 실제 명세서와 다를 수 있어요.</p>
+            <div class="payslip-actions">
+                <button type="button" class="payslip-dismiss" onclick="closePayslipModalDirect()">확인</button>
+                <button type="button" class="payslip-details" onclick="goToPayrollFromPayslip()">상세 명세 보기</button>
             </div>
         </div>
     </div>
