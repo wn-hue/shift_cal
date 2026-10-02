@@ -398,3 +398,10 @@ body[data-view="all"] #first-use-guide { display:none; }
 .all-shortcut-icon.lavender circle { fill:none; }
 .all-shortcut-icon.sky svg { stroke-width:2.5; }
 @media(max-width:380px) { .reference-header .month-title-btn { font-size:26px; } .header-calendar-actions { gap:0; } .header-calendar-actions .icon-button { width:36px; } }
+
+/* Give the month more presence while keeping the group and actions compact. */
+body[data-view="calendar"] .reference-header { min-height:72px; padding:6px 0; }
+body[data-view="calendar"] .reference-header .month-title-btn { font-size:clamp(34px,10vw,44px); line-height:1.15; font-weight:750; letter-spacing:-1.2px; }
+@media(max-width:380px) {
+    body[data-view="calendar"] .reference-header .month-title-btn { font-size:clamp(32px,9.5vw,36px); letter-spacing:-1px; }
+}
