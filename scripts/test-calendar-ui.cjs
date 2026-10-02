@@ -58,3 +58,13 @@ console.log('PASS: calendar month/week layout, leap month, short shift labels, h
 assert.ok(!html.slice(html.indexOf('<header'),html.indexOf('</header>')).includes('account-menu-button'));
 assert.match(html, /id="account-menu-button"[^>]+aria-controls="view-all"/);
 assert.ok(!html.includes('<dialog id="account-management-dialog"'));
+
+const header=html.slice(html.indexOf('<header'),html.indexOf('</header>'));
+assert.ok(header.includes('id="calendar-group-label"'));
+assert.ok(!html.slice(html.indexOf('<div class="calendar-month-controls">'),html.indexOf('<div class="calendar-card"')).includes('3조 2교대'));
+for(const page of ['about.html','privacy.html','terms.html']) {
+ const source=fs.readFileSync(require.resolve('../'+page),'utf8');
+ assert.ok(source.includes('class="service-back"'));
+ assert.ok(source.includes('aria-label="전체 메뉴로 돌아가기"'));
+ assert.ok(!source.includes('>웹앱</a>'));
+}

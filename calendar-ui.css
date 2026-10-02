@@ -388,3 +388,13 @@ body[data-view="all"] #first-use-guide { display:none; }
 .bottom-nav .nav-item { min-width:0; flex:1; }
 .bottom-nav .nav-visual { min-width:0; padding:7px 3px; white-space:nowrap; font-size:11px; }
 @media(max-width:420px) { .bottom-nav .nav-visual { font-size:10px; } .all-shortcut-grid { gap:6px; } }
+
+/* Compact monochrome controls share the navigation's filled icon treatment. */
+.calendar-month-controls { justify-content:flex-end; }
+.header-group-label { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; align-self:center; min-width:32px; height:30px; padding:0 6px; margin-right:3px; border-radius:9px; background:#f4f4f4; color:#626262; font-size:12px; font-weight:650; white-space:nowrap; }
+.all-shortcut-icon.mint, .all-shortcut-icon.lavender, .all-shortcut-icon.sky { background:#f3f4f5; color:#34373c; }
+.all-shortcut-icon.mint rect, .all-shortcut-icon.lavender rect { fill:currentColor; stroke:currentColor; }
+.all-shortcut-icon.mint path, .all-shortcut-icon.lavender circle { stroke:#fff; }
+.all-shortcut-icon.lavender circle { fill:none; }
+.all-shortcut-icon.sky svg { stroke-width:2.5; }
+@media(max-width:380px) { .reference-header .month-title-btn { font-size:26px; } .header-calendar-actions { gap:0; } .header-calendar-actions .icon-button { width:36px; } }

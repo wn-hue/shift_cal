@@ -910,7 +910,7 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=11">
+    <link rel="stylesheet" href="./calendar-ui.css?v=12">
     <link rel="stylesheet" href="./today-menu.css?v=1">
 </head>
 <body data-view="calendar">
@@ -922,6 +922,7 @@
                 <span id="header-view-title" class="header-view-title" hidden>연차 · 설정</span>
             </div>
             <div id="header-calendar-actions" class="header-calendar-actions">
+                <span id="calendar-group-label" class="header-group-label" aria-label="현재 교대조">C조</span>
                 <button type="button" class="icon-button" onclick="openCalendarIntegration()" aria-label="구글 · 애플 캘린더 동기화" title="캘린더 연결"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2"/></svg></button>
                 <button type="button" class="icon-button" onclick="openMonthStatsModal()" aria-label="월 근무 통계" title="근무 통계"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16v-4M12 16V7M17 16V9"/></svg></button>
             </div>
@@ -936,7 +937,7 @@
         </aside>
         <section id="view-calendar" class="view-page active">
             <div class="calendar-month-controls">
-                <span class="calendar-group-caption"><strong id="calendar-group-label">C조</strong>3조 2교대</span>
+                
                 <div class="gcal-nav-group">
                     <button class="nav-arrow-btn" onclick="changeMonth(-1)" aria-label="이전 달">‹</button>
                     <button class="calendar-today" onclick="goToToday()">오늘</button>
@@ -1246,9 +1247,9 @@
         </div>
         </section>
         <section class="all-info-section" aria-labelledby="all-info-title"><h2 id="all-info-title">앱 안내</h2><div class="all-info-list">
-          <a href="./about.html" target="_blank" rel="noopener"><span>앱 소개 · 문의</span><span aria-hidden="true">›</span></a>
-          <a href="./privacy.html" target="_blank" rel="noopener"><span>개인정보처리방침</span><span aria-hidden="true">›</span></a>
-          <a href="./terms.html" target="_blank" rel="noopener"><span>서비스 이용약관</span><span aria-hidden="true">›</span></a>
+          <a href="./about.html"><span>앱 소개 · 문의</span><span aria-hidden="true">›</span></a>
+          <a href="./privacy.html"><span>개인정보처리방침</span><span aria-hidden="true">›</span></a>
+          <a href="./terms.html"><span>서비스 이용약관</span><span aria-hidden="true">›</span></a>
         </div><p class="all-brand">Shift_calander</p></section>
       </div>
     </section>
@@ -1368,7 +1369,7 @@
         <textarea id="payroll-sms-text" maxlength="30000" rows="4" placeholder="급여 문자를 지급·공제내역까지 붙여넣으세요." class="sms-textarea"></textarea>
         <label for="payroll-bonus-sms-text" class="sms-input-label" style="margin-top:16px">상여금 문자 (선택)</label>
         <textarea id="payroll-bonus-sms-text" maxlength="30000" rows="4" placeholder="상여금 문자를 지급·공제내역까지 붙여넣으세요. 없으면 비워두세요." class="sms-textarea"></textarea>
-        <p class="sms-privacy">문자는 이 기기에서 인식하며 이름·사번·원문은 저장·전송하지 않습니다. 적용한 금액만 저장하고, 구글 계정 저장을 연결하면 금액도 본인 계정에 저장합니다. <a href="./privacy.html" target="_blank" rel="noopener">저장 안내</a></p>
+        <p class="sms-privacy">문자는 이 기기에서 인식하며 이름·사번·원문은 저장·전송하지 않습니다. 적용한 금액만 저장하고, 구글 계정 저장을 연결하면 금액도 본인 계정에 저장합니다. <a href="./privacy.html">저장 안내</a></p>
         <div class="sms-actions">
             <button type="button" id="payroll-sms-apply" class="sms-primary-btn" disabled>설정 적용</button>
             <button type="button" id="payroll-sms-clear" class="sms-clear-btn">지우기</button>
@@ -2754,6 +2755,7 @@
             initCalendarSwipe();
             initSalarySwipe();
 
+            if (location.hash === "#all") switchView("all");
             checkPayslipPopup();
         };
     </script>
@@ -2763,7 +2765,7 @@
     <script src="./google-sync-core.js?v=5"></script>
     <script src="./account-data-core.js?v=2"></script>
     <script src="./calendar-ui.js?v=4"></script>
-    <script src="./today-menu.js?v=2"></script>
+    <script src="./today-menu.js?v=3"></script>
     <script src="./settings-ui.js?v=5"></script>
     <script src="./account-sync.js?v=8"></script>
     <script src="./google-sync.js?v=9"></script>

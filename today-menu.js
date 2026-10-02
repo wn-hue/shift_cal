@@ -4,6 +4,29 @@
     // Match the API's 03:00 Asia/Seoul meal-day boundary, independent of device timezone.
     const today = () => new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(Date.now() - 3 * 60 * 60 * 1000));
     let shownDate = '', loadedAt = 0, loading = false;
+    const cacheKey = 'shift_today_menu_cache_v1';
+    let cachedMenu = null;
+    function validMenu(data, date) {
+        return data?.status === 'ok' && data.date === date && Number.isFinite(Date.parse(data.checkedAt)) &&
+            Array.isArray(data.meals) && data.meals.length === 4 && data.meals.every(meal =>
+                typeof meal.name === 'string' && Array.isArray(meal.groups) && meal.groups.length > 0 && meal.groups.length <= 12 &&
+                meal.groups.every(group => typeof group.title === 'string' && Array.isArray(group.items) && group.items.length > 0 &&
+                    group.items.length <= 50 && group.items.every(item => typeof item === 'string' && item.length <= 2000)));
+    }
+    function readCache(date) {
+        if (validMenu(cachedMenu,date)) return cachedMenu;
+        try {
+            const raw = localStorage.getItem(cacheKey);
+            const data = raw && raw.length <= 100000 ? JSON.parse(raw) : null;
+            if (validMenu(data,date)) return (cachedMenu = data);
+            localStorage.removeItem(cacheKey);
+        } catch (_) { /* Storage can be disabled; the in-memory cache still works. */ }
+        return null;
+    }
+    function saveCache(data) {
+        cachedMenu = data;
+        try {localStorage.setItem(cacheKey,JSON.stringify(data));} catch (_) {}
+    }
 
     function dateLabel(date) {
         return new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',weekday:'long'}).format(new Date(date + 'T12:00:00+09:00'));
@@ -56,7 +79,17 @@
     async function load(force = false) {
         const date = today();
         $('today-menu-date').textContent = dateLabel(date);
-        if (loading || (!force && shownDate === date && Date.now() - loadedAt < 120000)) return;
+        if (loading) return;
+        if (!force) {
+            const saved = readCache(date);
+            if (saved) {
+                if (shownDate !== date || !loadedAt) render(saved);
+                shownDate = date;
+                loadedAt = Date.now();
+                return;
+            }
+            if (shownDate === date && Date.now() - loadedAt < 120000) return;
+        }
         if (shownDate !== date) $('today-menu-cards').replaceChildren();
         loading = true;
         const button = $('today-menu-refresh');
@@ -71,7 +104,7 @@
             const data = await response.json();
             if (!response.ok || data.status === 'error') throw new Error(data.message || '식단을 불러오지 못했어요. 다시 시도해 주세요.');
             if (date !== today() || data.date !== today()) throw new Error('날짜가 변경되었어요. 새로고침해 주세요.');
-            if (data.status === 'ok' && Array.isArray(data.meals) && data.meals.length === 4) render(data);
+            if (validMenu(data,date)) {render(data); saveCache(data);}
             else if (data.status === 'not_published') empty(data.message);
             else throw new Error('오늘 식단을 확인하지 못했어요. 원문을 확인해 주세요.');
             shownDate = date;
