@@ -6,7 +6,7 @@ const version=(data)=>({revision:crypto.randomUUID().replace(/-/g,''),updatedAt:
 const flush=async()=>{for(let n=0;n<12;n++)await new Promise(resolve=>setImmediate(resolve));};
 function device(server,{local={},user='A',connected=true,cloudConnected=true}={}) {
     const saved=new Map(Object.entries(local)),elements=new Map(),events={},timers=new Map();let timerId=0;
-    function element(id){if(!elements.has(id))elements.set(id,{textContent:'',hidden:false,open:false,handlers:{},children:[],addEventListener(k,f){this.handlers[k]=f;},replaceChildren(){this.children=[];},append(x){this.children.push(x);},close(){this.open=false;},showModal(){this.open=true;}});return elements.get(id);}
+    function element(id){if(!elements.has(id))elements.set(id,{textContent:'',hidden:false,open:false,attributes:{},setAttribute(k,v){this.attributes[k]=v},handlers:{},children:[],addEventListener(k,f){this.handlers[k]=f;},replaceChildren(){this.children=[];},append(x){this.children.push(x);},close(){this.open=false;},showModal(){this.open=true;}});return elements.get(id);}
     const d={user,connected,cloudConnected,disabled:false,beforeWrite:null,calls:[],saved,element};
     const ctx={AccountDataCore:C,navigator:{onLine:true},crypto,URLSearchParams,Date,console,location:{search:''},switchView:()=>{},
         localStorage:{getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(k,String(v)),removeItem:k=>saved.delete(k)},
@@ -58,9 +58,17 @@ async function run(){
     await b.click('account-sync-now');assert.deepEqual(b.snapshot().shift_bonus_sms_reference_v1,{gross:1000000,total:50000});
     // Local edits during upload must still be sent on the next save.
     a.change('shift_day_memos',{...a.snapshot().shift_day_memos,'2026-10-04':'first'});
-    a.beforeWrite=async()=>{a.beforeWrite=null;a.change('shift_day_memos',{...a.snapshot().shift_day_memos,'2026-10-05':'while uploading'});};
+    a.beforeWrite=async()=>{a.beforeWrite=null;
+        assert.equal(a.element('account-sync-now').disabled,true);
+        assert.equal(a.element('account-sync-now').textContent,'동기화 중…');
+        assert.equal(a.element('account-sync-now').attributes['aria-busy'],'true');
+        assert.equal(a.element('account-sync-status').attributes['data-state'],'progress');
+        a.change('shift_day_memos',{...a.snapshot().shift_day_memos,'2026-10-05':'while uploading'});};
     await a.tick();assert.equal(server.A[0].data.shift_day_memos['2026-10-05'],undefined);
     await a.tick();assert.equal(server.A[0].data.shift_day_memos['2026-10-05'],'while uploading');
+    assert.equal(a.element('account-sync-now').disabled,false);
+    assert.equal(a.element('account-sync-status').attributes['data-state'],'success');
+    assert.match(a.element('account-sync-status').textContent,/계정 동기화 완료 · .*\d{1,2}:\d{2}:\d{2}/);
     // A conflict pauses automatic saves until the user selects a version.
     const current=a.snapshot();server.A=[version(memo({'2026-10-01':'cloud conflicting'}))];
     a.change('shift_day_memos',{...current.shift_day_memos,'2026-10-01':'local conflicting'});await a.tick();

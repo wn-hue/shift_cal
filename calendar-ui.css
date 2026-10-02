@@ -226,3 +226,43 @@ input[type="number"], input[readonly], .num, .stat-value, .hero-amount, .sub-val
 #view-payroll .pay-table .bonus-row { background:#f4f0fa; }
 #view-payroll .payroll-detail-content > .sms-open-btn { margin-top:16px; border-radius:999px; padding:8px 12px; color:#657182; background:#eef1f5; font-size:12px; font-weight:500; }
 @media(prefers-reduced-motion:reduce) { .payroll-disclosure-state svg { transition:none; } }
+
+/* Visible, accessible sync progress and the matching shift editor. */
+.sync-feedback { padding:10px 12px; border-radius:12px; background:#f3f5f4; color:#59645e !important; font-size:12px; line-height:1.7; overflow-wrap:anywhere; }
+.sync-feedback:empty { display:none; }
+.sync-feedback[data-state="progress"] { background:#eef4fc; color:#426b9c !important; }
+.sync-feedback[data-state="success"] { background:#edf8f2; color:#198266 !important; }
+.sync-feedback[data-state="warning"] { background:#fff6e6; color:#946622 !important; }
+.sync-feedback[data-state="error"] { background:#fff0f0; color:#b14747 !important; }
+.sync-feedback[data-state="success"]::before { content:'✓ '; font-weight:700; }
+#account-sync-now[aria-busy="true"]::before, #google-sync-enable[aria-busy="true"]::before { content:''; display:inline-block; width:13px; height:13px; margin-right:8px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; vertical-align:-2px; animation:shift-sync-spin .8s linear infinite; }
+#account-sync-now:disabled, #google-sync-enable:disabled { opacity:.75; cursor:wait; }
+@keyframes shift-sync-spin { to { transform:rotate(360deg); } }
+#modal-override .override-sheet { background:#fff; border:1px solid #e5eae7; border-radius:24px; padding:22px; box-shadow:0 16px 60px #162b2220; }
+.override-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:20px; }
+.override-header h2 { font-size:21px; font-weight:700; color:#252e29; margin:0 0 8px; }
+.override-header p { color:#69756e; font-size:13px; margin:0 0 8px; font-variant-numeric:tabular-nums; }
+.override-base { display:inline-block; color:#198266; background:#edf7f2; padding:5px 9px; border-radius:8px; font-size:11px; }
+.override-close { width:36px; height:36px; flex-shrink:0; border:0; border-radius:50%; background:#f2f4f3; color:#728078; font-size:18px; cursor:pointer; }
+.override-section { margin:0 0 16px; padding:16px; border:1px solid #e8ece9; border-radius:18px; background:#fbfcfb; }
+.override-section:last-child { margin-bottom:0; }
+.override-section-title { display:block; margin:0 0 10px; font-size:14px; font-weight:650; color:#354a3e; }
+.override-help { font-size:11px; color:#758078; line-height:1.8; margin:8px 0 12px; }
+#modal-override .modal-btn-grid { gap:8px; margin-bottom:0; }
+#modal-override .opt-btn { min-height:66px; border-radius:13px; border-width:1px; padding:10px; align-items:flex-start; text-align:left; font-size:13px; font-weight:600; gap:6px; }
+#modal-override .opt-btn.day-sp { background:#fff9df; border-color:#f0e5b7; color:#8b762b; }
+#modal-override .opt-btn.night-sp { background:#f1edf9; border-color:#e0d8ee; color:#7c669f; }
+#modal-override .opt-btn.leave { background:#edf8f2; border-color:#d5eadd; color:#198266; }
+#modal-override .opt-btn.half { background:#eef5fc; border-color:#dae6f3; color:#507daa; }
+#modal-override .opt-btn.no-ot { background:#fff7e9; border-color:#f1e3c8; color:#9a763e; }
+#modal-override .opt-btn.off { background:#f2f4f3; border-color:#e2e7e3; color:#66756d; }
+#modal-override .opt-btn.unpaid, #modal-override .opt-btn.unpaid-half { background:#fcf0ef; border-color:#eedbd8; color:#a2766f; }
+#modal-override .opt-btn.reset { background:#fff; min-height:42px; align-items:center; color:#78847c; }
+.override-memo { background:#f7faf8; }
+.override-memo textarea { display:block; width:100%; min-height:88px; resize:vertical; box-sizing:border-box; padding:12px; border:1px solid #dee6e0; border-radius:12px; background:#fff; color:#35423a; font:inherit; font-size:16px; line-height:1.6; }
+#modal-override .btn-save { background:#198266; border-radius:999px; padding:11px 18px; width:100%; margin-top:12px; font-size:13px; }
+.override-google { background:#f7f9fd; border-color:#e3e9f4; }
+#modal-override .override-google .btn-reset-data { width:100%; border:1px solid #dbe4f1; border-radius:999px; background:#fff; color:#58759a; padding:12px; font-size:13px; }
+#modal-override button:focus-visible, .override-memo textarea:focus-visible { outline:2px solid #198266; outline-offset:3px; }
+@media(max-width:380px) { #modal-override .override-sheet { padding:16px; } .override-section { padding:12px; } }
+@media(prefers-reduced-motion:reduce) { #account-sync-now[aria-busy="true"]::before, #google-sync-enable[aria-busy="true"]::before { animation:none; } }

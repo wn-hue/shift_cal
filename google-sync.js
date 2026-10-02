@@ -20,7 +20,13 @@
         group.group=currentGroup;
         return group;
     }
-    function status(message) { if (el('google-sync-status')) el('google-sync-status').textContent = message; }
+    function status(message,tone='info') {
+        const node=el('google-sync-status');if(node){node.textContent=message;node.setAttribute('data-state',tone==='info' && busy?'progress':tone);}
+    }
+    function setBusy(value) {
+        busy=value;const button=el('google-sync-enable');if(button){button.disabled=value;button.textContent=value?'동기화 중…':'동기화';button.setAttribute('aria-busy',String(value));}
+        el('google-sync-status')?.setAttribute('aria-busy',String(value));
+    }
     async function api(action, body, get = false) {
         const response = await fetch('/api/google-calendar?action='+action, { method:get ? 'GET':'POST',credentials:'same-origin',cache:'no-store',
             headers:get ? {} : {'Content-Type':'application/json','X-Shift-CSRF':auth?.csrf || ''}, ...(get ? {} : {body:JSON.stringify(body || {})}) });
@@ -143,7 +149,7 @@
         el('google-sync-controls').hidden=!connected;
         el('google-sync-setup').hidden=configured;
         el('google-sync-user').textContent=connected ? auth.user.email+' · '+currentGroup+'조':'구글 계정 연결 전';
-        el('google-sync-enable').textContent='동기화';
+        el('google-sync-enable').textContent=busy?'동기화 중…':'동기화';
         if (auth && !configured) {
             el('google-sync-setup-message').textContent='관리자 최초 설정이 필요합니다. '+(auth.missing?.length ? '미설정: '+auth.missing.join(', '):'Vercel 서버 설정을 확인하세요.');
             el('google-sync-redirect').textContent=auth.redirectUri || location.origin+'/api/google-calendar?action=callback';
@@ -160,7 +166,7 @@
     }
     async function sync(rangeOverride=null) {
         if (busy || !auth?.connected || !groupState()?.enabled || document.hidden || (window.AccountSync && !AccountSync.ready)) return;
-        busy=true; const group=currentGroup, g=groupState();
+        setBusy(true); const group=currentGroup, g=groupState();
         status('구글 일정과 변경사항을 확인하고 있습니다…');
         try {
             const range=rangeOverride || monthRange();
@@ -214,19 +220,19 @@
             save(); await writeOperations(g,operations);
             if (currentGroup===group) { renderCalendar(); syncFromCalendar(); }
             g.lastSync=new Date().toISOString(); save(); render();
-            status(Object.keys(g.pending).length ? '동기화했습니다. 아래 변경 확인이 필요합니다.':'동기화 완료 · '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}));
+            status(Object.keys(g.pending).length ? '동기화했습니다. 아래 변경 확인이 필요합니다.':'캘린더 동기화 완료 · '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),Object.keys(g.pending).length?'warning':'success');
         } catch(e) {
-            status(e.message); save(); render();
+            status('동기화 실패 · '+e.message,'error'); save(); render();
             if(e.status===401) {auth.connected=false;state=null;render();}
         } finally {
-            busy=false;
+            setBusy(false);
             if (currentGroup!==group) changed();
             else if(!rangeOverride && g.paletteVersion!==3) migrateColors();
         }
     }
     async function migrateColors() {
         if(busy || !auth?.connected || !groupState()?.enabled || (window.AccountSync && !AccountSync.ready))return;
-        busy=true;const group=currentGroup,g=groupState(),userId=auth.user.id;
+        setBusy(true);const group=currentGroup,g=groupState(),userId=auth.user.id;
         status('연결된 근무 일정의 색상을 적용하고 있습니다…');
         try {
             const months=[...new Set(Object.keys(g.records).map(key=>key.slice(0,7)))].sort();
@@ -252,8 +258,8 @@
                     // Remote attendance/memo edits must still be reviewed next run.
                 }
             }
-            g.paletteVersion=3;save();status('색상 적용 완료 · 주간 병아리색 · 야간 연보라 · 휴무 기본색');
-        } catch(e){status(e.message);}finally{busy=false;if(currentGroup!==group)changed();}
+            g.paletteVersion=3;save();status('캘린더 동기화 완료 · '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+' · 색상 적용 완료','success');
+        } catch(e){status(e.message);}finally{setBusy(false);if(currentGroup!==group)changed();}
     }
     function changed() {
         if(suppressed) return;
@@ -261,7 +267,7 @@
     }
     async function enable() {
         if(busy || !auth?.connected) return;
-        status('전용 구글 캘린더를 준비하고 있습니다…'); busy=true;
+        status('전용 구글 캘린더를 준비하고 있습니다…'); setBusy(true);
         const group=currentGroup, g=groupState();
         try {
             const data=await api('calendar',{group,calendarId:g.calendarId || undefined});
@@ -269,7 +275,7 @@
             g.calendarId=data.calendar.id;g.enabled=true;save();
         }
         catch(e) {status(e.message);return;}
-        finally {busy=false;}
+        finally {setBusy(false);}
         if(currentGroup===group) {render();await sync();}
     }
     async function resolve(key,choice) {
@@ -283,7 +289,7 @@
             if(!analysis.valid) {g.excluded[key]=true;g.personal.push(pending.remote);delete g.pending[key];save();render();status('구글 일정은 유지하고 이 날짜의 근무표 동기화를 중지했습니다.');return;}
             applyLocal(key,analysis.value);remember(g,key,pending.remote,analysis.value);save();renderCalendar();syncFromCalendar();render();status('구글 변경을 웹앱에 적용했습니다.');return;
         }
-        busy=true;
+        setBusy(true);
         try {
             const remote=pending.remote, deleted=pending.kind==='deleted'||remote?.status==='cancelled';
             const id=deleted ? baseId(key)+'r'+crypto.randomUUID().replace(/-/g,'').slice(0,16) : remote.id;
@@ -291,7 +297,7 @@
             const {results}=await api('write',{group:g.group,calendarId:g.calendarId,operations:[{type:deleted?'insert':'patch',id,event:body,...(!deleted?{etag:remote.etag}:{})}]});
             if(!results[0]?.ok) throw Error(results[0]?.message||'일정을 변경하지 못했습니다. 다시 동기화하세요.');
             remember(g,key,results[0].event,value);delete g.excluded[key];save();render();status('웹앱 일정을 구글에 반영했습니다.');
-        }catch(e){status(e.message);}finally{busy=false;}
+        }catch(e){status(e.message);}finally{setBusy(false);}
     }
     async function disconnect() {
         if(busy||!auth?.connected)return;
@@ -300,7 +306,10 @@
     }
     function stop() { const g=groupState();if(g){g.enabled=false;save();render();status('자동 동기화를 중지했습니다. 구글 일정은 그대로 남습니다.');} }
     async function synchronize() {
-        if (busy || !auth?.connected) return;
+        if(busy)return;
+        if(!auth?.connected){status('먼저 Google 계정으로 로그인해 주세요.','warning');return;}
+        if(window.AccountSync && !AccountSync.ready){status('계정 데이터를 확인 중이거나 변경 확인이 필요합니다. 왼쪽 메뉴에서 계정 저장 상태를 확인해 주세요.','warning');return;}
+        if(!navigator.onLine){status('오프라인입니다. 인터넷 연결 후 다시 동기화해 주세요.','warning');return;}
         if (groupState()?.enabled) await sync();
         else await enable();
     }
@@ -351,13 +360,13 @@
         }
         const event={summary:el('google-personal-title').value.trim(),description:el('google-personal-memo').value,start,end,extendedProperties:{private:{kind:'personal'}}};
         if(!remove&&!event.summary){status('일정 제목을 입력하세요.');return;}
-        busy=true;
+        setBusy(true);
         try{
             const existing=el('google-personal-id').value;
             const {results}=await api('write',{group:g.group,calendarId:g.calendarId,operations:[{id,type:remove?'delete':existing?'patch':'insert',event,etag:el('google-personal-etag').value}]});
             if(!results[0]?.ok)throw Error(results[0]?.message||'일정을 저장하지 못했습니다.');
             g.personal=g.personal.filter(e=>e.id!==id);if(!remove)g.personal.push(results[0].event);save();el('google-personal-form').hidden=true;render();status(remove?'개인 일정을 삭제했습니다.':'개인 일정을 구글에 저장했습니다.');
-        }catch(e){status(e.message);}finally{busy=false;}
+        }catch(e){status(e.message);}finally{setBusy(false);}
     }
     async function init() {
         await refreshStatus();

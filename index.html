@@ -910,7 +910,7 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=6">
+    <link rel="stylesheet" href="./calendar-ui.css?v=7">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1290,7 +1290,8 @@
             </div>
         </div>
         <div class="drawer-section">
-            <p id="account-sync-status" class="account-status" role="status">기기에 저장 중</p>
+            <p id="account-sync-status" class="account-status sync-feedback" role="status" aria-live="polite" aria-atomic="true">기기에 저장 중</p>
+            <p class="account-hint">시급·연차·메모·근무 변경을 계정에 저장하거나 불러옵니다. 캘린더 일정 반영은 ‘캘린더 동기화’에서 시작하세요.</p>
             <div class="account-actions">
                 <button type="button" id="account-sync-now" class="sms-primary-btn" hidden>지금 동기화</button>
                 <button type="button" id="account-logout" class="sms-clear-btn" hidden>로그아웃</button>
@@ -1439,7 +1440,7 @@
                         <a href="https://github.com/wn-hue/shift_cal/blob/main/GOOGLE_CALENDAR_SETUP.md" target="_blank" rel="noopener noreferrer">설정 순서 자세히 보기</a>
                     </details>
                 </div>
-                <div id="google-sync-status" role="status" aria-live="polite"></div>
+                <div id="google-sync-status" class="sync-feedback" role="status" aria-live="polite" aria-atomic="true"></div>
                 <div id="google-sync-review"></div>
                 <div id="google-personal-form" class="card" style="margin:12px 0 0;padding:12px;" hidden>
                     <strong>개인 일정</strong>
@@ -1464,77 +1465,75 @@
 
     <!-- 모달: 근태 및 메모 변경 (반차 전/후 & 무급반차 전/후 포함) -->
     <div class="modal-overlay" id="modal-override" onclick="closeModal(event)">
-        <div class="modal-sheet" onclick="event.stopPropagation()">
-            <div class="modal-title">
-                <div>
-                    <span id="modal-date-text">2026년 9월 16일 (수)</span>
-                    <span id="modal-orig-text" style="font-size: 12px; color: var(--text-sub); font-weight: normal; margin-left: 6px;">[기본: 야간]</span>
-                </div>
-                <button style="border: none; background: none; font-size: 18px; color: #5f6368; cursor: pointer;" onclick="closeModalDirect()">✕</button>
+        <div class="modal-sheet override-sheet" role="dialog" aria-modal="true" aria-labelledby="override-title" onclick="event.stopPropagation()">
+            <div class="override-header">
+                <div><h2 id="override-title">근무 변경</h2><p id="modal-date-text"></p><span id="modal-orig-text" class="override-base"></span></div>
+                <button type="button" class="override-close" aria-label="근무 변경 닫기" onclick="closeModalDirect()">✕</button>
             </div>
-            
-            <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
-                <label style="display:block; font-size:12.5px; font-weight:700; color:#3c4043; margin-bottom:6px;">📝 일자별 메모 (스케줄러 기능)</label>
-                <textarea id="modal-memo-input" style="width:100%; min-height:78px; padding:10px; font-size:13.5px; line-height:1.5; border-radius:8px; border:1px solid var(--border); box-sizing:border-box; resize:none; background:#ffffff;" placeholder="예: 설비 점검, 연차 신청, 특근 등 메모 입력..."></textarea>
-                <button class="btn-save" style="width:100%; margin-top:8px; padding:9px 0; font-size:13px;" onclick="saveMemoDirect()">💾 메모 저장 및 닫기</button>
-            </div>
-
-            <div class="calendar-link-actions">
-                <button class="btn-reset-data" onclick="addSelectedToGoogleCalendar()">구글에 하루 추가</button>
-            </div>
-            <p class="calendar-link-copy">저장된 근무와 메모를 추가합니다. 메모 수정 중이면 먼저 저장하세요. 추가 화면에서 저장 또는 가져오기를 완료해야 반영됩니다.</p>
-            <div style="font-size:12px; font-weight:700; color:#3c4043; margin-bottom:6px;">근무 변경 옵션</div>
-            <div style="font-size:11px; color:#64748b; line-height:1.5; margin-bottom:10px;">무급 한도: 달력 월별 무급휴무 1회 또는 무급반차 2회 · 특근은 근무조와 전날 야간근무를 확인합니다.</div>
+            <section class="override-section">
+            <h3 class="override-section-title">근무 선택</h3>
+            <p class="override-help">무급 한도: 달력 월별 무급휴무 1회 또는 무급반차 2회 · 특근은 근무조와 전날 야간근무를 확인합니다.</p>
             <div class="modal-btn-grid">
                 <button class="opt-btn day-sp" onclick="setDayOverride('SPECIAL_DAY')">
-                    <span>☀️ 주간 특근</span>
+                    <span>주간 특근</span>
                     <span style="font-size:10px; opacity:0.8;">휴일 주간 10.5h</span>
                 </button>
                 <button class="opt-btn night-sp" onclick="setDayOverride('SPECIAL_NIGHT')">
-                    <span>🌙 야간 특근</span>
+                    <span>야간 특근</span>
                     <span style="font-size:10px; opacity:0.8;">휴일 야간 10.5h</span>
                 </button>
 
                 <button class="opt-btn leave" onclick="setDayOverride('LEAVE')">
-                    <span>🌴 연차</span>
+                    <span>연차</span>
                     <span style="font-size:10px; opacity:0.8;">-1일 (출근 면제)</span>
                 </button>
                 <button class="opt-btn no-ot" onclick="setDayOverride('NO_OT')">
-                    <span>⏹️ O.T 해제</span>
+                    <span>O.T 해제</span>
                     <span style="font-size:10px; opacity:0.8;">정시퇴근 (2.5h OT 제외)</span>
                 </button>
 
                 <button class="opt-btn half" onclick="setDayOverride('HALF_PRE')">
-                    <span>⏱️ 반차 (전)</span>
+                    <span>반차 (전)</span>
                     <span style="font-size:10px; opacity:0.8;">-0.5일 · 잔업 O (2.5h)</span>
                 </button>
                 <button class="opt-btn half" onclick="setDayOverride('HALF_POST')">
-                    <span>⏱️ 반차 (후)</span>
+                    <span>반차 (후)</span>
                     <span style="font-size:10px; opacity:0.8;">-0.5일 · 잔업 X (O.T해제)</span>
                 </button>
 
                 <button class="opt-btn unpaid-half" onclick="setDayOverride('UNPAID_HALF_PRE')">
-                    <span>🌗 무반 (전)</span>
+                    <span>무반 (전)</span>
                     <span style="font-size:10px; opacity:0.8;">4h 근무 · 잔업 O (2.5h)</span>
                 </button>
                 <button class="opt-btn unpaid-half" onclick="setDayOverride('UNPAID_HALF_POST')">
-                    <span>🌗 무반 (후)</span>
+                    <span>무반 (후)</span>
                     <span style="font-size:10px; opacity:0.8;">4h 근무 · 잔업 X (OT제외)</span>
                 </button>
 
                 <button class="opt-btn unpaid" onclick="setDayOverride('UNPAID_OFF')">
-                    <span>🚫 무급 휴무</span>
+                    <span>무급 휴무</span>
                     <span style="font-size:10px; opacity:0.8;">무급 결근</span>
                 </button>
                 <button class="opt-btn off" onclick="setDayOverride('FORCED_OFF')">
-                    <span>🛌 강제 휴무</span>
+                    <span>강제 휴무</span>
                     <span style="font-size:10px; opacity:0.8;">비번/휴무 처리</span>
                 </button>
 
                 <button class="opt-btn reset" onclick="setDayOverride(null)">
-                    <span>🔄 기본 스케줄로 복구</span>
+                    <span>기본 스케줄로 복구</span>
                 </button>
             </div>
+            </section>
+            <section class="override-section override-memo">
+                <label for="modal-memo-input" class="override-section-title">일자별 메모</label>
+                <textarea id="modal-memo-input" placeholder="이 날짜에 기억할 내용을 입력하세요." maxlength="16000"></textarea>
+                <button class="btn-save" onclick="saveMemoDirect()">메모 저장</button>
+            </section>
+            <section class="override-section override-google">
+                <button class="btn-reset-data" onclick="addSelectedToGoogleCalendar()">구글 캘린더에 스케줄 추가</button>
+                <p class="override-help">선택한 날짜의 현재 근무와 저장된 메모를 넣은 Google 캘린더 새 일정 화면을 엽니다. 열린 화면에서 캘린더를 선택하고 ‘저장’을 눌러야 일정이 추가됩니다.</p>
+                <p class="override-help">작성 중인 메모는 먼저 ‘메모 저장’을 눌러 주세요. 자동 동기화를 사용 중이면 별도로 추가할 필요가 없으며, 추가하면 일정이 중복될 수 있습니다.</p>
+            </section>
         </div>
     </div>
 
@@ -2731,7 +2730,7 @@
     <script src="./account-data-core.js?v=2"></script>
     <script src="./calendar-ui.js?v=2"></script>
     <script src="./settings-ui.js?v=2"></script>
-    <script src="./account-sync.js?v=5"></script>
-    <script src="./google-sync.js?v=8"></script>
+    <script src="./account-sync.js?v=6"></script>
+    <script src="./google-sync.js?v=9"></script>
 </body>
 </html>

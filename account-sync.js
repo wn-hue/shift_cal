@@ -30,7 +30,17 @@
             window.refreshAccountData();throw error;
         } finally { suppressed=false; }
     }
-    function status(message) { $('account-sync-status').textContent=message; }
+    function status(message,tone='info') {
+        const node=$('account-sync-status');node.textContent=message;node.setAttribute('data-state',tone==='info' && busy?'progress':tone);
+    }
+    function setBusy(value) {
+        busy=value;
+        const button=$('account-sync-now');button.disabled=value;button.textContent=value?'동기화 중…':'지금 동기화';button.setAttribute('aria-busy',String(value));
+        $('account-sync-status').setAttribute('aria-busy',String(value));
+    }
+    function completed(message) {
+        status(message+' · '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),'success');
+    }
     function renderAuth() {
         const connected=!!auth?.connected;
         $('account-email').textContent=connected?auth.user.email:'로그인하면 다른 기기에서도 이어서 사용할 수 있습니다.';
@@ -68,7 +78,7 @@
         status('로그아웃했습니다. 구글 계정 데이터는 보관됩니다.');
     }
     function showConflict(versions,message) {
-        pending={versions};api.ready=false;status(message);
+        pending={versions};api.ready=false;status(message,'warning');
         const choices=$('account-conflict-choices');choices.replaceChildren();
         for(const version of versions) {
             const button=document.createElement('button');button.type='button';button.className='sms-primary-btn';
@@ -80,7 +90,7 @@
     }
     async function resolve(data) {
         if(busy || !pending)return;
-        busy=true;const generation=epoch;
+        setBusy(true);const generation=epoch;
         try {
             const localAtStart=snapshot(), selected=C.normalize(data||localAtStart);
             localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(localAtStart));
@@ -96,15 +106,18 @@
             if(generation!==epoch)return;
             status(e.message);
             if(e.code==='CLOUD_CONFLICT'){pending=null;$('account-conflict-dialog').close();}
-        } finally {busy=false;if(generation===epoch && !pending)sync();}
+        } finally {setBusy(false);if(generation===epoch && !pending)sync();}
     }
     async function sync() {
-        if(busy || pending || !auth?.cloudConnected || !navigator.onLine)return;
-        busy=true;const generation=epoch;
+        if(busy || pending)return;
+        if(!auth?.cloudConnected){status('Google 계정 저장을 연결해 주세요.','warning');return;}
+        if(!navigator.onLine){status('오프라인입니다. 인터넷 연결 후 다시 동기화해 주세요.','warning');return;}
+        setBusy(true);const generation=epoch;
+        status('시급·연차·메모·근무 변경을 동기화하고 있습니다…','progress');
         try {
             const live=await request('status',null,true);
             if(generation!==epoch)return;
-            if(!live.connected || live.user.id!==auth.user.id || !live.cloudConnected){busy=false;await init();return;}
+            if(!live.connected || live.user.id!==auth.user.id || !live.cloudConnected){setBusy(false);await init();return;}
             auth=live;
             const {versions}=await request('cloud-read');
             if(generation!==epoch)return;
@@ -118,30 +131,30 @@
                 if(versions.length && C.meaningful(local) && !C.equal(local,remote)) {
                     showConflict(versions,'기기와 구글 계정의 데이터가 다릅니다. 사용할 데이터를 선택해주세요.');return;
                 }
-                if(versions.length){adopt(remote);status('구글 계정에서 불러옴');return;}
+                if(versions.length){adopt(remote);completed('구글 계정에서 불러옴');return;}
                 baseline=C.normalize({});
             }
             const merged=C.merge(baseline,local,remote);
             if(merged.conflicts.length){showConflict(versions,'같은 항목을 다른 기기에서도 변경했습니다. 사용할 데이터를 선택해주세요.');return;}
             const data=C.normalize(merged.data);
             if(!C.equal(local,data))restore(data);
-            if(C.equal(data,remote)){persistBase(remote);api.ready=true;$('account-setup-help').hidden=true;status(versions.length?'계정에 저장됨':'구글 계정 연결됨 · 변경하면 자동 저장');if(!C.equal(local,data) && window.GoogleSync)GoogleSync.groupChanged();return;}
+            if(C.equal(data,remote)){persistBase(remote);api.ready=true;$('account-setup-help').hidden=true;completed(versions.length?'계정 동기화 완료':'계정 연결 완료 · 변경하면 자동 저장');if(!C.equal(local,data) && window.GoogleSync)GoogleSync.groupChanged();return;}
             status('구글 계정에 저장 중…');
             const result=await request('cloud-write',{revision:crypto.randomUUID().replace(/-/g,''),parents,data});
             if(generation!==epoch)return;
             parents=[result.revision];persistBase(result.data);api.ready=true;
             $('account-setup-help').hidden=true;
-            status(C.equal(snapshot(),result.data)?'계정에 저장됨':'변경사항 저장 대기 중');
+            C.equal(snapshot(),result.data)?completed('계정 동기화 완료'):status('변경사항 저장 대기 중');
             if(!C.equal(local,data) && window.GoogleSync)GoogleSync.groupChanged();
         } catch(e) {
             if(generation!==epoch)return;
-            status(e.message||'동기화하지 못했습니다. 기기 데이터는 유지됩니다.');
+            status('동기화 실패 · '+(e.message||'기기 데이터는 유지됩니다.'),'error');
             $('account-setup-help').hidden=e.code!=='DRIVE_SETUP';
             if(e.status>=400 && e.status<500)api.ready=false;
             if(['RECONNECT','DRIVE_PERMISSION'].includes(e.code)){$('account-login').hidden=false;$('account-login').textContent='구글 계정 다시 연결';}
             if(e.code==='CLOUD_CONFLICT') {clearTimeout(timer);timer=setTimeout(sync,1000);}
         } finally {
-            busy=false;
+            setBusy(false);
             if(api.ready && baseline && !pending) {
                 try{if(!C.equal(snapshot(),baseline)){clearTimeout(timer);timer=setTimeout(sync,5000);}}catch(_){}
             }
