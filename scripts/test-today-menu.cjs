@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const {koreaDate, resolveDate, extractToday, SOURCE_URL} = require('../lib/today-menu.cjs');
+const {koreaDate, menuDate, resolveDate, extractToday, SOURCE_URL} = require('../lib/today-menu.cjs');
 const {downloadPdf} = require('../api/today-menu.js');
 const fixture = require('./fixtures/menu-layout.json');
 const copy = () => structuredClone(fixture);
@@ -10,6 +10,17 @@ const copy = () => structuredClone(fixture);
 async function main() {
     assert.equal(koreaDate(new Date('2026-10-02T14:59:59Z')),'2026-10-02');
     assert.equal(koreaDate(new Date('2026-10-02T15:00:00Z')),'2026-10-03');
+    for (const time of ['15:00:00','17:40:00','17:59:59.999']) {
+        const now = new Date('2026-10-02T' + time + 'Z');
+        assert.equal(menuDate(now),'2026-10-02','00:00–02:59 KST retains the previous meal day');
+        assert.equal(extractToday(copy(),now).date,'2026-10-02');
+    }
+    assert.equal(menuDate(new Date('2026-10-02T18:00:00Z')),'2026-10-03');
+    assert.equal(extractToday(copy(),new Date('2026-10-02T18:00:00Z')).date,'2026-10-03');
+    assert.equal(menuDate(new Date('2026-12-31T17:59:59Z')),'2026-12-31');
+    assert.equal(menuDate(new Date('2026-12-31T18:00:00Z')),'2027-01-01');
+    assert.equal(menuDate(new Date('2026-09-30T17:59:59Z')),'2026-09-30');
+    assert.equal(menuDate(new Date('2026-09-30T18:00:00Z')),'2026-10-01');
     assert.equal(resolveDate('1/1(금)','2026-12-31'),'2027-01-01');
     assert.equal(resolveDate('12/31(목)','2027-01-01'),'2026-12-31');
     assert.equal(resolveDate('2/30(금)','2026-02-20'),null);
@@ -70,11 +81,17 @@ async function main() {
     await ctx.TodayMenu.load(true);
     assert.equal(elements.get('today-menu-cards').children[0].children[1].children[0].textContent,'<img src=x onerror=alert(1)>','PDF text must never become HTML');
     instant=new Date('2026-10-02T15:00:00Z');
+    await ctx.TodayMenu.load();assert.equal(elements.get('today-menu-cards').children.length,4,'Midnight retains the previous meal day');
+    instant=new Date('2026-10-02T17:40:00Z');
+    await ctx.TodayMenu.load();assert.equal(elements.get('today-menu-cards').children.length,4,'02:40 KST still shows the previous meal day');
+    instant=new Date('2026-10-02T17:59:59.999Z');
+    await ctx.TodayMenu.load(true);assert.equal(elements.get('today-menu-cards').children.length,4,'Refresh before 03:00 retains the previous meal day');
+    instant=new Date('2026-10-02T18:00:00Z');
     await ctx.TodayMenu.load();assert.equal(elements.get('today-menu-cards').children.length,0,'Yesterday is cleared when browser or server date changes');
     reply={status:'not_published',date:'2026-10-03',message:'오늘 식단 미등록',meals:[]};
     await ctx.TodayMenu.load(true);assert.equal(elements.get('today-menu-empty').textContent,'오늘 식단 미등록');
     ctx.fetch=async()=>{throw new Error('Failed to fetch');};
     await ctx.TodayMenu.load(true);assert.match(elements.get('today-menu-empty').textContent,/인터넷 연결/);assert.equal(elements.get('today-menu-panel').attributes['aria-busy'],'false');
-    console.log('PASS: Today menu loading/cache/refresh, accessible status, safe text rendering, midnight clearing and offline recovery.');
+    console.log('PASS: Today menu loading/cache/refresh, accessible status, safe text rendering, 03:00 Korean meal-day rollover and offline recovery.');
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});

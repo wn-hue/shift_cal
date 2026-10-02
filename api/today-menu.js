@@ -1,7 +1,7 @@
 'use strict';
 
 const PDFParser = require('pdf2json');
-const {SOURCE_URL, extractToday, koreaDate} = require('../lib/today-menu.cjs');
+const {SOURCE_URL, extractToday, menuDate} = require('../lib/today-menu.cjs');
 const MAX_BYTES = 3 * 1024 * 1024;
 const CACHE_MS = 2 * 60 * 1000;
 let cached = null, pending = null;
@@ -60,7 +60,7 @@ async function handler(req, res) {
         return res.status(200).json({...extractToday(result.data), checkedAt:new Date(result.time).toISOString()});
     } catch (error) {
         const layout = error.message === 'MENU_LAYOUT';
-        return res.status(503).json({status:'error', date:koreaDate(), sourceUrl:SOURCE_URL, meals:[],
+        return res.status(503).json({status:'error', date:menuDate(), sourceUrl:SOURCE_URL, meals:[],
             message:layout ? '식단표 형식이 변경되어 읽지 못했어요. 원문을 확인해 주세요.' : '식단을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'});
     }
 }

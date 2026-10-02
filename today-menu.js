@@ -1,7 +1,8 @@
 (function () {
     'use strict';
     const $ = id => document.getElementById(id);
-    const today = () => new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    // Match the API's 03:00 Asia/Seoul meal-day boundary, independent of device timezone.
+    const today = () => new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(Date.now() - 3 * 60 * 60 * 1000));
     let shownDate = '', loadedAt = 0, loading = false;
 
     function dateLabel(date) {
