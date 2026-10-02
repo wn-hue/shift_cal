@@ -30,7 +30,7 @@
     async function api(action, body, get = false) {
         const response = await fetch('/api/google-calendar?action='+action, { method:get ? 'GET':'POST',credentials:'same-origin',cache:'no-store',
             headers:get ? {} : {'Content-Type':'application/json','X-Shift-CSRF':auth?.csrf || ''}, ...(get ? {} : {body:JSON.stringify(body || {})}) });
-        let data; try { data = await response.json(); } catch { throw Error('서버 연동 경로를 확인하세요. Vercel에 배포된 웹앱에서 사용해 주세요.'); }
+        let data; try { data = await response.json(); } catch { throw Error('서버 연동 경로를 확인하세요. Vercel에 배포된 앱에서 사용해 주세요.'); }
         if (!response.ok) { const error = Error(data.message || '구글 요청을 완료하지 못했습니다.'); error.code = data.error; error.status = response.status; throw error; }
         return data;
     }
@@ -63,7 +63,7 @@
         if (remote.summary === desired(key,remote.id,'BASE','').summary) type = 'BASE';
         else if (record && remote.summary === record.summary && props.override) type = props.override;
         else type = C.infer(remote.summary,getBaseShift(dateObj(key),currentGroup).type);
-        if (!type) return {valid:false,reason:'일정 제목에서 근무 종류를 확인할 수 없습니다. 근무 변경은 웹앱에서 지정해 주세요.'};
+        if (!type) return {valid:false,reason:'일정 제목에서 근무 종류를 확인할 수 없습니다. 근무 변경은 앱에서 지정해 주세요.'};
         if (!['BASE','SPECIAL_DAY','SPECIAL_NIGHT','LEAVE','NO_OT','HALF_PRE','HALF_POST','UNPAID_HALF_PRE','UNPAID_HALF_POST','UNPAID_OFF','FORCED_OFF'].includes(type)) return {valid:false,reason:'지원하지 않는 근무 변경입니다.'};
         const reason = validateDayOverride(key,type === 'BASE' ? null:type);
         if (reason) return {valid:false,reason};
@@ -133,7 +133,7 @@
             const preview=document.createElement('p'); preview.className='calendar-link-copy'; preview.textContent='구글: '+(pending.remote?.status==='cancelled' || pending.kind==='deleted' ? '삭제된 일정':pending.remote?.summary || '다시 불러오기 필요');
             row.append(heading,reason,preview);
             const actions=document.createElement('div'); actions.className='calendar-link-actions';
-            const local=document.createElement('button'); local.className='btn-reset-data'; local.textContent='웹앱 일정 사용'; local.onclick=()=>resolve(key,'local');
+            const local=document.createElement('button'); local.className='btn-reset-data'; local.textContent='앱 일정 사용'; local.onclick=()=>resolve(key,'local');
             const remote=document.createElement('button'); remote.className='btn-save';
             const canApply=pending.remote && analyzeRemote(key,pending.remote,g.records[key]).valid;
             if(pending.remote && pending.remote.status!=='cancelled' && !canApply && pending.kind!=='duplicate')reason.textContent=analyzeRemote(key,pending.remote,g.records[key]).reason;
@@ -284,10 +284,10 @@
         if(pending.kind==='duplicate') {status('구글에서 중복 일정을 정리한 뒤 다시 동기화하세요.');return;}
         if(!pending.remote && pending.kind!=='deleted') {delete g.pending[key];save();await sync();return;}
         if(choice==='remote') {
-            if(pending.kind==='deleted' || pending.remote?.status==='cancelled') {g.excluded[key]=true;delete g.pending[key];save();render();status('구글 삭제를 유지했습니다. 웹앱 근태는 보존됩니다.');return;}
+            if(pending.kind==='deleted' || pending.remote?.status==='cancelled') {g.excluded[key]=true;delete g.pending[key];save();render();status('구글 삭제를 유지했습니다. 앱 근태는 보존됩니다.');return;}
             const analysis=analyzeRemote(key,pending.remote,g.records[key]);
             if(!analysis.valid) {g.excluded[key]=true;g.personal.push(pending.remote);delete g.pending[key];save();render();status('구글 일정은 유지하고 이 날짜의 근무표 동기화를 중지했습니다.');return;}
-            applyLocal(key,analysis.value);remember(g,key,pending.remote,analysis.value);save();renderCalendar();syncFromCalendar();render();status('구글 변경을 웹앱에 적용했습니다.');return;
+            applyLocal(key,analysis.value);remember(g,key,pending.remote,analysis.value);save();renderCalendar();syncFromCalendar();render();status('구글 변경을 앱에 적용했습니다.');return;
         }
         setBusy(true);
         try {
@@ -296,7 +296,7 @@
             const value=localValue(key), body=desired(key,id);
             const {results}=await api('write',{group:g.group,calendarId:g.calendarId,operations:[{type:deleted?'insert':'patch',id,event:body,...(!deleted?{etag:remote.etag}:{})}]});
             if(!results[0]?.ok) throw Error(results[0]?.message||'일정을 변경하지 못했습니다. 다시 동기화하세요.');
-            remember(g,key,results[0].event,value);delete g.excluded[key];save();render();status('웹앱 일정을 구글에 반영했습니다.');
+            remember(g,key,results[0].event,value);delete g.excluded[key];save();render();status('앱 일정을 구글에 반영했습니다.');
         }catch(e){status(e.message);}finally{setBusy(false);}
     }
     async function disconnect() {

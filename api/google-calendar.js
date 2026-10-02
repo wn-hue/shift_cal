@@ -166,7 +166,7 @@ async function writes(token, calendarId, group, operations) {
                     return {id,ok:true,event};
                 }
                 if (op.type === 'delete') {
-                    if (old.extendedProperties?.private?.kind === 'shift' || /^sc2[a-c]\d{8}/.test(id)) throw new ApiError(400,'SHIFT_DELETE','근무 일정 삭제는 구글 캘린더에서 진행하고 웹앱에서 확인하세요.');
+                    if (old.extendedProperties?.private?.kind === 'shift' || /^sc2[a-c]\d{8}/.test(id)) throw new ApiError(400,'SHIFT_DELETE','근무 일정 삭제는 구글 캘린더에서 진행하고 앱에서 확인하세요.');
                     await google(token, `${path}/${encodeURIComponent(id)}`, 'DELETE', undefined, op.etag);
                     return {id,ok:true,event:{id,status:'cancelled'}};
                 }
@@ -222,7 +222,7 @@ async function handler(req, res) {
         }
         if (req.method !== 'POST') throw new ApiError(405,'METHOD','지원하지 않는 요청 방식입니다.');
         if (!session) throw new ApiError(401,'RECONNECT','구글 계정을 연결해 주세요.');
-        if (req.headers.origin !== cfg.origin || req.headers['x-shift-csrf'] !== session.csrf) throw new ApiError(403,'CSRF','요청을 확인하지 못했습니다. 웹앱을 새로고침하세요.');
+        if (req.headers.origin !== cfg.origin || req.headers['x-shift-csrf'] !== session.csrf) throw new ApiError(403,'CSRF','요청을 확인하지 못했습니다. 앱을 새로고침하세요.');
         if (action === 'logout') { setCookie(res,SESSION,'',0); return json(res,200,{ok:true}); }
         let body = req.body;
         if (typeof body === 'string') { if (body.length > 250000) throw new ApiError(413,'BODY','요청이 너무 큽니다.'); try { body = JSON.parse(body); } catch { throw new ApiError(400,'JSON','요청 형식을 확인하세요.'); } }

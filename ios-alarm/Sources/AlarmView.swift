@@ -59,7 +59,7 @@ struct AlarmView: View {
                         Text("현재 예약 마지막 날짜: \(Self.formatter.string(from: last.date))").font(.footnote)
                     }
                 } header: { Text("예약 상태") } footer: {
-                    Text("앞으로 30일의 근무를 미리 예약합니다. 예약된 알람은 앱을 닫아도 울립니다. 웹앱·Google에서 근무를 바꾼 뒤에는 이 앱을 열어 갱신 완료를 확인하세요. 계속 사용하려면 예약 마지막 날짜 전에 앱을 다시 열어 주세요. \(model.backgroundNote)")
+                    Text("앞으로 30일의 근무를 미리 예약합니다. 예약된 알람은 앱을 닫아도 울립니다. 앱·Google에서 근무를 바꾼 뒤에는 이 앱을 열어 갱신 완료를 확인하세요. 계속 사용하려면 예약 마지막 날짜 전에 앱을 다시 열어 주세요. \(model.backgroundNote)")
                 }
 
                 Section("다가오는 알람") {
@@ -73,7 +73,7 @@ struct AlarmView: View {
                 }
 
                 Section {
-                    Link("근무표 웹앱 열기", destination: URL(string: "https://h-lyart-ten.vercel.app/")!)
+                    Link("근무표 앱 열기", destination: URL(string: "https://h-lyart-ten.vercel.app/")!)
                     Text("iPhone 설정 → 앱 → 캘린더 → 캘린더 계정에서 Google 계정을 추가하고 캘린더를 켜 주세요. Shift_cal이 없으면 Google 캘린더의 iPhone 동기화 목록도 확인하세요.")
                         .font(.footnote).foregroundStyle(.secondary)
                     Link("Google 캘린더 동기화 목록", destination: URL(string: "https://calendar.google.com/calendar/syncselect")!)

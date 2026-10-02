@@ -13,7 +13,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#ffffff">
     <meta name="application-name" content="Shift_calander">
-    <meta name="description" content="Shift_calander는 교대 근무표, 예상 급여와 연차를 관리하고 Google Calendar 및 본인 Google 계정과 동기화하는 개인용 웹앱입니다.">
+    <meta name="description" content="Shift_calander는 교대 근무표, 예상 급여와 연차를 관리하고 Google Calendar 및 본인 Google 계정과 동기화하는 개인용 앱입니다.">
 
     <link rel="apple-touch-icon" sizes="512x512" href="./apple-touch-icon.png?v=1">
     <link rel="icon" type="image/png" href="./apple-touch-icon.png?v=1">
@@ -1450,7 +1450,7 @@
             <div class="card" style="padding:12px;">
                 <strong id="google-sync-badge" style="font-size:14px;">구글 캘린더 동기화</strong>
                 <p id="google-sync-user" class="calendar-link-copy">동기화 상태 확인 중…</p>
-                <p class="calendar-link-copy">구글 전용 캘린더에 근무표·메모·개인 일정을 저장합니다. 웹앱 변경은 저장 후 반영하고, 구글·아이폰에서 바꾼 내용은 웹앱을 열면 가져옵니다. 열린 동안에는 약 30초마다 확인합니다.</p>
+                <p class="calendar-link-copy">구글 전용 캘린더에 근무표·메모·개인 일정을 저장합니다. 앱 변경은 저장 후 반영하고, 구글·아이폰에서 바꾼 내용은 앱을 열면 가져옵니다. 열린 동안에는 약 30초마다 확인합니다.</p>
                 <a id="google-sync-login" class="account-login" href="/api/google-calendar?action=login" aria-label="Google 계정으로 캘린더 연결" aria-describedby="calendar-permission-notice" hidden><img class="google-login-image" src="./google-signin.png" width="180" height="40" alt="" aria-hidden="true"></a>
                 <p id="calendar-permission-notice" class="account-hint">계정 확인, 캘린더 목록 조회와 앱이 만든 캘린더의 일정 관리 권한을 요청합니다. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p>
                 <div id="google-sync-controls" hidden>
@@ -1468,7 +1468,7 @@
                     <details class="calendar-link-help"><summary>관리자 최초 설정</summary>
                         <p>Google Cloud에서 Calendar API를 켜고 웹 애플리케이션 OAuth 클라이언트를 만드세요. 개인 테스트에서는 본인 이메일을 테스트 사용자로 등록합니다.</p>
                         <p>승인된 리디렉션 URI: <code id="google-sync-redirect" style="display:block;overflow-wrap:anywhere;"></code></p>
-                        <p>Vercel 프로젝트에 GOOGLE_CALENDAR_CLIENT_ID, GOOGLE_CALENDAR_CLIENT_SECRET, GOOGLE_CALENDAR_SESSION_SECRET(32자 이상 무작위 값), APP_URL(웹앱의 https 주소)을 등록하고 재배포하세요. 비밀 키는 코드·채팅에 붙여 넣지 마세요.</p>
+                        <p>Vercel 프로젝트에 GOOGLE_CALENDAR_CLIENT_ID, GOOGLE_CALENDAR_CLIENT_SECRET, GOOGLE_CALENDAR_SESSION_SECRET(32자 이상 무작위 값), APP_URL(앱의 https 주소)을 등록하고 재배포하세요. 비밀 키는 코드·채팅에 붙여 넣지 마세요.</p>
                         <a href="https://github.com/wn-hue/shift_cal/blob/main/GOOGLE_CALENDAR_SETUP.md" target="_blank" rel="noopener noreferrer">설정 순서 자세히 보기</a>
                     </details>
                 </div>
@@ -1486,8 +1486,8 @@
                     <button id="google-personal-delete" class="btn-reset-data" onclick="GoogleSync.savePersonal(true)" hidden>개인 일정 삭제</button>
                 </div>
                 <details class="calendar-link-help"><summary>아이폰 기본 캘린더에서 사용하기</summary>
-                    <p>아이폰 설정 → 앱 → 캘린더 → 캘린더 계정 → 계정 추가 → Google에서 같은 계정을 연결하고 캘린더를 켜세요. 기본 캘린더 앱에서 <b>앱 전용 A/B/C조 캘린더</b>를 선택합니다. 일정을 만들 때도 이 캘린더를 저장 위치로 선택해야 웹앱에 표시됩니다. 별도 iCloud 캘린더의 일정은 포함되지 않습니다.</p>
-                    <p>근무 종류를 구글에서 바꿀 때는 제목을 연차, 반차(전), 반차(후), 주간 특근, 야간 특근 등으로 지정하세요. 근태 변경·동시 수정·근무표 삭제는 웹앱에서 확인한 뒤 적용합니다. 단순 메모 변경과 개인 일정은 자동으로 가져옵니다.</p>
+                    <p>아이폰 설정 → 앱 → 캘린더 → 캘린더 계정 → 계정 추가 → Google에서 같은 계정을 연결하고 캘린더를 켜세요. 기본 캘린더 앱에서 <b>앱 전용 A/B/C조 캘린더</b>를 선택합니다. 일정을 만들 때도 이 캘린더를 저장 위치로 선택해야 앱에 표시됩니다. 별도 iCloud 캘린더의 일정은 포함되지 않습니다.</p>
+                    <p>근무 종류를 구글에서 바꿀 때는 제목을 연차, 반차(전), 반차(후), 주간 특근, 야간 특근 등으로 지정하세요. 근태 변경·동시 수정·근무표 삭제는 앱에서 확인한 뒤 적용합니다. 단순 메모 변경과 개인 일정은 자동으로 가져옵니다.</p>
                     <p>동기화를 누르면 현재 보고 있는 달의 근무표를 반영합니다. 이후 다른 달을 열면 그 달도 자동으로 동기화합니다. 개인 일정은 Google 또는 아이폰 기본 캘린더의 앱 전용 캘린더에서 추가할 수 있습니다.</p>
                 </details>
             </div>
@@ -2771,6 +2771,6 @@
     <script src="./today-menu.js?v=3"></script>
     <script src="./settings-ui.js?v=5"></script>
     <script src="./account-sync.js?v=9"></script>
-    <script src="./google-sync.js?v=9"></script>
+    <script src="./google-sync.js?v=10"></script>
 </body>
 </html>
