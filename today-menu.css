@@ -22,8 +22,7 @@ body[data-view="menu"] #first-use-guide { display:none; }
 .meal-extras .meal-items { font-size:12px; }
 .meal-extras .meal-items li:first-child { font-weight:400; font-size:12px; margin:0; }
 .meal-empty { border:1px dashed #ddd; border-radius:20px; padding:36px 22px; text-align:center; color:#737373; line-height:1.8; font-size:14px; }
-.meal-footer { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:20px; color:#999; font-size:11px; }
-.meal-footer a { color:#737373; text-underline-offset:3px; }
+.meal-footer { display:flex; align-items:center; justify-content:flex-end; gap:12px; margin-top:20px; color:#999; font-size:11px; }
 .meal-note { margin:14px 0 0; color:#999; font-size:11px; line-height:1.7; }
 .meal-refresh:focus-visible, .meal-extras summary:focus-visible { outline:2px solid #555; outline-offset:3px; }
 @media (max-width:560px) {

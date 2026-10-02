@@ -106,7 +106,7 @@
             if (date !== today() || data.date !== today()) throw new Error('날짜가 변경되었어요. 새로고침해 주세요.');
             if (validMenu(data,date)) {render(data); saveCache(data);}
             else if (data.status === 'not_published') empty(data.message);
-            else throw new Error('오늘 식단을 확인하지 못했어요. 원문을 확인해 주세요.');
+            else throw new Error('오늘 식단을 확인하지 못했어요. 잠시 후 다시 시도해 주세요.');
             shownDate = date;
             loadedAt = Date.now();
         } catch (error) {

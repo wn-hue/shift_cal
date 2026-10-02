@@ -61,7 +61,7 @@ async function handler(req, res) {
     } catch (error) {
         const layout = error.message === 'MENU_LAYOUT';
         return res.status(503).json({status:'error', date:menuDate(), sourceUrl:SOURCE_URL, meals:[],
-            message:layout ? '식단표 형식이 변경되어 읽지 못했어요. 원문을 확인해 주세요.' : '식단을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'});
+            message:layout ? '식단표 형식이 변경되어 읽지 못했어요. 잠시 후 다시 시도해 주세요.' : '식단을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'});
     }
 }
 
