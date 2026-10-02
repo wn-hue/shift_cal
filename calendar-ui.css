@@ -399,7 +399,5 @@ body[data-view="all"] #first-use-guide { display:none; }
 .all-shortcut-icon.sky svg { stroke-width:2.5; }
 @media(max-width:380px) { .reference-header .month-title-btn { font-size:26px; } .header-calendar-actions { gap:0; } .header-calendar-actions .icon-button { width:36px; } }
 
-/* Keep the original month typography centered within a balanced header. */
-body[data-view="calendar"] .reference-header { min-height:88px; padding:12px 0; align-items:center; }
-body[data-view="calendar"] .header-title-area { display:flex; align-items:center; }
-body[data-view="calendar"] .header-calendar-actions { align-items:center; }
+/* Lower only the month label without changing the header or calendar geometry. */
+body[data-view="calendar"] .reference-header .month-title-btn { transform:translateY(6px); }
