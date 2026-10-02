@@ -38,4 +38,17 @@ const visual={getAnimations:()=>[{cancel:()=>cancelled++}],animate:(frames,optio
 ctx.matchMedia=()=>({matches:reducedMotion});
 ctx.ShiftUI.tap({querySelector:()=>visual});assert.equal(animations,1);assert.equal(cancelled,1);
 reducedMotion=true;ctx.ShiftUI.tap({querySelector:()=>visual});assert.equal(animations,1,'Reduced motion must keep navigation functional without the tap animation');
+
+// Direct group buttons use the same persisted group and group-specific edits as the calendar.
+const stored=new Map([['shift_overrides_A',JSON.stringify({'2026-10-01':'LEAVE'})],['shift_overrides_B',JSON.stringify({'2026-10-02':'NO_OT'})]]);
+ctx.localStorage={getItem:k=>stored.get(k)||null,setItem:(k,v)=>stored.set(k,v)};
+let saved=0,calendarSync=0,selected=null;
+ctx.AccountSync={changed:()=>saved++};ctx.GoogleSync={groupChanged:()=>calendarSync++,viewChanged:()=>{}};ctx.SettingsUI={syncGroup:g=>selected=g};
+for(const group of ['A','B','C']) {
+    run(`setGroup('${group}')`);
+    assert.equal(run('currentGroup'),group);assert.equal(stored.get('shift_active_group'),group);
+    assert.equal(elements.get('calendar-group-label').textContent,group+'조');assert.equal(selected,group);
+    assert.equal(run('JSON.stringify(overrides)'),stored.get('shift_overrides_'+group)||'{}');
+}
+run("setGroup('invalid')");assert.equal(run('currentGroup'),'C');assert.equal(saved,3);assert.equal(calendarSync,3);
 console.log('PASS: calendar month/week layout, leap month, short shift labels, holiday types, accessible day actions, safe memo text and view-aware header.');

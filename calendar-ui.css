@@ -261,3 +261,11 @@ input[type="number"], input[readonly], .num, .stat-value, .hero-amount, .sub-val
 @media(hover:hover) { #modal-override .opt-btn:hover, #modal-override .override-google .btn-reset-data:hover { background:#f0f0f0; border-color:#ccc; } .override-close:hover { background:#e9e9e9; } #modal-override .btn-save:hover { background:#444; } }
 @media(max-width:380px) { #modal-override .override-sheet { padding:18px; } #modal-override .opt-btn { padding:10px; } }
 @media(prefers-reduced-motion:reduce) { #account-sync-now[aria-busy="true"]::before, #google-sync-enable[aria-busy="true"]::before { animation:none; } }
+
+/* Direct buttons avoid reliance on a native select picker inside the account dialog. */
+.group-choice-list { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+.group-choice-list button { min-width:0; min-height:48px; border:1px solid #e2e2e2; border-radius:12px; background:#fafafa; color:#616161; font:inherit; font-size:15px; font-weight:600; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.group-choice-list button[aria-pressed="true"] { background:#303030; border-color:#303030; color:#fff; }
+.group-choice-list button:focus-visible { outline:2px solid #666; outline-offset:3px; }
+.group-choice-list button:active { transform:scale(.98); }
+.group-selection-status { min-height:18px; margin:10px 0 0; color:#737373; font-size:12px; line-height:1.6; }

@@ -1,6 +1,6 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const html=fs.readFileSync(require.resolve('../index.html'),'utf8'),els=new Map();
-function el(){return {open:false,hidden:false,textContent:'',handlers:{},showModal(){this.open=true},close(){this.open=false},focus(){this.focused=true},scrollIntoView(){this.scrolled=true},addEventListener(k,f){this.handlers[k]=f}};}
+function el(){return {open:false,hidden:false,textContent:'',attributes:{},setAttribute(k,v){this.attributes[k]=v},handlers:{},showModal(){this.open=true},close(){this.open=false},focus(){this.focused=true},scrollIntoView(){this.scrolled=true},addEventListener(k,f){this.handlers[k]=f}};}
 for(const m of html.matchAll(/\bid="([^"]+)"/g))els.set(m[1],el());
 const buttons=[el(),el(),el()];els.get('first-use-guide').querySelectorAll=()=>buttons;
 els.get('menu-leave-settings').querySelector=()=>buttons[1];
@@ -18,4 +18,12 @@ for(const view of ['payroll','leave']){const section=html.slice(html.indexOf('<s
 const dialog=html.slice(html.indexOf('<dialog id="leave-settings-dialog"'));assert.ok(dialog.slice(0,dialog.indexOf('</dialog>')).includes('id="input-hire-date"'));
 console.log('PASS: incomplete/new-user guidance, imported complete settings, fractional annual leave, separate menu settings and single SMS entry point.');
 
-api.refresh({...state,group:null,hireDate:'2020-01-01',baseHourly:11050,ordinaryHourly:14482});assert.equal(els.get('first-use-guide').hidden,false);assert.equal(buttons[0].hidden,false);assert.match(els.get('first-use-copy').textContent,/교대조/);api.openMenu('group');assert.equal(els.get('group-select').focused,true);
+api.refresh({...state,group:null,hireDate:'2020-01-01',baseHourly:11050,ordinaryHourly:14482});assert.equal(els.get('first-use-guide').hidden,false);assert.equal(buttons[0].hidden,false);assert.match(els.get('first-use-copy').textContent,/교대조/);api.openMenu('group');assert.equal(els.get('group-choice-A').focused,true);
+for(const group of ['A','B','C']) {
+    api.refresh({...state,group});
+    assert.equal(els.get('group-select').value,group);
+    assert.match(els.get('group-selection-status').textContent,new RegExp(group+'조 근무표 적용됨'));
+    for(const other of ['A','B','C']) assert.equal(els.get('group-choice-'+other).attributes['aria-pressed'],String(group===other));
+    api.openMenu('group');assert.equal(els.get('group-choice-'+group).focused,true);
+}
+api.syncGroup(null);for(const group of ['A','B','C']) assert.equal(els.get('group-choice-'+group).attributes['aria-pressed'],'false');
