@@ -3,7 +3,7 @@
     const C=AccountDataCore, $=id=>document.getElementById(id);
     const ownerKey='shift_account_owner_v1', basePrefix='shift_account_base_v1_', cachePrefix='shift_account_cache_v1_';
     let auth=null, baseline=null, parents=[], busy=false, suppressed=false, timer=null, pending=null, epoch=0;
-    const api=window.AccountSync={ready:false,changed,sessionChanged:init,disconnected};
+    const api=window.AccountSync={ready:false,changed,sessionChanged:init,disconnected,prepareLogout};
     function openManager() {
         if(!$('account-management-dialog').open)$('account-management-dialog').showModal();
     }
@@ -157,17 +157,27 @@
             renderAuth();baseline=null;
             if(!auth.connected){api.ready=true;status('기기에 저장 중');return;}
             const owner=localStorage.getItem(ownerKey);
-            if(owner && owner!==auth.user.id) {
+            const cached=JSON.parse(localStorage.getItem(cachePrefix+auth.user.id)||'null');
+            const saved=JSON.parse(localStorage.getItem(basePrefix+auth.user.id)||'null');
+            const local=snapshot();
+            const switching=owner && owner!==auth.user.id;
+            // Logout clears the visible working data, not the account data.
+            // Restore this identity's cache before comparing with its cloud baseline.
+            if(switching) {
                 if(window.PayrollEstimate?.clearDraft)PayrollEstimate.clearDraft();
-                localStorage.setItem(cachePrefix+owner,JSON.stringify(snapshot()));
-                const cached=JSON.parse(localStorage.getItem(cachePrefix+auth.user.id)||'null');
-                restore(cached||C.normalize({}));
+                localStorage.setItem(cachePrefix+owner,JSON.stringify(local));
+                restore(cached||saved||C.normalize({}));
+            } else if(!C.meaningful(local) && cached && C.meaningful(C.normalize(cached))) {
+                restore(cached);
+            } else if(!owner && !C.meaningful(local) && saved) {
+                restore(saved);
             }
             localStorage.setItem(ownerKey,auth.user.id);
-            const saved=JSON.parse(localStorage.getItem(basePrefix+auth.user.id)||'null');
-            if(saved)baseline=C.normalize(saved);
+            // Guest edits made after logout are a new branch. Do not treat them
+            // as deletions of the previous signed-in account's data.
+            if(saved && (owner || !C.meaningful(local)))baseline=C.normalize(saved);
             if(!auth.cloudConnected){api.ready=true;status('캘린더 연결됨 · 계정 저장 권한을 추가해주세요.');return;}
-            status('구글 계정 데이터 확인 중…');if(busy)timer=setTimeout(sync,1000);else await sync();
+            status('구글 계정 데이터 확인 중…');if(busy)timer=setTimeout(sync,1000);else {await sync();if(api.ready && window.GoogleSync)GoogleSync.groupChanged();}
         } catch(e){api.ready=false;status(e.message||'구글 계정을 확인하지 못했습니다. 기기 저장은 계속 사용할 수 있습니다.');}
     }
     $('account-menu-button').addEventListener('click',openManager);
@@ -181,10 +191,20 @@
     $('account-sync-now').addEventListener('click',()=>{if(pending)showConflict(pending.versions,'사용할 데이터를 선택해주세요.');else sync();});
     $('account-use-local').addEventListener('click',()=>resolve(null));
     $('account-conflict-close').addEventListener('click',()=>$('account-conflict-dialog').close());
+    async function prepareLogout() {
+        if(!auth?.connected)return;
+        if(busy)throw Error('계정 저장 중입니다. 완료 후 다시 로그아웃해 주세요.');
+        localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(snapshot()));
+        if(!auth.cloudConnected)return;
+        if(!navigator.onLine)throw Error('오프라인 변경사항이 있습니다. 인터넷 연결 후 저장을 완료하고 로그아웃해 주세요.');
+        await sync();
+        if(pending || !api.ready || !baseline || !C.equal(snapshot(),baseline))
+            throw Error('계정 저장을 완료하지 못해 로그아웃을 보류했습니다. 저장 상태를 확인해 주세요.');
+    }
     $('account-logout').addEventListener('click',async()=>{
         if(busy)return;
         try {
-            if(auth?.connected)localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(snapshot()));
+            await prepareLogout();
             await request('logout');disconnected();
             if(window.GoogleSync)GoogleSync.refreshStatus();
         }catch(e){status(e.message);}

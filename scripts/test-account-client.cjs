@@ -82,6 +82,28 @@ async function run(){
     const priorA=clone(server.A);a.user='B';await a.click('account-sync-now');
     assert.deepEqual(a.snapshot().shift_day_memos,{'2026-10-09':'other account'});assert.deepEqual(server.A,priorA);
     await a.click('account-logout');assert.equal(a.snapshot().shift_day_memos,null);assert.equal(a.saved.get('shift_account_owner_v1'),undefined);assert.equal(server.B.length,1);
+    // Re-login must not interpret the cleared logout screen as a cloud deletion.
+    const payroll=C.normalize({shift_salary_config_master:{hireDate:'2020-01-01',baseHourly:11050,ordinaryHourly:14482},shift_active_group:'C',shift_day_memos:{'2026-10-12':'keep memo'},shift_overrides_C:{'2026-10-12':'LEAVE'}});
+    const reServer={A:[version(payroll)]},re=device(reServer);await re.start();
+    const beforeLogout=clone(reServer.A);await re.click('account-logout');
+    re.connected=true;re.cloudConnected=true;await re.ctx.AccountSync.sessionChanged();await flush();
+    assert.deepEqual(re.snapshot(),payroll,'Same-account re-login restores wages, memos and attendance');
+    assert.deepEqual(reServer.A,beforeLogout,'Logout screen must never create a deletion revision');
+    // Immediate logout flushes edits still waiting in the debounce timer.
+    re.change('shift_day_memos',{'2026-10-12':'not yet uploaded'});await re.click('account-logout');
+    assert.equal(reServer.A[0].data.shift_day_memos['2026-10-12'],'not yet uploaded');
+    re.connected=true;re.cloudConnected=true;await re.ctx.AccountSync.sessionChanged();await flush();
+    assert.equal(re.snapshot().shift_day_memos['2026-10-12'],'not yet uploaded');
+    // An older affected client can recover the intact per-account device cache.
+    const recovery=device({A:[version(blank)]},{local:{shift_account_owner_v1:'A',shift_account_base_v1_A:JSON.stringify(blank),shift_account_cache_v1_A:JSON.stringify(payroll)}});
+    await recovery.start();assert.deepEqual(recovery.snapshot(),payroll);
+    // Guest edits after logout require an explicit choice instead of silently
+    // deleting the stored account's wages and attendance fields.
+    const guestServer={A:[version(payroll)]},guest=device(guestServer,{local:{shift_day_memos:JSON.stringify({'2026-10-13':'guest note'}),shift_account_base_v1_A:JSON.stringify(payroll),shift_account_cache_v1_A:JSON.stringify(payroll)}});
+    await guest.start();assert.equal(guest.element('account-conflict-dialog').open,true);assert.deepEqual(guestServer.A[0].data,payroll);
+    // Offline logout keeps the working copy and login so it can still be saved.
+    recovery.ctx.navigator.onLine=false;await recovery.click('account-logout');
+    assert.equal(recovery.connected,true);assert.deepEqual(recovery.snapshot(),payroll);
     // Missing Drive configuration does not loop or discard the existing device copy.
     const c=device({}, {local:{shift_day_memos:JSON.stringify({'2026-10-11':'retained'})}});c.disabled=true;await c.start();
     assert.equal(c.ctx.AccountSync.ready,false);assert.equal(c.element('account-setup-help').hidden,false);assert.equal(c.timers.size,0);

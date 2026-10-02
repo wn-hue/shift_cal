@@ -295,7 +295,7 @@
     }
     async function disconnect() {
         if(busy||!auth?.connected)return;
-        try {await api('logout');auth.connected=false;state=null;if(window.AccountSync)AccountSync.disconnected();render();status('이 기기의 연결을 해제했습니다. 구글에 저장된 일정은 유지됩니다.');}
+        try {if(window.AccountSync?.prepareLogout)await AccountSync.prepareLogout();await api('logout');auth.connected=false;state=null;if(window.AccountSync)AccountSync.disconnected();render();status('이 기기의 연결을 해제했습니다. 구글에 저장된 일정은 유지됩니다.');}
         catch(e){status(e.message);}
     }
     function stop() { const g=groupState();if(g){g.enabled=false;save();render();status('자동 동기화를 중지했습니다. 구글 일정은 그대로 남습니다.');} }
