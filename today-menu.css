@@ -1,0 +1,40 @@
+/* Today's meals follow the same restrained card style as payroll and leave. */
+body[data-view="menu"] #first-use-guide { display:none; }
+.meal-date-card { padding:24px; margin-bottom:18px; border:1px solid #e8e8e8; border-radius:22px; background:#f7f7f7; }
+.meal-eyebrow { margin:0 0 10px; font-size:12px; color:#737373; }
+.meal-date-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.meal-date-row h1 { margin:0; font-size:25px; color:#303030; letter-spacing:-.7px; }
+.meal-refresh { flex-shrink:0; min-height:40px; padding:9px 14px; border:1px solid #dedede; border-radius:20px; background:#fff; color:#444; font:inherit; font-size:12px; cursor:pointer; }
+.meal-refresh:disabled { color:#777; cursor:wait; }
+.meal-refresh[aria-busy="true"]::before { content:""; display:inline-block; width:10px; height:10px; margin-right:5px; border:1.5px solid #ddd; border-top-color:#444; border-radius:50%; animation:meal-spin .8s linear infinite; }
+@keyframes meal-spin { to {transform:rotate(360deg);} }
+.meal-status { margin:12px 0 0; font-size:12px; color:#737373; line-height:1.6; }
+.meal-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.meal-card { padding:22px; background:#fff; border:1px solid #e5e5e5; border-radius:20px; min-width:0; }
+.meal-card-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; }
+.meal-card h2 { margin:0; font-size:19px; color:#303030; }
+.meal-category { font-size:11px; color:#737373; padding:5px 8px; border-radius:8px; background:#f5f5f5; }
+.meal-items { padding:0; margin:0; list-style:none; color:#555; font-size:14px; line-height:1.8; overflow-wrap:anywhere; }
+.meal-items li:first-child { color:#303030; font-weight:650; font-size:16px; margin-bottom:4px; }
+.meal-extras { margin-top:18px; padding-top:14px; border-top:1px solid #eee; }
+.meal-extras summary { color:#777; font-size:12px; cursor:pointer; line-height:1.5; }
+.meal-extras h3 { margin:16px 0 7px; font-size:12px; color:#555; }
+.meal-extras .meal-items { font-size:12px; }
+.meal-extras .meal-items li:first-child { font-weight:400; font-size:12px; margin:0; }
+.meal-empty { border:1px dashed #ddd; border-radius:20px; padding:36px 22px; text-align:center; color:#737373; line-height:1.8; font-size:14px; }
+.meal-footer { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:20px; color:#999; font-size:11px; }
+.meal-footer a { color:#737373; text-underline-offset:3px; }
+.meal-note { margin:14px 0 0; color:#999; font-size:11px; line-height:1.7; }
+.meal-refresh:focus-visible, .meal-extras summary:focus-visible { outline:2px solid #555; outline-offset:3px; }
+@media (max-width:560px) {
+    .meal-grid { grid-template-columns:1fr; gap:14px; }
+    .meal-date-card { padding:20px; }
+    .meal-card { padding:20px; }
+    .meal-date-row h1 { font-size:23px; }
+}
+@media (max-width:420px) {
+    .bottom-nav { padding-left:6px; padding-right:6px; }
+    .nav-visual { min-width:0; padding:7px 7px; font-size:10px; white-space:nowrap; }
+    .nav-item svg { width:23px; height:23px; }
+}
+@media (prefers-reduced-motion:reduce) { .meal-refresh[aria-busy="true"]::before { animation:none; } }

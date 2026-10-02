@@ -911,6 +911,7 @@
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
     <link rel="stylesheet" href="./calendar-ui.css?v=10">
+    <link rel="stylesheet" href="./today-menu.css?v=1">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1188,6 +1189,23 @@
             </div>
 
         </section>
+
+    <section id="view-menu" class="view-page today-menu-page" aria-label="오늘 식단">
+        <div class="meal-date-card">
+            <p class="meal-eyebrow">코리아써키트 · 오늘 식단</p>
+            <div class="meal-date-row">
+                <h1 id="today-menu-date">오늘</h1>
+                <button type="button" class="meal-refresh" id="today-menu-refresh">새로고침</button>
+            </div>
+            <p id="today-menu-status" class="meal-status" role="status" aria-live="polite">오늘의 조식·중식·석식·야식을 확인하세요.</p>
+        </div>
+        <div id="today-menu-panel" aria-busy="false">
+            <div id="today-menu-cards" class="meal-grid"></div>
+            <p id="today-menu-empty" class="meal-empty" hidden></p>
+        </div>
+        <div class="meal-footer"><a href="https://hr.kcg.co.kr/App_Images/weekmenu.pdf" target="_blank" rel="noopener noreferrer">식단표 원문 보기 ↗</a><span id="today-menu-checked"></span></div>
+        <p id="today-menu-note" class="meal-note" hidden>식당 사정에 따라 메뉴가 변경될 수 있어요. 알레르기·원산지는 식당 게시물을 확인해 주세요.</p>
+    </section>
     </div>
 
     <!-- 하단 네비게이션 바 -->
@@ -1208,6 +1226,12 @@
             <span class="nav-visual">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="nav-outline"><path d="M7 3v4M17 3v4"/><rect x="3" y="5" width="18" height="16" rx="3"/><path d="m8 14 3 3 5-6"/></g><g class="nav-filled" stroke="none" fill="currentColor"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4" stroke="currentColor" stroke-width="2"/><path d="m8 14 3 3 5-6" stroke="#fff" stroke-width="2"/></g></svg>
                 <span>연차 & 설정</span>
+            </span>
+        </button>
+        <button type="button" class="nav-item" id="bnav-menu" aria-controls="view-menu" aria-current="false" onclick="switchView('menu', this)">
+            <span class="nav-visual">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="nav-outline"><path d="M4 3v5a2 2 0 0 0 4 0V3M6 3v18M20 3v18M20 3c-4 1-5 5-5 9h5"/></g><g class="nav-filled"><path d="M4 3v5a2 2 0 0 0 4 0V3M6 3v18M20 3v18" stroke-width="2.4"/><path d="M20 3c-4 1-5 5-5 9h5" fill="currentColor"/></g></svg>
+                <span>오늘 식단</span>
             </span>
         </button>
     </nav>
@@ -2699,6 +2723,9 @@
             } else if (viewName === 'leave') {
                 document.getElementById('bnav-leave').classList.add('active');
                 updateLeaveStats();
+            } else if (viewName === 'menu') {
+                document.getElementById('bnav-menu').classList.add('active');
+                if (window.TodayMenu) TodayMenu.load();
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -2730,7 +2757,8 @@
     <script src="./calendar-integration.js?v=3"></script>
     <script src="./google-sync-core.js?v=5"></script>
     <script src="./account-data-core.js?v=2"></script>
-    <script src="./calendar-ui.js?v=2"></script>
+    <script src="./calendar-ui.js?v=3"></script>
+    <script src="./today-menu.js?v=1"></script>
     <script src="./settings-ui.js?v=4"></script>
     <script src="./account-sync.js?v=7"></script>
     <script src="./google-sync.js?v=9"></script>
