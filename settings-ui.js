@@ -2,13 +2,11 @@
     'use strict';
     const $ = id => document.getElementById(id);
     function openMenu(section) {
-        const menu = $('account-management-dialog');
-        if (!menu.open) menu.showModal();
+        switchView('all');
         $('menu-' + section + '-settings').scrollIntoView({block:'nearest'});
         (section === 'group' ? $('group-select') : section === 'salary' ? $('payroll-sms-open') : $('menu-leave-settings').querySelector('button')).focus();
     }
     function openLeave() {
-        $('account-management-dialog').close();
         updateLeaveStats();
         $('leave-settings-dialog').showModal();
     }
@@ -26,11 +24,11 @@
         const missing = [needsGroup && '교대조', needsHire && '입사년월일', needsPay && '급여 문자'].filter(Boolean);
         $('first-use-guide').hidden = missing.length === 0;
         $('first-use-copy').textContent = missing.length
-            ? '왼쪽 상단 ☰ 메뉴에서 ' + missing.join('·') + '를 설정해 주세요.'
+            ? '하단 전체 메뉴에서 ' + missing.join('·') + '를 설정해 주세요.'
             : '내 근무표와 연차·예상 급여를 확인할 수 있어요.';
         const buttons = $('first-use-guide').querySelectorAll('button');
         buttons[0].hidden = !needsGroup; buttons[1].hidden = !needsHire; buttons[2].hidden = !needsPay;
     }
-    $('leave-settings-dialog').addEventListener('close', () => $('account-menu-button').focus());
+    $('leave-settings-dialog').addEventListener('close', () => $('menu-leave-settings').querySelector('button').focus());
     window.SettingsUI = {openMenu,openLeave,refresh,syncGroup};
 })();

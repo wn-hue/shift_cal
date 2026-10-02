@@ -5,7 +5,7 @@
     let auth=null, baseline=null, parents=[], busy=false, suppressed=false, timer=null, pending=null, epoch=0;
     const api=window.AccountSync={ready:false,changed,sessionChanged:init,disconnected,prepareLogout};
     function openManager() {
-        if(!$('account-management-dialog').open)$('account-management-dialog').showModal();
+        switchView('all');
     }
     function snapshot() {
         return C.normalize(Object.fromEntries(C.keys.map(k=>[k,k==='shift_active_group'?localStorage.getItem(k):JSON.parse(localStorage.getItem(k)||'null')])));
@@ -193,21 +193,6 @@
             status('구글 계정 데이터 확인 중…');if(busy)timer=setTimeout(sync,1000);else {await sync();if(api.ready && window.GoogleSync)GoogleSync.groupChanged();}
         } catch(e){api.ready=false;status(e.message||'구글 계정을 확인하지 못했습니다. 기기 저장은 계속 사용할 수 있습니다.');}
     }
-    $('account-menu-button').addEventListener('click',openManager);
-    $('account-management-close').addEventListener('click',()=>$('account-management-dialog').close());
-    const drawer=$('account-management-dialog');
-    let backdropPressed=false;
-    function outsideDrawer(event) {
-        const box=drawer.getBoundingClientRect();
-        return event.target===drawer && (event.clientX<box.left || event.clientX>box.right || event.clientY<box.top || event.clientY>box.bottom);
-    }
-    drawer.addEventListener('pointerdown',event=>{backdropPressed=outsideDrawer(event);});
-    drawer.addEventListener('pointercancel',()=>{backdropPressed=false;});
-    drawer.addEventListener('click',event=>{
-        const close=backdropPressed && outsideDrawer(event);
-        backdropPressed=false;
-        if(close)drawer.close();
-    });
     $('account-sync-now').addEventListener('click',()=>{if(pending)showConflict(pending.versions,'사용할 데이터를 선택해주세요.');else sync();});
     $('account-use-local').addEventListener('click',()=>resolve(null));
     $('account-conflict-close').addEventListener('click',()=>$('account-conflict-dialog').close());

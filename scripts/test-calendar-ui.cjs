@@ -24,17 +24,17 @@ run("currentCalDate=new Date(2026,4,1);renderCalendar()");assert.equal(grid.chil
 run("currentCalDate=new Date(2028,1,1);renderCalendar()");assert.equal(grid.children.filter(e=>e.attributes.role==='button').length,29);
 ctx.ShiftUI.showView('leave');assert.equal(ctx.document.body.dataset.view,'leave');assert.equal(elements.get('cal-month-title-btn').hidden,true);assert.equal(elements.get('header-calendar-actions').hidden,true);
 ctx.ShiftUI.showView('calendar');assert.equal(elements.get('cal-month-title-btn').hidden,false);assert.equal(elements.get('header-view-title').hidden,true);
-ctx.document.querySelectorAll=selector=>(selector==='.nav-item'?['bnav-cal','bnav-pay','bnav-leave','bnav-menu']:['view-calendar','view-payroll','view-leave','view-menu']).map(id=>elements.get(id));
+ctx.document.querySelectorAll=selector=>(selector==='.nav-item'?['bnav-cal','bnav-pay','bnav-leave','bnav-menu','account-menu-button']:['view-calendar','view-payroll','view-leave','view-menu','view-all']).map(id=>elements.get(id));
 ctx.scrollTo=()=>{};run('syncFromCalendar=()=>{}');
 let menuLoads=0;ctx.TodayMenu={load:()=>menuLoads++};
-const navIds=['bnav-cal','bnav-pay','bnav-leave','bnav-menu'];
-for(const [view,id] of [['calendar','bnav-cal'],['payroll','bnav-pay'],['leave','bnav-leave'],['menu','bnav-menu']]){
+const navIds=['bnav-cal','bnav-pay','bnav-leave','bnav-menu','account-menu-button'];
+for(const [view,id] of [['calendar','bnav-cal'],['payroll','bnav-pay'],['leave','bnav-leave'],['menu','bnav-menu'],['all','account-menu-button']]){
     run(`switchView('${view}')`);
     assert.ok(elements.get('view-'+view).classList.contains('active'));
     assert.deepEqual(navIds.filter(id=>elements.get(id).classList.contains('active')),[id]);
     assert.deepEqual(navIds.filter(id=>elements.get(id).attributes['aria-current']==='page'),[id]);
 }
-assert.equal(menuLoads,1);assert.equal(elements.get('header-view-title').textContent,'오늘 식단');
+assert.equal(menuLoads,1);assert.equal(elements.get('header-view-title').textContent,'전체');
 let animations=0,cancelled=0,reducedMotion=false;
 const visual={getAnimations:()=>[{cancel:()=>cancelled++}],animate:(frames,options)=>{animations++;assert.equal(frames.at(-1).backgroundColor,'transparent');assert.ok(options.duration<500)}};
 ctx.matchMedia=()=>({matches:reducedMotion});
@@ -54,3 +54,7 @@ for(const group of ['A','B','C']) {
 }
 run("setGroup('invalid')");assert.equal(run('currentGroup'),'C');assert.equal(saved,3);assert.equal(calendarSync,3);
 console.log('PASS: calendar month/week layout, leap month, short shift labels, holiday types, accessible day actions, safe memo text and view-aware header.');
+
+assert.ok(!html.slice(html.indexOf('<header'),html.indexOf('</header>')).includes('account-menu-button'));
+assert.match(html, /id="account-menu-button"[^>]+aria-controls="view-all"/);
+assert.ok(!html.includes('<dialog id="account-management-dialog"'));

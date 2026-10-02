@@ -93,7 +93,7 @@ assert.equal(/inp-retro-check|disp-retro-status|toggleRetroCheck|근속수당 �
 for(const id of ['input-base-hourly','input-ordinary-hourly','input-duty-pay','input-seniority-pay'])assert.match(html.match(new RegExp('<input[^>]+id="'+id+'"[^>]*>'))[0],/\breadonly\b/);
 assert.equal(/calendar-export|내 변경사항 포함해서 가져오기|하루 일정\(ICS\)|input-base-hours/.test(html),false);
 assert.ok(!html.slice(html.indexOf('<section id="view-leave"'),html.indexOf('</section>',html.indexOf('<section id="view-leave"'))).includes('account-email'));
-assert.ok(html.includes('aria-controls="account-management-dialog"'));
+assert.ok(html.includes('aria-controls="view-all"'));
 vm.runInContext(fs.readFileSync(require.resolve('../calendar-integration.js'),'utf8'),ctx);
 ctx.document.getElementById=id=>elements.get(id)||null;
 evaluate('openCalendarIntegration();closeCalendarIntegration()');

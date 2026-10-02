@@ -1,4 +1,4 @@
-/* A monthly calendar, compact personal settings and a left-hand account drawer. */
+/* Monthly calendar and personal settings. */
 :root { --primary:#187fcc; --primary-dark:#1466a4; --cal-line:#e9edf1; }
 .container { max-width:760px; }
 .reference-header { border:0; box-shadow:none; border-radius:0; min-height:60px; margin-bottom:8px; padding:4px 0; gap:8px; }
@@ -349,3 +349,42 @@ body { background:#fff; }
 .account-drawer .group-select { font-size:16px; min-height:48px; border-radius:12px; padding:12px 32px 12px 14px; border:1px solid #dfdfdf; background:#f7f7f7; color:#303030; }
 .account-drawer .group-select-wrapper::after { right:14px; color:#737373; font-size:12px; }
 .group-selection-status { margin:10px 0 0; color:#737373; font-size:12px; line-height:1.6; }
+
+/* The fifth navigation page keeps settings available without covering other tabs. */
+body[data-view="all"] #first-use-guide { display:none; }
+.all-page { padding:8px 4px 30px; }
+.all-page-title { font-size:23px; color:#202124; letter-spacing:-.6px; margin:4px 0 22px; }
+.all-menu-content h2 { font-size:18px; color:#343a40; margin:0 0 16px; }
+.all-account-card { border-radius:24px; background:#f7f8fa; padding:22px; margin-bottom:30px; }
+.all-account-card .drawer-profile { padding-bottom:15px; }
+.all-account-card .drawer-avatar { width:48px; height:48px; border-radius:16px; background:#e9edf3; color:#566373; }
+.all-account-card .account-login { font-size:20px; font-weight:750; color:#30343b; text-decoration:none; }
+.all-account-card .account-email { color:#7b818a; font-size:12px; overflow-wrap:anywhere; margin:5px 0 0; }
+.all-account-details .account-status { font-size:13px; margin:0 0 8px; }
+.all-account-details .account-hint { font-size:12px; line-height:1.6; color:#7b818a; margin:8px 0; }
+.all-account-details .account-hint a { color:#626e80; }
+.all-account-details .account-actions { margin:12px 0; }
+.all-shortcuts, .all-settings-section { margin-bottom:32px; }
+.all-shortcut-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.all-shortcut { width:100%; display:flex; flex-direction:column; align-items:center; gap:10px; padding:4px 0; border:0; background:none; cursor:pointer; color:#41464e; }
+.all-shortcut-icon { width:60px; height:60px; border-radius:20px; display:flex; align-items:center; justify-content:center; }
+.all-shortcut-icon svg { width:28px; height:28px; }
+.all-shortcut-icon.mint { background:#e1f3e9; color:#418868; }
+.all-shortcut-icon.lavender { background:#eeebfb; color:#7964b0; }
+.all-shortcut-icon.sky { background:#e5effd; color:#5685c6; }
+.all-shortcut strong { font-size:13px; font-weight:650; white-space:nowrap; }
+.all-shortcut-caption { font-size:11px; color:#8a9099; text-align:center; }
+.all-settings-card { padding:20px; background:#f7f8fa; border-radius:20px; }
+.all-company { font-size:14px; color:#737b86; margin:0 0 14px; }
+.all-settings-card .drawer-section-label { margin-bottom:8px; color:#41464e; font-weight:650; font-size:15px; }
+.all-settings-card .group-select-wrapper { display:flex; width:100%; }
+.all-settings-card .group-select { width:100%; min-height:48px; font-size:16px; border-radius:12px; background:#fff; padding:12px 36px 12px 14px; border:1px solid #e4e7ec; }
+.all-settings-card .group-selection-status { margin:10px 0 0; font-size:12px; color:#7b818a; }
+.all-info-list { border-top:1px solid #f0f1f3; }
+.all-info-list a { display:flex; align-items:center; justify-content:space-between; min-height:54px; font-size:14px; color:#4b525c; text-decoration:none; border-bottom:1px solid #f0f1f3; }
+.all-info-list a > :last-child { color:#a4a9b1; font-size:23px; }
+.all-brand { font-size:12px; color:#a2a7ae; margin:22px 0 0; }
+.all-shortcut:focus-visible, .all-info-list a:focus-visible { outline:2px solid #7a8a9e; outline-offset:4px; border-radius:10px; }
+.bottom-nav .nav-item { min-width:0; flex:1; }
+.bottom-nav .nav-visual { min-width:0; padding:7px 3px; white-space:nowrap; font-size:11px; }
+@media(max-width:420px) { .bottom-nav .nav-visual { font-size:10px; } .all-shortcut-grid { gap:6px; } }

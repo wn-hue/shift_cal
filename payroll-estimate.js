@@ -24,10 +24,10 @@
     const text = document.getElementById('payroll-sms-text'), bonusText = document.getElementById('payroll-bonus-sms-text');
     const status = document.getElementById('payroll-sms-status'), preview = document.getElementById('payroll-sms-preview');
     const apply = document.getElementById('payroll-sms-apply'), dialog = document.getElementById('payroll-sms-dialog');
-    api.open = () => { const menu=document.getElementById('account-management-dialog');if(menu?.open)menu.close();dialog.showModal(); text.focus(); };
+    api.open = () => { dialog.showModal(); text.focus(); };
     document.getElementById('payroll-sms-open').addEventListener('click', api.open);
     document.getElementById('payroll-sms-close').addEventListener('click', () => dialog.close());
-    dialog.addEventListener('close', () => { clearDraft();document.getElementById('account-menu-button')?.focus(); });
+    dialog.addEventListener('close', () => { clearDraft();document.getElementById('payroll-sms-open')?.focus(); });
     const labels = {baseHourly:'기본시급', ordinaryHourly:'통상시급', dutyPay:'직책수당', seniorityPay:'근속수당'};
     const fmt = value => value.toLocaleString('ko-KR') + ' 원';
     let parts = {regular:0,bonus:0,support:0}, profile = null, bonusProfile = null;

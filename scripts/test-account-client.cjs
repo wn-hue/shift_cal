@@ -8,7 +8,7 @@ function device(server,{local={},user='A',connected=true,cloudConnected=true}={}
     const saved=new Map(Object.entries(local)),elements=new Map(),events={},timers=new Map();let timerId=0;
     function element(id){if(!elements.has(id))elements.set(id,{textContent:'',hidden:false,open:false,attributes:{},setAttribute(k,v){this.attributes[k]=v},handlers:{},children:[],addEventListener(k,f){this.handlers[k]=f;},replaceChildren(){this.children=[];},append(x){this.children.push(x);},close(){this.open=false;},showModal(){this.open=true;}});return elements.get(id);}
     const d={user,connected,cloudConnected,disabled:false,beforeWrite:null,calls:[],saved,element};
-    const ctx={AccountDataCore:C,navigator:{onLine:true},crypto,URLSearchParams,Date,console,location:{search:''},switchView:()=>{},
+    const ctx={AccountDataCore:C,navigator:{onLine:true},crypto,URLSearchParams,Date,console,location:{search:''},switchView:v=>{d.view=v;},
         localStorage:{getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(k,String(v)),removeItem:k=>saved.delete(k)},
         document:{hidden:false,getElementById:element,createElement:()=>element('new'+Math.random()),addEventListener:(k,f)=>events[k]=f},
         addEventListener:(k,f)=>events[k]=f,
@@ -40,22 +40,8 @@ function device(server,{local={},user='A',connected=true,cloudConnected=true}={}
 async function run(){
     const server={A:[version(memo({'2026-10-01':'original'}))],B:[version(memo({'2026-10-09':'other account'}))]};
     const a=device(server),b=device(server);await a.start();await b.start();
-    assert.equal(a.element('account-management-dialog').open,false);
-    await a.click('account-menu-button');assert.equal(a.element('account-management-dialog').open,true);
-    const drawer=a.element('account-management-dialog');drawer.getBoundingClientRect=()=>({left:0,right:320,top:0,bottom:800});
-    drawer.handlers.click({target:drawer,clientX:30,clientY:60});assert.equal(drawer.open,true);
-    // Native select releases or synthetic clicks must not dismiss the drawer.
-    drawer.handlers.click({target:drawer,clientX:0,clientY:0});assert.equal(drawer.open,true);
-    drawer.handlers.pointerdown({target:a.element('group-select'),clientX:30,clientY:300});
-    drawer.handlers.click({target:drawer,clientX:400,clientY:60});assert.equal(drawer.open,true);
-    drawer.handlers.pointerdown({target:drawer,clientX:400,clientY:60});
-    drawer.handlers.pointercancel();drawer.handlers.click({target:drawer,clientX:400,clientY:60});assert.equal(drawer.open,true);
-    drawer.handlers.pointerdown({target:drawer,clientX:400,clientY:60});
-    drawer.handlers.click({target:drawer,clientX:400,clientY:60});assert.equal(drawer.open,false);
-    await a.click('account-menu-button');
-    await a.click('account-management-close');assert.equal(a.element('account-management-dialog').open,false);
     const callback=device({});callback.ctx.location.search='?cloud=connected';await callback.start();
-    assert.equal(callback.element('account-management-dialog').open,true,'OAuth return opens account management');
+    assert.equal(callback.view,'all','OAuth return opens the account page');
     assert.equal(a.snapshot().shift_day_memos['2026-10-01'],'original');
     a.change('shift_day_memos',{'2026-10-01':'original','2026-10-02':'a edit'});await a.tick();
     b.change('shift_day_memos',{'2026-10-01':'original','2026-10-03':'b edit'});await b.tick();
