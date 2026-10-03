@@ -5,7 +5,7 @@
     const webOrigin = 'https://h-lyart-ten.vercel.app';
     const originalFetch = window.fetch.bind(window);
     window.fetch = function (input, options) {
-        const url = new URL(typeof input === 'string' ? input : input.url, location.href);
+        const url = new URL(input instanceof URL ? input.href : typeof input === 'string' ? input : input.url, location.href);
         if (url.origin === location.origin && url.pathname === '/api/google-calendar') {
             const status = !url.searchParams.get('action') || url.searchParams.get('action') === 'status';
             return Promise.resolve(new Response(JSON.stringify(status
@@ -14,19 +14,40 @@
                 { status: status ? 200 : 409, headers: { 'Content-Type': 'application/json' } }));
         }
         if (url.origin === location.origin && url.pathname === '/api/today-menu') {
-            return window.Capacitor.Plugins.CapacitorHttp.get({ url: webOrigin + url.pathname })
-                .then(result => new Response(typeof result.data === 'string' ? result.data : JSON.stringify(result.data),
-                    { status: result.status, headers: { 'Content-Type': 'application/json' } }));
+            const signal = options?.signal ?? input.signal;
+            return new Promise((resolve, reject) => {
+                let timer;
+                const finish = (callback, value) => {
+                    clearTimeout(timer);
+                    signal?.removeEventListener('abort', abort);
+                    callback(value);
+                };
+                const abort = () => finish(reject, signal.reason ?? new DOMException('Aborted', 'AbortError'));
+                if (signal?.aborted) { abort(); return; }
+                signal?.addEventListener('abort', abort, { once: true });
+                timer = setTimeout(() => finish(reject, new DOMException('Timed out', 'TimeoutError')), 45000);
+                Promise.resolve().then(() => {
+                    if (signal?.aborted) throw signal.reason;
+                    return window.Capacitor.Plugins.CapacitorHttp.get({
+                        url: webOrigin + url.pathname, connectTimeout: 15000, readTimeout: 45000
+                    });
+                }).then(result => {
+                    const response = new Response(typeof result.data === 'string' ? result.data : JSON.stringify(result.data),
+                        { status: result.status, headers: { 'Content-Type': 'application/json' } });
+                    finish(resolve, response);
+                }).catch(() => finish(reject, new TypeError('Failed to fetch')));
+            });
         }
         return originalFetch(input, options);
     };
     document.addEventListener('click', function (event) {
-        const link = event.target.closest('a[href]');
+        const link = event.target?.closest?.('a[href]');
         if (!link) return;
         const url = new URL(link.href, location.href);
-        if (url.pathname === '/api/google-calendar') {
+        if (url.origin === location.origin && url.pathname === '/api/google-calendar' && url.searchParams.get('action') === 'login') {
             event.preventDefault();
-            window.Capacitor.Plugins.Browser.open({ url: webOrigin + '/#all' });
+            Promise.resolve().then(() => window.Capacitor.Plugins.Browser.open({ url: webOrigin + '/#all' }))
+                .catch(() => window.alert('Google 로그인 화면을 열지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.'));
         }
     });
     document.addEventListener('DOMContentLoaded', function () {

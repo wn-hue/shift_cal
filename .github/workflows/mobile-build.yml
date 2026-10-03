@@ -2,7 +2,7 @@ name: Mobile preview builds
 on:
   workflow_dispatch:
   pull_request:
-    paths: ['android/**', 'ios/**', '*.html', '*.js', '*.css', '*.png', 'package*.json', 'capacitor.config.json', 'scripts/prepare-web.mjs', '.github/workflows/mobile-build.yml']
+    paths: ['android/**', 'ios/**', '*.html', '*.js', '*.css', '*.png', 'package*.json', 'capacitor.config.json', 'scripts/**', '.github/workflows/mobile-build.yml']
 permissions:
   contents: read
 jobs:
