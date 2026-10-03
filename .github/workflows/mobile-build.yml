@@ -1,0 +1,51 @@
+name: Mobile preview builds
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: ['android/**', 'ios/**', '*.html', '*.js', '*.css', '*.png', 'package*.json', 'capacitor.config.json', 'scripts/prepare-web.mjs', '.github/workflows/mobile-build.yml']
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:mobile
+      - run: npm run sync
+      - run: chmod +x android/gradlew && cd android && ./gradlew assembleDebug bundleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shift-cal-android-preview
+          path: |
+            android/app/build/outputs/apk/debug/*.apk
+            android/app/build/outputs/bundle/release/*.aab
+  ios:
+    runs-on: macos-26
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run sync
+      - run: xcodebuild -project ios/App/App.xcodeproj -scheme App -destination 'generic/platform=iOS Simulator' -derivedDataPath work/ios-build CODE_SIGNING_ALLOWED=NO build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shift-cal-ios-simulator
+          path: work/ios-build/Build/Products/Debug-iphonesimulator/App.app
