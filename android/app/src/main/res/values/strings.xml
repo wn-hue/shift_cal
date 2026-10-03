@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Shift_calander</string>
+    <string name="title_activity_main">Shift_calander</string>
+    <string name="package_name">com.wnhue.shiftcal</string>
+    <string name="custom_url_scheme">com.wnhue.shiftcal</string>
+</resources>

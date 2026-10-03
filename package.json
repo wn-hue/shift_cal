@@ -6,9 +6,21 @@
     "node": "24.x"
   },
   "scripts": {
-    "test": "node scripts/test-calendars.cjs && node scripts/test-calendar-ui.cjs && node scripts/test-google-sync.cjs && node scripts/test-payroll-estimate.cjs && node scripts/test-payroll-sms.cjs && node scripts/test-payroll-ui.cjs && node scripts/test-account-data.cjs && node scripts/test-account-client.cjs && node scripts/test-settings-ui.cjs && node scripts/test-today-menu.cjs"
+    "test": "node scripts/test-calendars.cjs && node scripts/test-calendar-ui.cjs && node scripts/test-google-sync.cjs && node scripts/test-payroll-estimate.cjs && node scripts/test-payroll-sms.cjs && node scripts/test-payroll-ui.cjs && node scripts/test-account-data.cjs && node scripts/test-account-client.cjs && node scripts/test-settings-ui.cjs && node scripts/test-today-menu.cjs",
+    "prepare:web": "node scripts/prepare-web.mjs",
+    "sync": "node scripts/prepare-web.mjs && cap sync",
+    "android": "npm run sync && cap open android",
+    "ios": "npm run sync && cap open ios",
+    "test:mobile": "node scripts/prepare-web.mjs && node scripts/test-native-bridge.cjs"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/browser": "^8.0.5",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/ios": "^8.5.2",
     "pdf2json": "4.1.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.4.3"
   }
 }
