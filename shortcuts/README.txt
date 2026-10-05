@@ -20,3 +20,6 @@ Mac에서 서명하는 명령(Apple 도구 필요)
 shortcuts sign --mode anyone --input Shift_calander_C_unsigned.shortcut --output Shift_calander_C_signed.shortcut
 
 이 파일은 설치 및 실행 검증 전의 구성 파일입니다. 기기·iOS 버전에 따라 알람 동작 재선택이나 수정이 필요할 수 있습니다.
+
+2026-10-05 서명 시도 결과
+GitHub macOS 26 실행 환경에서 XML·바이너리 형식 모두 Apple shortcuts sign을 실행했지만, 두 시도 모두 'In order to do this, you must be signed into iCloud.' 오류로 실패했습니다. 서명된 파일은 생성되지 않았습니다. 실제 iCloud 로그인이 된 Mac에서의 서명과 아이폰 실기 검증이 남아 있습니다. 자동 서명 워크플로는 제거했습니다.
