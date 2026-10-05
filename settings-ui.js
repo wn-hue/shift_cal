@@ -14,6 +14,8 @@
         const selected = ['A','B','C'].includes(group) ? group : '';
         $('group-select').value = selected;
         $('group-selection-status').textContent = selected ? selected + '조 근무표 적용됨 · 자동 저장' : '교대조를 선택해 주세요.';
+        const alarmGuide = $('iphone-alarm-guide-link');
+        if (alarmGuide) alarmGuide.setAttribute('href', './iphone-alarms.html' + (selected ? '?group=' + selected : ''));
     }
     function refresh({group,hireDate,baseHourly,ordinaryHourly,year,total,used,remain}) {
         syncGroup(group);
