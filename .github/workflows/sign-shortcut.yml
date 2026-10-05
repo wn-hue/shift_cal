@@ -1,0 +1,45 @@
+name: Sign iPhone work alarm shortcut
+on:
+  push:
+    branches: [main]
+    paths: ['shortcuts/**', '.github/workflows/sign-shortcut.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sign:
+    runs-on: macos-26
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate plist and sign with Apple Shortcuts
+        run: |
+          python3 - <<'PY'
+          import pathlib, plistlib, subprocess
+          source = pathlib.Path('shortcuts/Shift_calander_C_unsigned.shortcut')
+          workflow = plistlib.loads(source.read_bytes())
+          assert len(workflow['WFWorkflowImportQuestions']) == 2
+          output = pathlib.Path('shortcuts/Shift_calander_C_signed.shortcut')
+          for fmt in [plistlib.FMT_XML, plistlib.FMT_BINARY]:
+              candidate = pathlib.Path('shortcuts/signing-input.shortcut')
+              candidate.write_bytes(plistlib.dumps(workflow, fmt=fmt, sort_keys=False))
+              try:
+                  result = subprocess.run(['/usr/bin/shortcuts', 'sign', '--mode', 'anyone', '--input', str(candidate.resolve()), '--output', str(output.resolve())], timeout=90, text=True, capture_output=True)
+              except subprocess.TimeoutExpired:
+                  print('Apple Shortcuts signing timed out for', fmt, flush=True)
+                  continue
+              print(result.stdout, result.stderr, flush=True)
+              if result.returncode == 0 and output.exists() and output.stat().st_size > 0:
+                  assert output.read_bytes() != candidate.read_bytes(), 'Output is still unsigned'
+                  print('Signed artifact created:', output.name, output.stat().st_size, flush=True)
+                  break
+          else:
+              raise SystemExit('Apple Shortcuts signing was not available on this runner. No signed artifact created.')
+          PY
+      - name: Upload signed shortcut
+        uses: actions/upload-artifact@v4
+        with:
+          name: Shift_calander-C-signed-shortcut
+          path: shortcuts/Shift_calander_C_signed.shortcut
+          if-no-files-found: error
+          retention-days: 30
