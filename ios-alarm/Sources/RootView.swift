@@ -201,7 +201,8 @@ struct SettingsView: View {
                 }
                 Section("앱 정보") {
                     Text("Shift_cal 1.0 · iOS 26 이상")
-                    NavigationLink("개인정보 처리 안내") { PrivacyView() }
+                    NavigationLink("도움말 및 문의") { SupportView() }
+                    NavigationLink("개인정보 처리방침") { PrivacyView() }
                     Link("기존 서비스 이용약관",destination:URL(string:"https://h-lyart-ten.vercel.app/terms.html")!)
                     Text("알람은 앞으로 30일을 미리 예약합니다. 예약 마지막 날짜 전에 앱을 다시 열어 주세요. 근무 변경 후 예약 목록을 확인하세요.").font(.footnote).foregroundStyle(.secondary)
                 }
@@ -231,14 +232,47 @@ struct SettingsView: View {
     }
 }
 
+struct PolicySection: Decodable { let title: String; let body: String }
+struct AppPolicy: Decodable {
+    let email: String
+    let effectiveDate: String
+    let privacy: [PolicySection]
+    let support: [PolicySection]
+    static let shared: AppPolicy = {
+        guard let url = Bundle.main.url(forResource: "AppPolicy", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let policy = try? JSONDecoder().decode(AppPolicy.self, from: data) else {
+            fatalError("Bundled AppPolicy.json is missing or invalid")
+        }
+        return policy
+    }()
+}
+struct SupportView: View {
+    var body: some View {
+        List {
+            Section("지원 연락처") {
+                Text(AppPolicy.shared.email).textSelection(.enabled)
+                Link("메일로 문의하기", destination: URL(string: "mailto:" + AppPolicy.shared.email)!)
+                Text("메일 앱이 열립니다. 내용을 확인한 뒤 직접 보내 주세요.").font(.footnote)
+            }
+            ForEach(AppPolicy.shared.support, id: \.title) { item in
+                Section(item.title) { Text(item.body) }
+            }
+            NavigationLink("개인정보 처리방침") { PrivacyView() }
+            Link("공개 지원 페이지", destination: URL(string: "https://h-lyart-ten.vercel.app/ios-support.html")!)
+        }.navigationTitle("도움말 및 문의").navigationBarTitleDisplayMode(.inline)
+    }
+}
 struct PrivacyView: View {
     var body: some View {
         List {
-            Section("아이폰에 저장하는 정보") { Text("선택한 교대조, 근무 변경, 메모, 알람 예약 정보를 앱 저장 공간에 보관합니다. 앱 삭제 시 삭제됩니다. iCloud 기기 백업 설정에 따라 기기 백업에 포함될 수 있습니다.") }
-            Section("사용하는 권한") { Text("알람을 켤 때 AlarmKit 권한을 요청합니다. iPhone 캘린더를 근무표 출처로 선택한 경우에만 캘린더 전체 읽기 권한을 요청하며, 선택한 캘린더만 읽습니다. 일정은 수정하지 않습니다.") }
-            Section("외부 전송") { Text("앱은 근무표·메모·캘린더 데이터를 서버에 보내지 않으며 광고 및 추적 SDK를 사용하지 않습니다. 내보내기·백업 공유는 사용자가 선택한 대상에 파일을 전달합니다. Safari에서 여는 기존 웹 서비스에는 그 서비스의 개인정보 처리방침이 적용됩니다.") }
-            Section("데이터 관리") { Text("설정에서 백업 파일을 내보내거나 복원할 수 있습니다. 알람을 끄면 이 앱이 예약한 알람을 취소합니다. 앱에는 회원 가입과 계정 생성 기능이 없습니다.") }
-            Link("기존 웹 서비스 개인정보 처리방침",destination:URL(string:"https://h-lyart-ten.vercel.app/privacy.html")!)
-        }.navigationTitle("개인정보 처리 안내").navigationBarTitleDisplayMode(.inline)
+            ForEach(AppPolicy.shared.privacy, id: \.title) { item in
+                Section(item.title) { Text(item.body) }
+            }
+            Link("공개 iOS 개인정보 처리방침", destination: URL(string: "https://h-lyart-ten.vercel.app/ios-privacy.html")!)
+            Link("Google 개인정보처리방침", destination: URL(string: "https://policies.google.com/privacy")!)
+            Link("Vercel 개인정보처리방침", destination: URL(string: "https://vercel.com/legal/privacy-policy")!)
+            Link("기존 웹 서비스 개인정보 처리방침", destination: URL(string: "https://h-lyart-ten.vercel.app/privacy.html")!)
+        }.navigationTitle("개인정보 처리방침").navigationBarTitleDisplayMode(.inline)
     }
 }

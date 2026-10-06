@@ -24,7 +24,9 @@
 - [ ] Xcode → Settings → Accounts에서 개발자 계정 준비
 - [ ] Signing & Capabilities에서 배포팀과 Bundle ID 선택
 - [ ] 서명된 Release archive 생성 및 Organizer Validate
-- [ ] 지원 연락처/URL 및 공개 네이티브 개인정보 정책 확정
+- [x] 지원 URL·iOS 개인정보 처리방침 작성 및 앱 내 연결
+- [ ] 운영자가 shiftcalander7@gmail.com 수신·답변 확인 및 문의 종료 후 90일 이내 삭제 운영
+- [ ] App Store Connect 개인정보 항목: 이메일 주소·이름·고객 지원, 앱 기능 목적, 사용자 연결, 추적 없음 확인
 - [ ] App Store 메타데이터·스크린샷·연령 등급 검토
 
 현재 맥의 코드 서명 인증서는 0개이며 연결된 실제 iPhone은 확인되지 않았습니다. 제공된 서명 없는 archive는 직접 설치/업로드할 수 없습니다. TestFlight 업로드와 App Store 심사 제출은 아직 하지 않았습니다.
