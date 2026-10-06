@@ -4,61 +4,58 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>아이폰 근무 알람 · Shift_calander</title>
-  <meta name="description" content="아이폰 단축어로 오늘의 근무를 확인하고 시계 앱의 주간·야간 알람을 켜고 끄는 설정 안내입니다.">
+  <meta name="description" content="A조·B조·C조 근무에 맞춰 시계 알람을 켜고 끄는 아이폰 단축어를 내려받으세요.">
   <link rel="icon" href="./apple-touch-icon.png">
-  <link rel="stylesheet" href="./iphone-alarms.css?v=1">
-  <script src="./iphone-alarms.js?v=1" defer></script>
+  <link rel="stylesheet" href="./iphone-alarms.css?v=2">
+  <script src="./iphone-alarms.js?v=2" defer></script>
 </head>
 <body>
   <header><a class="back" href="./#all" aria-label="전체 메뉴로 돌아가기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></a><span>Shift_calander</span></header>
   <main>
-    <p class="eyebrow">아이폰 · 단축어</p><h1>근무에 맞춰<br>시계 알람 켜기</h1>
-    <p class="intro">오늘의 근무를 확인해 주간은 06:30, 야간은 18:30에 울리도록 설정해요. 특근도 같은 시간에 적용됩니다.</p>
-    <aside>아이폰에서 아래 설정을 한 번 등록해야 합니다. 이 페이지를 열거나 Google에 로그인하는 것만으로 알람이 설정되지는 않아요.</aside>
-    <div class="group"><label for="alarm-group">내 교대조</label><select id="alarm-group"><option value="">선택해 주세요</option><option value="A">A조</option><option value="B">B조</option><option value="C">C조</option></select></div>
-    <p id="group-notice" class="muted">앱에서 사용하는 교대조를 선택하면 아래 일정 조건을 확인할 수 있어요.</p>
-    <section><span class="step">01</span><h2>아이폰 캘린더 연결</h2>
-      <p>앱에서 캘린더 동기화를 먼저 실행하세요. 아이폰 설정 → 앱 → 캘린더 → 캘린더 계정에서 같은 Google 계정을 추가하고 캘린더를 켭니다.</p>
-      <p>아이폰 캘린더 앱에서 <strong data-calendar>내 조의 Shift_calander 캘린더</strong>를 선택하고 오늘의 근무가 보이는지 확인하세요. Google 캘린더 앱에만 보이면 단축어에서 찾지 못할 수 있어요.</p>
-      <p class="muted">이번 달과 다음 달을 앱에서 열어 동기화해 두세요. 아이폰의 날짜·시간대는 한국 시간 기준으로 설정합니다.</p>
+    <p class="eyebrow">아이폰 · 근무 알람</p><h1>내 근무에 맞는<br>알람 단축어</h1>
+    <p class="intro">주간은 06:30, 야간은 18:30. 오늘 근무에 맞춰 시계 알람을 켜고, 휴무·연차·반차에는 꺼요. 특근도 같은 시간에 적용됩니다.</p>
+    <section class="download-section" aria-labelledby="download-title">
+      <span class="step">01</span><h2 id="download-title">내 교대조 파일 받기</h2>
+      <div class="group"><label for="alarm-group">내 교대조</label><select id="alarm-group"><option value="">선택해 주세요</option><option value="A">A조</option><option value="B">B조</option><option value="C">C조</option></select></div>
+      <p id="group-notice" class="muted" aria-live="polite">앱에서 사용하는 교대조의 파일을 선택하세요.</p>
+      <div class="downloads" aria-label="조별 단축어 다운로드">
+        <a class="download-link" data-download="A" href="./shortcuts/Shift_cal_A.shortcut" download="Shift_cal A조 근무 알람.shortcut"><strong>A조</strong><span>단축어 받기 ↓</span></a>
+        <a class="download-link" data-download="B" href="./shortcuts/Shift_cal_B.shortcut" download="Shift_cal B조 근무 알람.shortcut"><strong>B조</strong><span>단축어 받기 ↓</span></a>
+        <a class="download-link" data-download="C" href="./shortcuts/Shift_cal_C.shortcut" download="Shift_cal C조 근무 알람.shortcut"><strong>C조</strong><span>단축어 받기 ↓</span></a>
+      </div>
+      <p>아이폰에서 받은 파일을 열고 <strong>단축어 추가</strong>를 누르세요. 다운로드 목록이나 파일 앱에 저장됐다면 그곳에서 파일을 열면 됩니다.</p>
+      <p class="muted">맥에서 받았다면 AirDrop으로 아이폰에 보내세요. 기존 근무 알람 자동화는 새 단축어로 바꿔 주세요.</p>
     </section>
     <section><span class="step">02</span><h2>전용 알람 두 개 만들기</h2>
-      <p>시계 앱 → 알람 → +에서 아래 두 개를 만드세요. 반복은 <strong>안 함</strong>, 사운드는 원하는 소리로 설정하고 처음에는 모두 꺼 둡니다.</p>
+      <p>아이폰 시계 앱에서 아래 이름과 시간으로 각각 하나씩 만드세요. <strong>반복은 안 함</strong>, 사운드는 원하는 소리로 설정하고 처음에는 모두 꺼 둡니다.</p>
       <div class="alarm"><div><span>주간 · 주간 특근</span><strong>06:30</strong><code>Shift_calander 주간</code></div><button type="button" data-copy="Shift_calander 주간">이름 복사</button></div>
       <div class="alarm"><div><span>야간 · 야간 특근</span><strong>18:30</strong><code>Shift_calander 야간</code></div><button type="button" data-copy="Shift_calander 야간">이름 복사</button></div>
-      <p class="muted">기존 개인 알람은 그대로 두고 이 두 개만 사용합니다. 이름이 같은 알람을 여러 개 만들지 마세요.</p>
+      <p class="muted">이미 이 이름과 시간의 알람이 있다면 그대로 사용하세요. 같은 이름의 알람이 여러 개 있거나 하나라도 없으면 단축어가 안내를 표시하고 멈춥니다.</p>
     </section>
-    <section><span class="step">03</span><h2>근무 확인 단축어 만들기</h2>
-      <p>단축어 앱 → +에서 새 단축어를 만들고 이름을 <strong>Shift_calander 근무 알람</strong>으로 지정하세요. 동작 이름과 표시 위치는 iOS 버전에 따라 다를 수 있어요.</p>
-      <details open><summary>먼저 현재 시각 준비하기</summary><ol>
-        <li><strong>날짜</strong> 동작을 추가하고 ‘현재 날짜’를 선택합니다.</li>
-        <li><strong>날짜 포맷 지정</strong>에서 포맷을 ‘사용자 설정’, 문자열을 <code>HHmm</code>으로 설정합니다. 날짜 입력은 위의 현재 날짜를 선택합니다.</li>
-        <li><strong>입력에서 숫자 가져오기</strong>로 포맷 지정한 날짜를 숫자로 바꿉니다.</li>
-        <li><strong>변수 설정</strong>으로 이 숫자를 <code>현재시각</code>에 저장합니다. 예: 06:29는 629, 18:30은 1830입니다.</li>
-      </ol></details>
-      <div class="work-block"><h3>주간 조건</h3><p>‘캘린더 이벤트 찾기’를 추가하고 다음 조건을 <strong>모두</strong> 만족하도록 설정하세요.</p>
-        <dl><div><dt>캘린더</dt><dd data-calendar>내 조의 Shift_calander 캘린더</dd></div><div><dt>시작일</dt><dd>오늘</dd></div><div><dt>제목</dt><dd><span data-prefix="day">조 선택 필요</span> <small>으로 시작</small></dd></div></dl>
-        <button type="button" data-copy-prefix="day" disabled>제목 조건 복사</button>
-        <ol><li><strong>조건문</strong>: 찾은 ‘캘린더 이벤트’에 값이 있는 경우.</li><li>그 안에 <strong>조건문</strong>을 하나 더 추가: 변수 <code>현재시각</code>이 <code>630</code>보다 작은 경우 → ‘알람 전환’에서 <strong>Shift_calander 주간 켜기</strong>. 그렇지 않은 경우 → 같은 알람 <strong>끄기</strong>.</li><li>첫 번째 조건문의 ‘그렇지 않은 경우’에도 <strong>Shift_calander 주간 끄기</strong>를 넣습니다.</li></ol>
-      </div>
-      <div class="work-block"><h3>야간 조건</h3><p>주간 조건문이 완전히 끝난 뒤 ‘캘린더 이벤트 찾기’를 새로 추가하세요.</p>
-        <dl><div><dt>캘린더</dt><dd data-calendar>내 조의 Shift_calander 캘린더</dd></div><div><dt>시작일</dt><dd>오늘</dd></div><div><dt>제목</dt><dd><span data-prefix="night">조 선택 필요</span> <small>으로 시작</small></dd></div></dl>
-        <button type="button" data-copy-prefix="night" disabled>제목 조건 복사</button>
-        <ol><li><strong>조건문</strong>: 이번에 찾은 ‘캘린더 이벤트’에 값이 있는 경우.</li><li>그 안에 <strong>조건문</strong>: <code>현재시각</code>이 <code>1830</code>보다 작은 경우 → <strong>Shift_calander 야간 켜기</strong>. 그렇지 않은 경우 → 같은 알람 <strong>끄기</strong>.</li><li>첫 번째 조건문의 ‘그렇지 않은 경우’에도 <strong>Shift_calander 야간 끄기</strong>를 넣습니다.</li></ol>
-      </div>
-      <aside>알람 동작은 상태를 반대로 바꾸는 ‘전환’이 아닌 <strong>켜기 / 끄기</strong>로 지정하세요. 시작일 ‘오늘’을 사용해야 전날 시작한 야간 근무를 오늘 근무로 잘못 읽지 않습니다. 지난 시간의 알람은 꺼지도록 구성합니다.</aside>
+    <section><span class="step">03</span><h2>근무 캘린더 연결하고 실행하기</h2>
+      <ol>
+        <li>Shift_cal에서 이번 달·다음 달의 캘린더 동기화를 실행합니다.</li>
+        <li>아이폰 설정 → 앱 → 캘린더 → 캘린더 계정에서 같은 Google 계정을 추가하고 캘린더를 켭니다.</li>
+        <li>아이폰 기본 캘린더에서 <strong data-calendar>내 조의 Shift_calander 캘린더</strong>와 오늘 근무가 보이는지 확인합니다.</li>
+        <li>추가한 <strong data-shortcut>내 조의 Shift_cal 근무 알람</strong>을 직접 실행하고 필요한 캘린더·시계 접근을 허용합니다.</li>
+        <li>시계 앱에서 오늘 근무에 맞는 전용 알람만 켜졌는지 확인합니다.</li>
+      </ol>
+      <p class="muted">Google 캘린더 앱에만 보이는 일정은 읽지 못할 수 있어요. 캘린더와 전용 알람 이름을 바꾸지 말고, 아이폰의 날짜·시간대는 한국 시간 기준으로 설정하세요.</p>
     </section>
-    <section><span class="step">04</span><h2>매일 자동으로 실행</h2><ol>
-      <li>단축어 앱 → 자동화 → + → <strong>특정 시간</strong>.</li>
-      <li><strong>00:05 · 매일 · 즉시 실행</strong>으로 설정합니다. ‘실행 전에 묻기’가 보이는 버전은 이를 끕니다.</li>
-      <li><strong>단축어 실행</strong>에서 ‘Shift_calander 근무 알람’을 선택하고 저장합니다.</li>
-    </ol><p class="muted">처음에는 단축어를 직접 실행해 캘린더·시계 접근 요청을 허용하세요. 자동화의 실행 알림을 켜 두면 실행 여부를 확인하기 편해요.</p></section>
-    <section><span class="step">05</span><h2>적용 확인하기</h2>
-      <p>단축어를 실행한 뒤 시계 앱에서 확인하세요. 앱에는 아이폰 알람 상태가 표시되지 않습니다.</p>
-      <table><thead><tr><th>오늘 근무</th><th>시간이 지나기 전</th></tr></thead><tbody><tr><td>주간 · 주간 특근</td><td>06:30만 켜짐</td></tr><tr><td>야간 · 야간 특근</td><td>18:30만 켜짐</td></tr><tr><td>휴무 · 연차 · 반차 · 무급 휴무</td><td>둘 다 꺼짐</td></tr></tbody></table>
-      <p class="muted">O.T해제는 원래 주간·야간 시간에 적용됩니다. 반차·개인 일정은 자동 알람 대상에서 제외하며 필요한 알람을 따로 설정하세요.</p>
-      <h3>근무를 변경했다면</h3><p>앱 캘린더 동기화 → 아이폰 캘린더에 변경 반영 확인 → 단축어 직접 실행 순서로 적용하세요. 교대조를 바꾸면 단축어의 캘린더와 제목 조건 두 개도 변경해야 합니다.</p>
-      <aside>일정이 아직 내려오지 않았거나 자동화 실행에 실패하면 원하는 알람이 설정되지 않을 수 있어요. 실제 아이폰에서 잠금 상태의 자동 실행과 소리를 확인한 뒤 사용하세요. 사용을 중단할 때는 자동화와 전용 알람 두 개를 모두 꺼 주세요.</aside>
+    <section><span class="step">04</span><h2>매일 자동으로 실행하기</h2>
+      <ol>
+        <li>아이폰 단축어 앱 → 자동화 → + → <strong>특정 시간</strong>을 선택합니다.</li>
+        <li><strong>00:05 · 매일 · 즉시 실행</strong>으로 설정합니다. ‘실행 전에 묻기’가 보이면 끕니다.</li>
+        <li><strong>단축어 실행</strong>에서 <strong data-shortcut>내 조의 Shift_cal 근무 알람</strong>을 선택하고 저장합니다.</li>
+      </ol>
+      <p class="muted">시간 자동화는 아이폰에서 한 번 직접 등록해야 합니다. 교대조를 바꾸면 새 조의 파일을 추가하고 자동화의 실행 단축어도 바꿔 주세요.</p>
+    </section>
+    <section><h2>어떤 알람이 켜지나요?</h2>
+      <table><thead><tr><th>오늘 근무</th><th>알람 시각이 지나기 전</th></tr></thead><tbody><tr><td>주간 · 주간 특근</td><td>06:30만 켜짐</td></tr><tr><td>야간 · 야간 특근</td><td>18:30만 켜짐</td></tr><tr><td>휴무 · 연차 · 반차 · 무급 휴무</td><td>둘 다 꺼짐</td></tr></tbody></table>
+      <p class="muted">이미 지난 시각의 알람은 끕니다. 선택한 조의 캘린더에서 오늘 시작하는 ‘조 이름’ 근무 일정이 없거나 중복돼도 둘 다 끕니다. O.T해제는 원래 주간·야간에 맞춰 적용합니다.</p>
+      <h3>근무를 변경했다면</h3><p>앱에서 동기화 → 아이폰 캘린더에 변경 반영 확인 → 단축어 직접 실행 순서로 적용하세요.</p>
+      <aside>파일 서명과 맥의 가져오기 화면은 확인했습니다. 실제 아이폰의 알람 소리·잠금 상태 자동 실행은 확인이 필요해요. 일정 동기화가 늦거나 자동화가 실행되지 않으면 알람이 설정되지 않을 수 있습니다.</aside>
+      <p class="muted">사용을 중단할 때는 자동화와 전용 알람 두 개를 모두 꺼 주세요.</p>
     </section>
     <footer><a href="https://support.apple.com/ko-kr/guide/shortcuts/apd602971e63/ios" target="_blank" rel="noopener">Apple 단축어 자동화 안내 ↗</a><a href="./#all">전체 메뉴로 돌아가기</a></footer>
     <p id="copy-status" role="status" aria-live="polite"></p>
