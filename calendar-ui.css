@@ -1,4 +1,5 @@
 /* Monthly calendar and personal settings. */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 :root { --primary:#187fcc; --primary-dark:#1466a4; --cal-line:#e9edf1; }
 .container { max-width:760px; }
 .reference-header { border:0; box-shadow:none; border-radius:0; min-height:60px; margin-bottom:8px; padding:4px 0; gap:8px; }
@@ -25,7 +26,7 @@ body[data-view="calendar"] .reference-header { margin-bottom:0; }
 .cal-weekdays { padding:10px 0; font-size:13px; font-weight:500; color:#54595f; }
 .cal-weekdays > :first-child { color:#f05a65; }
 .cal-weekdays > :last-child { color:#0788f8; }
-.cal-grid { height:clamp(440px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 200px),680px); grid-auto-rows:minmax(88px,1fr); }
+.cal-grid { height:auto; min-height:clamp(440px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 200px),680px); grid-auto-rows:minmax(88px,1fr); transition:none; }
 .cal-day { min-height:88px; min-width:0; padding:4px 3px; align-items:center; }
 .cal-day.other-month { background:white; opacity:.23; cursor:default; }
 .cal-day.today { background:#f0f7fc; box-shadow:inset 0 3px 0 var(--primary); z-index:1; }
@@ -47,7 +48,10 @@ body[data-view="calendar"] .reference-header { margin-bottom:0; }
 .shift-badge.no-ot.day { background:#ffdf67; color:#33383e; border:0; }
 .shift-badge.no-ot.night { background:#354355; color:white; border:0; }
 .sub-tag { font-size:9px; line-height:1.35; font-weight:500; margin-top:0; color:#8d6970; }
-.memo-tag { background:none; border:0; border-radius:0; padding:1px; font-size:10px; line-height:1.4; color:#686d75; text-align:left; font-weight:400; letter-spacing:0; width:100%; }
+.memo-tag { background:none; border:0; border-radius:0; padding:1px; font-size:10px; line-height:1.4; color:#686d75; text-align:left; font-weight:400; letter-spacing:0; width:100%; min-width:0; flex-shrink:0; white-space:pre-wrap; overflow-wrap:anywhere; word-break:normal; text-overflow:clip; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; }
+.month-swipe-surface { touch-action:pan-y pinch-zoom; }
+.month-swipe-active { user-select:none; -webkit-user-select:none; }
+.salary-month-viewport { overflow:hidden; }
 .bottom-nav { max-width:760px; margin:0 auto; padding:4px 12px calc(6px + env(safe-area-inset-bottom)); border:1px solid #ededed; border-bottom:0; border-radius:24px 24px 0 0; box-shadow:0 -3px 14px #00000004; }
 .nav-item { font-size:11px; font-weight:500; color:#424242; min-height:56px; padding:0; transition:none; -webkit-tap-highlight-color:transparent; }
 .nav-item.active { color:#202020; font-weight:600; }
@@ -434,3 +438,4 @@ body[data-view="all"] #first-use-guide { display:none; }
 
 /* Lower only the month label without changing the header or calendar geometry. */
 body[data-view="calendar"] .reference-header .month-title-btn { transform:translateY(6px); }
+

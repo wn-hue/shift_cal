@@ -912,7 +912,7 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=16">
+    <link rel="stylesheet" href="./calendar-ui.css?v=17">
     <link rel="stylesheet" href="./today-menu.css?v=2">
 </head>
 <body data-view="calendar">
@@ -973,6 +973,7 @@
             </div>
 
             <!-- 총지급액 히어로 카드 (좌/우 스와이프 지원) -->
+            <div class="salary-month-viewport">
             <div class="salary-hero" id="salary-hero-card" title="좌우로 스와이프하여 이전/다음 달 급여 이동">
                 <div class="period-tag" id="pay-period-label">산정기간: 2026-08-16 ~ 2026-09-15</div>
                 <div class="hero-label" id="hero-pay-label">총 지급액 (세전 합계)</div>
@@ -989,6 +990,7 @@
                 </div>
             </div>
 
+            </div>
             <div class="card payroll-summary" id="payroll-estimate-card">
                 <label class="estimate-toggle" for="payroll-estimate-toggle">
                     <span><span class="estimate-title">예상 실수령액</span><span class="estimate-caption">세금·보험 공제 적용</span></span>
@@ -2005,7 +2007,11 @@
             }, 100);
         }
 
-        function changeMonth(delta) {
+        function changeMonth(delta, animate = true) {
+            if (animate && window.ShiftUI?.slideMonth) {
+                ShiftUI.slideMonth(document.getElementById('calendar-grid'), delta, () => changeMonth(delta, false));
+                return;
+            }
             currentCalDate.setDate(1);
             currentCalDate.setMonth(currentCalDate.getMonth() + delta);
             currentPayDate = new Date(currentCalDate.getFullYear(), currentCalDate.getMonth(), 1);
@@ -2277,7 +2283,11 @@
             calculatePayrollFromInputs();
         }
 
-        function changePayMonth(delta) {
+        function changePayMonth(delta, animate = true) {
+            if (animate && window.ShiftUI?.slideMonth) {
+                ShiftUI.slideMonth(document.getElementById('salary-hero-card'), delta, () => changePayMonth(delta, false));
+                return;
+            }
             currentPayDate.setDate(1);
             currentPayDate.setMonth(currentPayDate.getMonth() + delta);
             currentCalDate = new Date(currentPayDate.getFullYear(), currentPayDate.getMonth(), 1);
@@ -2667,47 +2677,14 @@
         function initCalendarSwipe() {
             const calCard = document.querySelector('.calendar-card');
             if (!calCard) return;
-
-            let startX = 0, startY = 0;
-
-            calCard.addEventListener('touchstart', (e) => {
-                startX = e.changedTouches[0].screenX;
-                startY = e.changedTouches[0].screenY;
-            }, { passive: true });
-
-            calCard.addEventListener('touchend', (e) => {
-                const diffX = e.changedTouches[0].screenX - startX;
-                const diffY = e.changedTouches[0].screenY - startY;
-                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 45) {
-                    if (diffX < 0) changeMonth(1);
-                    else changeMonth(-1);
-                }
-            }, { passive: true });
+            if (window.ShiftUI) ShiftUI.bindMonthSwipe(calCard, document.getElementById('calendar-grid'), delta => changeMonth(delta, false));
         }
 
         /* 총지급액 Hero 카드 좌/우 스와이프 제스처 리스너 */
         function initSalarySwipe() {
             const heroCard = document.getElementById('salary-hero-card');
             if (!heroCard) return;
-
-            let startX = 0, startY = 0;
-
-            heroCard.addEventListener('touchstart', (e) => {
-                startX = e.changedTouches[0].screenX;
-                startY = e.changedTouches[0].screenY;
-            }, { passive: true });
-
-            heroCard.addEventListener('touchend', (e) => {
-                const diffX = e.changedTouches[0].screenX - startX;
-                const diffY = e.changedTouches[0].screenY - startY;
-                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
-                    if (diffX < 0) {
-                        changePayMonth(1);
-                    } else {
-                        changePayMonth(-1);
-                    }
-                }
-            }, { passive: true });
+            if (window.ShiftUI) ShiftUI.bindMonthSwipe(heroCard, heroCard, delta => changePayMonth(delta, false));
         }
 
         function switchView(viewName, navButton) {
@@ -2766,10 +2743,11 @@
     <script src="./calendar-integration.js?v=3"></script>
     <script src="./google-sync-core.js?v=5"></script>
     <script src="./account-data-core.js?v=2"></script>
-    <script src="./calendar-ui.js?v=5"></script>
+    <script src="./calendar-ui.js?v=6"></script>
     <script src="./today-menu.js?v=4"></script>
     <script src="./settings-ui.js?v=6"></script>
     <script src="./account-sync.js?v=9"></script>
     <script src="./google-sync.js?v=10"></script>
 </body>
 </html>
+
