@@ -36,8 +36,8 @@
         surface.style.willChange='';
         surface.classList.remove('month-swipe-active');
     }
-    function play(surface,state,frames,duration) {
-        state.animation=surface.animate(frames,{duration,easing:'cubic-bezier(.22,.7,.25,1)',fill:'both'});
+    function play(surface,state,frames,duration,easing='cubic-bezier(.25,.1,.25,1)') {
+        state.animation=surface.animate(frames,{duration,easing,fill:'both'});
         return state.animation.finished.catch(()=>{});
     }
     async function slideMonth(surface,delta,change) {
@@ -48,21 +48,47 @@
         state.busy=true;
         surface.style.willChange='transform';
         surface.classList.add('month-swipe-active');
-        const width=surface.getBoundingClientRect().width;
+        const rect=surface.getBoundingClientRect();
+        const width=rect.width;
         const direction=delta>0?-1:1;
+        const startX=state.x;
+        const track=document.createElement('div');
+        track.className='month-swipe-track';
+        track.style.height=rect.height+'px';
+        const previous=surface.cloneNode(true);
+        previous.removeAttribute('id');
+        previous.querySelectorAll('[id]').forEach(node=>node.removeAttribute('id'));
+        previous.setAttribute('aria-hidden','true');
+        previous.inert=true;
+        previous.classList.remove('month-swipe-active');
+        previous.style.cssText='position:absolute;top:0;left:0;width:100%;height:'+rect.height+'px;min-height:0;margin:0;pointer-events:none;will-change:transform';
+        let outgoing=null;
+        surface.before(track);
+        track.append(surface);
         try {
-            await play(surface,state,[{transform:`translate3d(${state.x}px,0,0)`},{transform:`translate3d(${direction*width}px,0,0)`}],140);
+            // Both months share one timeline. No exit/re-entry pause or acceleration restart.
             change();
-            state.animation.cancel();
-            surface.style.transform=`translate3d(${-direction*width}px,0,0)`;
-            await play(surface,state,[{transform:`translate3d(${-direction*width}px,0,0)`},{transform:'translate3d(0,0,0)'}],220);
+            track.append(previous);
+            const duration=Math.round(440*Math.max(.55,1-Math.abs(startX)/width));
+            outgoing=previous.animate([
+                {transform:`translate3d(${startX}px,0,0)`},
+                {transform:`translate3d(${direction*width}px,0,0)`}
+            ],{duration,easing:'cubic-bezier(.25,.1,.25,1)',fill:'both'});
+            await play(surface,state,[
+                {transform:`translate3d(${startX-direction*width}px,0,0)`},
+                {transform:'translate3d(0,0,0)'}
+            ],duration);
         } finally {
+            if (outgoing) outgoing.cancel();
             if (state.animation) state.animation.cancel();
             state.animation=null;
+            track.before(surface);
+            track.remove();
             reset(surface,state);
             state.busy=false;
         }
     }
+
     function bindMonthSwipe(target,surface,change) {
         if (!target || !surface || target.dataset.monthSwipeBound) return;
         target.dataset.monthSwipeBound='true';

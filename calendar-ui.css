@@ -439,3 +439,6 @@ body[data-view="all"] #first-use-guide { display:none; }
 /* Lower only the month label without changing the header or calendar geometry. */
 body[data-view="calendar"] .reference-header .month-title-btn { transform:translateY(6px); }
 
+
+/* One continuous track for the outgoing and incoming month. */
+.month-swipe-track{position:relative;overflow:hidden;width:100%;isolation:isolate}
