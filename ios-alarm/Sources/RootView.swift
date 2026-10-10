@@ -4,14 +4,16 @@ import UniformTypeIdentifiers
 extension WorkType {
     var color: Color {
         switch self {
-        case .day: Color(red:0.65,green:0.30,blue:0.13)
-        case .night: Color(red:0.16,green:0.20,blue:0.37)
-        case .specialDay: Color(red:0.03,green:0.48,blue:0.47)
-        case .specialNight: Color(red:0.44,green:0.31,blue:0.60)
+        case .day: Color(red:255/255,green:214/255,blue:0/255)
+        case .night: Color(red:66/255,green:66/255,blue:66/255)
+        case .specialDay: Color(red:71/255,green:214/255,blue:220/255)
+        case .specialNight: Color(red:84/255,green:133/255,blue:238/255)
+        case .off: Color(red:232/255,green:104/255,blue:127/255)
         case .leave, .halfPre, .halfPost: Color(red:0.14,green:0.45,blue:0.29)
         default: .secondary
         }
     }
+    var badgeTextColor: Color { self == .day ? Color(red:66/255,green:66/255,blue:66/255) : .white }
     var shortLabel:String {
         switch self {
         case .day: "주"
@@ -176,7 +178,7 @@ struct EditWorkView: View {
             ForEach(types) { type in
                 Button { choice=type.rawValue } label: {
                     VStack(spacing:8) {
-                        Text(type.shortLabel).font(.system(size:15,weight:.semibold)).foregroundStyle(.white)
+                        Text(type.shortLabel).font(.system(size:15,weight:.semibold)).foregroundStyle(type.badgeTextColor)
                             .frame(width:44,height:40).background(type.color,in:RoundedRectangle(cornerRadius:10))
                             .padding(3).overlay(RoundedRectangle(cornerRadius:13).stroke(selectedType==type ? Color.primary : .clear,lineWidth:2))
                         Text(type.label).font(.system(size:11)).foregroundStyle(selectedType==type ? Color.primary : .secondary).lineLimit(1).minimumScaleFactor(0.8)

@@ -58,7 +58,7 @@ struct MonthGrid: View {
                                 Spacer(minLength:0)
                                 if !day.holiday.isEmpty { Text(day.holiday).font(.system(size:7)).foregroundStyle(.red).lineLimit(1) }
                             }
-                            Text(day.type.shortLabel).font(.system(size:12,weight:.medium)).foregroundStyle(day.type==WorkType.off ? day.type.color : Color.white)
+                            Text(day.type.shortLabel).font(.system(size:12,weight:.medium)).foregroundStyle(day.type==WorkType.off ? day.type.color : day.type.badgeTextColor)
                                 .frame(width:30,height:27)
                                 .background(day.type==WorkType.off ? Color.clear : day.type.color,in:RoundedRectangle(cornerRadius:7))
                                 .frame(maxWidth:.infinity)
