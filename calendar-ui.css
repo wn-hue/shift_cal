@@ -519,3 +519,21 @@ body .bottom-nav .nav-item.active { color:var(--shift-night); }
 #modal-override .opt-btn.unpaid, #modal-override .opt-btn.unpaid-half { background:#805345; color:#fff; border-color:#805345; }
 #modal-override[data-base="DAY"] .opt-btn.no-ot { background:var(--shift-day); color:#424242; border-color:var(--shift-day); }
 #modal-override[data-base="NIGHT"] .opt-btn.no-ot { background:var(--shift-night); color:#fff; border-color:var(--shift-night); }
+
+/* Restrained functional accents; shift colors remain independent. */
+:root { --accent:#2874e8; --accent-soft:#edf4ff; --primary:#2874e8; --primary-dark:#1c5fc7; }
+body[data-view="calendar"] { --primary:#2874e8; --primary-dark:#1c5fc7; }
+body .bottom-nav .nav-item.active { color:var(--accent); }
+body .bottom-nav .nav-item.active .nav-visual { background:var(--accent-soft); border-radius:14px; }
+.header-calendar-actions .icon-button:first-child { color:var(--accent); }
+#modal-override .btn-save, #view-payroll .btn-save, #view-leave .btn-save, .settings-dialog .btn-save, #payroll-sms-dialog .sms-primary-btn { background:var(--accent); }
+#modal-override .editor-tabs button[aria-selected="true"] { background:var(--accent); color:#fff; box-shadow:none; }
+#modal-override .editor-tabs { background:#edf1f6; }
+.all-shortcut-icon.mint { background:#eaf7f0; color:#15966a; }
+.all-shortcut-icon.lavender { background:#fff3e3; color:#df8c25; }
+.all-shortcut-icon.sky { background:var(--accent-soft); color:var(--accent); }
+.all-settings-card { background:#f1f5fa; }
+.all-settings-card .drawer-section-label svg { color:var(--accent); }
+.share-row > span:first-child { color:var(--accent); background:var(--accent-soft); width:40px; height:40px; display:grid; place-items:center; border-radius:12px; }
+.all-info-list a:first-child { color:var(--accent); }
+button:focus-visible, a:focus-visible, select:focus-visible { outline-color:var(--accent); }
