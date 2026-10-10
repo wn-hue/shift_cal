@@ -1398,7 +1398,7 @@
     <div class="modal-overlay" id="modal-month-stats" onclick="closeMonthStatsModal(event)">
       <div class="modal-sheet stats-sheet" role="dialog" aria-modal="true" aria-labelledby="stat-modal-title" onclick="event.stopPropagation()">
         <div class="stats-header"><div><h2 id="stat-modal-title"></h2><p id="stat-modal-group"></p></div><button class="override-close" aria-label="근무 통계 닫기" onclick="closeMonthStatsModalDirect()">✕</button></div>
-        <section class="stats-section"><h3>이번 달 근무</h3><p id="stat-month-period"></p><div class="stats-shifts">
+        <section class="stats-section"><h3>급여 기간 근무</h3><p id="stat-month-period"></p><div class="stats-shifts">
           <div><span class="stats-badge day">주</span><strong id="modal-pill-day"></strong></div>
           <div><span class="stats-badge night">야</span><strong id="modal-pill-night"></strong></div>
           <div><span class="stats-badge off">휴</span><strong id="modal-pill-off"></strong></div>
@@ -1410,7 +1410,7 @@
           <div class="stats-row"><span>월 급여</span><strong id="stat-salary"></strong></div>
           <div class="stats-row"><span>상여 · 지원금</span><strong id="stat-bonus"></strong></div>
           <div class="stats-row stats-total"><span>세전 합계</span><strong id="stat-total"></strong></div>
-        </section><section class="stats-section"><div class="stats-row"><span>이번 달 사용 연차</span><strong id="modal-pill-leave"></strong></div><div class="stats-row"><span>잔여 연차</span><strong id="stat-remaining"></strong></div></section>
+        </section><section class="stats-section"><div class="stats-row"><span>급여 기간 사용 연차</span><strong id="modal-pill-leave"></strong></div><div class="stats-row"><span>잔여 연차</span><strong id="stat-remaining"></strong></div></section>
       </div>
     </div>
 
@@ -1865,8 +1865,8 @@
             const month = currentCalDate.getMonth();
             const payMonthNum = month + 1;
 
-            const startDate = new Date(year, month, 1);
-            const endDate = new Date(year, month+1, 0);
+            const startDate = new Date(year, month - 1, 16);
+            const endDate = new Date(year, month, 15);
             const startStr = toDateKey(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
             const endStr = toDateKey(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
 
