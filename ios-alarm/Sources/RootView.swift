@@ -141,11 +141,10 @@ struct EditWorkView: View {
                         Text("\(store.group)조 · 기본 근무 \(store.engine.day(day.date,group:store.group).label)").font(.subheadline).foregroundStyle(.secondary)
                         if !day.holiday.isEmpty { Text(day.holiday).font(.caption).foregroundStyle(.secondary) }
                     }.padding(.top,12)
-                    HStack(spacing:28) {
-                        editorTab("근무",index:0)
-                        editorTab("메모",index:1)
-                        Spacer()
-                    }
+                    Picker("편집",selection:$tab) {
+                        Text("근무").tag(0).accessibilityIdentifier("editor-tab-0")
+                        Text("메모").tag(1).accessibilityIdentifier("editor-tab-1")
+                    }.pickerStyle(.segmented).controlSize(.large)
                     if tab == 0 {
                         Text("근무").font(.subheadline.weight(.medium))
                         options([.day,.night,.off,.specialDay,.specialNight,.noOT])
@@ -155,7 +154,7 @@ struct EditWorkView: View {
                         Divider()
                         Button("기본 근무로 되돌리기") { choice="" }.font(.subheadline).foregroundStyle(.secondary).accessibilityIdentifier("reset-shift")
                     } else {
-                        TextField("메모를 남겨 주세요",text:$memo,axis:.vertical).lineLimit(6...12).accessibilityIdentifier("memo-editor")
+                        TextField("메모를 남겨 주세요",text:$memo,axis:.vertical).lineLimit(12...18).frame(minHeight:240,alignment:.top).accessibilityIdentifier("memo-editor")
                         Divider()
                     }
                 }.padding(.horizontal,24).padding(.bottom,24)
@@ -213,11 +212,10 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("교대조 설정") {
+                Section {
                     Button { changingGroup=true } label: {
-                        HStack { Text(store.group+"조");Spacer();Image(systemName:"chevron.right").font(.caption) }
+                        HStack { Text("교대조 설정").font(.subheadline);Spacer();Text(store.group+"조").font(.subheadline);Image(systemName:"chevron.right").font(.caption) }
                     }.accessibilityIdentifier("menu-group-settings")
-                    Text("한국 시간 · 주간 06:30 / 야간 18:30").font(.footnote)
                 }
                 Section("백업 및 복원") {
                     Button("근무 변경·메모 백업") { backup() }.accessibilityIdentifier("backup-schedule")

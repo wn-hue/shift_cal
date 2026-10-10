@@ -89,6 +89,7 @@ struct ScheduleShareView: View {
     @Binding var month:Date
     @State private var includeMemos=false
     @State private var preview:SharePreview?
+    @State private var linkURL:URL?
     @State private var fileURL:URL?
     @State private var message=""
     var body: some View {
@@ -108,6 +109,8 @@ struct ScheduleShareView: View {
                     }
                     Toggle("메모도 함께 보내기",isOn:$includeMemos)
                     Text("기본은 메모 제외입니다. 선택한 조의 이번 달 근무만 공유합니다.").font(.footnote).foregroundStyle(.secondary)
+                    Button { makeLink() } label: { shareCard("링크로 보내기",detail:"공유 시점의 이번 달 근무 · 메모 제외",symbol:"link") }.buttonStyle(.plain)
+                    Divider()
                     Button { makeImage() } label: { shareCard("이미지로 보내기",detail:"월간 근무표를 한 장의 이미지로",symbol:"photo.on.rectangle.angled") }.buttonStyle(.plain).accessibilityIdentifier("share-image")
                     Divider()
                     Button { makeCalendar() } label: { shareCard("캘린더 파일로 보내기",detail:"받는 사람이 캘린더에 가져올 수 있어요",symbol:"calendar.badge.plus") }.buttonStyle(.plain).accessibilityIdentifier("share-calendar")
@@ -116,6 +119,7 @@ struct ScheduleShareView: View {
                     if !message.isEmpty { Text(message).foregroundStyle(.red).accessibilityIdentifier("share-error") }
                 }.padding()
             }.background(Color(.systemBackground)).navigationTitle("공유").navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented:Binding(get:{linkURL != nil},set:{if !$0 {linkURL=nil}})) { if let linkURL { ShareSheet(items:[linkURL]) } }
             .sheet(item:$preview) { item in
                 NavigationStack {
                     ScrollView { Image(uiImage:item.image).resizable().scaledToFit().padding().accessibilityIdentifier("share-preview") }
@@ -128,6 +132,14 @@ struct ScheduleShareView: View {
             }
             .sheet(isPresented:Binding(get:{fileURL != nil},set:{if !$0 {fileURL=nil}})) { if let fileURL { ShareSheet(items:[fileURL]) } }
         }
+    }
+    private func makeLink() {
+        let days=store.month(month).map { ["type":$0.type.rawValue,"label":$0.type.label] }
+        let payload:[String:Any] = ["v":1,"group":store.group,"month":ScheduleDisplay.title(month,format:"yyyy-MM"),"days":days]
+        guard let data=try? JSONSerialization.data(withJSONObject:payload),let json=String(data:data,encoding:.utf8) else { message="링크를 만들지 못했습니다.";return }
+        var parts=URLComponents(string:"https://h-lyart-ten.vercel.app/shared-schedule.html")!
+        parts.fragment=json
+        linkURL=parts.url
     }
     private func shareCard(_ title:String,detail:String,symbol:String)->some View {
         HStack(spacing:18) {
