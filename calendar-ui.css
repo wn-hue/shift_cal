@@ -444,16 +444,16 @@ body[data-view="calendar"] .reference-header .month-title-btn { transform:transl
 .month-swipe-track{position:relative;overflow:hidden;width:100%;isolation:isolate}
 
 /* Strong shift colors on quiet, unchanged surfaces. */
-:root { --shift-day:#a64d22; --shift-night:#29345f; --shift-special-day:#087b78; --shift-special-night:#70509a; --shift-leave:#24724b; --shift-off:#60636b; --primary:#29345f; --primary-dark:#20294b; }
-body[data-view="calendar"] { --primary:#29345f; --primary-dark:#20294b; }
-.shift-badge.day, .shift-badge.no-ot.day { background:var(--shift-day); color:#fff; }
+:root { --shift-day:#ffd600; --shift-night:#424242; --shift-special-day:#47d6dc; --shift-special-night:#5485ee; --shift-leave:#24724b; --shift-off:#e8687f; --primary:#424242; --primary-dark:#303030; }
+body[data-view="calendar"] { --primary:#424242; --primary-dark:#303030; }
+.shift-badge.day, .shift-badge.no-ot.day { background:var(--shift-day); color:#424242; }
 .shift-badge.night, .shift-badge.no-ot.night { background:var(--shift-night); color:#fff; }
 .shift-badge.special-day { background:var(--shift-special-day); color:#fff; }
 .shift-badge.special-night { background:var(--shift-special-night); color:#fff; }
 .shift-badge.leave, .shift-badge.half { background:var(--shift-leave); color:#fff; }
 .shift-badge.unpaid, .shift-badge.unpaid-half { background:#805345; color:#fff; }
 .shift-badge.off { color:var(--shift-off) !important; }
-#modal-pill-day { background:var(--shift-day); color:#fff !important; }
+#modal-pill-day { background:var(--shift-day); color:#424242 !important; }
 #modal-pill-night { background:var(--shift-night); color:#fff !important; }
 #modal-pill-special { color:var(--shift-special-day) !important; }
 #modal-pill-leave { color:var(--shift-leave) !important; }
