@@ -25,23 +25,30 @@ struct AlarmView: View {
                 }
 
                 Section {
-                    if !model.calendarGranted {
-                        Button("iPhone 캘린더 연결") { Task { await model.requestCalendar() } }
-                    } else {
-                        Picker("근무 캘린더", selection: Binding(get: { model.calendarID }, set: { value in Task { await model.selectCalendar(value) } })) {
-                            Text("선택해 주세요").tag("")
-                            ForEach(model.calendars, id: \.calendarIdentifier) { calendar in
-                                Text("\(calendar.title) · \(calendar.source.title)").tag(calendar.calendarIdentifier)
+                    Picker("근무표 출처", selection: Binding(get: { model.useBuiltIn }, set: { value in Task { await model.setSource(builtIn: value) } })) {
+                        Text("앱의 내 근무표").tag(true)
+                        Text("iPhone 캘린더").tag(false)
+                    }
+                    if !model.useBuiltIn {
+                        if !model.calendarGranted {
+                            Button("iPhone 캘린더 연결") { Task { await model.requestCalendar() } }
+                        } else {
+                            Picker("근무 캘린더", selection: Binding(get: { model.calendarID }, set: { value in Task { await model.selectCalendar(value) } })) {
+                                Text("선택해 주세요").tag("")
+                                ForEach(model.calendars, id: \.calendarIdentifier) { calendar in
+                                    Text("\(calendar.title) · \(calendar.source.title)").tag(calendar.calendarIdentifier)
+                                }
                             }
                         }
-                        Toggle("자동 알람 사용", isOn: Binding(get: { model.enabled }, set: { value in Task { await model.setEnabled(value) } }))
-                        Toggle("반차에도 기존 주·야 시간 적용", isOn: Binding(get: { model.includeHalf }, set: { value in Task { await model.setIncludeHalf(value) } }))
                     }
+                    Toggle("자동 알람 사용", isOn: Binding(get: { model.enabled }, set: { value in Task { await model.setEnabled(value) } }))
+                        .accessibilityIdentifier("automatic-alarms")
+                    Toggle("반차에도 기존 주·야 시간 적용", isOn: Binding(get: { model.includeHalf }, set: { value in Task { await model.setIncludeHalf(value) } }))
                     Button("iPhone 설정 열기") {
                         openURL(URL(string: UIApplication.openSettingsURLString)!)
                     }
                 } header: { Text("연결 및 사용 설정") } footer: {
-                    Text("Shift_cal A/B/C조 중 본인의 캘린더 하나를 선택하세요. 반차 알람은 기본으로 제외합니다. 켜면 반차의 실제 출근 시각과 관계없이 06:30 또는 18:30에 울립니다.")
+                    Text("앱의 내 근무표를 사용하면 캘린더 연결이나 단축어가 필요 없습니다. iPhone 캘린더를 선택하면 Google에 동기화된 근무표를 읽습니다. 반차 알람은 기본으로 제외합니다. 켜면 반차의 실제 출근 시각과 관계없이 06:30 또는 18:30에 울립니다.")
                 }
                 .disabled(model.busy)
 
@@ -81,7 +88,7 @@ struct AlarmView: View {
                     Text("iOS 26 이상에서 사용하는 앱 전용 시스템 알람입니다. Apple 기본 시계의 알람 목록에 추가되지는 않습니다. 이 앱은 선택한 캘린더를 읽기만 하며 일정이나 개인정보를 서버에 전송하지 않습니다.")
                 }
             }
-            .navigationTitle("교대근무 알람")
+            .navigationTitle("근무 알람")
         }
     }
 }
