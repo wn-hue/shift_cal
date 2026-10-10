@@ -182,8 +182,8 @@ struct EditWorkView: View {
             ForEach(types) { type in
                 Button { choice=type.rawValue } label: {
                     VStack(spacing:8) {
-                        Text(type.shortLabel).font(.system(size:15,weight:.semibold)).foregroundStyle(type.badgeTextColor)
-                            .frame(width:44,height:40).background(type.color,in:RoundedRectangle(cornerRadius:10))
+                        Text(type.shortLabel).font(.system(size:15,weight:.semibold)).foregroundStyle(type == .off ? type.color : type.badgeTextColor)
+                            .frame(width:44,height:40).background(type == .off ? Color.clear : type.color,in:RoundedRectangle(cornerRadius:10))
                             .padding(3).overlay(RoundedRectangle(cornerRadius:13).stroke(selectedType==type ? Color.primary : .clear,lineWidth:2))
                     }.frame(width:58,height:48)
                 }.buttonStyle(.plain).accessibilityLabel(type.label).accessibilityIdentifier("shift-"+type.rawValue)
