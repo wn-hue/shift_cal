@@ -12,7 +12,7 @@
         }
     }
     function rendered(group) {
-        $('calendar-group-label').textContent=group+'조';
+        $('cal-month-title-btn').setAttribute('aria-label',group+'조 달력 연도와 월 선택');
     }
     function tap(button) {
         const visual=button.querySelector('.nav-visual');

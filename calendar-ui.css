@@ -442,3 +442,34 @@ body[data-view="calendar"] .reference-header .month-title-btn { transform:transl
 
 /* One continuous track for the outgoing and incoming month. */
 .month-swipe-track{position:relative;overflow:hidden;width:100%;isolation:isolate}
+
+/* Strong shift colors on quiet, unchanged surfaces. */
+:root { --shift-day:#a64d22; --shift-night:#29345f; --shift-special-day:#087b78; --shift-special-night:#70509a; --shift-leave:#24724b; --shift-off:#60636b; --primary:#29345f; --primary-dark:#20294b; }
+body[data-view="calendar"] { --primary:#29345f; --primary-dark:#20294b; }
+.shift-badge.day, .shift-badge.no-ot.day { background:var(--shift-day); color:#fff; }
+.shift-badge.night, .shift-badge.no-ot.night { background:var(--shift-night); color:#fff; }
+.shift-badge.special-day { background:var(--shift-special-day); color:#fff; }
+.shift-badge.special-night { background:var(--shift-special-night); color:#fff; }
+.shift-badge.leave, .shift-badge.half { background:var(--shift-leave); color:#fff; }
+.shift-badge.unpaid, .shift-badge.unpaid-half { background:#805345; color:#fff; }
+.shift-badge.off { color:var(--shift-off) !important; }
+#modal-pill-day { background:var(--shift-day); color:#fff !important; }
+#modal-pill-night { background:var(--shift-night); color:#fff !important; }
+#modal-pill-special { color:var(--shift-special-day) !important; }
+#modal-pill-leave { color:var(--shift-leave) !important; }
+.nav-item.active { color:var(--shift-night); }
+.all-topline { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:24px; }
+.all-topline .all-page-title { margin:0; font-size:20px; }
+.all-topline .google-login-image { width:135px; height:30px; }
+.all-account-card { padding:0; background:none; border:0; border-radius:0; margin:24px 0; }
+.all-account-card > summary { font-size:13px; color:var(--text-sub); cursor:pointer; padding:10px 0; }
+.all-settings-card { border-radius:12px; }
+#first-use-guide button:first-child { display:none; }
+body .bottom-nav .nav-item.active { color:var(--shift-night); }
+.all-shortcut-icon.mint { color:var(--shift-leave); }
+.all-shortcut-icon.lavender { color:var(--shift-night); }
+.all-shortcut-icon.sky { color:var(--shift-special-day); }
+#modal-override .opt-btn.day-sp { border-left:3px solid var(--shift-special-day); color:var(--shift-special-day); }
+#modal-override .opt-btn.night-sp { border-left:3px solid var(--shift-special-night); color:var(--shift-special-night); }
+#modal-override .opt-btn.leave, #modal-override .opt-btn.half { border-left:3px solid var(--shift-leave); color:var(--shift-leave); }
+#modal-override .btn-save, #view-payroll .btn-save, #view-leave .btn-save, .settings-dialog .btn-save, #payroll-sms-dialog .sms-primary-btn { background:var(--shift-night); }

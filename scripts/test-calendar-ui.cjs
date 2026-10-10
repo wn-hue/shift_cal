@@ -12,7 +12,7 @@ const run=s=>vm.runInContext(s,ctx),grid=elements.get('calendar-grid');
 run("updateLeaveStats=()=>{};currentGroup='C';currentCalDate=new Date(2026,9,1);dayMemos={'2026-10-01':'<img src=x onerror=alert(1)>'};renderCalendar()");
 assert.equal(grid.children.length,35);assert.equal(grid.style.gridTemplateRows,'repeat(5, minmax(88px, 1fr))');
 assert.equal(elements.get('cal-month-title-text').innerText,'2026. 10');
-assert.equal(elements.get('calendar-group-label').textContent,'C조');
+assert.equal(elements.has('calendar-group-label'),false);
 const days=grid.children.filter(e=>e.attributes.role==='button');assert.equal(days.length,31);
 assert.equal(grid.children.filter(e=>e.attributes['aria-hidden']==='true').length,4);
 const memo=days[0].children[0];assert.equal(memo.textContent,'<img src=x onerror=alert(1)>');assert.ok(!days[0].innerHTML.includes('onerror'));
@@ -49,7 +49,7 @@ ctx.AccountSync={changed:()=>saved++};ctx.GoogleSync={groupChanged:()=>calendarS
 for(const group of ['A','B','C']) {
     run(`setGroup('${group}')`);
     assert.equal(run('currentGroup'),group);assert.equal(stored.get('shift_active_group'),group);
-    assert.equal(elements.get('calendar-group-label').textContent,group+'조');assert.equal(selected,group);
+    assert.ok(elements.get('cal-month-title-btn').attributes['aria-label'].startsWith(group+'조'));assert.equal(selected,group);
     assert.equal(run('JSON.stringify(overrides)'),stored.get('shift_overrides_'+group)||'{}');
 }
 run("setGroup('invalid')");assert.equal(run('currentGroup'),'C');assert.equal(saved,3);assert.equal(calendarSync,3);
@@ -60,7 +60,7 @@ assert.match(html, /id="account-menu-button"[^>]+aria-controls="view-all"/);
 assert.ok(!html.includes('<dialog id="account-management-dialog"'));
 
 const header=html.slice(html.indexOf('<header'),html.indexOf('</header>'));
-assert.ok(header.includes('id="calendar-group-label"'));
+assert.ok(!header.includes('id="calendar-group-label"'));
 assert.ok(!html.slice(html.indexOf('<div class="calendar-month-controls">'),html.indexOf('<div class="calendar-card"')).includes('3조 2교대'));
 for(const page of ['about.html','privacy.html','terms.html']) {
  const source=fs.readFileSync(require.resolve('../'+page),'utf8');

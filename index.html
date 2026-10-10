@@ -924,7 +924,6 @@
                 <span id="header-view-title" class="header-view-title" hidden>시급 · 연차</span>
             </div>
             <div id="header-calendar-actions" class="header-calendar-actions">
-                <span id="calendar-group-label" class="header-group-label" aria-label="현재 교대조">C조</span>
                 <button type="button" class="icon-button" onclick="openCalendarIntegration()" aria-label="구글 · 애플 캘린더 동기화" title="캘린더 연결"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2"/></svg></button>
                 <button type="button" class="icon-button" onclick="openMonthStatsModal()" aria-label="월 근무 통계" title="근무 통계"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16v-4M12 16V7M17 16V9"/></svg></button>
             </div>
@@ -935,7 +934,7 @@
         <aside id="first-use-guide" class="first-use-guide" aria-labelledby="first-use-title" hidden>
             <strong id="first-use-title">내 근무표를 시작해 보세요</strong>
             <p id="first-use-copy">교대조·입사년월일·급여 기준을 설정하면 내 근무표와 연차·예상 급여를 확인할 수 있어요.</p>
-            <div><button type="button" onclick="SettingsUI.openMenu('group')">교대조 설정</button><button type="button" onclick="SettingsUI.openMenu('leave')">입사년월일 설정</button><button type="button" onclick="SettingsUI.openMenu('salary')">급여 설정</button></div>
+            <div><button type="button" onclick="SettingsUI.openMenu('group')" hidden>교대조 설정</button><button type="button" onclick="SettingsUI.openMenu('leave')">입사년월일 설정</button><button type="button" onclick="SettingsUI.openMenu('salary')">급여 설정</button></div>
         </aside>
         <section id="view-calendar" class="view-page active">
             <div class="calendar-month-controls">
@@ -1213,31 +1212,7 @@
     </section>
     <section id="view-all" class="view-page all-page" aria-labelledby="account-management-title">
       <div id="account-management-dialog" class="all-menu-content">
-        <h1 id="account-management-title" class="all-page-title">내 설정과 계정</h1>
-        <div class="all-account-card">
-        <div class="drawer-profile">
-            <span class="drawer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg></span>
-            <div class="drawer-profile-content">
-                <a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1" aria-label="Google로 로그인" aria-describedby="account-permission-notice"><img class="google-login-image" src="./google-signin.png" width="180" height="40" alt="" aria-hidden="true"></a>
-                <p id="account-email" class="account-email">다른 기기에서도 이어서 사용하세요.</p>
-            </div>
-        </div>
-        <div class="all-account-details">
-            <p id="account-sync-status" class="account-status sync-feedback" role="status" aria-live="polite" aria-atomic="true">기기에 저장 중</p>
-            <p class="account-hint">시급·연차·메모·근무 변경을 계정에 저장하거나 불러옵니다. 캘린더 일정 반영은 ‘캘린더 동기화’에서 시작하세요.</p>
-            <div class="account-actions">
-                <button type="button" id="account-sync-now" class="sms-primary-btn" hidden>지금 동기화</button>
-                <button type="button" id="account-logout" class="sms-clear-btn" hidden>로그아웃</button>
-            </div>
-            <p id="account-permission-notice" class="account-hint">로그인은 선택 사항입니다. 계정 확인, 앱 캘린더 관리·목록 조회와 Drive 앱 전용 저장 권한을 요청합니다. 설정은 본인 계정에 저장되며, 캘린더 반영은 동기화를 시작할 때 진행됩니다. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p>
-            <div id="account-setup-help" class="account-hint" hidden>관리자가 Google Cloud에서 Google Drive API를 사용 설정해야 합니다. 사용 설정 후 ‘지금 동기화’를 눌러주세요.</div>
-        </div>
-        </div>
-        <section class="all-shortcuts" aria-labelledby="all-shortcuts-title"><h2 id="all-shortcuts-title">바로가기</h2><div class="all-shortcut-grid">
-          <div id="menu-leave-settings"><button type="button" class="all-shortcut" onclick="SettingsUI.openLeave()"><span class="all-shortcut-icon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4m-9 10 3 3 5-6"/></svg></span><strong>연차 설정</strong><span class="all-shortcut-caption">잔여 <span id="quick-remain-leave">0</span>일</span></button></div>
-          <div id="menu-salary-settings"><button type="button" id="payroll-sms-open" class="all-shortcut"><span class="all-shortcut-icon lavender"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><circle cx="12" cy="12" r="3"/></svg></span><strong>급여 설정</strong><span class="all-shortcut-caption">급여 · 상여 문자</span></button></div>
-          <div><button type="button" class="all-shortcut" onclick="openCalendarIntegration()"><span class="all-shortcut-icon sky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7h-5l2-3M4 17h5l-2 3M4 10a8 8 0 0 1 13-6M20 14a8 8 0 0 1-13 6"/></svg></span><strong>캘린더 동기화</strong><span class="all-shortcut-caption">Google · Apple</span></button></div>
-        </div></section>
+        <div class="all-topline"><h1 id="account-management-title" class="all-page-title">설정</h1><a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1" aria-label="Google로 로그인" aria-describedby="account-permission-notice"><img class="google-login-image" src="./google-signin.png?v=2" width="180" height="40" alt="" aria-hidden="true"></a></div>
         <section class="all-settings-section" aria-labelledby="all-settings-title"><h2 id="all-settings-title">내 근무 설정</h2>
         <div class="all-settings-card" id="menu-group-settings">
             <div class="drawer-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M16 4a3 3 0 0 1 0 6M18 14a5 5 0 0 1 4 5v2"/></svg><span>교대조 설정</span></div>
@@ -1250,6 +1225,24 @@
             <p id="group-selection-status" class="group-selection-status" role="status" aria-live="polite">교대조를 선택해 주세요.</p>
         </div>
         </section>
+
+        <section class="all-shortcuts" aria-labelledby="all-shortcuts-title"><h2 id="all-shortcuts-title">바로가기</h2><div class="all-shortcut-grid">
+          <div id="menu-leave-settings"><button type="button" class="all-shortcut" onclick="SettingsUI.openLeave()"><span class="all-shortcut-icon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4m-9 10 3 3 5-6"/></svg></span><strong>연차 설정</strong><span class="all-shortcut-caption">잔여 <span id="quick-remain-leave">0</span>일</span></button></div>
+          <div id="menu-salary-settings"><button type="button" id="payroll-sms-open" class="all-shortcut"><span class="all-shortcut-icon lavender"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><circle cx="12" cy="12" r="3"/></svg></span><strong>급여 설정</strong><span class="all-shortcut-caption">급여 · 상여 문자</span></button></div>
+          <div><button type="button" class="all-shortcut" onclick="openCalendarIntegration()"><span class="all-shortcut-icon sky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7h-5l2-3M4 17h5l-2 3M4 10a8 8 0 0 1 13-6M20 14a8 8 0 0 1-13 6"/></svg></span><strong>캘린더 동기화</strong><span class="all-shortcut-caption">Google · Apple</span></button></div>
+        </div></section>
+        <details class="all-account-card"><summary>계정 연결 및 동기화 안내</summary>
+        <div class="all-account-details"><p id="account-email" class="account-email">기기에 저장 중</p>
+            <p id="account-sync-status" class="account-status sync-feedback" role="status" aria-live="polite" aria-atomic="true">기기에 저장 중</p>
+            <p class="account-hint">시급·연차·메모·근무 변경을 계정에 저장하거나 불러옵니다. 캘린더 일정 반영은 ‘캘린더 동기화’에서 시작하세요.</p>
+            <div class="account-actions">
+                <button type="button" id="account-sync-now" class="sms-primary-btn" hidden>지금 동기화</button>
+                <button type="button" id="account-logout" class="sms-clear-btn" hidden>로그아웃</button>
+            </div>
+            <p id="account-permission-notice" class="account-hint">로그인은 선택 사항입니다. 계정 확인, 앱 캘린더 관리·목록 조회와 Drive 앱 전용 저장 권한을 요청합니다. 설정은 본인 계정에 저장되며, 캘린더 반영은 동기화를 시작할 때 진행됩니다. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p>
+            <div id="account-setup-help" class="account-hint" hidden>관리자가 Google Cloud에서 Google Drive API를 사용 설정해야 합니다. 사용 설정 후 ‘지금 동기화’를 눌러주세요.</div>
+        </div>
+        </details>
         <section class="all-info-section" aria-labelledby="all-info-title"><h2 id="all-info-title">앱 안내</h2><div class="all-info-list">
           <a id="iphone-alarm-guide-link" href="./iphone-alarms.html"><span>아이폰 근무 알람 · 단축어 설정</span><span aria-hidden="true">›</span></a>
           <a href="./about.html"><span>앱 소개 · 문의</span><span aria-hidden="true">›</span></a>
@@ -1452,7 +1445,7 @@
                 <strong id="google-sync-badge" style="font-size:14px;">구글 캘린더 동기화</strong>
                 <p id="google-sync-user" class="calendar-link-copy">동기화 상태 확인 중…</p>
                 <p class="calendar-link-copy">구글 전용 캘린더에 근무표·메모·개인 일정을 저장합니다. 앱 변경은 저장 후 반영하고, 구글·아이폰에서 바꾼 내용은 앱을 열면 가져옵니다. 열린 동안에는 약 30초마다 확인합니다.</p>
-                <a id="google-sync-login" class="account-login" href="/api/google-calendar?action=login" aria-label="Google 계정으로 캘린더 연결" aria-describedby="calendar-permission-notice" hidden><img class="google-login-image" src="./google-signin.png" width="180" height="40" alt="" aria-hidden="true"></a>
+                <a id="google-sync-login" class="account-login" href="/api/google-calendar?action=login" aria-label="Google 계정으로 캘린더 연결" aria-describedby="calendar-permission-notice" hidden><img class="google-login-image" src="./google-signin.png?v=2" width="180" height="40" alt="" aria-hidden="true"></a>
                 <p id="calendar-permission-notice" class="account-hint">계정 확인, 캘린더 목록 조회와 앱이 만든 캘린더의 일정 관리 권한을 요청합니다. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p>
                 <div id="google-sync-controls" hidden>
                     <div class="calendar-link-actions">
