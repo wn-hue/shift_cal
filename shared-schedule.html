@@ -1,0 +1,18 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><meta name="robots" content="noindex,nofollow"><title>공유 근무표 · Shift_cal</title><style>
+*{box-sizing:border-box}body{font-family:system-ui,sans-serif;color:#424242;margin:0;background:#fff}main{max-width:640px;margin:auto;padding:24px 16px}h1{font-size:26px;margin:0 0 8px}p{font-size:13px;color:#737373;line-height:1.6}.week,.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}.week{text-align:center;font-size:12px;margin:24px 0 10px}.cell{min-height:100px;border:1px solid #f1f1f1;padding:6px 3px}.num{font-size:13px}.badge{display:block;width:max-content;max-width:100%;margin:12px auto;font-size:12px;border-radius:8px;padding:6px 5px;overflow-wrap:anywhere}a{color:#424242;font-size:13px}.error{padding:24px;background:#f6f6f6;border-radius:12px}
+</style></head><body><main><h1 id="title">공유 근무표</h1><p>공유 시점의 근무표입니다. 이후 변경은 자동 반영되지 않습니다.</p><div id="content"></div><p>이 링크를 가진 사람은 근무표를 볼 수 있습니다.</p><a href="/">Shift_cal 열기</a></main><script>
+(()=>{'use strict';const target=document.getElementById('content');try {
+if(location.hash.length>12000)throw Error();
+const data=JSON.parse(decodeURIComponent(location.hash.slice(1)));
+if(data.v!==1||!['A','B','C'].includes(data.group)||!/^20\d{2}-(0[1-9]|1[0-2])$/.test(data.month))throw Error();
+const [y,m]=data.month.split('-').map(Number),count=new Date(y,m,0).getDate();
+if(!Array.isArray(data.days)||data.days.length!==count||data.days.some(d=>typeof d.type!=='string'||typeof d.label!=='string'||d.label.length>20))throw Error();
+document.getElementById('title').textContent=`${y}.${String(m).padStart(2,'0')} · ${data.group}조`;
+const week=document.createElement('div');week.className='week';for(const label of ['일','월','화','수','목','금','토']){const e=document.createElement('span');e.textContent=label;week.append(e);}target.append(week);
+const grid=document.createElement('div');grid.className='grid';target.append(grid);
+const offset=new Date(y,m-1,1).getDay();for(let i=0;i<offset;i++){const e=document.createElement('div');e.className='cell';grid.append(e);}
+const colors={DAY:'#ffd600',NIGHT:'#424242',SPECIAL_DAY:'#47d6dc',SPECIAL_NIGHT:'#5485ee',LEAVE:'#24724b'};
+const labels={DAY:'주',NIGHT:'야',OFF:'휴',FORCED_OFF:'휴',SPECIAL_DAY:'주특',SPECIAL_NIGHT:'야특'};
+data.days.forEach((d,i)=>{const cell=document.createElement('div');cell.className='cell';const n=document.createElement('span');n.className='num';n.textContent=i+1;cell.append(n);const b=document.createElement('span');b.className='badge';b.textContent=labels[d.type]||d.label;const off=d.type==='OFF'||d.type==='FORCED_OFF';b.style.background=off?'transparent':colors[d.type]||'#737373';b.style.color=off?'#e8687f':d.type==='DAY'?'#424242':'white';cell.append(b);grid.append(cell);});
+}catch{target.textContent='공유 링크가 올바르지 않습니다. 새 링크를 받아 주세요.';target.className='error';}})();
+</script></body></html>

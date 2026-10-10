@@ -69,3 +69,12 @@ function shareScheduleImage() {
         sendScheduleFile(new File([blob],`Shift_cal-${currentGroup}-${currentCalDate.getFullYear()}-${currentCalDate.getMonth()+1}.png`,{type:'image/png'}));
     },'image/png');
 }
+
+async function shareScheduleURL() {
+    const snapshot={v:1,group:currentGroup,month:`${currentCalDate.getFullYear()}-${String(currentCalDate.getMonth()+1).padStart(2,'0')}`,days:sharedMonthDays().map(({shift})=>({type:shift.type,label:shift.type==='SPECIAL_DAY'?'주특':shift.type==='SPECIAL_NIGHT'?'야특':shift.name}))};
+    const url=new URL('shared-schedule.html',location.href);url.hash=encodeURIComponent(JSON.stringify(snapshot));
+    try {
+        if(navigator.share)await navigator.share({title:'Shift_cal 근무표',url:url.href});
+        else {await navigator.clipboard.writeText(url.href);document.getElementById('share-status').textContent='링크를 복사했습니다. 이후 변경은 새 링크로 보내 주세요.';}
+    } catch(error) {if(error.name!=='AbortError')document.getElementById('share-status').textContent='링크를 복사하지 못했습니다. 다시 시도해 주세요.';}
+}

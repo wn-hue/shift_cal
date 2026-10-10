@@ -912,7 +912,7 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=20">
+    <link rel="stylesheet" href="./calendar-ui.css?v=21">
     <link rel="stylesheet" href="./today-menu.css?v=2">
 </head>
 <body data-view="calendar">
@@ -1489,7 +1489,7 @@
         </div>
     </div>
 
-<div class="modal-overlay" id="modal-schedule-share" onclick="closeScheduleShare(event)"><div class="modal-sheet share-sheet" role="dialog" aria-modal="true" aria-labelledby="share-title" onclick="event.stopPropagation()"><div class="override-header"><div><h2 id="share-title">근무표 보내기</h2><p id="share-month"></p></div><button type="button" class="override-close" aria-label="공유 닫기" onclick="closeScheduleShare()">✕</button></div><button class="share-row" onclick="shareScheduleImage()"><span>▧</span><strong>이미지로 보내기</strong><span>›</span></button><button class="share-row" onclick="shareScheduleFile()"><span>▤</span><strong>캘린더 파일로 보내기</strong><span>›</span></button><p id="share-status" role="status"></p></div></div>
+<div class="modal-overlay" id="modal-schedule-share" onclick="closeScheduleShare(event)"><div class="modal-sheet share-sheet" role="dialog" aria-modal="true" aria-labelledby="share-title" onclick="event.stopPropagation()"><div class="override-header"><div><h2 id="share-title">근무표 보내기</h2><p id="share-month"></p></div><button type="button" class="override-close" aria-label="공유 닫기" onclick="closeScheduleShare()">✕</button></div><button class="share-row" onclick="shareScheduleURL()"><span>↗</span><strong>링크로 보내기</strong><span>›</span></button><button class="share-row" onclick="shareScheduleImage()"><span>▧</span><strong>이미지로 보내기</strong><span>›</span></button><button class="share-row" onclick="shareScheduleFile()"><span>▤</span><strong>캘린더 파일로 보내기</strong><span>›</span></button><p id="share-status" role="status"></p></div></div>
     <!-- 모달: 근태 및 메모 변경 (반차 전/후 & 무급반차 전/후 포함) -->
     <div class="modal-overlay" id="modal-override" onclick="closeModal(event)">
         <div class="modal-sheet override-sheet" role="dialog" aria-modal="true" aria-labelledby="override-title" onclick="event.stopPropagation()">
@@ -2706,7 +2706,7 @@
     <script src="./payroll-sms.js?v=2"></script>
     <script src="./payroll-estimate.js?v=11"></script>
     <script src="./calendar-integration.js?v=3"></script>
-    <script src="./schedule-share.js?v=1"></script>
+    <script src="./schedule-share.js?v=2"></script>
     <script src="./google-sync-core.js?v=5"></script>
     <script src="./account-data-core.js?v=2"></script>
     <script src="./calendar-ui.js?v=7"></script>
