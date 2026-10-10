@@ -5,8 +5,8 @@ final class ShiftCalUITests: XCTestCase {
     func testCalendarEditPersistsAndAlarmScreenOpens() throws {
         let app=XCUIApplication();app.launch()
         XCTAssertTrue(app.staticTexts["Shift_cal"].waitForExistence(timeout:10))
-        app.buttons["choose-group"].tap()
-        app.buttons["group-C"].tap()
+        app.buttons["open-menu"].tap();app.buttons["menu-group-settings"].tap()
+        app.buttons["group-C"].tap();app.buttons["close-menu"].tap()
         var calendar=Calendar(identifier:.gregorian);calendar.timeZone=TimeZone(identifier:"Asia/Seoul")!
         let c=calendar.dateComponents([.year,.month,.day],from:Date())
         let key=String(format:"%04d-%02d-%02d",c.year!,c.month!,c.day!)
@@ -47,8 +47,8 @@ final class ShiftCalUITests: XCTestCase {
     @MainActor
     func testGroupSwitchAndSharedImagePreview() throws {
         let app=XCUIApplication();app.launch()
-        app.buttons["choose-group"].tap();app.buttons["group-B"].tap()
-        XCTAssertTrue(app.buttons["choose-group"].label.contains("B조"))
+        app.buttons["open-menu"].tap();app.buttons["menu-group-settings"].tap();app.buttons["group-B"].tap();app.buttons["close-menu"].tap()
+        XCTAssertFalse(app.buttons["choose-group"].exists)
         let calendarScreen=XCTAttachment(screenshot:app.screenshot());calendarScreen.name="새 근무표";calendarScreen.lifetime = .keepAlways;add(calendarScreen)
         app.tabBars.buttons["공유"].tap()
         XCTAssertTrue(app.buttons["share-image"].waitForExistence(timeout:5))
@@ -57,7 +57,7 @@ final class ShiftCalUITests: XCTestCase {
         XCTAssertTrue(app.images["share-preview"].waitForExistence(timeout:10))
         app.buttons["닫기"].tap()
         app.tabBars.buttons["근무표"].tap()
-        app.buttons["choose-group"].tap();app.buttons["group-C"].tap()
+        app.buttons["open-menu"].tap();app.buttons["menu-group-settings"].tap();app.buttons["group-C"].tap();app.buttons["close-menu"].tap()
         let formatter=DateFormatter();formatter.dateFormat="yyyy-MM-dd";formatter.timeZone=TimeZone(identifier:"Asia/Seoul")
         app.buttons["day-"+formatter.string(from:Date())].tap()
         XCTAssertTrue(app.buttons["shift-DAY"].waitForExistence(timeout:5))

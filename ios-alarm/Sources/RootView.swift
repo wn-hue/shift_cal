@@ -4,11 +4,11 @@ import UniformTypeIdentifiers
 extension WorkType {
     var color: Color {
         switch self {
-        case .day: Color(red:0.65,green:0.32,blue:0.16)
-        case .night: Color(red:0.24,green:0.28,blue:0.48)
-        case .specialDay: Color(red:0.10,green:0.44,blue:0.43)
-        case .specialNight: Color(red:0.44,green:0.30,blue:0.55)
-        case .leave, .halfPre, .halfPost: Color(red:0.22,green:0.46,blue:0.34)
+        case .day: Color(red:0.65,green:0.30,blue:0.13)
+        case .night: Color(red:0.16,green:0.20,blue:0.37)
+        case .specialDay: Color(red:0.03,green:0.48,blue:0.47)
+        case .specialNight: Color(red:0.44,green:0.31,blue:0.60)
+        case .leave, .halfPre, .halfPost: Color(red:0.14,green:0.45,blue:0.29)
         default: .secondary
         }
     }
@@ -38,7 +38,7 @@ struct RootView: View {
             ScheduleShareView(store:schedule,month:$month).tabItem { Label("공유",systemImage:"square.and.arrow.up") }
             AlarmView(model:model).tabItem { Label("알람",systemImage:"alarm") }
             SettingsView(store:schedule).tabItem { Label("설정",systemImage:"gearshape") }
-        }.tint(.indigo)
+        }.tint(WorkType.night.color)
     }
 }
 
@@ -67,9 +67,15 @@ struct ScheduleView: View {
             }
             .navigationTitle("Shift_cal").navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement:.topBarLeading) {
+                    Button { choosingGroup=true } label: { Image(systemName:"line.3.horizontal") }
+                        .accessibilityLabel("메뉴").accessibilityIdentifier("open-menu")
+                }
                 ToolbarItem(placement:.topBarTrailing) {
-                    Button { choosingGroup=true } label: { Text(store.group+"조").font(.headline); Image(systemName:"chevron.down").font(.caption) }
-                    .accessibilityIdentifier("choose-group")
+                    VStack(spacing:1) {
+                        Text("Google 로그인").font(.system(size:10))
+                        Text("준비 중").font(.system(size:8))
+                    }.foregroundStyle(.secondary).accessibilityLabel("Google 로그인 준비 중")
                 }
                 ToolbarItem(placement:.topBarTrailing) {
                     Menu {
@@ -77,7 +83,7 @@ struct ScheduleView: View {
                     } label: { Image(systemName:"ellipsis.circle") }
                 }
             }
-            .sheet(isPresented:$choosingGroup) { GroupSelectionView(store:store) }
+            .sheet(isPresented:$choosingGroup) { SettingsView(store:store,showClose:true) }
             .sheet(item:$selected) { item in EditWorkView(store:store,day:item).presentationDragIndicator(.visible) }
 
         }
@@ -170,9 +176,9 @@ struct EditWorkView: View {
             ForEach(types) { type in
                 Button { choice=type.rawValue } label: {
                     VStack(spacing:8) {
-                        Text(type.shortLabel).font(.system(size:15,weight:.semibold)).foregroundStyle(type.color)
-                            .frame(width:44,height:40).background(type.color.opacity(0.10),in:RoundedRectangle(cornerRadius:10))
-                            .overlay(RoundedRectangle(cornerRadius:10).stroke(selectedType==type ? type.color : .clear,lineWidth:1.5))
+                        Text(type.shortLabel).font(.system(size:15,weight:.semibold)).foregroundStyle(.white)
+                            .frame(width:44,height:40).background(type.color,in:RoundedRectangle(cornerRadius:10))
+                            .padding(3).overlay(RoundedRectangle(cornerRadius:13).stroke(selectedType==type ? Color.primary : .clear,lineWidth:2))
                         Text(type.label).font(.system(size:11)).foregroundStyle(selectedType==type ? Color.primary : .secondary).lineLimit(1).minimumScaleFactor(0.8)
                     }.frame(maxWidth:.infinity,minHeight:68)
                 }.buttonStyle(.plain).accessibilityLabel(type.label).accessibilityIdentifier("shift-"+type.rawValue)
@@ -190,6 +196,9 @@ struct ShareSheet: UIViewControllerRepresentable {
 
 struct SettingsView: View {
     @ObservedObject var store: ScheduleStore
+    var showClose=false
+    @Environment(\.dismiss) private var dismiss
+    @State private var changingGroup=false
     @State private var shareURL:URL?
     @State private var importing=false
     @State private var pending:Data?
@@ -197,10 +206,10 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("내 근무 설정") {
-                    Picker("교대조",selection:Binding(get:{store.group},set:{store.setGroup($0)})) {
-                        ForEach(["A","B","C"],id:\.self) { Text($0+"조").tag($0) }
-                    }
+                Section("교대조 설정") {
+                    Button { changingGroup=true } label: {
+                        HStack { Text(store.group+"조");Spacer();Image(systemName:"chevron.right").font(.caption) }
+                    }.accessibilityIdentifier("menu-group-settings")
                     Text("한국 시간 · 주간 06:30 / 야간 18:30").font(.footnote)
                 }
                 Section("백업 및 복원") {
@@ -220,6 +229,8 @@ struct SettingsView: View {
                     Text("알람은 앞으로 30일을 미리 예약합니다. 예약 마지막 날짜 전에 앱을 다시 열어 주세요. 근무 변경 후 예약 목록을 확인하세요.").font(.footnote).foregroundStyle(.secondary)
                 }
             }.navigationTitle("설정")
+            .toolbar { if showClose { ToolbarItem(placement:.cancellationAction) { Button("닫기") { dismiss() }.accessibilityIdentifier("close-menu") } } }
+            .sheet(isPresented:$changingGroup) { GroupSelectionView(store:store) }
             .fileImporter(isPresented:$importing,allowedContentTypes:[.json]) { result in
                 do {
                     let url=try result.get();let access=url.startAccessingSecurityScopedResource();defer { if access {url.stopAccessingSecurityScopedResource()} }

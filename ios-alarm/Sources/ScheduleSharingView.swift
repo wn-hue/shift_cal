@@ -15,7 +15,7 @@ struct GroupSelectionView: View {
                                     Text("오늘 기본 · "+store.engine.day(Date(),group:group).label).font(.subheadline).foregroundStyle(.secondary)
                                 }
                                 Spacer()
-                                if store.group==group { Image(systemName:"checkmark.circle.fill").foregroundStyle(.indigo) }
+                                if store.group==group { Image(systemName:"checkmark.circle.fill").foregroundStyle(WorkType.night.color) }
                             }.padding(.vertical,8).foregroundStyle(.primary)
                         }.accessibilityIdentifier("group-"+group)
                     }
@@ -58,9 +58,9 @@ struct MonthGrid: View {
                                 Spacer(minLength:0)
                                 if !day.holiday.isEmpty { Text(day.holiday).font(.system(size:7)).foregroundStyle(.red).lineLimit(1) }
                             }
-                            Text(day.type.shortLabel).font(.system(size:12,weight:.medium)).foregroundStyle(day.type.color)
+                            Text(day.type.shortLabel).font(.system(size:12,weight:.medium)).foregroundStyle(day.type==WorkType.off ? day.type.color : Color.white)
                                 .frame(width:30,height:27)
-                                .background(day.type==WorkType.off ? Color.clear : day.type.color.opacity(0.11),in:RoundedRectangle(cornerRadius:7))
+                                .background(day.type==WorkType.off ? Color.clear : day.type.color,in:RoundedRectangle(cornerRadius:7))
                                 .frame(maxWidth:.infinity)
                             HStack(spacing:3) {
                                 if day.changed { Image(systemName:"pencil").font(.system(size:7)) }
@@ -68,8 +68,8 @@ struct MonthGrid: View {
                             }.foregroundStyle(.secondary).frame(maxWidth:.infinity).frame(height:4)
                             Spacer(minLength:0)
                         }.padding(.horizontal,4).padding(.top,7).frame(maxWidth:.infinity).frame(height:cellHeight)
-                            .background(ShiftPlanner.korea.isDateInToday(day.date) ? Color.indigo.opacity(0.035) : .clear)
-                            .overlay(Rectangle().stroke(ShiftPlanner.korea.isDateInToday(day.date) ? Color.indigo.opacity(0.7) : .clear,lineWidth:1))
+                            .background(ShiftPlanner.korea.isDateInToday(day.date) ? WorkType.night.color.opacity(0.035) : .clear)
+                            .overlay(Rectangle().stroke(ShiftPlanner.korea.isDateInToday(day.date) ? WorkType.night.color.opacity(0.7) : .clear,lineWidth:1))
                             .overlay(alignment:.bottom) { Rectangle().fill(Color.primary.opacity(0.09)).frame(height:0.5) }
                             .overlay(alignment:.trailing) { Rectangle().fill(Color.primary.opacity(0.07)).frame(width:0.5) }
                     }.buttonStyle(.plain).accessibilityLabel("\(day.key) \(day.label) \(day.holiday) \(showMemos ? day.memo : "")")
@@ -164,7 +164,7 @@ struct SharedScheduleImage:View {
     let includeMemos:Bool
     var body:some View {
         VStack(alignment:.leading,spacing:20) {
-            HStack { VStack(alignment:.leading,spacing:5) { Text("Shift_cal").font(.headline).foregroundStyle(.indigo);Text(ScheduleDisplay.title(month,format:"yyyy년 M월")).font(.title2.bold()) };Spacer();Text(group+"조").font(.title2.bold()) }
+            HStack { VStack(alignment:.leading,spacing:5) { Text("Shift_cal").font(.headline).foregroundStyle(WorkType.night.color);Text(ScheduleDisplay.title(month,format:"yyyy년 M월")).font(.title2.bold()) };Spacer();Text(group+"조").font(.title2.bold()) }
             MonthGrid(days:days,showMemos:includeMemos)
             HStack { Label("주간",systemImage:"sun.max.fill");Label("야간",systemImage:"moon.fill");Label("휴무",systemImage:"cup.and.saucer.fill") }.font(.caption).foregroundStyle(.secondary)
             if includeMemos {
