@@ -1,6 +1,12 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+enum AppTheme {
+    static let accent=Color(red:40/255,green:116/255,blue:232/255)
+    static let green=Color(red:21/255,green:150/255,blue:106/255)
+    static let orange=Color(red:223/255,green:140/255,blue:37/255)
+}
+
 extension WorkType {
     var color: Color {
         switch self {
@@ -40,7 +46,7 @@ struct RootView: View {
             ScheduleShareView(store:schedule,month:$month).tabItem { Label("공유",systemImage:"square.and.arrow.up") }
             AlarmView(model:model).tabItem { Label("알람",systemImage:"alarm") }
             SettingsView(store:schedule).tabItem { Label("설정",systemImage:"gearshape") }
-        }.tint(WorkType.night.color)
+        }.tint(AppTheme.accent)
     }
 }
 
@@ -141,10 +147,10 @@ struct EditWorkView: View {
                         Text("\(store.group)조 · 기본 근무 \(store.engine.day(day.date,group:store.group).label)").font(.subheadline).foregroundStyle(.secondary)
                         if !day.holiday.isEmpty { Text(day.holiday).font(.caption).foregroundStyle(.secondary) }
                     }.padding(.top,12)
-                    Picker("편집",selection:$tab) {
-                        Text("근무").tag(0).accessibilityIdentifier("editor-tab-0")
-                        Text("메모").tag(1).accessibilityIdentifier("editor-tab-1")
-                    }.pickerStyle(.segmented).controlSize(.large)
+                    HStack(spacing:4) {
+                        editorTab("근무",index:0)
+                        editorTab("메모",index:1)
+                    }.padding(4).background(Color(.secondarySystemBackground),in:RoundedRectangle(cornerRadius:12))
                     if tab == 0 {
                         Text("근무").font(.subheadline.weight(.medium))
                         options([.day,.night,.off,.specialDay,.specialNight,.noOT])
@@ -169,11 +175,12 @@ struct EditWorkView: View {
     }
     private func editorTab(_ title:String,index:Int)->some View {
         Button { tab=index } label: {
-            VStack(spacing:10) {
-                Text(title).font(.headline).foregroundStyle(tab==index ? Color.primary : .secondary)
-                Rectangle().fill(tab==index ? Color.primary : .clear).frame(height:2)
-            }.fixedSize(horizontal:true,vertical:false)
+            Text(title).font(.system(size:16,weight:.semibold))
+                .foregroundStyle(tab==index ? Color.white : Color.secondary)
+                .frame(maxWidth:.infinity,minHeight:44)
+                .background(tab==index ? AppTheme.accent : Color.clear,in:RoundedRectangle(cornerRadius:9))
         }.buttonStyle(.plain).accessibilityIdentifier("editor-tab-\(index)")
+            .accessibilityAddTraits(tab==index ? .isSelected : [])
     }
     private var selectedType:WorkType { WorkType(rawValue:choice) ?? store.engine.day(day.date,group:store.group).type }
     private func options(_ types:[WorkType])->some View {
@@ -214,12 +221,12 @@ struct SettingsView: View {
             List {
                 Section {
                     Button { changingGroup=true } label: {
-                        HStack { Text("교대조 설정").font(.subheadline);Spacer();Text(store.group+"조").font(.subheadline);Image(systemName:"chevron.right").font(.caption) }
+                        HStack { Image(systemName:"person.2.fill").foregroundStyle(AppTheme.accent);Text("교대조 설정").font(.subheadline);Spacer();Text(store.group+"조").font(.subheadline);Image(systemName:"chevron.right").font(.caption) }
                     }.accessibilityIdentifier("menu-group-settings")
                 }
                 Section("백업 및 복원") {
-                    Button("근무 변경·메모 백업") { backup() }.accessibilityIdentifier("backup-schedule")
-                    Button("백업 파일 복원") { importing=true }
+                    Button { backup() } label: { Label("근무 변경·메모 백업",systemImage:"tray.and.arrow.up.fill").foregroundStyle(AppTheme.green) }.accessibilityIdentifier("backup-schedule")
+                    Button { importing=true } label: { Label("백업 파일 복원",systemImage:"tray.and.arrow.down.fill").foregroundStyle(AppTheme.orange) }
                     if !message.isEmpty { Text(message).font(.footnote) }
                 }
                 Section("기존 Shift_cal 기능") {

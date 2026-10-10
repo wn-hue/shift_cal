@@ -15,7 +15,7 @@ struct GroupSelectionView: View {
                                     Text("오늘 기본 · "+store.engine.day(Date(),group:group).label).font(.subheadline).foregroundStyle(.secondary)
                                 }
                                 Spacer()
-                                if store.group==group { Image(systemName:"checkmark.circle.fill").foregroundStyle(WorkType.night.color) }
+                                if store.group==group { Image(systemName:"checkmark.circle.fill").foregroundStyle(AppTheme.accent) }
                             }.padding(.vertical,8).foregroundStyle(.primary)
                         }.accessibilityIdentifier("group-"+group)
                     }
@@ -143,7 +143,7 @@ struct ScheduleShareView: View {
     }
     private func shareCard(_ title:String,detail:String,symbol:String)->some View {
         HStack(spacing:18) {
-            Image(systemName:symbol).font(.system(size:23,weight:.regular)).foregroundStyle(.secondary).frame(width:30)
+            Image(systemName:symbol).font(.system(size:21,weight:.regular)).foregroundStyle(AppTheme.accent).frame(width:44,height:44).background(AppTheme.accent.opacity(0.08),in:RoundedRectangle(cornerRadius:12))
             VStack(alignment:.leading,spacing:5) { Text(title).font(.system(size:17,weight:.medium));Text(detail).font(.caption).foregroundStyle(.secondary) }
             Spacer();Image(systemName:"chevron.right").font(.caption).foregroundStyle(.tertiary)
         }.padding(.vertical,10).frame(minHeight:66).foregroundStyle(.primary)
@@ -176,7 +176,7 @@ struct SharedScheduleImage:View {
     let includeMemos:Bool
     var body:some View {
         VStack(alignment:.leading,spacing:20) {
-            HStack { VStack(alignment:.leading,spacing:5) { Text("Shift_cal").font(.headline).foregroundStyle(WorkType.night.color);Text(ScheduleDisplay.title(month,format:"yyyy년 M월")).font(.title2.bold()) };Spacer();Text(group+"조").font(.title2.bold()) }
+            HStack { VStack(alignment:.leading,spacing:5) { Text("Shift_cal").font(.headline).foregroundStyle(AppTheme.accent);Text(ScheduleDisplay.title(month,format:"yyyy년 M월")).font(.title2.bold()) };Spacer();Text(group+"조").font(.title2.bold()) }
             MonthGrid(days:days,showMemos:includeMemos)
             HStack { Label("주간",systemImage:"sun.max.fill");Label("야간",systemImage:"moon.fill");Label("휴무",systemImage:"cup.and.saucer.fill") }.font(.caption).foregroundStyle(.secondary)
             if includeMemos {
