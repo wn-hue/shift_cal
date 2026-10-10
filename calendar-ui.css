@@ -537,3 +537,27 @@ body .bottom-nav .nav-item.active .nav-visual { background:var(--accent-soft); b
 .share-row > span:first-child { color:var(--accent); background:var(--accent-soft); width:40px; height:40px; display:grid; place-items:center; border-radius:12px; }
 .all-info-list a:first-child { color:var(--accent); }
 button:focus-visible, a:focus-visible, select:focus-visible { outline-color:var(--accent); }
+
+/* Monthly summary in the app's own palette. */
+#modal-month-stats .stats-sheet { padding:24px; background:#fff; border-radius:24px 24px 0 0; }
+.stats-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; }
+.stats-header h2 { font-size:28px; margin:0; letter-spacing:-.6px; }
+.stats-header p,.stats-section p { color:#737b88; font-size:11px; margin:6px 0 16px; }
+.stats-section { padding:0 0 18px; margin-bottom:18px; border-bottom:1px solid #edf0f4; }
+.stats-section:last-child { border:0; padding:0; margin:0; }
+.stats-section h3 { font-size:14px; margin:0; font-weight:600; }
+.stats-section-heading,.stats-row { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.stats-section-heading button { border:0; background:none; color:var(--accent); font-size:12px; cursor:pointer; }
+.stats-row { padding:10px 0; font-size:14px; color:#616b78; }
+.stats-row strong { color:#333d4b; font-size:15px; }
+.stats-total { margin-top:6px; background:var(--accent-soft); border-radius:12px; padding:14px 12px; }
+.stats-total strong { color:var(--accent); font-size:18px; }
+.stats-shifts { display:flex; gap:12px; flex-wrap:wrap; margin:8px 0 14px; }
+.stats-shifts > div { display:flex; gap:5px; align-items:center; font-size:12px; }
+.stats-badge { display:grid; place-items:center; border-radius:9px; width:30px; height:30px; font-size:11px; }
+.stats-badge.day { background:var(--shift-day);color:#424242; }
+.stats-badge.night { background:var(--shift-night);color:#fff; }
+.stats-badge.off { color:var(--shift-off);background:#fff4f6; }
+.stats-badge.day-sp { background:var(--shift-special-day);color:#fff; }
+.stats-badge.night-sp { background:var(--shift-special-night);color:#fff; }
+#modal-month-stats [id^="modal-pill-"] { background:none; padding:0; color:#333d4b !important; font-size:13px; }
