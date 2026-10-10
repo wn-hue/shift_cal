@@ -473,3 +473,14 @@ body .bottom-nav .nav-item.active { color:var(--shift-night); }
 #modal-override .opt-btn.night-sp { border-left:3px solid var(--shift-special-night); color:var(--shift-special-night); }
 #modal-override .opt-btn.leave, #modal-override .opt-btn.half { border-left:3px solid var(--shift-leave); color:var(--shift-leave); }
 #modal-override .btn-save, #view-payroll .btn-save, #view-leave .btn-save, .settings-dialog .btn-save, #payroll-sms-dialog .sms-primary-btn { background:var(--shift-night); }
+
+/* Compact attendance choices and schedule sharing. */
+#modal-override .opt-btn { min-height:44px; padding:10px 12px; border-radius:10px; justify-content:center; }
+#modal-override .override-header { margin-bottom:18px; }
+#modal-override .override-section { margin-bottom:16px; padding-bottom:16px; }
+#modal-override .override-memo textarea { min-height:72px; border-radius:10px; }
+.share-sheet { background:#fff; padding:24px; border-radius:22px 22px 0 0; }
+.share-row { display:flex; align-items:center; gap:16px; min-height:72px; width:100%; border:0; border-bottom:1px solid #eee; background:#fff; color:#424242; text-align:left; font:inherit; cursor:pointer; }
+.share-row strong { flex:1; font-size:16px; font-weight:500; }
+.share-row > span { font-size:24px; }
+#share-status { font-size:12px; color:#737373; margin:12px 0 0; }
