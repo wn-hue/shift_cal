@@ -48,6 +48,7 @@ struct ScheduleView: View {
     @ObservedObject var store: ScheduleStore
     @Binding var month: Date
     @State private var choosingGroup = false
+    @State private var sharing = false
     @State private var selected: WorkDay?
     var body: some View {
         NavigationStack {
@@ -80,11 +81,15 @@ struct ScheduleView: View {
                     }.foregroundStyle(.secondary).accessibilityLabel("Google 로그인 준비 중")
                 }
                 ToolbarItem(placement:.topBarTrailing) {
+                    Button { sharing=true } label: { Image(systemName:"square.and.arrow.up") }.accessibilityLabel("근무표 공유")
+                }
+                ToolbarItem(placement:.topBarTrailing) {
                     Menu {
                         Button("오늘로 이동",systemImage:"calendar.badge.clock") { month=Date() }
                     } label: { Image(systemName:"ellipsis.circle") }
                 }
             }
+            .sheet(isPresented:$sharing) { ScheduleShareView(store:store,month:$month).presentationDragIndicator(.visible) }
             .sheet(isPresented:$choosingGroup) { SettingsView(store:store,showClose:true) }
             .sheet(item:$selected) { item in EditWorkView(store:store,day:item).presentationDragIndicator(.visible) }
 
@@ -145,14 +150,12 @@ struct EditWorkView: View {
                     if tab == 0 {
                         options([.day,.night,.off,.specialDay,.specialNight,.noOT])
                         Divider()
-                        Text("연차 · 반차 · 무급").font(.subheadline).foregroundStyle(.secondary)
                         options([.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost])
                         Divider()
                         Button("기본 근무로 되돌리기") { choice="" }.font(.subheadline).foregroundStyle(.secondary).accessibilityIdentifier("reset-shift")
                     } else {
                         TextField("메모를 남겨 주세요",text:$memo,axis:.vertical).lineLimit(6...12).accessibilityIdentifier("memo-editor")
                         Divider()
-                        Text("공유할 때 메모 포함 여부를 선택할 수 있어요.").font(.caption).foregroundStyle(.secondary)
                     }
                 }.padding(.horizontal,24).padding(.bottom,24)
             }.background(Color(.systemBackground))
@@ -181,8 +184,7 @@ struct EditWorkView: View {
                         Text(type.shortLabel).font(.system(size:15,weight:.semibold)).foregroundStyle(type.badgeTextColor)
                             .frame(width:44,height:40).background(type.color,in:RoundedRectangle(cornerRadius:10))
                             .padding(3).overlay(RoundedRectangle(cornerRadius:13).stroke(selectedType==type ? Color.primary : .clear,lineWidth:2))
-                        Text(type.label).font(.system(size:11)).foregroundStyle(selectedType==type ? Color.primary : .secondary).lineLimit(1).minimumScaleFactor(0.8)
-                    }.frame(maxWidth:.infinity,minHeight:68)
+                    }.frame(maxWidth:.infinity,minHeight:48)
                 }.buttonStyle(.plain).accessibilityLabel(type.label).accessibilityIdentifier("shift-"+type.rawValue)
                     .accessibilityAddTraits(selectedType==type ? .isSelected : [])
             }
