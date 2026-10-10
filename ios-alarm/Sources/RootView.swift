@@ -54,6 +54,7 @@ struct ScheduleView: View {
     @ObservedObject var store: ScheduleStore
     @Binding var month: Date
     @State private var choosingGroup = false
+    @State private var statistics = false
     @State private var sharing = false
     @State private var selected: WorkDay?
     var body: some View {
@@ -90,11 +91,15 @@ struct ScheduleView: View {
                     Button { sharing=true } label: { Image(systemName:"square.and.arrow.up") }.accessibilityLabel("근무표 공유")
                 }
                 ToolbarItem(placement:.topBarTrailing) {
+                    Button { statistics=true } label:{ Image(systemName:"chart.bar.xaxis") }.accessibilityLabel("근무 통계")
+                }
+                ToolbarItem(placement:.topBarTrailing) {
                     Menu {
                         Button("오늘로 이동",systemImage:"calendar.badge.clock") { month=Date() }
                     } label: { Image(systemName:"ellipsis.circle") }
                 }
             }
+            .sheet(isPresented:$statistics) { WorkStatisticsView(store:store,month:month).presentationDragIndicator(.visible) }
             .sheet(isPresented:$sharing) { ScheduleShareView(store:store,month:$month).presentationDragIndicator(.visible) }
             .sheet(isPresented:$choosingGroup) { SettingsView(store:store,showClose:true) }
             .sheet(item:$selected) { item in EditWorkView(store:store,day:item).presentationDragIndicator(.visible) }
@@ -310,5 +315,79 @@ struct PrivacyView: View {
             Link("Vercel 개인정보처리방침", destination: URL(string: "https://vercel.com/legal/privacy-policy")!)
             Link("기존 웹 서비스 개인정보 처리방침", destination: URL(string: "https://h-lyart-ten.vercel.app/privacy.html")!)
         }.navigationTitle("개인정보 처리방침").navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+
+struct WorkStatisticsView: View {
+    @ObservedObject var store:ScheduleStore
+    let month:Date
+    @Environment(\.dismiss) private var dismiss
+    private var days:[WorkDay] { store.month(month) }
+    private func count(_ type:WorkType)->Int { days.filter{$0.type==type}.count }
+    private var used:Double { Double(count(.leave)) + Double(count(.halfPre)+count(.halfPost))/2 }
+    private func amount(_ type:WorkType)->Double {
+        days.reduce(0) { sum,day in
+            if type == .off { return sum + (day.type == .off || day.type == .unpaid ? 1 : [.unpaidHalfPre,.unpaidHalfPost].contains(day.type) ? 0.5 : 0) }
+            if day.type == type { return sum+1 }
+            if type == .day || type == .night {
+                let base=store.engine.day(day.date,group:store.group).type
+                let direction:WorkType = [.night,.specialNight].contains(base) ? .night : .day
+                if direction == type {
+                    if day.type == .noOT { return sum+1 }
+                    if [.halfPre,.halfPost,.unpaidHalfPre,.unpaidHalfPost].contains(day.type) { return sum+0.5 }
+                }
+            }
+            return sum
+        }
+    }
+    private var working:Double { amount(.day)+amount(.night)+amount(.specialDay)+amount(.specialNight) }
+    var body:some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment:.leading,spacing:24) {
+                    VStack(alignment:.leading,spacing:6) {
+                        Text(ScheduleDisplay.title(month,format:"yyyy.MM")).font(.system(size:28,weight:.semibold))
+                        Text(store.group+"조 · 근무 통계").font(.caption).foregroundStyle(.secondary)
+                    }
+                    VStack(alignment:.leading,spacing:16) {
+                        Text("이번 달 근무").font(.subheadline.weight(.semibold))
+                        Text("이번 달 1일 – 말일").font(.caption).foregroundStyle(.secondary)
+                        ViewThatFits {
+                            HStack(spacing:16) { badges }
+                            ScrollView(.horizontal,showsIndicators:false) { HStack(spacing:16) { badges } }
+                        }
+                        row("총 출근",value:working.formatted()+"일")
+                    }
+                    Divider()
+                    VStack(alignment:.leading,spacing:16) {
+                        Text("예상 급여").font(.subheadline.weight(.semibold))
+                        Text("급여 설정과 계산은 웹에서 확인할 수 있어요.").font(.caption).foregroundStyle(.secondary)
+                        Link(destination:URL(string:"https://h-lyart-ten.vercel.app/")!) {
+                            HStack { Text("급여 계산기 열기");Spacer();Image(systemName:"chevron.right") }
+                                .font(.subheadline.weight(.medium)).padding(14)
+                                .foregroundStyle(AppTheme.accent).background(AppTheme.accent.opacity(0.08),in:RoundedRectangle(cornerRadius:12))
+                        }
+                    }
+                    Divider()
+                    row("이번 달 사용 연차",value:used.formatted()+"일")
+                }.padding(24)
+            }.background(Color(.systemBackground))
+            .navigationTitle("근무 통계").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement:.confirmationAction) { Button("닫기") { dismiss() } } }
+        }
+    }
+    private var badges:some View {
+        ForEach([WorkType.day,.night,.off,.specialDay,.specialNight]) { type in
+            HStack(spacing:5) {
+                Text(type.shortLabel).font(.system(size:11,weight:.medium))
+                    .foregroundStyle(type == .off ? type.color : type.badgeTextColor)
+                    .frame(width:30,height:30).background(type == .off ? type.color.opacity(0.08) : type.color,in:RoundedRectangle(cornerRadius:9))
+                Text(amount(type).formatted()).font(.system(size:13,weight:.semibold))
+            }
+        }
+    }
+    private func row(_ title:String,value:String)->some View {
+        HStack { Text(title).foregroundStyle(.secondary);Spacer();Text(value).fontWeight(.semibold) }.font(.subheadline)
     }
 }
