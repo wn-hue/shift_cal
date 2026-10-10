@@ -323,7 +323,23 @@ struct WorkStatisticsView: View {
     @ObservedObject var store:ScheduleStore
     let month:Date
     @Environment(\.dismiss) private var dismiss
-    private var days:[WorkDay] { store.month(month) }
+    private var periodStart:Date {
+        let cal=ShiftPlanner.korea
+        let first=cal.date(from:cal.dateComponents([.year,.month],from:month))!
+        return cal.date(byAdding:.day,value:15,to:cal.date(byAdding:.month,value:-1,to:first)!)!
+    }
+    private var periodEnd:Date {
+        let cal=ShiftPlanner.korea
+        return cal.date(byAdding:.day,value:14,to:cal.date(from:cal.dateComponents([.year,.month],from:month))!)!
+    }
+    private var days:[WorkDay] {
+        var result:[WorkDay]=[],date=periodStart
+        while date<=periodEnd {
+            result.append(store.day(date))
+            date=ShiftPlanner.korea.date(byAdding:.day,value:1,to:date)!
+        }
+        return result
+    }
     private func count(_ type:WorkType)->Int { days.filter{$0.type==type}.count }
     private var used:Double { Double(count(.leave)) + Double(count(.halfPre)+count(.halfPost))/2 }
     private func amount(_ type:WorkType)->Double {
@@ -351,8 +367,8 @@ struct WorkStatisticsView: View {
                         Text(store.group+"조 · 근무 통계").font(.caption).foregroundStyle(.secondary)
                     }
                     VStack(alignment:.leading,spacing:16) {
-                        Text("이번 달 근무").font(.subheadline.weight(.semibold))
-                        Text("이번 달 1일 – 말일").font(.caption).foregroundStyle(.secondary)
+                        Text("급여 기간 근무").font(.subheadline.weight(.semibold))
+                        Text(ScheduleDisplay.title(periodStart,format:"yyyy.MM.dd")+" – "+ScheduleDisplay.title(periodEnd,format:"yyyy.MM.dd")).font(.caption).foregroundStyle(.secondary)
                         ViewThatFits {
                             HStack(spacing:16) { badges }
                             ScrollView(.horizontal,showsIndicators:false) { HStack(spacing:16) { badges } }
@@ -370,7 +386,7 @@ struct WorkStatisticsView: View {
                         }
                     }
                     Divider()
-                    row("이번 달 사용 연차",value:used.formatted()+"일")
+                    row("급여 기간 사용 연차",value:used.formatted()+"일")
                 }.padding(24)
             }.background(Color(.systemBackground))
             .navigationTitle("근무 통계").navigationBarTitleDisplayMode(.inline)
