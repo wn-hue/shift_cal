@@ -37,35 +37,48 @@ enum ScheduleDisplay {
 struct MonthGrid: View {
     let days:[WorkDay]
     let showMemos:Bool
+    var cellHeight:CGFloat = 90
     var onSelect:((WorkDay)->Void)? = nil
-    private let columns=Array(repeating:GridItem(.flexible(),spacing:4),count:7)
+    private let columns=Array(repeating:GridItem(.flexible(),spacing:0),count:7)
     var body: some View {
         let pad=ShiftPlanner.korea.component(.weekday,from:days[0].date)-1
-        LazyVGrid(columns:columns,spacing:6) {
+        let total=((pad+days.count+6)/7)*7
+        LazyVGrid(columns:columns,spacing:0) {
             ForEach(Array(["일","월","화","수","목","금","토"].enumerated()),id:\.offset) { i,name in
-                Text(name).font(.caption.weight(.semibold)).foregroundStyle(i==0 ? Color.red : i==6 ? Color.blue : Color.secondary).frame(maxWidth:.infinity)
+                Text(name).font(.system(size:11)).foregroundStyle(i==0 ? Color.red : i==6 ? Color.blue : Color.secondary).frame(maxWidth:.infinity).frame(height:28)
             }
-            ForEach(0..<pad,id:\.self) { _ in Color.clear.frame(height:82) }
-            ForEach(days) { day in
-                Button { onSelect?(day) } label: {
-                    VStack(spacing:4) {
-                        Text(String(ShiftPlanner.korea.component(.day,from:day.date))).font(.subheadline.weight(.semibold))
-                            .foregroundStyle(day.holiday.isEmpty ? Color.primary : .red)
-                        VStack(spacing:3) {
-                            Image(systemName:day.type.symbol).font(.system(size:10))
-                            Text(day.type == .noOT ? "OT해제" : day.type.label).font(.system(size:10,weight:.bold)).minimumScaleFactor(0.65).lineLimit(1)
-                        }.foregroundStyle(day.type.color).frame(maxWidth:.infinity).padding(.vertical,5)
-                            .background(day.type.color.opacity(0.13),in:RoundedRectangle(cornerRadius:9))
-                        HStack(spacing:3) {
-                            if day.changed { Image(systemName:"pencil").font(.system(size:8)) }
-                            if showMemos && !day.memo.isEmpty { Circle().frame(width:4,height:4) }
-                            if !day.holiday.isEmpty { Image(systemName:"flag.fill").font(.system(size:8)).foregroundStyle(.red) }
-                        }.frame(height:7).foregroundStyle(.secondary)
-                    }.padding(.horizontal,3).frame(maxWidth:.infinity,minHeight:82)
-                        .background(Color(.secondarySystemGroupedBackground),in:RoundedRectangle(cornerRadius:12))
-                        .overlay(RoundedRectangle(cornerRadius:12).stroke(ShiftPlanner.korea.isDateInToday(day.date) ? Color.indigo : .clear,lineWidth:2))
-                }.buttonStyle(.plain).accessibilityLabel("\(day.key) \(day.label) \(day.holiday) \(showMemos ? day.memo : "")")
-                    .accessibilityIdentifier("day-\(day.key)")
+            ForEach(0..<total,id:\.self) { position in
+                if position>=pad && position<pad+days.count {
+                    let day=days[position-pad]
+                    Button { onSelect?(day) } label: {
+                        VStack(alignment:.leading,spacing:10) {
+                            HStack(alignment:.top,spacing:2) {
+                                Text(String(ShiftPlanner.korea.component(.day,from:day.date))).font(.system(size:12,weight:.medium))
+                                    .foregroundStyle(!day.holiday.isEmpty || position%7==0 ? Color.red : position%7==6 ? Color.blue : .primary)
+                                Spacer(minLength:0)
+                                if !day.holiday.isEmpty { Text(day.holiday).font(.system(size:7)).foregroundStyle(.red).lineLimit(1) }
+                            }
+                            Text(day.type.shortLabel).font(.system(size:12,weight:.medium)).foregroundStyle(day.type.color)
+                                .frame(width:30,height:27)
+                                .background(day.type==WorkType.off ? Color.clear : day.type.color.opacity(0.11),in:RoundedRectangle(cornerRadius:7))
+                                .frame(maxWidth:.infinity)
+                            HStack(spacing:3) {
+                                if day.changed { Image(systemName:"pencil").font(.system(size:7)) }
+                                if showMemos && !day.memo.isEmpty { Circle().frame(width:3,height:3) }
+                            }.foregroundStyle(.secondary).frame(maxWidth:.infinity).frame(height:4)
+                            Spacer(minLength:0)
+                        }.padding(.horizontal,4).padding(.top,7).frame(maxWidth:.infinity).frame(height:cellHeight)
+                            .background(ShiftPlanner.korea.isDateInToday(day.date) ? Color.indigo.opacity(0.035) : .clear)
+                            .overlay(Rectangle().stroke(ShiftPlanner.korea.isDateInToday(day.date) ? Color.indigo.opacity(0.7) : .clear,lineWidth:1))
+                            .overlay(alignment:.bottom) { Rectangle().fill(Color.primary.opacity(0.09)).frame(height:0.5) }
+                            .overlay(alignment:.trailing) { Rectangle().fill(Color.primary.opacity(0.07)).frame(width:0.5) }
+                    }.buttonStyle(.plain).accessibilityLabel("\(day.key) \(day.label) \(day.holiday) \(showMemos ? day.memo : "")")
+                        .accessibilityIdentifier("day-\(day.key)")
+                } else {
+                    Color.clear.frame(height:cellHeight)
+                        .overlay(alignment:.bottom) { Rectangle().fill(Color.primary.opacity(0.09)).frame(height:0.5) }
+                        .overlay(alignment:.trailing) { Rectangle().fill(Color.primary.opacity(0.07)).frame(width:0.5) }
+                }
             }
         }
     }
@@ -81,10 +94,10 @@ struct ScheduleShareView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment:.leading,spacing:20) {
+                VStack(alignment:.leading,spacing:24) {
                     VStack(alignment:.leading,spacing:8) {
-                        Text("내 근무표 보내기").font(.title2.bold())
-                        Text("동료나 가족에게 필요한 일정만 공유하세요.").foregroundStyle(.secondary)
+                        Text("근무표 보내기").font(.title2.weight(.semibold))
+                        Text("이미지나 파일로 간편하게 공유하세요.").font(.subheadline).foregroundStyle(.secondary)
                     }
                     HStack {
                         Button { move(-1) } label:{ Image(systemName:"chevron.left").frame(width:44,height:44) }.accessibilityLabel("이전 달")
@@ -96,11 +109,13 @@ struct ScheduleShareView: View {
                     Toggle("메모도 함께 보내기",isOn:$includeMemos)
                     Text("기본은 메모 제외입니다. 선택한 조의 이번 달 근무만 공유합니다.").font(.footnote).foregroundStyle(.secondary)
                     Button { makeImage() } label: { shareCard("이미지로 보내기",detail:"월간 근무표를 한 장의 이미지로",symbol:"photo.on.rectangle.angled") }.buttonStyle(.plain).accessibilityIdentifier("share-image")
+                    Divider()
                     Button { makeCalendar() } label: { shareCard("캘린더 파일로 보내기",detail:"받는 사람이 캘린더에 가져올 수 있어요",symbol:"calendar.badge.plus") }.buttonStyle(.plain).accessibilityIdentifier("share-calendar")
+                    Divider()
                     Text("공유한 사본에는 이후 수정이 자동 반영되지 않습니다.").font(.footnote).foregroundStyle(.secondary)
                     if !message.isEmpty { Text(message).foregroundStyle(.red).accessibilityIdentifier("share-error") }
                 }.padding()
-            }.background(Color(.systemGroupedBackground)).navigationTitle("공유")
+            }.background(Color(.systemBackground)).navigationTitle("공유").navigationBarTitleDisplayMode(.inline)
             .sheet(item:$preview) { item in
                 NavigationStack {
                     ScrollView { Image(uiImage:item.image).resizable().scaledToFit().padding().accessibilityIdentifier("share-preview") }
@@ -115,11 +130,11 @@ struct ScheduleShareView: View {
         }
     }
     private func shareCard(_ title:String,detail:String,symbol:String)->some View {
-        HStack(spacing:16) {
-            Image(systemName:symbol).font(.title2).foregroundStyle(.indigo).frame(width:48,height:48).background(Color.indigo.opacity(0.1),in:RoundedRectangle(cornerRadius:14))
-            VStack(alignment:.leading,spacing:6) { Text(title).font(.headline);Text(detail).font(.subheadline).foregroundStyle(.secondary) }
-            Spacer();Image(systemName:"chevron.right").foregroundStyle(.secondary)
-        }.padding(20).background(.background,in:RoundedRectangle(cornerRadius:22)).foregroundStyle(.primary)
+        HStack(spacing:18) {
+            Image(systemName:symbol).font(.system(size:23,weight:.regular)).foregroundStyle(.secondary).frame(width:30)
+            VStack(alignment:.leading,spacing:5) { Text(title).font(.system(size:17,weight:.medium));Text(detail).font(.caption).foregroundStyle(.secondary) }
+            Spacer();Image(systemName:"chevron.right").font(.caption).foregroundStyle(.tertiary)
+        }.padding(.vertical,10).frame(minHeight:66).foregroundStyle(.primary)
     }
     private func move(_ delta:Int) { month=ShiftPlanner.korea.date(byAdding:.month,value:delta,to:month)! }
     @MainActor private func makeImage() {
@@ -156,6 +171,6 @@ struct SharedScheduleImage:View {
                 ForEach(days.filter{ !$0.memo.isEmpty }) { day in Text("\(ShiftPlanner.korea.component(.day,from:day.date))일 · \(day.memo)").font(.subheadline) }
             }
             Text("공유한 시점의 근무표 · 변경 시 다시 확인해 주세요").font(.caption).foregroundStyle(.secondary)
-        }.padding(24).frame(width:420).background(Color(.systemGroupedBackground))
+        }.padding(24).frame(width:420).background(Color(.systemBackground))
     }
 }

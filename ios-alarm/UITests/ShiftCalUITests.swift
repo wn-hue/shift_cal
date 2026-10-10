@@ -12,7 +12,7 @@ final class ShiftCalUITests: XCTestCase {
         let key=String(format:"%04d-%02d-%02d",c.year!,c.month!,c.day!)
         let day=app.buttons["day-\(key)"];XCTAssertTrue(day.exists);day.tap()
         app.buttons["shift-LEAVE"].tap()
-        app.segmentedControls.buttons["메모"].tap()
+        app.buttons["editor-tab-1"].tap()
         let memo=app.descendants(matching:.any)["memo-editor"].firstMatch
         XCTAssertTrue(memo.exists);memo.tap();memo.typeText("iOS 확인 메모")
         app.buttons["save-shift"].tap()

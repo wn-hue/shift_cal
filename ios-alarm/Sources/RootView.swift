@@ -4,10 +4,26 @@ import UniformTypeIdentifiers
 extension WorkType {
     var color: Color {
         switch self {
-        case .day, .specialDay: .init(red:0.68,green:0.33,blue:0.08)
-        case .night, .specialNight: .init(red:0.27,green:0.29,blue:0.60)
-        case .leave, .halfPre, .halfPost: .green
+        case .day: Color(red:0.65,green:0.32,blue:0.16)
+        case .night: Color(red:0.24,green:0.28,blue:0.48)
+        case .specialDay: Color(red:0.10,green:0.44,blue:0.43)
+        case .specialNight: Color(red:0.44,green:0.30,blue:0.55)
+        case .leave, .halfPre, .halfPost: Color(red:0.22,green:0.46,blue:0.34)
         default: .secondary
+        }
+    }
+    var shortLabel:String {
+        switch self {
+        case .day: "주"
+        case .night: "야"
+        case .off: "휴"
+        case .unpaid: "무휴"
+        case .halfPre: "반전"
+        case .halfPost: "반후"
+        case .unpaidHalfPre: "무전"
+        case .unpaidHalfPost: "무후"
+        case .noOT: "OT−"
+        default: label
         }
     }
 }
@@ -33,22 +49,22 @@ struct ScheduleView: View {
     @State private var selected: WorkDay?
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment:.leading,spacing:20) {
-                    todayCard
-                    monthHeader
-                    calendarGrid
-                    HStack(spacing:16) {
-                        Label("주간",systemImage:"sun.max.fill").foregroundStyle(WorkType.day.color)
-                        Label("야간",systemImage:"moon.fill").foregroundStyle(WorkType.night.color)
-                        Label("연차",systemImage:"leaf.fill").foregroundStyle(.green)
-                    }.font(.caption)
-                    Text("날짜를 누르면 근무 변경과 메모를 저장할 수 있어요.").font(.footnote).foregroundStyle(.secondary)
-                    summary
-                    if let error=store.storageMessage { Text(error).foregroundStyle(.red) }
-                    Text("2025–2027년 공휴일·회사 휴무 규칙을 적용합니다. 이후에는 기본 교대 주기만 적용되므로 회사 공지에 맞춰 근무를 변경해 주세요.").font(.footnote).foregroundStyle(.secondary)
-                }.padding()
-            }.background(Color(.systemGroupedBackground))
+            GeometryReader { geometry in
+                ScrollView {
+                    VStack(alignment:.leading,spacing:12) {
+                        monthHeader
+                        todayCard
+                        MonthGrid(days:store.month(month),showMemos:true,cellHeight:calendarHeight(geometry.size.height)) { selected=$0 }
+                        HStack(spacing:16) {
+                            Text("주 주간").foregroundStyle(WorkType.day.color)
+                            Text("야 야간").foregroundStyle(WorkType.night.color)
+                            Text("휴 휴무").foregroundStyle(.secondary)
+                            Spacer()
+                        }.font(.caption)
+                        if let error=store.storageMessage { Text(error).foregroundStyle(.red).font(.footnote) }
+                    }.padding(.horizontal,16).padding(.bottom,24)
+                }.background(Color(.systemBackground))
+            }
             .navigationTitle("Shift_cal").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement:.topBarTrailing) {
@@ -68,44 +84,30 @@ struct ScheduleView: View {
     }
     private var todayCard: some View {
         let today=store.day(Date())
-        return VStack(alignment:.leading,spacing:10) {
-            Text("오늘 · \(store.group)조").font(.subheadline).foregroundStyle(.secondary)
-            HStack {
-                Image(systemName:today.type.symbol).font(.largeTitle).foregroundStyle(today.type.color)
-                VStack(alignment:.leading,spacing:4) {
-                    Text(today.label).font(.title.bold()).accessibilityIdentifier("today-shift")
-                    Text(today.alarmHour.map{String(format:"근무 알람 %02d:30",$0)} ?? "오늘은 근무 알람 없음").font(.subheadline).foregroundStyle(.secondary)
-                }
+        return VStack(alignment:.leading,spacing:4) {
+            HStack(spacing:8) {
+                Text("오늘").foregroundStyle(.secondary)
+                Text(today.label).fontWeight(.medium).foregroundStyle(today.type.color).accessibilityIdentifier("today-shift")
                 Spacer()
-            }
-            if !today.memo.isEmpty { Text(today.memo).font(.subheadline) }
-        }.padding(20).frame(maxWidth:.infinity,alignment:.leading).background(.background,in:RoundedRectangle(cornerRadius:24))
+                Text(today.alarmHour.map{String(format:"알람 %02d:30",$0)} ?? "알람 없음").foregroundStyle(.secondary)
+            }.font(.caption)
+            if !today.memo.isEmpty { Text(today.memo).font(.caption).foregroundStyle(.secondary).lineLimit(1) }
+        }.padding(.bottom,4)
     }
     private var monthHeader: some View {
-        HStack {
-            Button { move(-1) } label:{ Image(systemName:"chevron.left").frame(width:44,height:44) }.accessibilityLabel("이전 달")
+        HStack(spacing:4) {
+            Text(ScheduleDisplay.title(month,format:"yyyy.MM")).font(.system(size:28,weight:.semibold))
             Spacer()
-            Text(month.formatted(.dateTime.year().month(.wide).locale(Locale(identifier:"ko_KR")))).font(.title3.bold())
-            Spacer()
-            Button { move(1) } label:{ Image(systemName:"chevron.right").frame(width:44,height:44) }.accessibilityLabel("다음 달")
-        }
+            Button { move(-1) } label:{ Image(systemName:"chevron.left").font(.subheadline).frame(width:44,height:44) }.accessibilityLabel("이전 달")
+            Button { move(1) } label:{ Image(systemName:"chevron.right").font(.subheadline).frame(width:44,height:44) }.accessibilityLabel("다음 달")
+        }.foregroundStyle(.primary)
     }
-    private var calendarGrid: some View {
-        MonthGrid(days:store.month(month),showMemos:true) { selected=$0 }
-    }
-    private var summary: some View {
+    private func calendarHeight(_ available:CGFloat)->CGFloat {
         let days=store.month(month)
-        let work=days.filter{ $0.alarmHour != nil }.count
-        let leave=days.reduce(0.0) { $0 + ($1.type == .leave ? 1 : [.halfPre,.halfPost].contains($1.type) ? 0.5 : 0) }
-        return HStack {
-            stat("근무",value:"\(work)일")
-            Spacer()
-            stat("유급 연차 사용",value:String(format:"%g일",leave))
-            Spacer()
-            stat("휴무",value:"\(days.filter{$0.type == .off}.count)일")
-        }.padding().background(.background,in:RoundedRectangle(cornerRadius:18))
+        let pad=ShiftPlanner.korea.component(.weekday,from:days[0].date)-1
+        let rows=CGFloat((pad+days.count+6)/7)
+        return max(74,(available-150)/rows)
     }
-    private func stat(_ title:String,value:String)->some View { VStack(alignment:.leading,spacing:6) { Text(title).font(.caption).foregroundStyle(.secondary);Text(value).font(.headline) } }
     private func move(_ delta:Int) { month=ShiftPlanner.korea.date(byAdding:.month,value:delta,to:month)! }
 
 }
@@ -117,57 +119,62 @@ struct EditWorkView: View {
     @State private var choice=""
     @State private var memo=""
     @State private var tab = 0
-    private let columns = Array(repeating:GridItem(.flexible(),spacing:10),count:3)
+    private let columns=Array(repeating:GridItem(.flexible(),spacing:12),count:4)
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment:.leading,spacing:24) {
                     VStack(alignment:.leading,spacing:8) {
-                        Text(ScheduleDisplay.title(day.date,format:"M월 d일 EEEE")).font(.title2.bold())
-                        Text("\(store.group)조 · 기본 근무 \(store.engine.day(day.date,group:store.group).label)").foregroundStyle(.secondary)
-                        if !day.holiday.isEmpty { Label(day.holiday,systemImage:"flag").font(.subheadline) }
-                    }.padding(20).frame(maxWidth:.infinity,alignment:.leading).background(.background,in:RoundedRectangle(cornerRadius:20))
-                    Picker("편집 항목",selection:$tab) { Text("근무").tag(0); Text("메모").tag(1) }.pickerStyle(.segmented)
-                    if tab == 0 {
-                        Text("근무 선택").font(.headline)
-                        options([.day,.night,.off,.specialDay,.specialNight,.noOT])
-                        Text("연차 · 반차 · 무급").font(.headline)
-                        options([.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost])
-                        Button { choice="" } label: {
-                            Label("기본 근무로 되돌리기",systemImage:choice.isEmpty ? "checkmark.circle.fill" : "arrow.uturn.backward")
-                                .frame(maxWidth:.infinity,minHeight:48)
-                        }.buttonStyle(.bordered).accessibilityIdentifier("reset-shift")
-                        Text("저장하면 앱 근무표와 근무 알람에 반영됩니다.").font(.footnote).foregroundStyle(.secondary)
-                    } else {
-                        Text("이날의 메모").font(.headline)
-                        TextField("기억할 내용을 남겨 주세요",text:$memo,axis:.vertical).lineLimit(5...10)
-                            .padding().background(.background,in:RoundedRectangle(cornerRadius:16)).accessibilityIdentifier("memo-editor")
-                        Text("메모는 아이폰에 보관됩니다. 공유 이미지에는 기본으로 포함하지 않습니다.").font(.footnote).foregroundStyle(.secondary)
+                        Text(ScheduleDisplay.title(day.date,format:"M월 d일 EEEE")).font(.title2.weight(.semibold))
+                        Text("\(store.group)조 · 기본 근무 \(store.engine.day(day.date,group:store.group).label)").font(.subheadline).foregroundStyle(.secondary)
+                        if !day.holiday.isEmpty { Text(day.holiday).font(.caption).foregroundStyle(.secondary) }
+                    }.padding(.top,12)
+                    HStack(spacing:28) {
+                        editorTab("근무",index:0)
+                        editorTab("메모",index:1)
+                        Spacer()
                     }
-                }.padding()
-            }.background(Color(.systemGroupedBackground))
+                    if tab == 0 {
+                        options([.day,.night,.off,.specialDay,.specialNight,.noOT])
+                        Divider()
+                        Text("연차 · 반차 · 무급").font(.subheadline).foregroundStyle(.secondary)
+                        options([.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost])
+                        Divider()
+                        Button("기본 근무로 되돌리기") { choice="" }.font(.subheadline).foregroundStyle(.secondary).accessibilityIdentifier("reset-shift")
+                    } else {
+                        TextField("메모를 남겨 주세요",text:$memo,axis:.vertical).lineLimit(6...12).accessibilityIdentifier("memo-editor")
+                        Divider()
+                        Text("공유할 때 메모 포함 여부를 선택할 수 있어요.").font(.caption).foregroundStyle(.secondary)
+                    }
+                }.padding(.horizontal,24).padding(.bottom,24)
+            }.background(Color(.systemBackground))
             .navigationTitle("근무 변경").navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement:.cancellationAction) { Button("취소") { dismiss() } } }
-            .safeAreaInset(edge:.bottom) {
-                Button { store.update(day.date,type:WorkType(rawValue:choice),memo:memo);dismiss() } label: {
-                    Text("변경 저장").font(.headline).frame(maxWidth:.infinity).padding(16)
-                }.buttonStyle(.borderedProminent).accessibilityIdentifier("save-shift").padding().background(.regularMaterial)
+            .toolbar {
+                ToolbarItem(placement:.cancellationAction) { Button("취소") { dismiss() }.foregroundStyle(.secondary) }
+                ToolbarItem(placement:.confirmationAction) { Button("저장") { store.update(day.date,type:WorkType(rawValue:choice),memo:memo);dismiss() }.fontWeight(.semibold).accessibilityIdentifier("save-shift") }
             }
             .onAppear { choice=day.changed ? day.type.rawValue : "";memo=day.memo }
         }
     }
+    private func editorTab(_ title:String,index:Int)->some View {
+        Button { tab=index } label: {
+            VStack(spacing:10) {
+                Text(title).font(.headline).foregroundStyle(tab==index ? Color.primary : .secondary)
+                Rectangle().fill(tab==index ? Color.primary : .clear).frame(height:2)
+            }.fixedSize(horizontal:true,vertical:false)
+        }.buttonStyle(.plain).accessibilityIdentifier("editor-tab-\(index)")
+    }
     private var selectedType:WorkType { WorkType(rawValue:choice) ?? store.engine.day(day.date,group:store.group).type }
     private func options(_ types:[WorkType])->some View {
-        LazyVGrid(columns:columns,spacing:10) {
+        LazyVGrid(columns:columns,spacing:22) {
             ForEach(types) { type in
                 Button { choice=type.rawValue } label: {
                     VStack(spacing:8) {
-                        Image(systemName:type.symbol).font(.title3)
-                        Text(type.label).font(.subheadline.weight(.semibold)).minimumScaleFactor(0.7).lineLimit(1)
-                        Image(systemName:selectedType==type ? "checkmark.circle.fill" : "circle").font(.caption)
-                    }.foregroundStyle(type.color).frame(maxWidth:.infinity,minHeight:86)
-                        .background(type.color.opacity(selectedType==type ? 0.18 : 0.06),in:RoundedRectangle(cornerRadius:16))
-                        .overlay(RoundedRectangle(cornerRadius:16).stroke(type.color.opacity(selectedType==type ? 1 : 0.15),lineWidth:selectedType==type ? 2 : 1))
+                        Text(type.shortLabel).font(.system(size:15,weight:.semibold)).foregroundStyle(type.color)
+                            .frame(width:44,height:40).background(type.color.opacity(0.10),in:RoundedRectangle(cornerRadius:10))
+                            .overlay(RoundedRectangle(cornerRadius:10).stroke(selectedType==type ? type.color : .clear,lineWidth:1.5))
+                        Text(type.label).font(.system(size:11)).foregroundStyle(selectedType==type ? Color.primary : .secondary).lineLimit(1).minimumScaleFactor(0.8)
+                    }.frame(maxWidth:.infinity,minHeight:68)
                 }.buttonStyle(.plain).accessibilityLabel(type.label).accessibilityIdentifier("shift-"+type.rawValue)
                     .accessibilityAddTraits(selectedType==type ? .isSelected : [])
             }
