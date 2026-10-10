@@ -484,3 +484,12 @@ body .bottom-nav .nav-item.active { color:var(--shift-night); }
 .share-row strong { flex:1; font-size:16px; font-weight:500; }
 .share-row > span { font-size:24px; }
 #share-status { font-size:12px; color:#737373; margin:12px 0 0; }
+
+.editor-tabs { display:flex; gap:24px; margin-bottom:20px; }
+.editor-tabs button { border:0; border-bottom:2px solid transparent; background:none; padding:8px 0; font:inherit; color:#888; cursor:pointer; }
+.editor-tabs button[aria-selected="true"] { color:#424242; border-bottom-color:#424242; font-weight:600; }
+#modal-override [hidden] { display:none !important; }
+.shift-scroll { display:flex; overflow-x:auto; gap:8px; padding:3px 0 14px; margin-bottom:12px; scroll-snap-type:x proximity; }
+#modal-override .shift-scroll .opt-btn { flex:0 0 auto; min-width:78px; align-items:center; text-align:center; scroll-snap-align:start; }
+#modal-override .opt-btn.reset { width:100%; margin-top:4px; }
+#modal-override .override-sheet { min-height:0; height:auto; }

@@ -912,7 +912,7 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=19">
+    <link rel="stylesheet" href="./calendar-ui.css?v=20">
     <link rel="stylesheet" href="./today-menu.css?v=2">
 </head>
 <body data-view="calendar">
@@ -1497,47 +1497,29 @@
                 <div><h2 id="override-title">근무 변경</h2><p id="modal-date-text"></p><span id="modal-orig-text" class="override-base"></span></div>
                 <button type="button" class="override-close" aria-label="근무 변경 닫기" onclick="closeModalDirect()">✕</button>
             </div>
-            <section class="override-section">
-            <h3 class="override-section-title">근무 선택</h3>
-            <div class="modal-btn-grid">
-                <button class="opt-btn day-sp" onclick="setDayOverride('SPECIAL_DAY')">
+            <div class="editor-tabs" role="tablist"><button id="work-tab" role="tab" aria-selected="true" onclick="switchEditorTab('work')">근무</button><button id="memo-tab" role="tab" aria-selected="false" onclick="switchEditorTab('memo')">메모</button></div>
+            <section id="work-panel" class="override-section" role="tabpanel" aria-labelledby="work-tab"><h3 class="override-section-title">근무</h3><div class="shift-scroll"><button class="opt-btn day-sp" onclick="setDayOverride('SPECIAL_DAY')">
                     <span>주특</span>
-                </button>
-                <button class="opt-btn night-sp" onclick="setDayOverride('SPECIAL_NIGHT')">
+                </button><button class="opt-btn night-sp" onclick="setDayOverride('SPECIAL_NIGHT')">
                     <span>야특</span>
-                </button>
-
-                <button class="opt-btn leave" onclick="setDayOverride('LEAVE')">
-                    <span>연차</span>
-                </button>
-                <button class="opt-btn no-ot" onclick="setDayOverride('NO_OT')">
+                </button><button class="opt-btn no-ot" onclick="setDayOverride('NO_OT')">
                     <span>O.T 해제</span>
-                </button>
-
-                <button class="opt-btn half" onclick="setDayOverride('HALF_PRE')">
+                </button></div><h3 class="override-section-title">근태</h3><div class="shift-scroll"><button class="opt-btn leave" onclick="setDayOverride('LEAVE')">
+                    <span>연차</span>
+                </button><button class="opt-btn half" onclick="setDayOverride('HALF_PRE')">
                     <span>반차 (전)</span>
-                </button>
-                <button class="opt-btn half" onclick="setDayOverride('HALF_POST')">
+                </button><button class="opt-btn half" onclick="setDayOverride('HALF_POST')">
                     <span>반차 (후)</span>
-                </button>
-
-                <button class="opt-btn unpaid-half" onclick="setDayOverride('UNPAID_HALF_PRE')">
+                </button><button class="opt-btn unpaid-half" onclick="setDayOverride('UNPAID_HALF_PRE')">
                     <span>무반 (전)</span>
-                </button>
-                <button class="opt-btn unpaid-half" onclick="setDayOverride('UNPAID_HALF_POST')">
+                </button><button class="opt-btn unpaid-half" onclick="setDayOverride('UNPAID_HALF_POST')">
                     <span>무반 (후)</span>
-                </button>
-
-                <button class="opt-btn unpaid" onclick="setDayOverride('UNPAID_OFF')">
+                </button><button class="opt-btn unpaid" onclick="setDayOverride('UNPAID_OFF')">
                     <span>무급 휴무</span>
-                </button>
-
-                <button class="opt-btn reset" onclick="setDayOverride(null)">
+                </button></div><button class="opt-btn reset" onclick="setDayOverride(null)">
                     <span>기본 근무로 복구</span>
-                </button>
-            </div>
-            </section>
-            <section class="override-section override-memo">
+                </button></section>
+            <section id="memo-panel" class="override-section override-memo" role="tabpanel" aria-labelledby="memo-tab" hidden>
                 <label for="modal-memo-input" class="override-section-title">메모</label>
                 <textarea id="modal-memo-input" placeholder="메모 입력" maxlength="16000"></textarea>
                 <button class="btn-save" onclick="saveMemoDirect()">메모 저장</button>
@@ -2136,6 +2118,7 @@
 
         function openOverrideModal(dateStr, dateObj, currentShift) {
             selectedDateStr = dateStr;
+            switchEditorTab("work");
             const weekNames = ['일', '월', '화', '수', '목', '금', '토'];
             document.getElementById('modal-date-text').innerText = `${dateStr} (${weekNames[dateObj.getDay()]})`;
 
@@ -2146,6 +2129,12 @@
             document.getElementById('modal-override').classList.add('active');
         }
 
+        function switchEditorTab(tab) {
+            for (const name of ['work','memo']) {
+                document.getElementById(name+'-panel').hidden=name!==tab;
+                document.getElementById(name+'-tab').setAttribute('aria-selected',name===tab?'true':'false');
+            }
+        }
         function closeModalDirect() {
             document.getElementById('modal-override').classList.remove('active');
         }
