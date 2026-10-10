@@ -132,7 +132,6 @@ struct EditWorkView: View {
     @State private var choice=""
     @State private var memo=""
     @State private var tab = 0
-    private let columns=Array(repeating:GridItem(.flexible(),spacing:12),count:4)
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -148,8 +147,10 @@ struct EditWorkView: View {
                         Spacer()
                     }
                     if tab == 0 {
+                        Text("근무").font(.subheadline.weight(.medium))
                         options([.day,.night,.off,.specialDay,.specialNight,.noOT])
                         Divider()
+                        Text("근태").font(.subheadline.weight(.medium))
                         options([.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost])
                         Divider()
                         Button("기본 근무로 되돌리기") { choice="" }.font(.subheadline).foregroundStyle(.secondary).accessibilityIdentifier("reset-shift")
@@ -177,18 +178,20 @@ struct EditWorkView: View {
     }
     private var selectedType:WorkType { WorkType(rawValue:choice) ?? store.engine.day(day.date,group:store.group).type }
     private func options(_ types:[WorkType])->some View {
-        LazyVGrid(columns:columns,spacing:22) {
+        ScrollView(.horizontal,showsIndicators:false) {
+          HStack(spacing:12) {
             ForEach(types) { type in
                 Button { choice=type.rawValue } label: {
                     VStack(spacing:8) {
                         Text(type.shortLabel).font(.system(size:15,weight:.semibold)).foregroundStyle(type.badgeTextColor)
                             .frame(width:44,height:40).background(type.color,in:RoundedRectangle(cornerRadius:10))
                             .padding(3).overlay(RoundedRectangle(cornerRadius:13).stroke(selectedType==type ? Color.primary : .clear,lineWidth:2))
-                    }.frame(maxWidth:.infinity,minHeight:48)
+                    }.frame(width:58,height:48)
                 }.buttonStyle(.plain).accessibilityLabel(type.label).accessibilityIdentifier("shift-"+type.rawValue)
                     .accessibilityAddTraits(selectedType==type ? .isSelected : [])
             }
         }
+      }
     }
 }
 
