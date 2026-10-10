@@ -511,3 +511,11 @@ body .bottom-nav .nav-item.active { color:var(--shift-night); }
 .all-settings-card .group-selection-status[data-state="ready"] { display:none; }
 
 .all-settings-card .group-selection-status { display:none; }
+
+/* Attendance choices use exactly the calendar badge palette. */
+#modal-override .opt-btn.day-sp { background:var(--shift-special-day); color:#fff; border-color:var(--shift-special-day); }
+#modal-override .opt-btn.night-sp { background:var(--shift-special-night); color:#fff; border-color:var(--shift-special-night); }
+#modal-override .opt-btn.leave, #modal-override .opt-btn.half { background:var(--shift-leave); color:#fff; border-color:var(--shift-leave); }
+#modal-override .opt-btn.unpaid, #modal-override .opt-btn.unpaid-half { background:#805345; color:#fff; border-color:#805345; }
+#modal-override[data-base="DAY"] .opt-btn.no-ot { background:var(--shift-day); color:#424242; border-color:var(--shift-day); }
+#modal-override[data-base="NIGHT"] .opt-btn.no-ot { background:var(--shift-night); color:#fff; border-color:var(--shift-night); }
