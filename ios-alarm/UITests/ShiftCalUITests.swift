@@ -5,14 +5,14 @@ final class ShiftCalUITests: XCTestCase {
     func testCalendarEditPersistsAndAlarmScreenOpens() throws {
         let app=XCUIApplication();app.launch()
         XCTAssertTrue(app.staticTexts["Shift_cal"].waitForExistence(timeout:10))
-        app.segmentedControls["group-picker"].buttons["C조"].tap()
+        app.buttons["choose-group"].tap()
+        app.buttons["group-C"].tap()
         var calendar=Calendar(identifier:.gregorian);calendar.timeZone=TimeZone(identifier:"Asia/Seoul")!
         let c=calendar.dateComponents([.year,.month,.day],from:Date())
         let key=String(format:"%04d-%02d-%02d",c.year!,c.month!,c.day!)
         let day=app.buttons["day-\(key)"];XCTAssertTrue(day.exists);day.tap()
-        let picker=app.buttons["shift-editor"]
-        if picker.exists { picker.tap() } else { app.otherElements["shift-editor"].tap() }
-        app.buttons["연차"].tap()
+        app.buttons["shift-LEAVE"].tap()
+        app.segmentedControls.buttons["메모"].tap()
         let memo=app.descendants(matching:.any)["memo-editor"].firstMatch
         XCTAssertTrue(memo.exists);memo.tap();memo.typeText("iOS 확인 메모")
         app.buttons["save-shift"].tap()
@@ -42,6 +42,28 @@ final class ShiftCalUITests: XCTestCase {
         XCTAssertTrue(privacy.isHittable); privacy.tap()
         XCTAssertTrue(app.staticTexts.matching(NSPredicate(format:"label CONTAINS %@", "시행일: 2026-10-07")).firstMatch.waitForExistence(timeout:5))
         let policyScreen = XCTAttachment(screenshot: app.screenshot()); policyScreen.name = "개인정보 처리방침"; policyScreen.lifetime = .keepAlways; add(policyScreen)
+    }
+
+    @MainActor
+    func testGroupSwitchAndSharedImagePreview() throws {
+        let app=XCUIApplication();app.launch()
+        app.buttons["choose-group"].tap();app.buttons["group-B"].tap()
+        XCTAssertTrue(app.buttons["choose-group"].label.contains("B조"))
+        let calendarScreen=XCTAttachment(screenshot:app.screenshot());calendarScreen.name="새 근무표";calendarScreen.lifetime = .keepAlways;add(calendarScreen)
+        app.tabBars.buttons["공유"].tap()
+        XCTAssertTrue(app.buttons["share-image"].waitForExistence(timeout:5))
+        let shareScreen=XCTAttachment(screenshot:app.screenshot());shareScreen.name="공유 탭";shareScreen.lifetime = .keepAlways;add(shareScreen)
+        app.buttons["share-image"].tap()
+        XCTAssertTrue(app.images["share-preview"].waitForExistence(timeout:10))
+        app.buttons["닫기"].tap()
+        app.tabBars.buttons["근무표"].tap()
+        app.buttons["choose-group"].tap();app.buttons["group-C"].tap()
+        let formatter=DateFormatter();formatter.dateFormat="yyyy-MM-dd";formatter.timeZone=TimeZone(identifier:"Asia/Seoul")
+        app.buttons["day-"+formatter.string(from:Date())].tap()
+        XCTAssertTrue(app.buttons["shift-DAY"].waitForExistence(timeout:5))
+        XCTAssertTrue(app.buttons["shift-NIGHT"].exists)
+        let editorScreen=XCTAttachment(screenshot:app.screenshot());editorScreen.name="근무 변경";editorScreen.lifetime = .keepAlways;add(editorScreen)
+        app.buttons["shift-NIGHT"].tap();app.buttons["취소"].tap()
     }
 
 }

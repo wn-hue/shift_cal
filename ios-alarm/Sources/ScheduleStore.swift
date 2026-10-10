@@ -41,6 +41,8 @@ enum WorkType: String, Codable, CaseIterable, Identifiable {
         case .day, .specialDay: "sun.max.fill"
         case .night, .specialNight: "moon.fill"
         case .leave, .halfPre, .halfPost: "leaf.fill"
+        case .noOT: "clock.badge.checkmark"
+        case .unpaid, .unpaidHalfPre, .unpaidHalfPost: "minus.circle"
         default: "cup.and.saucer.fill"
         }
     }
@@ -164,13 +166,13 @@ final class ScheduleStore: ObservableObject {
             return ShiftEvent(title:title,notes:"Shift_cal 근무 일정\n메모:\n"+d.memo,start:d.date,allDay:true)
         }
     }
-    func calendarText(for date: Date) -> String {
+    func calendarText(for date: Date, includeMemos: Bool = true) -> String {
         func escape(_ s:String)->String { s.replacingOccurrences(of:"\\",with:"\\\\").replacingOccurrences(of:"\n",with:"\\n").replacingOccurrences(of:",",with:"\\,").replacingOccurrences(of:";",with:"\\;") }
         var lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Shift_cal//iOS//KO","CALSCALE:GREGORIAN","X-WR-CALNAME:Shift_cal \(group)조","X-WR-TIMEZONE:Asia/Seoul"]
         let stamp=ISO8601DateFormatter().string(from:Date()).replacingOccurrences(of:"-",with:"").replacingOccurrences(of:":",with:"")
         for d in month(date) {
             let next=ScheduleEngine.key(ShiftPlanner.korea.date(byAdding:.day,value:1,to:d.date)!).replacingOccurrences(of:"-",with:"")
-            lines += ["BEGIN:VEVENT","UID:shift-cal-native-\(group)-\(d.key)@wn-hue","DTSTAMP:\(stamp)","DTSTART;VALUE=DATE:\(d.key.replacingOccurrences(of:"-",with:""))","DTEND;VALUE=DATE:\(next)","SUMMARY:\(escape(group+"조 "+d.label))","DESCRIPTION:\(escape("Shift_cal 근무 일정\n메모:\n"+d.memo))","END:VEVENT"]
+            lines += ["BEGIN:VEVENT","UID:shift-cal-native-\(group)-\(d.key)@wn-hue","DTSTAMP:\(stamp)","DTSTART;VALUE=DATE:\(d.key.replacingOccurrences(of:"-",with:""))","DTEND;VALUE=DATE:\(next)","SUMMARY:\(escape(group+"조 "+d.label))","DESCRIPTION:\(escape("Shift_cal 근무 일정\n메모:\n"+(includeMemos ? d.memo : "")))","END:VEVENT"]
         }
         lines.append("END:VCALENDAR")
         // RFC 5545 lines are folded at 75 UTF-8 bytes without splitting scalars.

@@ -1,4 +1,5 @@
 import XCTest
+import SwiftUI
 @testable import ShiftCalAlarms
 
 final class ScheduleTests: XCTestCase {
@@ -60,4 +61,23 @@ final class ScheduleTests: XCTestCase {
         XCTAssertTrue(ics.contains("DTEND;VALUE=DATE:20261008"))
         for line in ics.components(separatedBy:"\r\n") { XCTAssertLessThanOrEqual(line.utf8.count,75) }
     }
+    @MainActor
+    func testSharedCalendarCanExcludeMemosAndOtherGroups() throws {
+        let store=ScheduleStore(defaults:UserDefaults(suiteName:UUID().uuidString)!)
+        let date=ScheduleEngine.date("2026-10-10")!
+        store.setGroup("A");store.update(date,type:.night,memo:"다른 조 비공개")
+        store.setGroup("C");store.update(date,type:.day,memo:"개인메모")
+        let privateExport=store.calendarText(for:date,includeMemos:false)
+        XCTAssertFalse(privateExport.contains("개인메모"))
+        XCTAssertFalse(privateExport.contains("다른 조 비공개"))
+        XCTAssertTrue(privateExport.contains("SUMMARY:C조 주간"))
+        XCTAssertTrue(store.calendarText(for:date,includeMemos:true).contains("개인메모"))
+        let renderer=ImageRenderer(content:SharedScheduleImage(days:store.month(date),group:store.group,month:date,includeMemos:false))
+        renderer.scale=2
+        let image=try XCTUnwrap(renderer.uiImage)
+        XCTAssertEqual(image.size.width,420)
+        XCTAssertGreaterThan(image.size.height,400)
+        XCTAssertNotNil(image.pngData())
+    }
+
 }
