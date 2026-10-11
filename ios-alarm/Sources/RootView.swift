@@ -4,7 +4,7 @@ import UniformTypeIdentifiers
 enum AppTheme {
     static var style:String { UserDefaults.standard.string(forKey:"calendar-theme") ?? "current" }
     static func rgb(_ hex:UInt)->Color { Color(red:Double((hex>>16)&255)/255,green:Double((hex>>8)&255)/255,blue:Double(hex&255)/255) }
-    static var accent:Color { rgb(style == "gpt" ? 0x212121 : style == "current" ? 0x424242 : 0x2874e8) }
+    static var accent:Color { rgb(style == "gpt" ? 0x212121 : style == "current" ? 0x356c87 : 0x2874e8) }
     static var attendance:Color { rgb(style == "gpt" ? 0xb55b61 : style == "toss" ? 0xc94d61 : 0xc64b58) }
     static var green:Color { style == "current" ? Color(red:21/255,green:150/255,blue:106/255) : accent }
     static var orange:Color { style == "current" ? Color(red:223/255,green:140/255,blue:37/255) : accent }
@@ -254,6 +254,11 @@ struct SettingsView: View {
                     Button { backup() } label: { Label("근무 변경·메모 백업",systemImage:"tray.and.arrow.up.fill").foregroundStyle(AppTheme.green) }.accessibilityIdentifier("backup-schedule")
                     Button { importing=true } label: { Label("백업 파일 복원",systemImage:"tray.and.arrow.down.fill").foregroundStyle(AppTheme.orange) }
                     if !message.isEmpty { Text(message).font(.footnote) }
+                }
+                Section("근무·휴가 계획") {
+                    Link("연차 연휴 추천 · 급여 변화 확인",destination:URL(string:"https://h-lyart-ten.vercel.app/?view=leave")!)
+                    Link("실시간 공유 · 함께 쉬는 날",destination:URL(string:"https://h-lyart-ten.vercel.app/?view=all")!)
+                    Text("웹에 저장한 근무표와 급여 기준으로 계획합니다. 앱에만 저장된 변경은 포함되지 않습니다.").font(.footnote).foregroundStyle(.secondary)
                 }
                 Section("기존 Shift_cal 기능") {
                     Link("웹 근무표·급여·식단·Google 연동 열기",destination:URL(string:"https://h-lyart-ten.vercel.app/")!)
