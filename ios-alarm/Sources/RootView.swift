@@ -186,7 +186,7 @@ struct EditWorkView: View {
                         Text("근태").font(.subheadline.weight(.medium))
                         options([.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost])
                         Divider()
-                        Button("기본 근무로 되돌리기") { choice="" }.font(.subheadline).foregroundStyle(.secondary).frame(maxWidth:.infinity,minHeight:44).background(AppTheme.surface,in:RoundedRectangle(cornerRadius:12)).overlay(RoundedRectangle(cornerRadius:12).stroke(Color.secondary.opacity(0.2))).accessibilityIdentifier("reset-shift")
+                        Button("기본 근무로 되돌리기") { choice="" }.font(.subheadline).foregroundStyle(.secondary).frame(maxWidth:.infinity,minHeight:44).background(AppTheme.surface,in:RoundedRectangle(cornerRadius:12)).overlay(RoundedRectangle(cornerRadius:12).stroke(Color.secondary.opacity(0.2))).accessibilityIdentifier("reset-shift").accessibilityValue(choice.isEmpty ? "선택됨" : "선택 안 됨")
                     } else {
                         TextField("메모를 남겨 주세요",text:$memo,axis:.vertical).lineLimit(12...18).frame(minHeight:240,alignment:.top).accessibilityIdentifier("memo-editor")
                         Divider()
@@ -219,9 +219,10 @@ struct EditWorkView: View {
                     VStack(spacing:8) {
                         Text(type.isAttendance || type == .noOT ? type.label : type.shortLabel).font(.system(size:type.isAttendance || type == .noOT ? 11 : 15,weight:.semibold)).foregroundStyle(type.isAttendance || type == .noOT ? Color(red:70/255,green:86/255,blue:106/255) : type == .off ? type.color : type.badgeTextColor)
                             .frame(width:displayCircle ? 58 : 44,height:displayCircle ? 58 : 40).background(type.isAttendance || type == .noOT ? Color(red:237/255,green:241/255,blue:245/255) : type == .off ? Color.clear : type.color,in:RoundedRectangle(cornerRadius:displayCircle ? 29 : 10))
-                            .padding(3).overlay(RoundedRectangle(cornerRadius:displayCircle ? 32 : 13).stroke(selectedType==type ? Color.primary : .clear,lineWidth:2))
+                            .padding(3).overlay(RoundedRectangle(cornerRadius:displayCircle ? 32 : 13).stroke(selectedType==type ? AppTheme.accent : .clear,lineWidth:3))
                     }.frame(width:displayCircle ? 66 : 58,height:displayCircle ? 66 : 48)
-                }.buttonStyle(.plain).accessibilityLabel(type.label).accessibilityIdentifier("shift-"+type.rawValue)
+                        .overlay(alignment:.topTrailing) { if selectedType==type { Image(systemName:"checkmark.circle.fill").font(.system(size:16,weight:.semibold)).symbolRenderingMode(.palette).foregroundStyle(.white,AppTheme.accent).padding(2).accessibilityHidden(true) } }
+                }.buttonStyle(.plain).accessibilityLabel(type.label).accessibilityValue(selectedType==type ? "선택됨" : "선택 안 됨").accessibilityIdentifier("shift-"+type.rawValue)
                     .accessibilityAddTraits(selectedType==type ? .isSelected : [])
             }
         }
