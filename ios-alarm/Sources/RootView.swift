@@ -2,10 +2,10 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 enum AppTheme {
-    static var style:String { UserDefaults.standard.string(forKey:"calendar-theme") ?? "toss" }
+    static var style:String { UserDefaults.standard.string(forKey:"calendar-theme") ?? "current" }
     static func rgb(_ hex:UInt)->Color { Color(red:Double((hex>>16)&255)/255,green:Double((hex>>8)&255)/255,blue:Double(hex&255)/255) }
-    static var accent:Color { rgb(style == "gpt" ? 0x28775f : 0x2874e8) }
-    static var attendance:Color { rgb(style == "gpt" ? 0xac6464 : style == "toss" ? 0xc94d61 : 0xc64b58) }
+    static var accent:Color { rgb(style == "gpt" ? 0x212121 : 0x2874e8) }
+    static var attendance:Color { rgb(style == "gpt" ? 0xb55b61 : style == "toss" ? 0xc94d61 : 0xc64b58) }
     static let green=Color(red:21/255,green:150/255,blue:106/255)
     static let orange=Color(red:223/255,green:140/255,blue:37/255)
 }
@@ -15,11 +15,11 @@ extension WorkType {
         if AppTheme.style != "current" {
             let gpt=AppTheme.style == "gpt"
             switch self {
-            case .day:return AppTheme.rgb(gpt ? 0xe8dba0 : 0xfff0b1)
-            case .night:return AppTheme.rgb(gpt ? 0x455a50 : 0xe4eaf3)
-            case .specialDay:return AppTheme.rgb(gpt ? 0x438872 : 0xbce8e9)
-            case .specialNight:return AppTheme.rgb(gpt ? 0x716d9e : 0xc9dcff)
-            case .off:return AppTheme.rgb(gpt ? 0xaf6666 : 0xd95769)
+            case .day:return AppTheme.rgb(gpt ? 0xeeeeee : 0xe8f2ff)
+            case .night:return AppTheme.rgb(gpt ? 0x343434 : 0xcbdfff)
+            case .specialDay:return AppTheme.rgb(gpt ? 0x555555 : 0x3182f6)
+            case .specialNight:return AppTheme.rgb(gpt ? 0x212121 : 0x1b64da)
+            case .off:return AppTheme.rgb(gpt ? 0x777777 : 0xd95769)
             default:return AppTheme.attendance
             }
         }
@@ -37,7 +37,7 @@ extension WorkType {
     }
     var isAttendance:Bool { [.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost].contains(self) }
     var attendanceLabel:String { switch self { case .leave: "연차 1";case .halfPre:"반차 전";case .halfPost:"반차 후";case .unpaid:"무급 1";case .unpaidHalfPre:"무반 전";case .unpaidHalfPost:"무반 후";default:label } }
-    var badgeTextColor: Color { self == .day ? AppTheme.rgb(0x424242) : AppTheme.style == "toss" ? AppTheme.rgb(0x344b69) : .white }
+    var badgeTextColor: Color { self == .day ? AppTheme.rgb(0x424242) : AppTheme.style == "toss" && self == .night ? AppTheme.rgb(0x1959b8) : .white }
     var shortLabel:String {
         switch self {
         case .day: "주"
@@ -55,7 +55,7 @@ extension WorkType {
 }
 
 struct RootView: View {
-    @AppStorage("calendar-theme") private var theme="toss"
+    @AppStorage("calendar-theme") private var theme="current"
     @ObservedObject var model: AlarmModel
     @ObservedObject var schedule: ScheduleStore
     @State private var month = Date()
@@ -70,7 +70,7 @@ struct RootView: View {
 }
 
 struct ScheduleView: View {
-    @AppStorage("calendar-theme") private var theme="toss"
+    @AppStorage("calendar-theme") private var theme="current"
     @State private var pickingMonth=false
     @ObservedObject var store: ScheduleStore
     @Binding var month: Date
@@ -154,7 +154,8 @@ struct ScheduleView: View {
 }
 
 struct EditWorkView: View {
-    @AppStorage("calendar-theme") private var theme="toss"
+    @AppStorage("display-circle") private var displayCircle=false
+    @AppStorage("calendar-theme") private var theme="current"
     @ObservedObject var store: ScheduleStore
     let day: WorkDay
     @Environment(\.dismiss) private var dismiss
@@ -213,9 +214,9 @@ struct EditWorkView: View {
                 Button { choice=type.rawValue } label: {
                     VStack(spacing:8) {
                         Text(type.isAttendance || type == .noOT ? type.label : type.shortLabel).font(.system(size:type.isAttendance || type == .noOT ? 11 : 15,weight:.semibold)).foregroundStyle(type.isAttendance || type == .noOT ? Color(red:70/255,green:86/255,blue:106/255) : type == .off ? type.color : type.badgeTextColor)
-                            .frame(width:44,height:40).background(type.isAttendance || type == .noOT ? Color(red:237/255,green:241/255,blue:245/255) : type == .off ? Color.clear : type.color,in:RoundedRectangle(cornerRadius:10))
-                            .padding(3).overlay(RoundedRectangle(cornerRadius:13).stroke(selectedType==type ? Color.primary : .clear,lineWidth:2))
-                    }.frame(width:58,height:48)
+                            .frame(width:displayCircle ? 58 : 44,height:displayCircle ? 58 : 40).background(type.isAttendance || type == .noOT ? Color(red:237/255,green:241/255,blue:245/255) : type == .off ? Color.clear : type.color,in:RoundedRectangle(cornerRadius:displayCircle ? 29 : 10))
+                            .padding(3).overlay(RoundedRectangle(cornerRadius:displayCircle ? 32 : 13).stroke(selectedType==type ? Color.primary : .clear,lineWidth:2))
+                    }.frame(width:displayCircle ? 66 : 58,height:displayCircle ? 66 : 48)
                 }.buttonStyle(.plain).accessibilityLabel(type.label).accessibilityIdentifier("shift-"+type.rawValue)
                     .accessibilityAddTraits(selectedType==type ? .isSelected : [])
             }
@@ -421,13 +422,13 @@ struct WorkStatisticsView: View {
 }
 
 struct AppPreferencesView:View {
-    @AppStorage("calendar-theme") private var theme="toss"
+    @AppStorage("calendar-theme") private var theme="current"
     @AppStorage("display-holidays") private var holidays=true
     @AppStorage("display-memos") private var memos=true
     @AppStorage("display-circle") private var circle=false
     var body:some View {
         List {
-            Section("테마") { Picker("달력 스타일",selection:$theme) { Text("1").tag("current");Text("2").tag("gpt");Text("3").tag("toss") } }
+            Section("테마") { Picker("달력 스타일",selection:$theme) { Text("1").tag("current");Text("2").tag("toss");Text("3").tag("gpt") } }
             Section("화면 표시") {
                 Toggle("공휴일 이름",isOn:$holidays)
                 Toggle("달력 메모",isOn:$memos)

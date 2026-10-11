@@ -35,7 +35,7 @@ enum ScheduleDisplay {
 }
 
 struct MonthGrid: View {
-    @AppStorage("calendar-theme") private var theme="toss"
+    @AppStorage("calendar-theme") private var theme="current"
     @AppStorage("display-holidays") private var displayHolidays=true
     @AppStorage("display-memos") private var displayMemos=true
     @AppStorage("display-circle") private var displayCircle=false
