@@ -6,8 +6,10 @@ enum AppTheme {
     static func rgb(_ hex:UInt)->Color { Color(red:Double((hex>>16)&255)/255,green:Double((hex>>8)&255)/255,blue:Double(hex&255)/255) }
     static var accent:Color { rgb(style == "gpt" ? 0x212121 : 0x2874e8) }
     static var attendance:Color { rgb(style == "gpt" ? 0xb55b61 : style == "toss" ? 0xc94d61 : 0xc64b58) }
-    static let green=Color(red:21/255,green:150/255,blue:106/255)
-    static let orange=Color(red:223/255,green:140/255,blue:37/255)
+    static var green:Color { style == "current" ? Color(red:21/255,green:150/255,blue:106/255) : accent }
+    static var orange:Color { style == "current" ? Color(red:223/255,green:140/255,blue:37/255) : accent }
+    static var surface:Color { Color(.systemBackground) }
+    static var page:Color { style == "toss" ? rgb(0xf5f7fa) : style == "gpt" ? Color(.systemBackground) : Color(.systemGroupedBackground) }
 }
 
 extension WorkType {
@@ -15,8 +17,8 @@ extension WorkType {
         if AppTheme.style != "current" {
             let gpt=AppTheme.style == "gpt"
             switch self {
-            case .day:return AppTheme.rgb(gpt ? 0xeeeeee : 0xe8f2ff)
-            case .night:return AppTheme.rgb(gpt ? 0x343434 : 0xcbdfff)
+            case .day:return AppTheme.rgb(gpt ? 0xddd9d0 : 0xe8f2ff)
+            case .night:return AppTheme.rgb(gpt ? 0x343434 : 0x2453a6)
             case .specialDay:return AppTheme.rgb(gpt ? 0x555555 : 0x3182f6)
             case .specialNight:return AppTheme.rgb(gpt ? 0x212121 : 0x1b64da)
             case .off:return AppTheme.rgb(gpt ? 0x777777 : 0xd95769)
@@ -37,7 +39,7 @@ extension WorkType {
     }
     var isAttendance:Bool { [.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost].contains(self) }
     var attendanceLabel:String { switch self { case .leave: "연차 1";case .halfPre:"반차 전";case .halfPost:"반차 후";case .unpaid:"무급 1";case .unpaidHalfPre:"무반 전";case .unpaidHalfPost:"무반 후";default:label } }
-    var badgeTextColor: Color { self == .day ? AppTheme.rgb(0x424242) : AppTheme.style == "toss" && self == .night ? AppTheme.rgb(0x1959b8) : .white }
+    var badgeTextColor: Color { self == .day ? AppTheme.rgb(0x424242) : .white }
     var shortLabel:String {
         switch self {
         case .day: "주"
@@ -65,7 +67,7 @@ struct RootView: View {
             ScheduleShareView(store:schedule,month:$month).tabItem { Label("공유",systemImage:"square.and.arrow.up") }
             AlarmView(model:model).tabItem { Label("알람",systemImage:"alarm") }
             SettingsView(store:schedule).tabItem { Label("내 근무",systemImage:"line.3.horizontal") }
-        }.tint(AppTheme.accent)
+        }.tint(AppTheme.accent).toolbarBackground(AppTheme.surface,for:.tabBar).toolbarBackground(.visible,for:.tabBar)
     }
 }
 
@@ -95,7 +97,7 @@ struct ScheduleView: View {
                         }.font(.caption)
                         if let error=store.storageMessage { Text(error).foregroundStyle(.red).font(.footnote) }
                     }.padding(.horizontal,16).padding(.bottom,24)
-                }.background(Color(.systemBackground))
+                }.background(AppTheme.page)
             }
             .navigationTitle("Shift_cal").navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -182,13 +184,13 @@ struct EditWorkView: View {
                         Text("근태").font(.subheadline.weight(.medium))
                         options([.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost])
                         Divider()
-                        Button("기본 근무로 되돌리기") { choice="" }.font(.subheadline).foregroundStyle(.secondary).accessibilityIdentifier("reset-shift")
+                        Button("기본 근무로 되돌리기") { choice="" }.font(.subheadline).foregroundStyle(.secondary).frame(maxWidth:.infinity,minHeight:44).background(AppTheme.surface,in:RoundedRectangle(cornerRadius:12)).overlay(RoundedRectangle(cornerRadius:12).stroke(Color.secondary.opacity(0.2))).accessibilityIdentifier("reset-shift")
                     } else {
                         TextField("메모를 남겨 주세요",text:$memo,axis:.vertical).lineLimit(12...18).frame(minHeight:240,alignment:.top).accessibilityIdentifier("memo-editor")
                         Divider()
                     }
                 }.padding(.horizontal,24).padding(.bottom,24)
-            }.background(Color(.systemBackground))
+            }.background(AppTheme.page)
             .navigationTitle("근무 변경").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement:.cancellationAction) { Button("취소") { dismiss() }.foregroundStyle(.secondary) }
@@ -258,7 +260,7 @@ struct SettingsView: View {
                     Text("기존 웹 기능은 Safari에서 이용합니다. 앱의 근무 변경과 메모는 웹 계정과 자동으로 동기화되지 않습니다. Google에 저장한 근무는 알람 탭에서 iPhone 캘린더를 선택해 사용할 수 있습니다.").font(.footnote).foregroundStyle(.secondary)
                 }
 
-            }.navigationTitle("내 근무")
+            }.scrollContentBackground(.hidden).background(AppTheme.page).navigationTitle("내 근무")
             .toolbar { ToolbarItem(placement:.topBarTrailing) { NavigationLink { AppPreferencesView() } label: { Image(systemName:"gearshape") }.accessibilityLabel("앱 환경") }; if showClose { ToolbarItem(placement:.cancellationAction) { Button("닫기") { dismiss() }.accessibilityIdentifier("close-menu") } } }
             .sheet(isPresented:$changingGroup) { GroupSelectionView(store:store) }
             .fileImporter(isPresented:$importing,allowedContentTypes:[.json]) { result in
@@ -401,7 +403,7 @@ struct WorkStatisticsView: View {
                     Divider()
                     row("급여 기간 사용 연차",value:used.formatted()+"일")
                 }.padding(24)
-            }.background(Color(.systemBackground))
+            }.background(AppTheme.page)
             .navigationTitle("근무 통계").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement:.confirmationAction) { Button("닫기") { dismiss() } } }
         }
@@ -440,6 +442,6 @@ struct AppPreferencesView:View {
                 NavigationLink("개인정보 처리방침") { PrivacyView() }
                 Link("서비스 이용약관",destination:URL(string:"https://h-lyart-ten.vercel.app/terms.html")!)
             }
-        }.navigationTitle("앱 환경").navigationBarTitleDisplayMode(.inline).tint(AppTheme.accent)
+        }.scrollContentBackground(.hidden).background(AppTheme.page).navigationTitle("앱 환경").navigationBarTitleDisplayMode(.inline).tint(AppTheme.accent)
     }
 }

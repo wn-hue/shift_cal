@@ -126,7 +126,7 @@ struct ScheduleShareView: View {
                     Text("공유한 사본에는 이후 수정이 자동 반영되지 않습니다.").font(.footnote).foregroundStyle(.secondary)
                     if !message.isEmpty { Text(message).foregroundStyle(.red).accessibilityIdentifier("share-error") }
                 }.padding()
-            }.background(Color(.systemBackground)).navigationTitle("공유").navigationBarTitleDisplayMode(.inline)
+            }.background(AppTheme.page).navigationTitle("공유").navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented:Binding(get:{linkURL != nil},set:{if !$0 {linkURL=nil}})) { if let linkURL { ShareSheet(items:[linkURL]) } }
             .sheet(item:$preview) { item in
                 NavigationStack {
