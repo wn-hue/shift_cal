@@ -1673,6 +1673,7 @@
 
             if (overrides[dateStr]) {
                 const ov = overrides[dateStr];
+                if(['DAY','NIGHT','OFF'].includes(ov))return {type:ov,name:ov==='DAY'?'주간':ov==='NIGHT'?'야간':'휴무',hasOt:ov!=='OFF',isOff:ov==='OFF',holidayName:holiday?holiday.name:''};
                 if (ov === 'SPECIAL_DAY') return { type: 'SPECIAL_DAY', name: '주특', isSpecial: true, hasOt: true, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'SPECIAL_NIGHT') return { type: 'SPECIAL_NIGHT', name: '야특', isSpecial: true, hasOt: true, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'LEAVE') return { type: 'LEAVE', name: '연차', isLeave: true, leaveVal: 1.0, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
@@ -2706,7 +2707,7 @@
     <script src="./calendar-integration.js?v=3"></script>
     <script src="./schedule-share.js?v=2"></script>
     <script src="./google-sync-core.js?v=5"></script>
-    <script src="./account-data-core.js?v=2"></script>
+    <script src="./account-data-core.js?v=3"></script>
     <script src="./calendar-ui.js?v=7"></script>
     <script src="./today-menu.js?v=4"></script>
     <script src="./app-menu.js?v=3"></script>

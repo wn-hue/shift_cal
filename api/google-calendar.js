@@ -4,7 +4,7 @@ const AccountDrive = require('../lib/account-drive.js');
 const SESSION = '__Host-shiftcal-google';
 const FLOW = '__Host-shiftcal-google-flow';
 const API = 'https://www.googleapis.com/calendar/v3';
-const TYPES = new Set(['BASE','SPECIAL_DAY','SPECIAL_NIGHT','LEAVE','NO_OT','HALF_PRE','HALF_POST','UNPAID_HALF_PRE','UNPAID_HALF_POST','UNPAID_OFF','FORCED_OFF']);
+const TYPES = new Set(['BASE','DAY','NIGHT','OFF','SPECIAL_DAY','SPECIAL_NIGHT','LEAVE','NO_OT','HALF_PRE','HALF_POST','UNPAID_HALF_PRE','UNPAID_HALF_POST','UNPAID_OFF','FORCED_OFF']);
 class ApiError extends Error { constructor(status, code, message) { super(message); this.status = status; this.code = code; } }
 function config() {
     const env = process.env;
