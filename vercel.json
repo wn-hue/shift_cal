@@ -5,6 +5,9 @@
     },
     "api/today-menu.js": {
       "maxDuration": 60
+    },
+    "api/live-schedule.js": {
+      "maxDuration": 30
     }
   },
   "headers": [
