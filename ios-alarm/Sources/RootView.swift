@@ -22,7 +22,7 @@ extension WorkType {
         }
     }
     var isAttendance:Bool { [.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost].contains(self) }
-    var attendanceLabel:String { switch self { case .leave: "연차 1";case .halfPre:"반차 전";case .halfPost:"반차 후";case .unpaid:"무급 1";case .unpaidHalfPre:"무급 전";case .unpaidHalfPost:"무급 후";default:label } }
+    var attendanceLabel:String { switch self { case .leave: "연차 1";case .halfPre:"반차 전";case .halfPost:"반차 후";case .unpaid:"무급 1";case .unpaidHalfPre:"무반 전";case .unpaidHalfPost:"무반 후";default:label } }
     var badgeTextColor: Color { self == .day ? Color(red:66/255,green:66/255,blue:66/255) : .white }
     var shortLabel:String {
         switch self {
@@ -198,8 +198,8 @@ struct EditWorkView: View {
             ForEach(types) { type in
                 Button { choice=type.rawValue } label: {
                     VStack(spacing:8) {
-                        Text(type.shortLabel).font(.system(size:15,weight:.semibold)).foregroundStyle(type == .off ? type.color : type.badgeTextColor)
-                            .frame(width:44,height:40).background(type == .off ? Color.clear : type.color,in:RoundedRectangle(cornerRadius:10))
+                        Text(type.isAttendance || type == .noOT ? type.label : type.shortLabel).font(.system(size:type.isAttendance || type == .noOT ? 11 : 15,weight:.semibold)).foregroundStyle(type.isAttendance || type == .noOT ? Color(red:70/255,green:86/255,blue:106/255) : type == .off ? type.color : type.badgeTextColor)
+                            .frame(width:44,height:40).background(type.isAttendance || type == .noOT ? Color(red:237/255,green:241/255,blue:245/255) : type == .off ? Color.clear : type.color,in:RoundedRectangle(cornerRadius:10))
                             .padding(3).overlay(RoundedRectangle(cornerRadius:13).stroke(selectedType==type ? Color.primary : .clear,lineWidth:2))
                     }.frame(width:58,height:48)
                 }.buttonStyle(.plain).accessibilityLabel(type.label).accessibilityIdentifier("shift-"+type.rawValue)
