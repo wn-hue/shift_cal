@@ -2,28 +2,42 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 enum AppTheme {
-    static let accent=Color(red:40/255,green:116/255,blue:232/255)
+    static var style:String { UserDefaults.standard.string(forKey:"calendar-theme") ?? "toss" }
+    static func rgb(_ hex:UInt)->Color { Color(red:Double((hex>>16)&255)/255,green:Double((hex>>8)&255)/255,blue:Double(hex&255)/255) }
+    static var accent:Color { rgb(style == "gpt" ? 0x28775f : 0x2874e8) }
+    static var attendance:Color { rgb(style == "gpt" ? 0xac6464 : style == "toss" ? 0xc94d61 : 0xc64b58) }
     static let green=Color(red:21/255,green:150/255,blue:106/255)
     static let orange=Color(red:223/255,green:140/255,blue:37/255)
 }
 
 extension WorkType {
     var color: Color {
+        if AppTheme.style != "current" {
+            let gpt=AppTheme.style == "gpt"
+            switch self {
+            case .day:return AppTheme.rgb(gpt ? 0xe8dba0 : 0xfff0b1)
+            case .night:return AppTheme.rgb(gpt ? 0x455a50 : 0xe4eaf3)
+            case .specialDay:return AppTheme.rgb(gpt ? 0x438872 : 0xbce8e9)
+            case .specialNight:return AppTheme.rgb(gpt ? 0x716d9e : 0xc9dcff)
+            case .off:return AppTheme.rgb(gpt ? 0xaf6666 : 0xd95769)
+            default:return AppTheme.attendance
+            }
+        }
         switch self {
-        case .day: Color(red:255/255,green:214/255,blue:0/255)
-        case .night: Color(red:66/255,green:66/255,blue:66/255)
-        case .specialDay: Color(red:71/255,green:214/255,blue:220/255)
-        case .specialNight: Color(red:84/255,green:133/255,blue:238/255)
-        case .off: Color(red:232/255,green:104/255,blue:127/255)
-        case .leave: Color(red:195/255,green:91/255,blue:24/255)
-        case .halfPre, .halfPost: Color(red:128/255,green:86/255,blue:181/255)
-        case .unpaid, .unpaidHalfPre, .unpaidHalfPost: Color(red:169/255,green:82/255,blue:100/255)
-        default: .secondary
+        case .day: return Color(red:255/255,green:214/255,blue:0/255)
+        case .night: return Color(red:66/255,green:66/255,blue:66/255)
+        case .specialDay: return Color(red:71/255,green:214/255,blue:220/255)
+        case .specialNight: return Color(red:84/255,green:133/255,blue:238/255)
+        case .off: return Color(red:232/255,green:104/255,blue:127/255)
+        case .leave: return Color(red:195/255,green:91/255,blue:24/255)
+        case .halfPre, .halfPost: return Color(red:128/255,green:86/255,blue:181/255)
+        case .unpaid, .unpaidHalfPre, .unpaidHalfPost: return Color(red:169/255,green:82/255,blue:100/255)
+        default: return .secondary
         }
     }
     var isAttendance:Bool { [.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost].contains(self) }
     var attendanceLabel:String { switch self { case .leave: "연차 1";case .halfPre:"반차 전";case .halfPost:"반차 후";case .unpaid:"무급 1";case .unpaidHalfPre:"무반 전";case .unpaidHalfPost:"무반 후";default:label } }
-    var badgeTextColor: Color { self == .day ? Color(red:66/255,green:66/255,blue:66/255) : .white }
+    var badgeTextColor: Color { self == .day ? AppTheme.rgb(0x424242) : AppTheme.style == "toss" ? AppTheme.rgb(0x344b69) : .white }
     var shortLabel:String {
         switch self {
         case .day: "주"
@@ -41,6 +55,7 @@ extension WorkType {
 }
 
 struct RootView: View {
+    @AppStorage("calendar-theme") private var theme="toss"
     @ObservedObject var model: AlarmModel
     @ObservedObject var schedule: ScheduleStore
     @State private var month = Date()
@@ -55,6 +70,8 @@ struct RootView: View {
 }
 
 struct ScheduleView: View {
+    @AppStorage("calendar-theme") private var theme="toss"
+    @State private var pickingMonth=false
     @ObservedObject var store: ScheduleStore
     @Binding var month: Date
     @State private var choosingGroup = false
@@ -69,6 +86,7 @@ struct ScheduleView: View {
                         monthHeader
                         todayCard
                         MonthGrid(days:store.month(month),showMemos:true,cellHeight:calendarHeight(geometry.size.height)) { selected=$0 }
+                            .simultaneousGesture(DragGesture(minimumDistance:30).onEnded { value in if abs(value.translation.width)>abs(value.translation.height),abs(value.translation.width)>50 { move(value.translation.width<0 ? 1 : -1) } })
                         HStack(spacing:16) {
                             Text("주 주간").foregroundStyle(WorkType.day.color)
                             Text("야 야간").foregroundStyle(WorkType.night.color)
@@ -97,12 +115,9 @@ struct ScheduleView: View {
                 ToolbarItem(placement:.topBarTrailing) {
                     Button { statistics=true } label:{ Image(systemName:"chart.bar.xaxis") }.accessibilityLabel("근무 통계")
                 }
-                ToolbarItem(placement:.topBarTrailing) {
-                    Menu {
-                        Button("오늘로 이동",systemImage:"calendar.badge.clock") { month=Date() }
-                    } label: { Image(systemName:"ellipsis.circle") }
-                }
+
             }
+            .sheet(isPresented:$pickingMonth) { NavigationStack { DatePicker("이동할 날짜",selection:$month,displayedComponents:.date).datePickerStyle(.graphical).padding().navigationTitle("월 이동").toolbar { ToolbarItem(placement:.confirmationAction) { Button("완료") { pickingMonth=false } } } } }
             .sheet(isPresented:$statistics) { WorkStatisticsView(store:store,month:month).presentationDragIndicator(.visible) }
             .sheet(isPresented:$sharing) { ScheduleShareView(store:store,month:$month).presentationDragIndicator(.visible) }
             .sheet(isPresented:$choosingGroup) { SettingsView(store:store,showClose:true) }
@@ -124,10 +139,8 @@ struct ScheduleView: View {
     }
     private var monthHeader: some View {
         HStack(spacing:4) {
-            Text(ScheduleDisplay.title(month,format:"yyyy.MM")).font(.system(size:28,weight:.semibold))
+            Button { pickingMonth=true } label: { Text(ScheduleDisplay.title(month,format:"yyyy.MM")).font(.system(size:28,weight:.semibold)).foregroundStyle(.primary) }.accessibilityLabel("달력 월 선택")
             Spacer()
-            Button { move(-1) } label:{ Image(systemName:"chevron.left").font(.subheadline).frame(width:44,height:44) }.accessibilityLabel("이전 달")
-            Button { move(1) } label:{ Image(systemName:"chevron.right").font(.subheadline).frame(width:44,height:44) }.accessibilityLabel("다음 달")
         }.foregroundStyle(.primary)
     }
     private func calendarHeight(_ available:CGFloat)->CGFloat {
@@ -141,6 +154,7 @@ struct ScheduleView: View {
 }
 
 struct EditWorkView: View {
+    @AppStorage("calendar-theme") private var theme="toss"
     @ObservedObject var store: ScheduleStore
     let day: WorkDay
     @Environment(\.dismiss) private var dismiss
@@ -407,11 +421,13 @@ struct WorkStatisticsView: View {
 }
 
 struct AppPreferencesView:View {
+    @AppStorage("calendar-theme") private var theme="toss"
     @AppStorage("display-holidays") private var holidays=true
     @AppStorage("display-memos") private var memos=true
     @AppStorage("display-circle") private var circle=false
     var body:some View {
         List {
+            Section("테마") { Picker("달력 스타일",selection:$theme) { Text("1. 현재 스타일").tag("current");Text("2. GPT 스타일").tag("gpt");Text("3. 토스 앱 스타일").tag("toss") } }
             Section("화면 표시") {
                 Toggle("공휴일 이름",isOn:$holidays)
                 Toggle("달력 메모",isOn:$memos)
