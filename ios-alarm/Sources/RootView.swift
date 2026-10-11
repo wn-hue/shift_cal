@@ -15,10 +15,14 @@ extension WorkType {
         case .specialDay: Color(red:71/255,green:214/255,blue:220/255)
         case .specialNight: Color(red:84/255,green:133/255,blue:238/255)
         case .off: Color(red:232/255,green:104/255,blue:127/255)
-        case .leave, .halfPre, .halfPost: Color(red:0.14,green:0.45,blue:0.29)
+        case .leave: Color(red:195/255,green:91/255,blue:24/255)
+        case .halfPre, .halfPost: Color(red:128/255,green:86/255,blue:181/255)
+        case .unpaid, .unpaidHalfPre, .unpaidHalfPost: Color(red:169/255,green:82/255,blue:100/255)
         default: .secondary
         }
     }
+    var isAttendance:Bool { [.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost].contains(self) }
+    var attendanceLabel:String { switch self { case .leave: "연차 1";case .halfPre:"반차 전";case .halfPost:"반차 후";case .unpaid:"무급 1";case .unpaidHalfPre:"무급 전";case .unpaidHalfPost:"무급 후";default:label } }
     var badgeTextColor: Color { self == .day ? Color(red:66/255,green:66/255,blue:66/255) : .white }
     var shortLabel:String {
         switch self {

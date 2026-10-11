@@ -53,18 +53,22 @@ struct MonthGrid: View {
             ForEach(0..<total,id:\.self) { position in
                 if position>=pad && position<pad+days.count {
                     let day=days[position-pad]
+                    let shown:WorkType = day.type.isAttendance ? (!day.holiday.isEmpty && day.baseType == .day ? .specialDay : !day.holiday.isEmpty && day.baseType == .night ? .specialNight : day.baseType) : day.type
                     Button { onSelect?(day) } label: {
-                        VStack(alignment:.leading,spacing:10) {
+                        VStack(alignment:.leading,spacing:day.type.isAttendance ? 2 : 10) {
                             HStack(alignment:.top,spacing:2) {
                                 Text(String(ShiftPlanner.korea.component(.day,from:day.date))).font(.system(size:12,weight:.medium))
                                     .foregroundStyle(!day.holiday.isEmpty || position%7==0 ? Color.red : position%7==6 ? Color.blue : .primary)
                                 Spacer(minLength:0)
                                 if displayHolidays && !day.holiday.isEmpty { Text(day.holiday).font(.system(size:7)).foregroundStyle(.red).lineLimit(1) }
                             }
-                            Text(day.type.shortLabel).font(.system(size:12,weight:.medium)).foregroundStyle(day.type==WorkType.off ? day.type.color : day.type.badgeTextColor)
-                                .frame(width:30,height:27)
-                                .background(day.type==WorkType.off ? Color.clear : day.type.color,in:RoundedRectangle(cornerRadius:displayCircle ? 15 : 7))
+                            Text(shown.shortLabel).font(.system(size:12,weight:.medium)).foregroundStyle(shown==WorkType.off ? shown.color : shown.badgeTextColor)
+                                .frame(width:30,height:displayCircle ? 30 : 27)
+                                .background(shown==WorkType.off ? Color.clear : shown.color,in:RoundedRectangle(cornerRadius:displayCircle ? 15 : 7))
                                 .frame(maxWidth:.infinity)
+                            if day.type.isAttendance {
+                                Text(day.type.attendanceLabel).font(.system(size:9,weight:.medium)).foregroundStyle(.white).frame(maxWidth:.infinity).padding(.vertical,2).background(day.type.color,in:RoundedRectangle(cornerRadius:5))
+                            }
                             HStack(spacing:3) {
                                 if day.changed { Image(systemName:"pencil").font(.system(size:7)) }
                                 if showMemos && displayMemos && !day.memo.isEmpty { Circle().frame(width:3,height:3) }
