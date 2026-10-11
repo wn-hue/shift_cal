@@ -561,3 +561,26 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline-color:var(
 .stats-badge.day-sp { background:var(--shift-special-day);color:#fff; }
 .stats-badge.night-sp { background:var(--shift-special-night);color:#fff; }
 #modal-month-stats [id^="modal-pill-"] { background:none; padding:0; color:#333d4b !important; font-size:13px; }
+
+/* Personal work menu and a separate, compact preferences page. */
+.all-topline { gap:10px; }
+.all-topline .all-page-title { flex:1; }
+.all-topline .google-login-image { width:120px;height:auto; }
+.menu-preferences { width:36px;height:36px;color:#626d7b; }
+.menu-environment-link { display:flex;align-items:center;justify-content:space-between;width:100%;padding:18px 0;border:0;border-top:1px solid #edf0f4;background:#fff;color:#626d7b;font:inherit;font-size:13px;cursor:pointer; }
+.app-preferences { border:0;border-radius:22px;max-width:480px;width:calc(100% - 28px);max-height:85dvh;padding:24px;background:#f4f6f9;color:#333d4b; }
+.app-preferences::backdrop { background:#0006; }
+.preferences-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:20px; }
+.preferences-header h2 { font-size:20px;margin:0; }
+.preferences-card,.app-preferences .all-info-section { background:#fff;border-radius:16px;padding:16px;margin:0 0 18px; }
+.preferences-card h3 { margin:0 0 10px;font-size:13px;color:#626d7b; }
+.preferences-card label { display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;border-bottom:1px solid #f2f3f6;font-size:14px; }
+.preferences-card label:last-child { border:0; }
+.preferences-card input { width:20px;height:20px;accent-color:var(--accent); }
+.preferences-card select { border:0;background:#edf4ff;color:var(--accent);padding:8px;border-radius:8px; }
+body[data-pref-adjacent="false"] .cal-day.other-month > * { visibility:hidden; }
+body[data-pref-holidays="false"] .holiday-bar { display:none; }
+body[data-pref-memos="false"] .memo-tag { display:none; }
+body[data-pref-shape="circle"] .shift-badge { border-radius:50%; }
+
+.app-preferences { position:fixed;inset:0;margin:auto;overflow:auto; }
