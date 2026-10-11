@@ -42,7 +42,7 @@ final class ShiftCalUITests: XCTestCase {
         let privacy = app.buttons["개인정보 처리방침"]
         for _ in 0..<3 { if privacy.isHittable { break }; app.swipeUp() }
         XCTAssertTrue(privacy.isHittable); privacy.tap()
-        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format:"label CONTAINS %@", "시행일: 2026-10-11")).firstMatch.waitForExistence(timeout:5))
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format:"label CONTAINS %@", "시행일: 2026-10-12")).firstMatch.waitForExistence(timeout:5))
         let policyScreen = XCTAttachment(screenshot: app.screenshot()); policyScreen.name = "개인정보 처리방침"; policyScreen.lifetime = .keepAlways; add(policyScreen)
     }
 

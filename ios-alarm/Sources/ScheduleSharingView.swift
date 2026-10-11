@@ -42,6 +42,7 @@ struct MonthGrid: View {
     @AppStorage("display-circle") private var displayCircle=false
     let days:[WorkDay]
     let showMemos:Bool
+    var showExternal:Bool = true
     var cellHeight:CGFloat = 90
     var onSelect:((WorkDay)->Void)? = nil
     private let columns=Array(repeating:GridItem(.flexible(),spacing:0),count:7)
@@ -75,7 +76,7 @@ struct MonthGrid: View {
                                 if day.changed { Image(systemName:"pencil").font(.system(size:7)) }
                                 if showMemos && displayMemos && !day.memo.isEmpty { Circle().frame(width:3,height:3) }
                             }.foregroundStyle(.secondary).frame(maxWidth:.infinity).frame(height:4)
-                            if showMemos { ForEach(Array(calendars.on(day.date).prefix(2))) { event in
+                            if showExternal { ForEach(Array(calendars.on(day.date).prefix(2))) { event in
                                 Text(event.title).font(.system(size:8)).lineLimit(1).foregroundStyle(.primary).padding(.leading,3).frame(maxWidth:.infinity,alignment:.leading).overlay(alignment:.leading){Rectangle().fill(event.color).frame(width:2)}
                             } }
                             Spacer(minLength:0)
@@ -102,7 +103,7 @@ struct ScheduleShareView: View {
     @State private var includeMemos=false
     @State private var preview:SharePreview?
     @State private var linkURL:URL?
-    @State private var fileURL:URL?
+    @State private var makingLink=false
     @State private var message=""
     var body: some View {
         NavigationStack {
@@ -110,7 +111,7 @@ struct ScheduleShareView: View {
                 VStack(alignment:.leading,spacing:24) {
                     VStack(alignment:.leading,spacing:8) {
                         Text("근무표 보내기").font(.title2.weight(.semibold))
-                        Text("이미지나 파일로 간편하게 공유하세요.").font(.subheadline).foregroundStyle(.secondary)
+                        Text("수정이 반영되는 링크나 이미지로 공유하세요.").font(.subheadline).foregroundStyle(.secondary)
                     }
                     HStack {
                         Button { move(-1) } label:{ Image(systemName:"chevron.left").frame(width:44,height:44) }.accessibilityLabel("이전 달")
@@ -119,15 +120,14 @@ struct ScheduleShareView: View {
                         Spacer()
                         Button { move(1) } label:{ Image(systemName:"chevron.right").frame(width:44,height:44) }.accessibilityLabel("다음 달")
                     }
-                    Toggle("메모도 함께 보내기",isOn:$includeMemos)
+                    Toggle("이미지에 메모 포함",isOn:$includeMemos)
                     Text("기본은 메모 제외입니다. 선택한 조의 이번 달 근무만 공유합니다.").font(.footnote).foregroundStyle(.secondary)
-                    Button { makeLink() } label: { shareCard("링크로 보내기",detail:"공유 시점의 이번 달 근무 · 메모 제외",symbol:"link") }.buttonStyle(.plain)
+                    Button { makeLink() } label: { shareCard("링크로 보내기",detail:"근무 변경 자동 반영 · 메모 제외",symbol:"link") }.buttonStyle(.plain).disabled(makingLink)
                     Divider()
                     Button { makeImage() } label: { shareCard("이미지로 보내기",detail:"월간 근무표를 한 장의 이미지로",symbol:"photo.on.rectangle.angled") }.buttonStyle(.plain).accessibilityIdentifier("share-image")
                     Divider()
-                    Button { makeCalendar() } label: { shareCard("캘린더 파일로 보내기",detail:"받는 사람이 캘린더에 가져올 수 있어요",symbol:"calendar.badge.plus") }.buttonStyle(.plain).accessibilityIdentifier("share-calendar")
-                    Divider()
-                    Text("공유한 사본에는 이후 수정이 자동 반영되지 않습니다.").font(.footnote).foregroundStyle(.secondary)
+                    Button("이 달 공유 끄기") { Task { @MainActor in do {try await NativeCloudAccount.shared.stopSharing(month:month);message="공유를 종료했습니다."}catch{message=error.localizedDescription} } }.font(.footnote)
+                    Text("링크에는 이후 근무 변경이 반영됩니다. 이미지는 공유한 시점의 사본입니다.").font(.footnote).foregroundStyle(.secondary)
                     if !message.isEmpty { Text(message).foregroundStyle(.red).accessibilityIdentifier("share-error") }
                 }.padding()
             }.background(AppTheme.page).navigationTitle("공유").navigationBarTitleDisplayMode(.inline)
@@ -142,16 +142,16 @@ struct ScheduleShareView: View {
                         }
                 }
             }
-            .sheet(isPresented:Binding(get:{fileURL != nil},set:{if !$0 {fileURL=nil}})) { if let fileURL { ShareSheet(items:[fileURL]) } }
+
         }
     }
     private func makeLink() {
-        let days=store.month(month).map { ["type":$0.type.rawValue,"label":$0.type.label] }
-        let payload:[String:Any] = ["v":1,"group":store.group,"month":ScheduleDisplay.title(month,format:"yyyy-MM"),"days":days]
-        guard let data=try? JSONSerialization.data(withJSONObject:payload),let json=String(data:data,encoding:.utf8) else { message="링크를 만들지 못했습니다.";return }
-        var parts=URLComponents(string:"https://h-lyart-ten.vercel.app/shared-schedule.html")!
-        parts.fragment=json
-        linkURL=parts.url
+        makingLink=true;message=""
+        Task { @MainActor in
+            defer { makingLink=false }
+            do { linkURL=try await NativeCloudAccount.shared.shareURL(month:month) }
+            catch { message=error.localizedDescription }
+        }
     }
     private func shareCard(_ title:String,detail:String,symbol:String)->some View {
         HStack(spacing:18) {
@@ -171,13 +171,7 @@ struct ScheduleShareView: View {
             try data.write(to:url,options:.atomic);preview=SharePreview(image:image,url:url)
         } catch { message="이미지 저장 실패: \(error.localizedDescription)" }
     }
-    private func makeCalendar() {
-        message=""
-        do {
-            let url=FileManager.default.temporaryDirectory.appendingPathComponent("Shift_cal_\(store.group)_\(ScheduleEngine.key(month).prefix(7)).ics")
-            try store.calendarText(for:month,includeMemos:includeMemos).write(to:url,atomically:true,encoding:.utf8);fileURL=url
-        } catch { message="파일 생성 실패: \(error.localizedDescription)" }
-    }
+
 }
 
 struct SharePreview:Identifiable { let id=UUID();let image:UIImage;let url:URL }
@@ -189,7 +183,7 @@ struct SharedScheduleImage:View {
     var body:some View {
         VStack(alignment:.leading,spacing:20) {
             HStack { VStack(alignment:.leading,spacing:5) { Text("Shift_cal").font(.headline).foregroundStyle(AppTheme.accent);Text(ScheduleDisplay.title(month,format:"yyyy년 M월")).font(.title2.bold()) };Spacer();Text(group+"조").font(.title2.bold()) }
-            MonthGrid(days:days,showMemos:includeMemos)
+            MonthGrid(days:days,showMemos:includeMemos,showExternal:false)
             HStack { Label("주간",systemImage:"sun.max.fill");Label("야간",systemImage:"moon.fill");Label("휴무",systemImage:"cup.and.saucer.fill") }.font(.caption).foregroundStyle(.secondary)
             if includeMemos {
                 ForEach(days.filter{ !$0.memo.isEmpty }) { day in Text("\(ShiftPlanner.korea.component(.day,from:day.date))일 · \(day.memo)").font(.subheadline) }
