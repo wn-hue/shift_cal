@@ -1,5 +1,10 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import EventKit
+import AuthenticationServices
+import CryptoKit
+import Security
+import Combine
 
 enum AppTheme {
     static var style:String { UserDefaults.standard.string(forKey:"calendar-theme") ?? "current" }
@@ -57,6 +62,7 @@ extension WorkType {
 }
 
 struct RootView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @AppStorage("calendar-theme") private var theme="current"
     @ObservedObject var model: AlarmModel
     @ObservedObject var schedule: ScheduleStore
@@ -67,7 +73,7 @@ struct RootView: View {
             ScheduleShareView(store:schedule,month:$month).tabItem { Label("공유",systemImage:"square.and.arrow.up") }
             AlarmView(model:model).tabItem { Label("알람",systemImage:"alarm") }
             SettingsView(store:schedule).tabItem { Label("내 근무",systemImage:"line.3.horizontal") }
-        }.tint(AppTheme.accent).toolbarBackground(AppTheme.surface,for:.tabBar).toolbarBackground(.visible,for:.tabBar)
+        }.onChange(of:scenePhase) { _,phase in if phase == .active {Task{await NativeCloudAccount.shared.sync()};CalendarOverlay.shared.refresh(month)} }.task { NativeCloudAccount.shared.attach(schedule) }.tint(AppTheme.accent).toolbarBackground(AppTheme.surface,for:.tabBar).toolbarBackground(.visible,for:.tabBar)
     }
 }
 
@@ -80,6 +86,7 @@ struct ScheduleView: View {
     @State private var statistics = false
     @State private var sharing = false
     @State private var selected: WorkDay?
+    @ObservedObject private var calendars=CalendarOverlay.shared
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
@@ -106,12 +113,6 @@ struct ScheduleView: View {
                         .accessibilityLabel("메뉴").accessibilityIdentifier("open-menu")
                 }
                 ToolbarItem(placement:.topBarTrailing) {
-                    VStack(spacing:1) {
-                        Text("Google 로그인").font(.system(size:10))
-                        Text("준비 중").font(.system(size:8))
-                    }.foregroundStyle(.secondary).accessibilityLabel("Google 로그인 준비 중")
-                }
-                ToolbarItem(placement:.topBarTrailing) {
                     Button { sharing=true } label: { Image(systemName:"square.and.arrow.up") }.accessibilityLabel("근무표 공유")
                 }
                 ToolbarItem(placement:.topBarTrailing) {
@@ -119,6 +120,7 @@ struct ScheduleView: View {
                 }
 
             }
+            .task(id:month) { calendars.refresh(month) }
             .sheet(isPresented:$pickingMonth) { NavigationStack { DatePicker("이동할 날짜",selection:$month,displayedComponents:.date).datePickerStyle(.graphical).padding().navigationTitle("월 이동").toolbar { ToolbarItem(placement:.confirmationAction) { Button("완료") { pickingMonth=false } } } } }
             .sheet(isPresented:$statistics) { WorkStatisticsView(store:store,month:month).presentationDragIndicator(.visible) }
             .sheet(isPresented:$sharing) { ScheduleShareView(store:store,month:$month).presentationDragIndicator(.visible) }
@@ -238,6 +240,8 @@ struct SettingsView: View {
     var showClose=false
     @Environment(\.dismiss) private var dismiss
     @State private var changingGroup=false
+    @State private var connectingCalendars=false
+    @State private var loggingIn=false
     @State private var shareURL:URL?
     @State private var importing=false
     @State private var pending:Data?
@@ -246,9 +250,22 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 Section {
+                    Button { loggingIn=true } label: {
+                        HStack(spacing:12) {
+                            Image(systemName:"person.crop.circle.fill").font(.system(size:34)).foregroundStyle(AppTheme.accent).accessibilityHidden(true)
+                            VStack(alignment:.leading,spacing:5) { Text("로그인 및 동기화").font(.headline).foregroundStyle(AppTheme.accent);Text("Google · Apple 계정").font(.caption).foregroundStyle(.secondary) }
+                            Spacer();Image(systemName:"chevron.right").font(.caption)
+                        }.padding(.vertical,6)
+                    }
+                }
+                Section {
                     Button { changingGroup=true } label: {
                         HStack { Image(systemName:"person.2.fill").foregroundStyle(AppTheme.accent);Text("교대조 설정").font(.subheadline);Spacer();Text(store.group+"조").font(.subheadline);Image(systemName:"chevron.right").font(.caption) }
                     }.accessibilityIdentifier("menu-group-settings")
+                }
+                Section("내 캘린더") {
+                    Button { connectingCalendars=true } label: { Label("iCloud · Google 일정 표시",systemImage:"calendar.badge.plus").foregroundStyle(AppTheme.accent) }
+                    Text("기기에 연결된 캘린더를 근무표와 함께 볼 수 있습니다. 원본 일정은 수정하지 않습니다.").font(.footnote).foregroundStyle(.secondary)
                 }
                 Section("백업 및 복원") {
                     Button { backup() } label: { Label("근무 변경·메모 백업",systemImage:"tray.and.arrow.up.fill").foregroundStyle(AppTheme.green) }.accessibilityIdentifier("backup-schedule")
@@ -262,11 +279,13 @@ struct SettingsView: View {
                 }
                 Section("기존 Shift_cal 기능") {
                     Link("웹 근무표·급여·식단·Google 연동 열기",destination:URL(string:"https://h-lyart-ten.vercel.app/")!)
-                    Text("기존 웹 기능은 Safari에서 이용합니다. 앱의 근무 변경과 메모는 웹 계정과 자동으로 동기화되지 않습니다. Google에 저장한 근무는 알람 탭에서 iPhone 캘린더를 선택해 사용할 수 있습니다.").font(.footnote).foregroundStyle(.secondary)
+                    Text("급여 계산과 식단은 웹에서 이용합니다. 로그인하면 근무 변경과 메모를 계정에 동기화할 수 있습니다.").font(.footnote).foregroundStyle(.secondary)
                 }
 
             }.scrollContentBackground(.hidden).background(AppTheme.page).navigationTitle("내 근무")
             .toolbar { ToolbarItem(placement:.topBarTrailing) { NavigationLink { AppPreferencesView() } label: { Image(systemName:"gearshape") }.accessibilityLabel("앱 환경") }; if showClose { ToolbarItem(placement:.cancellationAction) { Button("닫기") { dismiss() }.accessibilityIdentifier("close-menu") } } }
+            .sheet(isPresented:$connectingCalendars) { DeviceCalendarsView() }
+            .sheet(isPresented:$loggingIn) { NativeAccountView(store:store) }
             .sheet(isPresented:$changingGroup) { GroupSelectionView(store:store) }
             .fileImporter(isPresented:$importing,allowedContentTypes:[.json]) { result in
                 do {
@@ -449,4 +468,130 @@ struct AppPreferencesView:View {
             }
         }.scrollContentBackground(.hidden).background(AppTheme.page).navigationTitle("앱 환경").navigationBarTitleDisplayMode(.inline).tint(AppTheme.accent)
     }
+}
+
+
+struct CalendarOverlayEvent: Identifiable {
+    let id:String
+    let title:String
+    let start:Date
+    let end:Date
+    let color:Color
+}
+@MainActor
+final class CalendarOverlay: ObservableObject {
+    static let shared=CalendarOverlay()
+    private let eventStore=EKEventStore()
+    @Published var calendars:[EKCalendar]=[]
+    @Published var selected:Set<String>=Set(UserDefaults.standard.stringArray(forKey:"overlay-calendars") ?? [])
+    @Published var events:[CalendarOverlayEvent]=[]
+    @Published var message=""
+    private var month=Date()
+    private var observer:AnyCancellable?
+    private init() {
+        observer=NotificationCenter.default.publisher(for:.EKEventStoreChanged).receive(on:RunLoop.main).sink { [weak self] _ in Task { @MainActor in self?.refresh(self?.month ?? Date()) } }
+    }
+    func connect() async {
+        do { guard try await eventStore.requestFullAccessToEvents() else {message="캘린더 접근이 꺼져 있습니다. iPhone 설정에서 허용해 주세요.";return};refresh(month) }
+        catch {message="캘린더를 열지 못했습니다. 권한을 확인해 주세요."}
+    }
+    func toggle(_ id:String) { if selected.contains(id){selected.remove(id)}else{selected.insert(id)};UserDefaults.standard.set(Array(selected),forKey:"overlay-calendars");refresh(month) }
+    func refresh(_ date:Date) {
+        month=date
+        guard EKEventStore.authorizationStatus(for:.event) == .fullAccess else {calendars=[];events=[];return}
+        calendars=eventStore.calendars(for:.event).sorted { $0.source.title == $1.source.title ? $0.title < $1.title : $0.source.title < $1.source.title }
+        let chosen=calendars.filter{selected.contains($0.calendarIdentifier)}
+        guard !chosen.isEmpty else {events=[];message=calendars.isEmpty ? "연결된 캘린더가 없습니다. iPhone 설정에서 계정을 추가하세요." : "표시할 캘린더를 선택하세요.";return}
+        let cal=ShiftPlanner.korea,parts=cal.dateComponents([.year,.month],from:date),start=cal.date(from:parts)!,end=cal.date(byAdding:.month,value:1,to:start)!
+        events=eventStore.events(matching:eventStore.predicateForEvents(withStart:start,end:end,calendars:chosen)).sorted{$0.startDate < $1.startDate}.map{CalendarOverlayEvent(id:$0.eventIdentifier ?? UUID().uuidString,title:$0.title ?? "일정",start:$0.startDate,end:$0.endDate,color:Color(cgColor:$0.calendar.cgColor))}
+        message="선택한 일정은 근무와 급여 계산에 반영되지 않습니다."
+    }
+    func on(_ date:Date)->[CalendarOverlayEvent] {let start=ShiftPlanner.korea.startOfDay(for:date),end=ShiftPlanner.korea.date(byAdding:.day,value:1,to:start)!;return events.filter{$0.start < end && $0.end > start}}
+}
+struct DeviceCalendarsView: View {
+    @ObservedObject private var model=CalendarOverlay.shared
+    @Environment(\.dismiss) private var dismiss
+    var body:some View {
+        NavigationStack {
+            List {
+                Section { Button("캘린더 접근 허용") { Task {await model.connect()} };Text(model.message).font(.footnote).foregroundStyle(.secondary) }
+                ForEach(Array(Set(model.calendars.map{$0.source.title})).sorted(),id:\.self) { source in
+                    Section(source) { ForEach(model.calendars.filter{$0.source.title==source},id:\.calendarIdentifier) { calendar in
+                        Button {model.toggle(calendar.calendarIdentifier)} label:{HStack{Image(systemName:model.selected.contains(calendar.calendarIdentifier) ? "checkmark.square.fill" : "square").foregroundStyle(AppTheme.accent);Circle().fill(Color(cgColor:calendar.cgColor)).frame(width:9,height:9);Text(calendar.title).foregroundStyle(.primary);Spacer()}}
+                    } }
+                }
+                Section {Text("Google 일정이 보이지 않으면 iPhone 설정 → 앱 → 캘린더 → 캘린더 계정에서 Google 계정을 추가하세요. iCloud 캘린더도 기기의 계정 설정을 사용합니다.").font(.footnote).foregroundStyle(.secondary)}
+            }.scrollContentBackground(.hidden).background(AppTheme.page).navigationTitle("내 캘린더").toolbar{ToolbarItem(placement:.confirmationAction){Button("완료"){dismiss()}}}.task{model.refresh(Date())}
+        }.tint(AppTheme.accent)
+    }
+}
+struct NativeAccountView: View {
+    @ObservedObject var store:ScheduleStore
+    @State private var deleting=false
+    @ObservedObject private var account=NativeCloudAccount.shared
+    @Environment(\.dismiss) private var dismiss
+    var body:some View {
+        NavigationStack {
+            VStack(alignment:.leading,spacing:20) {
+                Text("내 근무, 어디서나").font(.title2.bold())
+                Text("로그인하면 근무 변경과 메모를 웹·다른 기기에서 이어서 사용할 수 있습니다.").foregroundStyle(.secondary)
+                if account.email.isEmpty {
+                    Button {account.login("google")} label:{Text("Google로 로그인").frame(maxWidth:.infinity).padding().background(AppTheme.surface,in:RoundedRectangle(cornerRadius:12)).overlay(RoundedRectangle(cornerRadius:12).stroke(Color.secondary.opacity(0.2)))}
+                    Button {account.login("apple")} label:{Label("Apple로 로그인",systemImage:"apple.logo").frame(maxWidth:.infinity).padding().background(Color.black,in:RoundedRectangle(cornerRadius:12)).foregroundStyle(.white)}.disabled(!account.appleAvailable)
+                    if !account.appleAvailable {Text("Apple 로그인은 개발자 서비스 설정 완료 후 사용할 수 있습니다.").font(.footnote).foregroundStyle(.secondary)}
+                } else {
+                    Text(account.email).font(.headline)
+                    Button("지금 동기화"){Task{await account.sync()}}
+                    Button("로그아웃"){Task{await account.logout()}}
+                    Button("계정 데이터 삭제",role:.destructive){deleting=true}
+                }
+                if account.busy {ProgressView()}
+                Text(account.message).font(.footnote).foregroundStyle(.secondary)
+                if account.conflict {Button("계정 근무표 사용"){Task{await account.resolve(useDevice:false)}};Button("이 기기 근무표 사용"){Task{await account.resolve(useDevice:true)}}}
+                Text("급여 기준은 계정에서 보관하고 웹 급여 계산기에 반영됩니다. 캘린더 표시 선택은 기기별로 유지합니다.").font(.footnote).foregroundStyle(.secondary)
+                Spacer()
+            }.padding(24).background(AppTheme.page).navigationTitle("로그인 및 동기화").toolbar{ToolbarItem(placement:.confirmationAction){Button("닫기"){dismiss()}}}.task{account.attach(store)}.confirmationDialog("계정 데이터를 삭제하고 로그아웃할까요? 공유 링크는 웹 공유 화면에서 별도로 종료하세요.",isPresented:$deleting,titleVisibility:.visible){Button("계정 데이터 삭제",role:.destructive){Task{await account.deleteAccount()}}}.disabled(account.busy)
+        }.tint(AppTheme.accent)
+    }
+}
+
+@MainActor
+final class NativeCloudAccount: NSObject,ObservableObject,ASWebAuthenticationPresentationContextProviding {
+    static let shared=NativeCloudAccount()
+    @Published var email=""
+    @Published var message=""
+    @Published var busy=false
+    @Published var conflict=false
+    @Published var appleAvailable=false
+    private var token:String?
+    private var authSession:ASWebAuthenticationSession?
+    private var store:ScheduleStore?
+    private var observer:AnyCancellable?
+    private var baseline:[String:Any]?
+    private var remote:[String:Any]=[:]
+    private var parents:[String]=[]
+    private var applying=false
+    private var timer:Task<Void,Never>?
+    private let keys=["shift_salary_config_master","shift_active_group","shift_day_memos","shift_overrides_A","shift_overrides_B","shift_overrides_C","shift_payroll_sms_reference_v1","shift_bonus_sms_reference_v1"]
+    override private init(){super.init();if let saved=readKeychain(),let data=try? JSONSerialization.jsonObject(with:saved) as? [String:String]{token=data["token"];email=data["email"] ?? ""}}
+    func attach(_ schedule:ScheduleStore){store=schedule;if observer == nil {observer=NotificationCenter.default.publisher(for:ScheduleStore.changed).receive(on:RunLoop.main).sink{[weak self] _ in Task{@MainActor in guard let self,!self.applying else{return};self.timer?.cancel();self.timer=Task{try? await Task.sleep(for:.seconds(2));if !Task.isCancelled {await self.sync()}}}}};Task{await checkApple();if token != nil {await sync()}}}
+    func presentationAnchor(for session:ASWebAuthenticationSession)->ASPresentationAnchor{UIApplication.shared.connectedScenes.compactMap{$0 as? UIWindowScene}.flatMap{$0.windows}.first{$0.isKeyWindow} ?? UIWindow()}
+    private func randomHex()->String{var bytes=[UInt8](repeating:0,count:32);guard SecRandomCopyBytes(kSecRandomDefault,bytes.count,&bytes)==errSecSuccess else{return UUID().uuidString.replacingOccurrences(of:"-",with:"")+UUID().uuidString.replacingOccurrences(of:"-",with:"")};return bytes.map{String(format:"%02x",$0)}.joined()}
+    func login(_ provider:String){guard !busy else{return};busy=true;message="로그인 화면을 여는 중…";let verifier=randomHex(),state=randomHex(),challenge=SHA256.hash(data:Data(verifier.utf8)).map{String(format:"%02x",$0)}.joined();let base="https://h-lyart-ten.vercel.app/api/"+(provider=="apple" ? "apple-account" : "google-calendar");var url=URLComponents(string:base)!;url.queryItems=[URLQueryItem(name:"action",value:"login"),URLQueryItem(name:"storage",value:"1"),URLQueryItem(name:"native_challenge",value:challenge),URLQueryItem(name:"native_state",value:state)];authSession=ASWebAuthenticationSession(url:url.url!,callbackURLScheme:"shiftcal"){[weak self] callback,error in Task{@MainActor in guard let self else{return};self.busy=false;if let error{self.message=(error as NSError).code==ASWebAuthenticationSessionError.canceledLogin.rawValue ? "로그인을 취소했습니다." : "로그인 화면을 열지 못했습니다.";return};guard let callback,let components=URLComponents(url:callback,resolvingAgainstBaseURL:false),components.host=="auth",components.queryItems?.first(where:{$0.name=="state"})?.value==state,let ticket=components.queryItems?.first(where:{$0.name=="ticket"})?.value else{self.message="로그인 요청을 확인하지 못했습니다.";return};do{let result=try await self.request("exchange",body:["ticket":ticket,"state":state,"verifier":verifier],anonymous:true);guard let token=result["token"] as? String,let user=result["user"] as? [String:String] else{throw CocoaError(.coderReadCorrupt)};self.token=token;self.email=user["email"] ?? "계정";self.baseline=nil;self.conflict=false;try self.saveKeychain();await self.sync()}catch{self.message=error.localizedDescription}}};authSession?.presentationContextProvider=self;authSession?.prefersEphemeralWebBrowserSession=false;if authSession?.start() != true {busy=false;message="로그인 화면을 열지 못했습니다."}}
+    func checkApple() async {do{let (data,_)=try await URLSession.shared.data(from:URL(string:"https://h-lyart-ten.vercel.app/api/apple-account?action=status")!);let j=try JSONSerialization.jsonObject(with:data) as? [String:Any];appleAvailable=j?["configured"] as? Bool ?? false}catch{appleAvailable=false}}
+    private func request(_ action:String,body:[String:Any]=[:],anonymous:Bool=false) async throws -> [String:Any]{var req=URLRequest(url:URL(string:"https://h-lyart-ten.vercel.app/api/native-account?action="+action)!);req.httpMethod="POST";req.timeoutInterval=45;req.setValue("application/json",forHTTPHeaderField:"Content-Type");if !anonymous,let token{req.setValue("Bearer "+token,forHTTPHeaderField:"Authorization")};req.httpBody=try JSONSerialization.data(withJSONObject:body);let(data,response)=try await URLSession.shared.data(for:req);guard let r=response as? HTTPURLResponse,let j=try JSONSerialization.jsonObject(with:data) as? [String:Any] else{throw CocoaError(.coderReadCorrupt)};guard (200..<300).contains(r.statusCode) else{throw NSError(domain:"ShiftCalCloud",code:r.statusCode,userInfo:[NSLocalizedDescriptionKey:j["message"] as? String ?? "동기화에 실패했습니다."])};return j}
+    private func equal(_ a:Any?,_ b:Any?)->Bool{let x=a ?? NSNull(),y=b ?? NSNull();return NSDictionary(dictionary:["v":x]).isEqual(to:["v":y])}
+    private func blank()->[String:Any]{Dictionary(uniqueKeysWithValues:keys.map{($0,NSNull())})}
+    private func snapshot()->[String:Any]{var data=baseline ?? remote;if data.isEmpty{data=blank()};guard let store else{return data};data["shift_active_group"]=store.group;for group in ["A","B","C"]{var map=[String:String]();for(k,v)in store.overrides where k.hasPrefix(group+":"){map[String(k.dropFirst(2))]=v.rawValue};data["shift_overrides_"+group]=map};var memos=remote["shift_day_memos"] as? [String:String] ?? [:];let old=baseline?["shift_day_memos"] as? [String:String] ?? [:];for k in old.keys{memos.removeValue(forKey:k)};for(k,v)in store.memos where k.hasPrefix(store.group+":"){memos[String(k.dropFirst(2))]=v};data["shift_day_memos"]=memos;return data}
+    private func apply(_ data:[String:Any]) throws{guard let store else{return};let group=data["shift_active_group"] as? String ?? store.group;var overrides=[String:WorkType]();for g in ["A","B","C"]{for(k,v)in data["shift_overrides_"+g] as? [String:String] ?? [:]{let name=v=="HALF_LEAVE" ? "HALF_POST" : v=="UNPAID_HALF" ? "UNPAID_HALF_POST" : v;if let type=WorkType(rawValue:name){overrides[g+":"+k]=type}}};var memos=store.memos.filter{!$0.key.hasPrefix(group+":")};for(k,v)in data["shift_day_memos"] as? [String:String] ?? [:]{memos[group+":"+k]=v;for g in ["A","B","C"] where memos[g+":"+k] == nil {memos[g+":"+k]=v}};applying=true;defer{applying=false};try store.restore(JSONEncoder().encode(ScheduleBackup(version:1,group:group,overrides:overrides,memos:memos)))}
+    private func merge(_ b:Any?,_ l:Any?,_ r:Any?,clash:inout Bool)->Any{if equal(l,r)||equal(b,r){return l ?? NSNull()};if equal(b,l){return r ?? NSNull()};if let ld=l as? [String:Any],let rd=r as? [String:Any]{let bd=b as? [String:Any] ?? [:];var result=[String:Any]();for k in Set(bd.keys).union(ld.keys).union(rd.keys){let value=merge(bd[k],ld[k],rd[k],clash:&clash);if !(value is NSNull){result[k]=value}};return result};clash=true;return l ?? NSNull()}
+    func sync() async {guard token != nil,store != nil,!busy,!conflict else{return};busy=true;defer{busy=false};message="근무표와 메모 동기화 중…";do{let result=try await request("cloud-read");let versions=result["versions"] as? [[String:Any]] ?? [];parents=versions.compactMap{$0["revision"] as? String};remote=versions.first?["data"] as? [String:Any] ?? blank();let local=snapshot();if versions.count>1{conflict=true;message="여러 기기에서 동시에 수정했습니다. 웹에서 저장 기록을 선택한 뒤 다시 시도하세요.";return};if baseline == nil,!versions.isEmpty,!equal(local,remote){let workKeys=["shift_active_group","shift_day_memos","shift_overrides_A","shift_overrides_B","shift_overrides_C"];let hasLocal=store!.overrides.count>0 || store!.memos.count>0;if hasLocal&&workKeys.contains(where:{!equal(local[$0],remote[$0])}){conflict=true;message="기기와 계정의 근무표가 다릅니다. 사용할 데이터를 선택하세요.";return};try apply(remote);baseline=remote;message="계정에서 근무표와 메모를 불러왔습니다.";return};var clash=false;let merged=merge(baseline ?? blank(),local,remote,clash:&clash) as! [String:Any];if clash{conflict=true;message="다른 기기에서 같은 항목을 수정했습니다. 사용할 데이터를 선택하세요.";return};let saved=equal(merged,remote) ? remote : try await write(merged);var furtherClash=false;let current=snapshot();let after=merge(local,current,saved,clash:&furtherClash) as! [String:Any];baseline=saved;if furtherClash{conflict=true;message="저장 중 수정된 항목이 있습니다. 사용할 데이터를 선택하세요.";return};try apply(after);if !equal(after,saved){timer?.cancel();timer=Task{try? await Task.sleep(for:.seconds(2));if !Task.isCancelled{await self.sync()}}};message="동기화 완료 · "+Date().formatted(date:.omitted,time:.shortened)}catch{message=error.localizedDescription}}
+    private func write(_ data:[String:Any]) async throws->[String:Any]{let j=try await request("cloud-write",body:["revision":UUID().uuidString.replacingOccurrences(of:"-",with:"").lowercased(),"parents":parents,"data":data]);parents=[j["revision"] as? String ?? ""];return j["data"] as? [String:Any] ?? data}
+    func resolve(useDevice:Bool) async {guard conflict,!busy else{return};busy=true;defer{busy=false};do{let j=try await request("cloud-read"),versions=j["versions"] as? [[String:Any]] ?? [];guard versions.count<=1 else{message="웹에서 여러 저장 기록을 먼저 정리하세요.";return};parents=versions.compactMap{$0["revision"] as? String};remote=versions.first?["data"] as? [String:Any] ?? blank();let data=useDevice ? snapshot() : remote;let saved=useDevice ? try await write(data) : data;try apply(saved);baseline=saved;conflict=false;message="선택한 근무표를 동기화했습니다."}catch{message=error.localizedDescription}}
+    func logout() async {guard !busy else{return};await sync();guard !conflict,!busy,message.hasPrefix("동기화 완료") || message.hasPrefix("계정에서") else{return};token=nil;email="";baseline=nil;deleteKeychain();message="로그아웃했습니다. 기기에 저장된 근무표는 유지됩니다."}
+    func deleteAccount() async {guard !busy else{return};busy=true;defer{busy=false};do{_ = try await request("cloud-delete");token=nil;email="";baseline=nil;conflict=false;deleteKeychain();message="계정 데이터를 삭제했습니다. 기기 근무표는 유지됩니다."}catch{message=error.localizedDescription}}
+    private var keychainQuery:[String:Any]{[kSecClass as String:kSecClassGenericPassword,kSecAttrService as String:"com.wnhue.shiftcal.account",kSecAttrAccount as String:"session"]}
+    private func readKeychain()->Data?{var q=keychainQuery;q[kSecReturnData as String]=true;q[kSecMatchLimit as String]=kSecMatchLimitOne;var result:CFTypeRef?;guard SecItemCopyMatching(q as CFDictionary,&result)==errSecSuccess else{return nil};return result as? Data}
+    private func deleteKeychain(){SecItemDelete(keychainQuery as CFDictionary)}
+    private func saveKeychain() throws{let data=try JSONSerialization.data(withJSONObject:["token":token ?? "","email":email]);deleteKeychain();var q=keychainQuery;q[kSecValueData as String]=data;q[kSecAttrAccessible as String]=kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;guard SecItemAdd(q as CFDictionary,nil)==errSecSuccess else{throw CocoaError(.fileWriteUnknown)}}
 }

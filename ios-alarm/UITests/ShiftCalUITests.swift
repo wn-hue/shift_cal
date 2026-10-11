@@ -42,7 +42,7 @@ final class ShiftCalUITests: XCTestCase {
         let privacy = app.buttons["개인정보 처리방침"]
         for _ in 0..<3 { if privacy.isHittable { break }; app.swipeUp() }
         XCTAssertTrue(privacy.isHittable); privacy.tap()
-        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format:"label CONTAINS %@", "시행일: 2026-10-07")).firstMatch.waitForExistence(timeout:5))
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format:"label CONTAINS %@", "시행일: 2026-10-11")).firstMatch.waitForExistence(timeout:5))
         let policyScreen = XCTAttachment(screenshot: app.screenshot()); policyScreen.name = "개인정보 처리방침"; policyScreen.lifetime = .keepAlways; add(policyScreen)
     }
 
@@ -68,4 +68,17 @@ final class ShiftCalUITests: XCTestCase {
         app.buttons["shift-NIGHT"].tap();app.buttons["취소"].tap()
     }
 
+    @MainActor
+    func testVisibleLoginAndExternalCalendarMenu() throws {
+        let app=XCUIApplication();app.launch()
+        app.tabBars.buttons["내 근무"].tap()
+        let login=app.buttons.matching(NSPredicate(format:"label CONTAINS %@","로그인 및 동기화")).firstMatch
+        XCTAssertTrue(login.waitForExistence(timeout:10));login.tap()
+        XCTAssertTrue(app.buttons["Google로 로그인"].waitForExistence(timeout:5))
+        XCTAssertTrue(app.buttons["Apple로 로그인"].exists)
+        app.buttons["닫기"].tap()
+        app.buttons["iCloud · Google 일정 표시"].tap()
+        XCTAssertTrue(app.buttons["캘린더 접근 허용"].waitForExistence(timeout:5))
+        XCTAssertTrue(app.navigationBars["내 캘린더"].exists)
+    }
 }

@@ -35,6 +35,7 @@ enum ScheduleDisplay {
 }
 
 struct MonthGrid: View {
+    @ObservedObject private var calendars=CalendarOverlay.shared
     @AppStorage("calendar-theme") private var theme="current"
     @AppStorage("display-holidays") private var displayHolidays=true
     @AppStorage("display-memos") private var displayMemos=true
@@ -74,6 +75,9 @@ struct MonthGrid: View {
                                 if day.changed { Image(systemName:"pencil").font(.system(size:7)) }
                                 if showMemos && displayMemos && !day.memo.isEmpty { Circle().frame(width:3,height:3) }
                             }.foregroundStyle(.secondary).frame(maxWidth:.infinity).frame(height:4)
+                            if showMemos { ForEach(Array(calendars.on(day.date).prefix(2))) { event in
+                                Text(event.title).font(.system(size:8)).lineLimit(1).foregroundStyle(.primary).padding(.leading,3).frame(maxWidth:.infinity,alignment:.leading).overlay(alignment:.leading){Rectangle().fill(event.color).frame(width:2)}
+                            } }
                             Spacer(minLength:0)
                         }.padding(.horizontal,4).padding(.top,7).frame(maxWidth:.infinity).frame(height:cellHeight)
                             .background(ShiftPlanner.korea.isDateInToday(day.date) ? WorkType.night.color.opacity(0.035) : .clear)
