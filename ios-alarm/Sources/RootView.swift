@@ -427,7 +427,7 @@ struct AppPreferencesView:View {
     @AppStorage("display-circle") private var circle=false
     var body:some View {
         List {
-            Section("테마") { Picker("달력 스타일",selection:$theme) { Text("1. 현재 스타일").tag("current");Text("2. GPT 스타일").tag("gpt");Text("3. 토스 앱 스타일").tag("toss") } }
+            Section("테마") { Picker("달력 스타일",selection:$theme) { Text("1").tag("current");Text("2").tag("gpt");Text("3").tag("toss") } }
             Section("화면 표시") {
                 Toggle("공휴일 이름",isOn:$holidays)
                 Toggle("달력 메모",isOn:$memos)
