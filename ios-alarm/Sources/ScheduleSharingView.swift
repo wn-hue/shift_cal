@@ -35,6 +35,9 @@ enum ScheduleDisplay {
 }
 
 struct MonthGrid: View {
+    @AppStorage("display-holidays") private var displayHolidays=true
+    @AppStorage("display-memos") private var displayMemos=true
+    @AppStorage("display-circle") private var displayCircle=false
     let days:[WorkDay]
     let showMemos:Bool
     var cellHeight:CGFloat = 90
@@ -56,15 +59,15 @@ struct MonthGrid: View {
                                 Text(String(ShiftPlanner.korea.component(.day,from:day.date))).font(.system(size:12,weight:.medium))
                                     .foregroundStyle(!day.holiday.isEmpty || position%7==0 ? Color.red : position%7==6 ? Color.blue : .primary)
                                 Spacer(minLength:0)
-                                if !day.holiday.isEmpty { Text(day.holiday).font(.system(size:7)).foregroundStyle(.red).lineLimit(1) }
+                                if displayHolidays && !day.holiday.isEmpty { Text(day.holiday).font(.system(size:7)).foregroundStyle(.red).lineLimit(1) }
                             }
                             Text(day.type.shortLabel).font(.system(size:12,weight:.medium)).foregroundStyle(day.type==WorkType.off ? day.type.color : day.type.badgeTextColor)
                                 .frame(width:30,height:27)
-                                .background(day.type==WorkType.off ? Color.clear : day.type.color,in:RoundedRectangle(cornerRadius:7))
+                                .background(day.type==WorkType.off ? Color.clear : day.type.color,in:RoundedRectangle(cornerRadius:displayCircle ? 15 : 7))
                                 .frame(maxWidth:.infinity)
                             HStack(spacing:3) {
                                 if day.changed { Image(systemName:"pencil").font(.system(size:7)) }
-                                if showMemos && !day.memo.isEmpty { Circle().frame(width:3,height:3) }
+                                if showMemos && displayMemos && !day.memo.isEmpty { Circle().frame(width:3,height:3) }
                             }.foregroundStyle(.secondary).frame(maxWidth:.infinity).frame(height:4)
                             Spacer(minLength:0)
                         }.padding(.horizontal,4).padding(.top,7).frame(maxWidth:.infinity).frame(height:cellHeight)

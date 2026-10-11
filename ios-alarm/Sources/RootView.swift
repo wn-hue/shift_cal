@@ -45,7 +45,7 @@ struct RootView: View {
             ScheduleView(store:schedule,month:$month).tabItem { Label("근무표",systemImage:"calendar") }
             ScheduleShareView(store:schedule,month:$month).tabItem { Label("공유",systemImage:"square.and.arrow.up") }
             AlarmView(model:model).tabItem { Label("알람",systemImage:"alarm") }
-            SettingsView(store:schedule).tabItem { Label("설정",systemImage:"gearshape") }
+            SettingsView(store:schedule).tabItem { Label("내 근무",systemImage:"line.3.horizontal") }
         }.tint(AppTheme.accent)
     }
 }
@@ -238,15 +238,9 @@ struct SettingsView: View {
                     Link("웹 근무표·급여·식단·Google 연동 열기",destination:URL(string:"https://h-lyart-ten.vercel.app/")!)
                     Text("기존 웹 기능은 Safari에서 이용합니다. 앱의 근무 변경과 메모는 웹 계정과 자동으로 동기화되지 않습니다. Google에 저장한 근무는 알람 탭에서 iPhone 캘린더를 선택해 사용할 수 있습니다.").font(.footnote).foregroundStyle(.secondary)
                 }
-                Section("앱 정보") {
-                    Text("Shift_cal 1.0 · iOS 26 이상")
-                    NavigationLink("도움말 및 문의") { SupportView() }
-                    NavigationLink("개인정보 처리방침") { PrivacyView() }
-                    Link("기존 서비스 이용약관",destination:URL(string:"https://h-lyart-ten.vercel.app/terms.html")!)
-                    Text("알람은 앞으로 30일을 미리 예약합니다. 예약 마지막 날짜 전에 앱을 다시 열어 주세요. 근무 변경 후 예약 목록을 확인하세요.").font(.footnote).foregroundStyle(.secondary)
-                }
-            }.navigationTitle("설정")
-            .toolbar { if showClose { ToolbarItem(placement:.cancellationAction) { Button("닫기") { dismiss() }.accessibilityIdentifier("close-menu") } } }
+
+            }.navigationTitle("내 근무")
+            .toolbar { ToolbarItem(placement:.topBarTrailing) { NavigationLink { AppPreferencesView() } label: { Image(systemName:"gearshape") }.accessibilityLabel("앱 환경") }; if showClose { ToolbarItem(placement:.cancellationAction) { Button("닫기") { dismiss() }.accessibilityIdentifier("close-menu") } } }
             .sheet(isPresented:$changingGroup) { GroupSelectionView(store:store) }
             .fileImporter(isPresented:$importing,allowedContentTypes:[.json]) { result in
                 do {
@@ -405,5 +399,26 @@ struct WorkStatisticsView: View {
     }
     private func row(_ title:String,value:String)->some View {
         HStack { Text(title).foregroundStyle(.secondary);Spacer();Text(value).fontWeight(.semibold) }.font(.subheadline)
+    }
+}
+
+struct AppPreferencesView:View {
+    @AppStorage("display-holidays") private var holidays=true
+    @AppStorage("display-memos") private var memos=true
+    @AppStorage("display-circle") private var circle=false
+    var body:some View {
+        List {
+            Section("화면 표시") {
+                Toggle("공휴일 이름",isOn:$holidays)
+                Toggle("달력 메모",isOn:$memos)
+                Toggle("원형 근무 배지",isOn:$circle)
+            }
+            Section("앱 정보") {
+                Text("Shift_cal 1.0 · iOS 26 이상")
+                NavigationLink("도움말 및 문의") { SupportView() }
+                NavigationLink("개인정보 처리방침") { PrivacyView() }
+                Link("서비스 이용약관",destination:URL(string:"https://h-lyart-ten.vercel.app/terms.html")!)
+            }
+        }.navigationTitle("앱 환경").navigationBarTitleDisplayMode(.inline).tint(AppTheme.accent)
     }
 }

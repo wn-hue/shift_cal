@@ -24,13 +24,15 @@ final class ShiftCalUITests: XCTestCase {
         let screen=XCTAttachment(screenshot:app.screenshot());screen.name="근무표";screen.lifetime = .keepAlways;add(screen)
         app.tabBars.buttons["알람"].tap()
         XCTAssertTrue(app.switches["automatic-alarms"].waitForExistence(timeout:5))
-        app.tabBars.buttons["설정"].tap()
+        app.tabBars.buttons["내 근무"].tap()
+        app.buttons["앱 환경"].tap()
         XCTAssertTrue(app.buttons["backup-schedule"].waitForExistence(timeout:5))
     }
     @MainActor
     func testSupportAndPrivacyAreAvailableInApp() throws {
         let app = XCUIApplication(); app.launch()
-        app.tabBars.buttons["설정"].tap()
+        app.tabBars.buttons["내 근무"].tap()
+        app.buttons["앱 환경"].tap()
         let support = app.buttons["도움말 및 문의"]
         for _ in 0..<5 { if support.isHittable { break }; app.swipeUp() }
         XCTAssertTrue(support.isHittable); support.tap()
