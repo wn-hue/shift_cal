@@ -912,7 +912,7 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=25">
+    <link rel="stylesheet" href="./calendar-ui.css?v=26">
     <link rel="stylesheet" href="./today-menu.css?v=2">
 </head>
 <body data-view="calendar">
@@ -1212,7 +1212,7 @@
     </section>
     <section id="view-all" class="view-page all-page" aria-labelledby="account-management-title">
       <div id="account-management-dialog" class="all-menu-content">
-        <div class="all-topline"><h1 id="account-management-title" class="all-page-title">내 근무</h1><a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1" aria-label="Google로 로그인" aria-describedby="account-permission-notice"><img class="google-login-image" src="./google-signin.png?v=3" width="180" height="40" alt="" aria-hidden="true"></a><button type="button" class="icon-button menu-preferences" aria-label="앱 환경" onclick="openAppPreferences()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m10 3-1 3-3 1-3 3 2 2-1 3 3 3 3-1 2 2 3-3 1-3 3-1V9l-3-1-1-3z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+        <div class="all-topline"><h1 id="account-management-title" class="all-page-title">내 근무</h1><a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1" aria-label="Google로 로그인" aria-describedby="account-permission-notice"><img class="google-login-image" src="./google-signin.png?v=3" width="180" height="40" alt="" aria-hidden="true"></a><button type="button" class="icon-button menu-preferences" aria-label="앱 환경" onclick="openAppPreferences()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><polygon points="12.00,4.00 13.56,4.15 15.83,2.76 17.56,3.69 17.66,6.34 18.65,7.56 21.24,8.17 21.81,10.05 20.00,12.00 19.85,13.56 21.24,15.83 20.31,17.56 17.66,17.66 16.44,18.65 15.83,21.24 13.95,21.81 12.00,20.00 10.44,19.85 8.17,21.24 6.44,20.31 6.34,17.66 5.35,16.44 2.76,15.83 2.19,13.95 4.00,12.00 4.15,10.44 2.76,8.17 3.69,6.44 6.34,6.34 7.56,5.35 8.17,2.76 10.05,2.19"/><circle cx="12" cy="12" r="3.2"/></svg></button></div>
         <section class="all-settings-section" aria-labelledby="all-settings-title"><h2 id="all-settings-title">내 근무 설정</h2>
         <div class="all-settings-card" id="menu-group-settings">
             <div class="drawer-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M16 4a3 3 0 0 1 0 6M18 14a5 5 0 0 1 4 5v2"/></svg><span>내 교대근무</span></div>
@@ -1750,20 +1750,28 @@
                     cell.setAttribute('aria-label', `${dateObj.getMonth() + 1}월 ${dateObj.getDate()}일 ${currentGroup}조 ${shift.name}${shift.holidayName ? ', ' + shift.holidayName : ''}${dayMemos[dateStr] ? ', 메모 있음' : ''}`);
                     cell.onkeydown = event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openDay(); } };
                 } else cell.setAttribute('aria-hidden', 'true');
+                const attendanceTypes=['LEAVE','HALF_PRE','HALF_POST','UNPAID_OFF','UNPAID_HALF_PRE','UNPAID_HALF_POST'];
+                const attendance=attendanceTypes.includes(shift.type);
+                let shown=shift;
+                if(attendance){
+                    const base=getBaseShift(dateObj,currentGroup);
+                    const type=shift.holidayName && base.type==='DAY'?'SPECIAL_DAY':shift.holidayName && base.type==='NIGHT'?'SPECIAL_NIGHT':base.type;
+                    shown={...base,type};
+                }
                 let badgeClass = 'off';
-                if (shift.type === 'DAY') badgeClass = 'day';
-                else if (shift.type === 'NIGHT') badgeClass = 'night';
-                else if (shift.type === 'SPECIAL_DAY') badgeClass = 'special special-day';
-                else if (shift.type === 'SPECIAL_NIGHT') badgeClass = 'special special-night';
-                else if (shift.type === 'LEAVE') badgeClass = 'leave';
-                else if (shift.type === 'HALF_PRE' || shift.type === 'HALF_POST') badgeClass = 'half';
-                else if (shift.type === 'NO_OT') badgeClass = shift.origType === 'NIGHT' ? 'no-ot night' : 'no-ot day';
-                else if (shift.type === 'UNPAID_OFF') badgeClass = 'unpaid';
-                else if (shift.type === 'UNPAID_HALF_PRE' || shift.type === 'UNPAID_HALF_POST') badgeClass = 'unpaid-half';
-                const label = shift.type === 'NO_OT' ? (shift.origType === 'NIGHT' ? '야' : '주') : labels[shift.type] || shift.name;
+                if (shown.type === 'DAY') badgeClass = 'day';
+                else if (shown.type === 'NIGHT') badgeClass = 'night';
+                else if (shown.type === 'SPECIAL_DAY') badgeClass = 'special special-day';
+                else if (shown.type === 'SPECIAL_NIGHT') badgeClass = 'special special-night';
+                else if (shown.type === 'LEAVE') badgeClass = 'leave';
+                else if (shown.type === 'HALF_PRE' || shown.type === 'HALF_POST') badgeClass = 'half';
+                else if (shown.type === 'NO_OT') badgeClass = shown.origType === 'NIGHT' ? 'no-ot night' : 'no-ot day';
+                else if (shown.type === 'UNPAID_OFF') badgeClass = 'unpaid';
+                else if (shown.type === 'UNPAID_HALF_PRE' || shown.type === 'UNPAID_HALF_POST') badgeClass = 'unpaid-half';
+                const label = shown.type === 'NO_OT' ? (shown.origType === 'NIGHT' ? '야' : '주') : labels[shown.type] || shift.name;
                 const holHtml = shift.holidayName ? `<span class="holiday-bar" title="${shift.holidayName}">${shift.holidayName}</span>` : '';
-                const subHtml = shift.subName ? `<div class="sub-tag">${shift.subName}</div>` : '';
-                cell.innerHTML = `<div class="day-meta"><span class="day-num">${dateObj.getDate()}</span>${holHtml}</div><div class="shift-badge ${badgeClass}" title="${shift.name}">${label}</div>${subHtml}`;
+                const subHtml = !attendance && shift.subName ? `<div class="sub-tag">${shift.subName}</div>` : '';
+                cell.innerHTML = `<div class="day-meta"><span class="day-num">${dateObj.getDate()}</span>${holHtml}</div><div class="shift-badge ${badgeClass}" title="${shift.name}">${label}</div>${attendance ? `<div class="attendance-pill ${shift.type==='LEAVE'?'leave':shift.type.startsWith('HALF')?'half':'unpaid'}">${{LEAVE:'연차 1',HALF_PRE:'반차 전',HALF_POST:'반차 후',UNPAID_OFF:'무급 1',UNPAID_HALF_PRE:'무급 전',UNPAID_HALF_POST:'무급 후'}[shift.type]}</div>` : ''}${subHtml}`;
                 if (!adjacent && dayMemos[dateStr]) {
                     const memo = document.createElement('div');
                     memo.className = 'memo-tag';

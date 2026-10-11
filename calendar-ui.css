@@ -584,3 +584,14 @@ body[data-pref-memos="false"] .memo-tag { display:none; }
 body[data-pref-shape="circle"] .shift-badge { border-radius:50%; }
 
 .app-preferences { position:fixed;inset:0;margin:auto;overflow:auto; }
+
+/* Circular work badges and separate attendance annotations. */
+body[data-pref-shape="circle"] .cal-day .shift-badge { width:32px;height:32px;min-width:32px;min-height:32px;padding:0;flex:0 0 32px;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1;box-sizing:border-box; }
+body[data-pref-shape="circle"] .cal-day .shift-badge.special { font-size:10px; }
+.attendance-pill { width:100%;max-width:72px;align-self:center;min-height:18px;padding:2px 3px;border-radius:6px;color:white;font-size:10px;line-height:14px;text-align:center;box-sizing:border-box; }
+.attendance-pill.leave { background:#c35b18; }
+.attendance-pill.half { background:#8056b5; }
+.attendance-pill.unpaid { background:#a95264; }
+#modal-override .opt-btn.leave { background:#c35b18;border-color:#c35b18;color:#fff; }
+#modal-override .opt-btn.half { background:#8056b5;border-color:#8056b5;color:#fff; }
+#modal-override .opt-btn.unpaid,#modal-override .opt-btn.unpaid-half { background:#a95264;border-color:#a95264;color:#fff; }
