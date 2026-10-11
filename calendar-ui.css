@@ -670,3 +670,8 @@ body[data-pref-theme="gpt"] #view-payroll .salary-hero,
 body[data-pref-theme="gpt"] #view-leave .card { border-radius:12px;border-color:#e7e7e7; }
 body[data-pref-theme="gpt"] #view-payroll .btn-save,
 body[data-pref-theme="gpt"] #view-leave .btn-save { border-radius:12px; }
+body[data-pref-theme] #view-payroll #hero-regular-pay,body[data-pref-theme] #view-payroll #hero-bonus-pay { color:var(--accent) !important; }
+body[data-pref-theme] #first-use-guide { background:var(--surface-soft);border-color:var(--theme-line); }
+body[data-pref-theme] #first-use-guide strong,body[data-pref-theme] #first-use-guide button { color:var(--accent); }
+body[data-pref-theme] #first-use-guide button { background:var(--surface);border-color:var(--theme-line); }
+body[data-pref-theme] #first-use-guide p { color:var(--theme-text); }
