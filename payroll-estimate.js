@@ -44,7 +44,7 @@
         document.getElementById('hero-gross-pay').innerText = fmt(amount);
         for(const prefix of ['hero','payslip-modal']) {
             document.getElementById(prefix+'-regular-label').textContent='월 급여 ('+suffix+')';
-            document.getElementById(prefix+'-bonus-label').textContent='상여금 / 지원금 ('+suffix+')';
+            document.getElementById(prefix+'-bonus-label').textContent=(parts.support>0?'지원금':'상여금')+' ('+suffix+')';
             document.getElementById(prefix+(prefix==='hero'?'-regular-pay':'-regular')).innerText=fmt(toggle.checked?result.regular.net:result.regular.gross);
             document.getElementById(prefix+(prefix==='hero'?'-bonus-pay':'-bonus')).innerText=fmt(toggle.checked?result.bonus.net+result.support.net:result.bonus.gross+result.support.gross);
         }

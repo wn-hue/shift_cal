@@ -6,7 +6,7 @@
 - 충돌 시 사용자가 계정 또는 기기 데이터를 선택합니다. 자동 덮어쓰기를 하지 않습니다.
 - Google 외부 캘린더: 선택한 캘린더를 읽기 전용으로 표시합니다. Google Calendar API를 사용 설정하고 OAuth 동의 화면의 calendar.events.readonly 범위 및 필요 시 검증/테스트 사용자 설정을 완료하세요.
 - iOS 캘린더: EventKit 전체 접근을 허용한 뒤 기기에 등록된 iCloud·Google·기타 캘린더를 선택합니다. 원본은 수정하지 않습니다.
-- 웹 Apple 캘린더: ICS 파일 스냅샷 가져오기입니다. 자동 iCloud 동기화는 iOS 앱에서 제공합니다. 반복 일정·TZID 일정은 누락시키지 않고 iOS 연결 안내를 표시합니다.
+- 웹의 Apple 캘린더 파일 가져오기는 제거했습니다. iOS 앱의 내 캘린더에서 기기에 등록된 iCloud 캘린더를 직접 선택하세요.
 - 계정 데이터 삭제: 로그인 영역에서 삭제합니다. 외부 캘린더 원본, 기기 데이터와 공유 링크는 별도로 유지됩니다. 공유 링크는 공유 화면에서 종료하세요.
 
 ## Apple 로그인 활성화 전 필요한 설정
@@ -32,3 +32,6 @@ Apple 웹 로그인은 기본 앱과 연결된 Services ID를 사용합니다. �
 - https://developer.apple.com/help/account/capabilities/configure-sign-in-with-apple-for-the-web/
 - https://developer.apple.com/documentation/eventkit/accessing-calendar-using-eventkit-and-eventkitui
 - https://developers.google.com/workspace/calendar/api/auth
+
+## 수정이 반영되는 공유 링크
+웹과 iOS 모두 로그인 후 선택한 조·월의 같은 링크를 재사용합니다. 근무를 저장하면 활성 링크를 갱신하며 인터넷 연결이 필요합니다. 급여·메모·외부 캘린더는 링크에 포함하지 않습니다. 공유받은 화면은 60초마다 또는 다시 열 때 최신 내용을 읽습니다. 이미지 공유는 그대로 제공하며 캘린더 파일 보내기는 제거했습니다.

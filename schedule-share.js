@@ -17,7 +17,7 @@ document.addEventListener('keydown',event=>{
     if(!modal.classList.contains('active'))return;
     if(event.key==='Escape')closeScheduleShare();
     if(event.key==='Tab') {
-        const buttons=[...modal.querySelectorAll('button')],first=buttons[0],last=buttons.at(-1);
+        const buttons=[...modal.querySelectorAll('button:not([disabled]),input:not([hidden])')],first=buttons[0],last=buttons.at(-1);
         if(event.shiftKey && document.activeElement===first){event.preventDefault();last.focus();}
         else if(!event.shiftKey && document.activeElement===last){event.preventDefault();first.focus();}
     }
@@ -43,11 +43,6 @@ async function sendScheduleFile(file) {
         }
     } catch(error) { if(error.name!=='AbortError')status.textContent='공유하지 못했습니다. 다시 시도해 주세요.'; }
 }
-function shareScheduleFile() {
-    const events=sharedMonthDays().map(({key,shift})=>ShiftCalendarLink.makeEvent(key,currentGroup,{...shift,subName:''},''));
-    const file=new File([ShiftCalendarLink.serialize(events,`Shift_cal ${currentGroup}조`)],`Shift_cal-${currentGroup}-${currentCalDate.getFullYear()}-${currentCalDate.getMonth()+1}.ics`,{type:'text/calendar;charset=utf-8'});
-    return sendScheduleFile(file);
-}
 function shareScheduleImage() {
     const days=sharedMonthDays(),offset=days[0].date.getDay(),rows=Math.ceil((offset+days.length)/7);
     const canvas=document.createElement('canvas');canvas.width=840;canvas.height=160+rows*150;
@@ -70,11 +65,3 @@ function shareScheduleImage() {
     },'image/png');
 }
 
-async function shareScheduleURL() {
-    const snapshot={v:1,group:currentGroup,month:`${currentCalDate.getFullYear()}-${String(currentCalDate.getMonth()+1).padStart(2,'0')}`,days:sharedMonthDays().map(({shift})=>({type:shift.type,label:shift.type==='SPECIAL_DAY'?'주특':shift.type==='SPECIAL_NIGHT'?'야특':shift.name}))};
-    const url=new URL('shared-schedule.html',location.href);url.hash=encodeURIComponent(JSON.stringify(snapshot));
-    try {
-        if(navigator.share)await navigator.share({title:'Shift_cal 근무표',url:url.href});
-        else {await navigator.clipboard.writeText(url.href);document.getElementById('share-status').textContent='링크를 복사했습니다. 이후 변경은 새 링크로 보내 주세요.';}
-    } catch(error) {if(error.name!=='AbortError')document.getElementById('share-status').textContent='링크를 복사하지 못했습니다. 다시 시도해 주세요.';}
-}

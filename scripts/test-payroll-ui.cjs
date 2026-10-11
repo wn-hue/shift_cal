@@ -102,10 +102,10 @@ const leaveMarkup=html.slice(html.indexOf('<section id="view-leave"'),html.index
 assert.equal(/회계연도|1일 연차 단가|매년 1월 1일|근속수당은/.test(leaveMarkup),false);
 assert.ok(leaveMarkup.includes('<span>1일 연차수당</span>'));
 assert.equal(/<details\b|<summary\b/.test(leaveMarkup),false,'Leave settings stay visible without an extra disclosure step');
-assert.ok(html.includes('입사년월일 (연차, 신입판정)'));
+assert.ok(html.includes('정규직 전환일 (연차, 지원금 판정)'));
 assert.equal(elem('leave-year-label').textContent,'2026년');
 const detailLabels=[...html.slice(html.indexOf('<table class="pay-table">'),html.indexOf('</table>',html.indexOf('<table class="pay-table">'))).matchAll(/<tr[^>]*>\s*<td[^>]*>([^<]+)<\/td>/g)].map(m=>m[1]);
-assert.deepEqual(detailLabels.slice(0,9),['기본','직책','근속','연장','야간','휴근','휴연','휴야','상여']);
+assert.deepEqual(detailLabels.slice(0,9),['기본','직책','근속','연장','야간','휴근','휴연','휴야','상여금']);
 console.log('PASS: automatic other pay thresholds/visibility, SMS-only wages and conditional read-only allowances, preserved hidden base hours, net/gross recalculation, private draft clearing, compact account placement, ICS removal and calendar dialog opening.');
 
 assert.equal(html.includes('id="payroll-sms-read"'),false);assert.equal(html.includes('app-brand-summary'),false);

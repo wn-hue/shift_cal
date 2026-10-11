@@ -21,3 +21,10 @@ console.log('PASS preview parity with existing payroll calculator (24 cases)');
 (async()=>{let stored,version=0,release,entered;const gate=new Promise(r=>release=r),signal=new Promise(r=>entered=r);let pause=false;
 const conditional=api.handlerFor({read:async()=>stored?{...stored,_etag:String(version)}:null,write:async(p,d,etag)=>{if(pause&&etag){entered();await gate;}if(etag&&(!stored||etag!==String(version))){const e=Error();e.name='BlobPreconditionFailedError';throw e;}stored=d;version++;},remove:async()=>{stored=null;version++;}});
 const created=await call('POST','/','owner',valid,'csrf',conditional);const url='/?id='+created.data.id;pause=true;const update=call('POST',url,'owner',valid,'csrf',conditional);await signal;assert.equal((await call('DELETE',url,'owner',null,'csrf',conditional)).status,200);release();assert.equal((await update).status,409);assert.equal((await call('GET',url,null,null,'csrf',conditional)).status,404);console.log('PASS revoked share cannot be resurrected by an in-flight update');})().catch(e=>{console.error(e);process.exitCode=1});
+
+assert.equal(C.isUnderOneYear('2025-10-16','2026-10-15'),true);
+assert.equal(C.isUnderOneYear('2025-10-15','2026-10-15'),false);
+assert.equal(C.isUnderOneYear('2026-10-16','2026-10-15'),false);
+assert.equal(C.isUnderOneYear('', '2026-10-15'),false);
+assert.equal(C.isUnderOneYear('2024-02-29','2025-03-01'),false);
+console.log('PASS regular conversion anniversary/support boundary');

@@ -23,7 +23,7 @@
         for (const [key,value] of Object.entries({total,used,remain})) $('menu-leave-' + key).textContent = value + '일';
         const needsGroup = !['A','B','C'].includes(group);
         const needsHire = !hireDate, needsPay = !(baseHourly > 0 && ordinaryHourly > 0);
-        const missing = [needsGroup && '교대조', needsHire && '입사년월일', needsPay && '급여 문자'].filter(Boolean);
+        const missing = [needsGroup && '교대조', needsHire && '정규직 전환일', needsPay && '급여 문자'].filter(Boolean);
         $('first-use-guide').hidden = missing.length === 0;
         $('first-use-copy').textContent = missing.length
             ? '하단 전체 메뉴에서 ' + missing.join('·') + '를 설정해 주세요.'
