@@ -45,12 +45,15 @@
         const connected=!!auth?.connected;
         $('account-email').textContent=connected?auth.user.email:'로그인하면 다른 기기에서도 이어서 사용할 수 있습니다.';
         $('account-login').hidden=!!auth?.cloudConnected;
+        if($('apple-login'))$('apple-login').hidden=connected;
+        if($('apple-login-status') && connected)$('apple-login-status').textContent='';
         $('account-login').setAttribute('aria-label',connected?'Google 계정 저장 연결':'Google로 로그인');
         $('account-sync-now').hidden=!auth?.cloudConnected;
         $('account-logout').hidden=!connected;
+        if($('account-delete'))$('account-delete').hidden=!connected;
     }
     async function request(action,body,get=false) {
-        const response=await fetch('/api/google-calendar?action='+action,{method:get?'GET':'POST',credentials:'same-origin',cache:'no-store',headers:get?{}:{'Content-Type':'application/json','X-Shift-CSRF':auth?.csrf||''},...(get?{}:{body:JSON.stringify(body||{})})});
+        const response=await fetch('/api/account?action='+action,{method:get?'GET':'POST',credentials:'same-origin',cache:'no-store',headers:get?{}:{'Content-Type':'application/json','X-Shift-CSRF':auth?.csrf||''},...(get?{}:{body:JSON.stringify(body||{})})});
         const data=await response.json();
         if(!response.ok){const e=Error(data.message||'계정 저장 요청을 완료하지 못했습니다.');e.code=data.error;e.status=response.status;throw e;}
         return data;
@@ -75,7 +78,7 @@
         if(auth?.connected)localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(snapshot()));
         ++epoch;clearTimeout(timer);pending=null;baseline=null;
         restore(C.normalize({}));localStorage.removeItem(ownerKey);auth=null;api.ready=true;renderAuth();
-        status('로그아웃했습니다. 구글 계정 데이터는 보관됩니다.');
+        status('로그아웃했습니다. 계정 데이터는 보관됩니다.');
     }
     function showConflict(versions,message) {
         pending={versions};api.ready=false;status(message,'warning');
@@ -110,7 +113,7 @@
     }
     async function sync() {
         if(busy || pending)return;
-        if(!auth?.cloudConnected){status('Google 계정 저장을 연결해 주세요.','warning');return;}
+        if(!auth?.cloudConnected){status('로그인 후 계정 저장을 연결해 주세요.','warning');return;}
         if(!navigator.onLine){status('오프라인입니다. 인터넷 연결 후 다시 동기화해 주세요.','warning');return;}
         setBusy(true);const generation=epoch;
         status('시급·연차·메모·근무 변경을 동기화하고 있습니다…','progress');
@@ -129,9 +132,9 @@
             if(!versions.length)baseline=C.normalize({});
             if(!baseline) {
                 if(versions.length && C.meaningful(local) && !C.equal(local,remote)) {
-                    showConflict(versions,'기기와 구글 계정의 데이터가 다릅니다. 사용할 데이터를 선택해주세요.');return;
+                    showConflict(versions,'기기와 계정의 데이터가 다릅니다. 사용할 데이터를 선택해주세요.');return;
                 }
-                if(versions.length){adopt(remote);completed('구글 계정에서 불러옴');return;}
+                if(versions.length){adopt(remote);completed('계정에서 불러옴');return;}
                 baseline=C.normalize({});
             }
             const merged=C.merge(baseline,local,remote);
@@ -139,7 +142,7 @@
             const data=C.normalize(merged.data);
             if(!C.equal(local,data))restore(data);
             if(C.equal(data,remote)){persistBase(remote);api.ready=true;$('account-setup-help').hidden=true;completed(versions.length?'계정 동기화 완료':'계정 연결 완료 · 변경하면 자동 저장');if(!C.equal(local,data) && window.GoogleSync)GoogleSync.groupChanged();return;}
-            status('구글 계정에 저장 중…');
+            status('계정에 저장 중…');
             const result=await request('cloud-write',{revision:crypto.randomUUID().replace(/-/g,''),parents,data});
             if(generation!==epoch)return;
             parents=[result.revision];persistBase(result.data);api.ready=true;
@@ -190,8 +193,8 @@
             // as deletions of the previous signed-in account's data.
             if(saved && (owner || !C.meaningful(local)))baseline=C.normalize(saved);
             if(!auth.cloudConnected){api.ready=true;status('캘린더 연결됨 · 계정 저장 권한을 추가해주세요.');return;}
-            status('구글 계정 데이터 확인 중…');if(busy)timer=setTimeout(sync,1000);else {await sync();if(api.ready && window.GoogleSync)GoogleSync.groupChanged();}
-        } catch(e){api.ready=false;status(e.message||'구글 계정을 확인하지 못했습니다. 기기 저장은 계속 사용할 수 있습니다.');}
+            status('계정 데이터 확인 중…');if(busy)timer=setTimeout(sync,1000);else {await sync();if(api.ready && window.GoogleSync)GoogleSync.groupChanged();}
+        } catch(e){api.ready=false;status(e.message||'계정을 확인하지 못했습니다. 기기 저장은 계속 사용할 수 있습니다.');}
     }
     $('account-sync-now').addEventListener('click',()=>{if(pending)showConflict(pending.versions,'사용할 데이터를 선택해주세요.');else sync();});
     $('account-use-local').addEventListener('click',()=>resolve(null));
@@ -214,6 +217,7 @@
             if(window.GoogleSync)GoogleSync.refreshStatus();
         }catch(e){status(e.message);}
     });
+    if($('account-delete'))$('account-delete').addEventListener('click',async()=>{if(busy || !confirm('계정에 저장된 근무 변경·메모·급여 기준·연차를 삭제하고 로그아웃할까요? 공유 링크는 공유 화면에서 별도로 종료하세요.'))return;try{await request('cloud-delete',{});disconnected();status('계정 데이터를 삭제했습니다.');}catch(e){status(e.message);}});
     window.addEventListener('storage',event=>{if(event.key===ownerKey){api.ready=false;init();}else if(C.keys.includes(event.key)){window.refreshAccountData();changed();}});
     window.addEventListener('online',()=>sync());
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync();});

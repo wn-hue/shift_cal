@@ -11,6 +11,11 @@
         if (!auth?.connected) { state = null; return; }
         try { state = JSON.parse(localStorage.getItem(storagePrefix+auth.user.id) || '{}'); } catch { state = {}; }
         state.groups ||= {};
+        if(!state.externalDisplayMigration){
+            // Switching to inbound calendar display must stop previous automatic exports.
+            for(const group of Object.values(state.groups))group.enabled=false;
+            state.externalDisplayMigration=true;save();
+        }
     }
     function save() { if (state && auth?.user) localStorage.setItem(storagePrefix+auth.user.id,JSON.stringify(state)); }
     function groupState() {

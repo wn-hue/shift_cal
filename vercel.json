@@ -8,6 +8,15 @@
     },
     "api/live-schedule.js": {
       "maxDuration": 30
+    },
+    "api/account.js": {
+      "maxDuration": 60
+    },
+    "api/apple-account.js": {
+      "maxDuration": 60
+    },
+    "api/native-account.js": {
+      "maxDuration": 60
     }
   },
   "headers": [

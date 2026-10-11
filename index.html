@@ -15,8 +15,8 @@
     <meta name="application-name" content="Shift_calander">
     <meta name="description" content="Shift_calander는 교대 근무표, 예상 급여와 연차를 관리하고 Google Calendar 및 본인 Google 계정과 동기화하는 개인용 앱입니다.">
 
-    <link rel="apple-touch-icon" sizes="512x512" href="./apple-touch-icon.png?v=1">
-    <link rel="icon" type="image/png" href="./apple-touch-icon.png?v=1">
+    <link rel="apple-touch-icon" sizes="512x512" href="./apple-touch-icon.png?v=2">
+    <link rel="icon" type="image/png" href="./apple-touch-icon.png?v=2">
 
     <style>
         :root {
@@ -367,7 +367,7 @@
 
         .shift-badge.day { background: var(--day-bg); color: var(--day-color); border: 1px solid #c2e7ff; }
         .shift-badge.night { background: var(--night-bg); color: var(--night-color); border: 1px solid #e9d5ff; }
-        
+
         .shift-badge.off {
             background: var(--off-bg);
             color: var(--off-color) !important;
@@ -533,8 +533,8 @@
             text-overflow: ellipsis;
         }
 
-        .input-group input, 
-        .input-group select, 
+        .input-group input,
+        .input-group select,
         .input-group textarea {
             width: 100%;
             min-width: 0;
@@ -914,6 +914,7 @@
     </style>
     <link rel="stylesheet" href="./calendar-ui.css?v=32">
     <link rel="stylesheet" href="./today-menu.css?v=2">
+<link rel="stylesheet" href="./identity.css?v=1">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1007,7 +1008,7 @@
                 <div class="card-header">
                     <span>출근 · 수당</span>
                     <div style="display:flex; gap:8px; align-items:center;">
-                        
+
                         <button style="border:none; background:none; color:var(--primary); font-size:11.5px; font-weight:bold; cursor:pointer;" onclick="syncFromCalendar()">캘린더 반영</button>
                     </div>
                 </div>
@@ -1205,8 +1206,9 @@
     </section>
     <section id="view-all" class="view-page all-page" aria-labelledby="account-management-title">
       <div id="account-management-dialog" class="all-menu-content">
-        <div class="all-topline"><h1 id="account-management-title" class="all-page-title">내 근무</h1><a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1" aria-label="Google로 로그인" aria-describedby="account-permission-notice"><img class="google-login-image" src="./google-signin.png?v=3" width="180" height="40" alt="" aria-hidden="true"></a><button type="button" class="icon-button menu-preferences" aria-label="앱 환경" onclick="openAppPreferences()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><polygon points="12.00,4.00 13.56,4.15 15.83,2.76 17.56,3.69 17.66,6.34 18.65,7.56 21.24,8.17 21.81,10.05 20.00,12.00 19.85,13.56 21.24,15.83 20.31,17.56 17.66,17.66 16.44,18.65 15.83,21.24 13.95,21.81 12.00,20.00 10.44,19.85 8.17,21.24 6.44,20.31 6.34,17.66 5.35,16.44 2.76,15.83 2.19,13.95 4.00,12.00 4.15,10.44 2.76,8.17 3.69,6.44 6.34,6.34 7.56,5.35 8.17,2.76 10.05,2.19"/><circle cx="12" cy="12" r="3.2"/></svg></button></div>
-        <section class="all-settings-section" aria-labelledby="all-settings-title"><h2 id="all-settings-title">내 근무 설정</h2>
+        <div class="all-topline"><h1 id="account-management-title" class="all-page-title">내 근무</h1><button type="button" class="icon-button menu-preferences" aria-label="앱 환경" onclick="openAppPreferences()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><polygon points="12.00,4.00 13.56,4.15 15.83,2.76 17.56,3.69 17.66,6.34 18.65,7.56 21.24,8.17 21.81,10.05 20.00,12.00 19.85,13.56 21.24,15.83 20.31,17.56 17.66,17.66 16.44,18.65 15.83,21.24 13.95,21.81 12.00,20.00 10.44,19.85 8.17,21.24 6.44,20.31 6.34,17.66 5.35,16.44 2.76,15.83 2.19,13.95 4.00,12.00 4.15,10.44 2.76,8.17 3.69,6.44 6.34,6.34 7.56,5.35 8.17,2.76 10.05,2.19"/><circle cx="12" cy="12" r="3.2"/></svg></button></div>
+        <section class="identity-card" aria-label="로그인 및 동기화"><div class="identity-heading"><img src="./apple-touch-icon.png?v=2" width="48" height="48" alt=""><div><h2>내 근무, 어디서나</h2><p id="account-email">로그인하면 근무표와 메모가 동기화됩니다.</p></div></div><div class="identity-buttons"><a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1" aria-label="Google로 로그인" aria-describedby="account-permission-notice"><img class="google-login-image" src="./google-signin.png?v=3" width="180" height="40" alt="" aria-hidden="true"></a><a id="apple-login" aria-disabled="true" class="apple-signin" href="/api/apple-account?action=login" aria-label="Apple로 로그인"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M17.1 12.3c0-2 1.6-3 1.7-3.1-1-1.5-2.5-1.7-3.1-1.7-1.3-.2-2.5.8-3.2.8-.7 0-1.8-.8-2.9-.8-1.5 0-2.8.9-3.5 2.1-1.5 2.5-.4 6.3 1 8.3.7 1 1.5 2.1 2.6 2 1.1 0 1.5-.7 2.8-.7 1.3 0 1.7.7 2.9.7 1.2 0 1.9-1 2.6-2 .8-1.1 1.1-2.2 1.1-2.3-.1 0-2-.8-2-3.3M14.8 6.2c.6-.8 1.1-1.8 1-2.9-1 .1-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.8 1.1.1 2.1-.6 2.8-1.4"/></svg>Apple로 로그인</a></div><p id="apple-login-status" class="identity-note" role="status"></p><div id="account-sync-status" class="sync-feedback" role="status" aria-live="polite" aria-atomic="true"></div><div class="identity-actions"><button id="account-sync-now" type="button" class="btn-save" hidden>지금 동기화</button><button id="account-logout" type="button" class="btn-reset-data" hidden>로그아웃</button><button id="account-delete" type="button" class="btn-reset-data" hidden>계정 데이터 삭제</button></div></section>
+<section class="external-calendars"><h2>내 캘린더</h2><p>개인 일정을 근무표와 함께 확인하세요.</p><a class="external-connect" href="/api/google-calendar?action=login&amp;storage=1&amp;external=1">Google 캘린더 연결</a><div id="external-calendar-list"></div><p id="external-calendar-status" role="status"></p><details><summary>Apple 캘린더</summary><p>iOS 앱의 ‘내 캘린더’에서 iCloud·Google 캘린더를 선택하세요. 웹에서는 캘린더 파일을 가져올 수 있습니다.</p><label class="external-connect">캘린더 파일 가져오기<input id="external-ics" type="file" accept=".ics,text/calendar" hidden></label><button id="external-ics-clear" type="button" hidden>가져온 일정 지우기</button></details></section><section class="all-settings-section" aria-labelledby="all-settings-title"><h2 id="all-settings-title">내 근무 설정</h2>
         <div class="all-settings-card" id="menu-group-settings">
             <div class="drawer-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M16 4a3 3 0 0 1 0 6M18 14a5 5 0 0 1 4 5v2"/></svg><span>내 교대근무</span></div>
             <p class="all-company">3조 2교대</p>
@@ -1222,15 +1224,15 @@
         <section class="all-shortcuts" aria-labelledby="all-shortcuts-title"><h2 id="all-shortcuts-title">내 근무 도구</h2><div class="all-shortcut-grid">
           <div id="menu-leave-settings"><button type="button" class="all-shortcut" onclick="SettingsUI.openLeave()"><span class="all-shortcut-icon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4m-9 10 3 3 5-6"/></svg></span><strong>연차 설정</strong><span class="all-shortcut-caption">잔여 <span id="quick-remain-leave">0</span>일</span></button></div>
           <div id="menu-salary-settings"><button type="button" id="payroll-sms-open" class="all-shortcut"><span class="all-shortcut-icon lavender"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><circle cx="12" cy="12" r="3"/></svg></span><strong>급여 설정</strong><span class="all-shortcut-caption">급여 · 상여 문자</span></button></div>
-          <div><button type="button" class="all-shortcut" onclick="openCalendarIntegration()"><span class="all-shortcut-icon sky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7h-5l2-3M4 17h5l-2 3M4 10a8 8 0 0 1 13-6M20 14a8 8 0 0 1-13 6"/></svg></span><strong>캘린더 동기화</strong><span class="all-shortcut-caption">Google · Apple</span></button></div>
+          <div><button type="button" class="all-shortcut" onclick="document.querySelector('.external-calendars').scrollIntoView({behavior:'smooth'})"><span class="all-shortcut-icon sky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7h-5l2-3M4 17h5l-2 3M4 10a8 8 0 0 1 13-6M20 14a8 8 0 0 1-13 6"/></svg></span><strong>내 캘린더</strong><span class="all-shortcut-caption">Google · Apple</span></button></div>
         </div></section>
         <details class="all-account-card"><summary>계정 연결 및 동기화 안내</summary>
-        <div class="all-account-details"><p id="account-email" class="account-email">기기에 저장 중</p>
-            <p id="account-sync-status" class="account-status sync-feedback" role="status" aria-live="polite" aria-atomic="true">기기에 저장 중</p>
-            <p class="account-hint">시급·연차·메모·근무 변경을 계정에 저장하거나 불러옵니다. 캘린더 일정 반영은 ‘캘린더 동기화’에서 시작하세요.</p>
+        <div class="all-account-details">
+
+            <p class="account-hint">시급·연차·메모·근무 변경을 계정에 저장하거나 불러옵니다. 외부 일정은 ‘내 캘린더’에서 선택해 표시하세요.</p>
             <div class="account-actions">
-                <button type="button" id="account-sync-now" class="sms-primary-btn" hidden>지금 동기화</button>
-                <button type="button" id="account-logout" class="sms-clear-btn" hidden>로그아웃</button>
+
+
             </div>
             <p id="account-permission-notice" class="account-hint">로그인은 선택 사항입니다. 계정 확인, 앱 캘린더 관리·목록 조회와 Drive 앱 전용 저장 권한을 요청합니다. 설정은 본인 계정에 저장되며, 캘린더 반영은 동기화를 시작할 때 진행됩니다. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p>
             <div id="account-setup-help" class="account-hint" hidden>관리자가 Google Cloud에서 Google Drive API를 사용 설정해야 합니다. 사용 설정 후 ‘지금 동기화’를 눌러주세요.</div>
@@ -1377,7 +1379,7 @@
                 <span id="picker-title-text">🗓️ 이동할 연도와 월 선택</span>
                 <button style="border: none; background: none; font-size: 18px; color: #5f6368; cursor: pointer;" onclick="closeYearMonthPickerDirect()">✕</button>
             </div>
-            
+
             <div class="picker-year-bar">
                 <button class="picker-year-btn" onclick="changePickerYear(-1)">◀</button>
                 <div class="year-val" id="picker-year-text">2026년</div>
@@ -1674,7 +1676,7 @@
                 if (ov === 'SPECIAL_DAY') return { type: 'SPECIAL_DAY', name: '주특', isSpecial: true, hasOt: true, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'SPECIAL_NIGHT') return { type: 'SPECIAL_NIGHT', name: '야특', isSpecial: true, hasOt: true, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'LEAVE') return { type: 'LEAVE', name: '연차', isLeave: true, leaveVal: 1.0, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
-                
+
                 // 유급 반차 (전): 잔업 수행 (2.5h OT 지급)
                 if (ov === 'HALF_PRE') {
                     return { type: 'HALF_PRE', name: '반차(전)', subName: '잔업 2.5h', isLeave: true, leaveVal: 0.5, hasOt: true, origType: base.type, holidayName: holiday ? holiday.name : '' };
@@ -1733,6 +1735,7 @@
                 if (dateObj.getDay() === 6) classes.push('saturday');
                 if (shift.holidayName) classes.push('holiday');
                 if (dateStr === todayStr && !adjacent) classes.push('today');
+                cell.dataset.date = dateStr;
                 cell.className = classes.join(' ');
                 if (!adjacent) {
                     const openDay = () => openOverrideModal(dateStr, dateObj, shift);
@@ -1780,6 +1783,7 @@
             if (window.ShiftUI) ShiftUI.rendered(currentGroup);
             updateLeaveStats();
             if (window.GoogleSync) GoogleSync.viewChanged();
+            if(window.ExternalCalendars)ExternalCalendars.render();
         }
 
         /* 캘린더 및 급여계산기 공용 연/월 선택 피커 모달 제어 */
@@ -2118,7 +2122,7 @@
             const base = getBaseShift(dateObj, currentGroup);
             document.getElementById("modal-override").setAttribute("data-base",base.type);
             document.getElementById('modal-orig-text').innerText = `[기본: ${base.name}${currentShift.holidayName ? ' · ' + currentShift.holidayName : ''}]`;
-            
+
             document.getElementById('modal-memo-input').value = dayMemos[dateStr] || '';
             document.getElementById('modal-override').classList.add('active');
         }
@@ -2557,11 +2561,11 @@
                     }
                 } catch (e) {}
             }
-            
+
             if (config.hireDate) {
                 document.getElementById('input-hire-date').value = config.hireDate;
                 document.getElementById('inp-hire-date').value = config.hireDate;
-                
+
             } else {
                 document.getElementById('input-hire-date').value = '';
                 document.getElementById('inp-hire-date').value = '';
@@ -2707,9 +2711,10 @@
     <script src="./today-menu.js?v=4"></script>
     <script src="./app-menu.js?v=3"></script>
     <script src="./settings-ui.js?v=6"></script>
-    <script src="./account-sync.js?v=9"></script>
-    <script src="./google-sync.js?v=10"></script>
+    <script src="./account-sync.js?v=10"></script>
+    <script src="./google-sync.js?v=11"></script>
 <script src="planner-core.js?v=1"></script><script src="shift-tools.js?v=3"></script>
+<script src="./external-calendars.js?v=1"></script>
 </body>
 </html>
 
