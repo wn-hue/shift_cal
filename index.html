@@ -912,7 +912,7 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=27">
+    <link rel="stylesheet" href="./calendar-ui.css?v=28">
     <link rel="stylesheet" href="./today-menu.css?v=2">
 </head>
 <body data-view="calendar">
@@ -937,14 +937,7 @@
             <div><button type="button" onclick="SettingsUI.openMenu('group')" hidden>교대조 설정</button><button type="button" onclick="SettingsUI.openMenu('leave')">입사년월일 설정</button><button type="button" onclick="SettingsUI.openMenu('salary')">급여 설정</button></div>
         </aside>
         <section id="view-calendar" class="view-page active">
-            <div class="calendar-month-controls">
-                
-                <div class="gcal-nav-group">
-                    <button class="nav-arrow-btn" onclick="changeMonth(-1)" aria-label="이전 달">‹</button>
-                    <button class="calendar-today" onclick="goToToday()">오늘</button>
-                    <button class="nav-arrow-btn" onclick="changeMonth(1)" aria-label="다음 달">›</button>
-                </div>
-            </div>
+            <div class="calendar-month-controls" hidden></div>
 
             <div class="calendar-card">
                 <div class="cal-weekdays">
@@ -1249,7 +1242,7 @@
     </section>
     </div>
 
-<dialog id="app-preferences-dialog" class="app-preferences"><div class="preferences-header"><h2>앱 환경</h2><button class="override-close" aria-label="앱 환경 닫기" onclick="document.getElementById('app-preferences-dialog').close()">✕</button></div><section class="preferences-card"><h3>화면 표시</h3><label>이전 · 다음 달 근무<input type="checkbox" id="pref-adjacent" checked></label><label>공휴일 이름<input type="checkbox" id="pref-holidays" checked></label><label>달력 메모<input type="checkbox" id="pref-memos" checked></label><label>근무 배지 모양<select id="pref-shape"><option value="square">둥근 네모</option><option value="circle">원</option></select></label></section>        <section class="all-info-section" aria-labelledby="all-info-title"><h2 id="all-info-title">앱 안내</h2><div class="all-info-list">
+<dialog id="app-preferences-dialog" class="app-preferences"><div class="preferences-header"><h2>앱 환경</h2><button class="override-close" aria-label="앱 환경 닫기" onclick="document.getElementById('app-preferences-dialog').close()">✕</button></div><section class="preferences-card"><h3>테마</h3><label>달력 스타일<select id="pref-theme"><option value="current">1. 현재 스타일</option><option value="gpt">2. GPT 스타일</option><option value="toss">3. 토스 앱 스타일</option></select></label></section><section class="preferences-card"><h3>화면 표시</h3><label>이전 · 다음 달 근무<input type="checkbox" id="pref-adjacent" checked></label><label>공휴일 이름<input type="checkbox" id="pref-holidays" checked></label><label>달력 메모<input type="checkbox" id="pref-memos" checked></label><label>근무 배지 모양<select id="pref-shape"><option value="square">둥근 네모</option><option value="circle">원</option></select></label></section>        <section class="all-info-section" aria-labelledby="all-info-title"><h2 id="all-info-title">앱 안내</h2><div class="all-info-list">
           <a id="iphone-alarm-guide-link" href="./iphone-alarms.html"><span>아이폰 근무 알람 · 단축어 설정</span><span aria-hidden="true">›</span></a>
           <a href="./about.html"><span>앱 소개 · 문의</span><span aria-hidden="true">›</span></a>
           <a href="./privacy.html"><span>개인정보처리방침</span><span aria-hidden="true">›</span></a>
@@ -2712,7 +2705,7 @@
     <script src="./account-data-core.js?v=2"></script>
     <script src="./calendar-ui.js?v=7"></script>
     <script src="./today-menu.js?v=4"></script>
-    <script src="./app-menu.js?v=1"></script>
+    <script src="./app-menu.js?v=2"></script>
     <script src="./settings-ui.js?v=6"></script>
     <script src="./account-sync.js?v=9"></script>
     <script src="./google-sync.js?v=10"></script>
