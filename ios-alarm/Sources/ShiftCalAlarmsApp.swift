@@ -23,7 +23,7 @@ struct ShiftCalAlarmsApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AlarmView(model: model)
+            RootView(model: model, schedule: ScheduleStore.shared)
                 .task { _ = await model.refresh() }
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active { Task { _ = await model.refresh() } }

@@ -47,3 +47,9 @@ node scripts/test-calendars.cjs
 - 내 조 하나만 활성화하고 기존 별도 근무 알람 자동화는 끕니다. 교대조를 바꾸면 이전 조의 자동화를 끄고 새 조의 파일을 추가해 활성화합니다. 근무 변경 후 캘린더 반영 확인과 단축어 재실행이 필요합니다.
 
 Apple 도구로 파일 서명과 맥의 매일 00:05 자동화 구성을 확인했습니다. 실제 아이폰의 알람 소리·잠금 상태 자동 실행은 별도 확인이 필요합니다.
+
+## iPhone 네이티브 앱
+
+`ios-alarm`에 SwiftUI iOS 앱을 제공합니다. A·B·C조 근무표, 근무 변경·메모, JSON 백업/복원, ICS 내보내기와 AlarmKit 근무 알람을 앱에서 사용할 수 있습니다. 앱의 근무표를 사용할 때 단축어나 Google 연결은 필요하지 않습니다. 기존 급여·식단·Google 기능은 Safari 링크로 사용하며 앱의 로컬 변경과는 자동 동기화되지 않습니다.
+
+[Xcode 빌드 및 사용 안내](ios-alarm/README.md) · [배포 자료 초안](ios-alarm/Release/AppStore-ko.md) · [실기기 검증 항목](ios-alarm/Release/Device-QA.md)

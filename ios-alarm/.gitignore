@@ -1,4 +1,5 @@
 Generated/
-*.xcodeproj/
-build/
-*.xcresult
+ShiftCalAlarms.xcodeproj/
+build*/
+*.xcresult/
+*.xcarchive/

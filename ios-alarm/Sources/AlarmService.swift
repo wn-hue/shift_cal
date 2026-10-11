@@ -1,4 +1,4 @@
-import AlarmKit
+@preconcurrency import AlarmKit
 import SwiftUI
 
 struct ShiftAlarmMetadata: AlarmMetadata {}
@@ -21,9 +21,13 @@ final class SystemAlarmBackend: AlarmBackend {
     func currentIDs() throws -> Set<UUID> { Set(try manager.alarms.map(\.id)) }
     func cancel(id: UUID) throws { try manager.cancel(id: id) }
     func schedule(id: UUID, plan: PlannedAlarm) async throws {
-        let alert = AlarmPresentation.Alert(
-            title: LocalizedStringResource(stringLiteral: plan.title),
-            stopButton: AlarmButton(text: "알람 끄기", textColor: .white, systemImageName: "stop.circle"))
+        let alert: AlarmPresentation.Alert
+        if #available(iOS 26.1, *) {
+            alert = AlarmPresentation.Alert(title: LocalizedStringResource(stringLiteral: plan.title))
+        } else {
+            alert = AlarmPresentation.Alert(title: LocalizedStringResource(stringLiteral: plan.title),
+                stopButton: AlarmButton(text: "알람 끄기", textColor: .white, systemImageName: "stop.circle"))
+        }
         let attributes = AlarmAttributes<ShiftAlarmMetadata>(
             presentation: AlarmPresentation(alert: alert),
             metadata: ShiftAlarmMetadata(), tintColor: .blue)

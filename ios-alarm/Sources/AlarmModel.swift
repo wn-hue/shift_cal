@@ -22,11 +22,14 @@ final class AlarmModel: ObservableObject {
     @Published private(set) var includeHalf: Bool
     private var needsRefresh = false
     private var observer: NSObjectProtocol?
+    private var scheduleObserver: NSObjectProtocol?
+    @Published private(set) var useBuiltIn: Bool
 
     var calendarGranted: Bool { EKEventStore.authorizationStatus(for: .event) == .fullAccess }
     var alarmGranted: Bool { AlarmManager.shared.authorizationState == .authorized }
 
     private init() {
+        useBuiltIn = defaults.object(forKey: "shiftCal.useBuiltIn") as? Bool ?? true
         enabled = defaults.bool(forKey: "shiftCal.enabled")
         calendarID = defaults.string(forKey: "shiftCal.calendarID") ?? ""
         includeHalf = defaults.bool(forKey: "shiftCal.includeHalf")
@@ -34,6 +37,15 @@ final class AlarmModel: ObservableObject {
         observer = NotificationCenter.default.addObserver(forName: .EKEventStoreChanged, object: nil, queue: .main) { [weak self] _ in
             Task { @MainActor in _ = await self?.refresh() }
         }
+        scheduleObserver = NotificationCenter.default.addObserver(forName: ScheduleStore.changed, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in _ = await self?.refresh() }
+        }
+    }
+
+    func setSource(builtIn: Bool) async {
+        useBuiltIn = builtIn
+        defaults.set(builtIn, forKey: "shiftCal.useBuiltIn")
+        _ = await refresh()
     }
 
     func loadCalendars() {
@@ -66,7 +78,7 @@ final class AlarmModel: ObservableObject {
 
     func setEnabled(_ value: Bool) async {
         if value {
-            guard calendarGranted, store.calendar(withIdentifier: calendarID) != nil else {
+            guard useBuiltIn || (calendarGranted && store.calendar(withIdentifier: calendarID) != nil) else {
                 message = "먼저 캘린더 읽기를 허용하고 근무 캘린더를 선택해 주세요."
                 return
             }
@@ -95,12 +107,21 @@ final class AlarmModel: ObservableObject {
                 if !enabled {
                     if alarmGranted { try alarms.clear() }
                     scheduled = []
-                    message = "자동 알람 꺼짐 · 이 앱의 예약 알람을 해제했습니다."
+                    message = "자동 알람 꺼짐 · 알람을 켜면 앞으로 30일을 예약합니다."
                     succeeded = true
                 } else if !alarmGranted {
                     scheduled = []
                     message = "알람 권한이 꺼져 있어 알람이 울리지 않습니다. 설정에서 허용해 주세요."
                     succeeded = false
+                } else if useBuiltIn {
+                    let now = Date()
+                    let plans = ShiftPlanner.plans(events: ScheduleStore.shared.events(now: now), now: now, includeHalf: includeHalf)
+                    try await alarms.reconcile(plans)
+                    scheduled = try alarms.scheduled()
+                    lastRefresh = now
+                    defaults.set(now, forKey: "shiftCal.lastRefresh")
+                    message = scheduled.isEmpty ? "앞으로 30일에 예약할 근무가 없습니다." : "\(ScheduleStore.shared.group)조 · \(scheduled.count)개 알람 예약 완료"
+                    succeeded = true
                 } else if !calendarGranted {
                     try alarms.clear()
                     scheduled = []

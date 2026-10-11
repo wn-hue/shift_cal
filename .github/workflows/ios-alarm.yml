@@ -2,9 +2,9 @@ name: iPhone 근무 자동 알람 검사
 on:
   push:
     branches: [main]
-    paths: ['ios-alarm/**', '.github/workflows/ios-alarm.yml']
+    paths: ['ios-alarm/**', 'scripts/export-ios-rules.cjs', 'index.html', '.github/workflows/ios-alarm.yml']
   pull_request:
-    paths: ['ios-alarm/**', '.github/workflows/ios-alarm.yml']
+    paths: ['ios-alarm/**', 'scripts/export-ios-rules.cjs', 'index.html', '.github/workflows/ios-alarm.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -24,7 +24,7 @@ jobs:
       - name: 근무별 예약 규칙 검사
         working-directory: ios-alarm
         run: |
-          DEVICE_ID=$(python3 -c 'import json,subprocess; d=json.loads(subprocess.check_output(["xcrun","simctl","list","devices","available","--json"])); print(next(x["udid"] for k,v in d["devices"].items() if "iOS-26" in k for x in v if x["name"].startswith("iPhone")))')
+          DEVICE_ID=$(python3 -c 'import json,subprocess; d=json.loads(subprocess.check_output(["xcrun","simctl","list","devices","available","--json"])); print(next(x["udid"] for k,v in d["devices"].items() if "iOS" in k for x in v if x["name"].startswith("iPhone")))')
           xcodebuild -project ShiftCalAlarms.xcodeproj -scheme ShiftCalAlarms -destination "platform=iOS Simulator,id=$DEVICE_ID" -derivedDataPath build -resultBundlePath tests.xcresult CODE_SIGNING_ALLOWED=NO test
       - name: 실기기용 컴파일 검사
         working-directory: ios-alarm
@@ -33,12 +33,14 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: shift-cal-iphone-alarm-project
+          name: shift-cal-iphone-app-project
           path: |
             ios-alarm/ShiftCalAlarms.xcodeproj
             ios-alarm/Generated
             ios-alarm/Sources
             ios-alarm/Tests
+            ios-alarm/UITests
+            ios-alarm/Release
             ios-alarm/project.yml
             ios-alarm/README.md
             ios-alarm/tests.xcresult

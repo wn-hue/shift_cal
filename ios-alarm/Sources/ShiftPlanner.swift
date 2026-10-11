@@ -43,9 +43,17 @@ enum ShiftPlanner {
     static func plans(events: [ShiftEvent], now: Date, includeHalf: Bool = false) -> [PlannedAlarm] {
         let calendar = korea
         let end = calendar.date(byAdding: .day, value: 30, to: calendar.startOfDay(for: now))!
+        let marked = events.filter { event in
+            let notes = event.notes.replacingOccurrences(of: "\r\n", with: "\n")
+            return event.allDay && (notes == "Shift_cal 근무 일정\n메모:" || notes.hasPrefix("Shift_cal 근무 일정\n메모:\n"))
+        }
+        let byDay = Dictionary(grouping: marked) { calendar.startOfDay(for: $0.start) }
+        let conflicts = Set(byDay.compactMap { day, items in
+            Set(items.map { hour(for: $0, includeHalf: includeHalf) ?? -1 }).count > 1 ? day : nil
+        })
         var unique: [String: PlannedAlarm] = [:]
         for event in events {
-            guard let hour = hour(for: event, includeHalf: includeHalf) else { continue }
+            guard !conflicts.contains(calendar.startOfDay(for: event.start)), let hour = hour(for: event, includeHalf: includeHalf) else { continue }
             var components = calendar.dateComponents([.year, .month, .day], from: event.start)
             components.hour = hour
             components.minute = 30
