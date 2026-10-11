@@ -595,3 +595,8 @@ body[data-pref-shape="circle"] .cal-day .shift-badge.special { font-size:10px; }
 #modal-override .opt-btn.leave { background:#c35b18;border-color:#c35b18;color:#fff; }
 #modal-override .opt-btn.half { background:#8056b5;border-color:#8056b5;color:#fff; }
 #modal-override .opt-btn.unpaid,#modal-override .opt-btn.unpaid-half { background:#a95264;border-color:#a95264;color:#fff; }
+
+/* Quiet attendance choices; calendar annotations share one red. */
+.attendance-pill.leave,.attendance-pill.half,.attendance-pill.unpaid { background:#c64b58; }
+#modal-override .opt-btn.leave,#modal-override .opt-btn.half,#modal-override .opt-btn.unpaid,#modal-override .opt-btn.unpaid-half,
+#modal-override[data-base] .opt-btn.no-ot { background:#edf1f5;color:#46566a;border:1px solid #dce3eb;box-shadow:none; }

@@ -912,7 +912,7 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=26">
+    <link rel="stylesheet" href="./calendar-ui.css?v=27">
     <link rel="stylesheet" href="./today-menu.css?v=2">
 </head>
 <body data-view="calendar">
@@ -1492,12 +1492,12 @@
                     <span>반차 (전)</span>
                 </button><button class="opt-btn half" onclick="setDayOverride('HALF_POST')">
                     <span>반차 (후)</span>
+                </button><button class="opt-btn unpaid" onclick="setDayOverride('UNPAID_OFF')">
+                    <span>무급 휴무</span>
                 </button><button class="opt-btn unpaid-half" onclick="setDayOverride('UNPAID_HALF_PRE')">
                     <span>무반 (전)</span>
                 </button><button class="opt-btn unpaid-half" onclick="setDayOverride('UNPAID_HALF_POST')">
                     <span>무반 (후)</span>
-                </button><button class="opt-btn unpaid" onclick="setDayOverride('UNPAID_OFF')">
-                    <span>무급 휴무</span>
                 </button></div><button class="opt-btn reset" onclick="setDayOverride(null)">
                     <span>기본 근무로 복구</span>
                 </button></section>
@@ -1771,7 +1771,7 @@
                 const label = shown.type === 'NO_OT' ? (shown.origType === 'NIGHT' ? '야' : '주') : labels[shown.type] || shift.name;
                 const holHtml = shift.holidayName ? `<span class="holiday-bar" title="${shift.holidayName}">${shift.holidayName}</span>` : '';
                 const subHtml = !attendance && shift.subName ? `<div class="sub-tag">${shift.subName}</div>` : '';
-                cell.innerHTML = `<div class="day-meta"><span class="day-num">${dateObj.getDate()}</span>${holHtml}</div><div class="shift-badge ${badgeClass}" title="${shift.name}">${label}</div>${attendance ? `<div class="attendance-pill ${shift.type==='LEAVE'?'leave':shift.type.startsWith('HALF')?'half':'unpaid'}">${{LEAVE:'연차 1',HALF_PRE:'반차 전',HALF_POST:'반차 후',UNPAID_OFF:'무급 1',UNPAID_HALF_PRE:'무급 전',UNPAID_HALF_POST:'무급 후'}[shift.type]}</div>` : ''}${subHtml}`;
+                cell.innerHTML = `<div class="day-meta"><span class="day-num">${dateObj.getDate()}</span>${holHtml}</div><div class="shift-badge ${badgeClass}" title="${shift.name}">${label}</div>${attendance ? `<div class="attendance-pill ${shift.type==='LEAVE'?'leave':shift.type.startsWith('HALF')?'half':'unpaid'}">${{LEAVE:'연차 1',HALF_PRE:'반차 전',HALF_POST:'반차 후',UNPAID_OFF:'무급 1',UNPAID_HALF_PRE:'무반 전',UNPAID_HALF_POST:'무반 후'}[shift.type]}</div>` : ''}${subHtml}`;
                 if (!adjacent && dayMemos[dateStr]) {
                     const memo = document.createElement('div');
                     memo.className = 'memo-tag';
