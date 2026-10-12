@@ -241,7 +241,6 @@ struct SettingsView: View {
     var showClose=false
     @Environment(\.dismiss) private var dismiss
     @State private var changingGroup=false
-    @State private var connectingCalendars=false
     @State private var loggingIn=false
     @State private var shareURL:URL?
     @State private var importing=false
@@ -253,10 +252,10 @@ struct SettingsView: View {
                 Section {
                     Button { loggingIn=true } label: {
                         HStack(spacing:12) {
-                            Image(systemName:"person.crop.circle.fill").font(.system(size:34)).foregroundStyle(AppTheme.accent).accessibilityHidden(true)
+                            Image(systemName:"person.crop.circle.fill").font(.system(size:30)).foregroundStyle(AppTheme.accent).accessibilityHidden(true)
                             VStack(alignment:.leading,spacing:5) { Text("로그인 및 동기화").font(.headline).foregroundStyle(AppTheme.accent);Text("Google · Apple 계정").font(.caption).foregroundStyle(.secondary) }
                             Spacer();Image(systemName:"chevron.right").font(.caption)
-                        }.padding(.vertical,6)
+                        }.padding(.vertical,2)
                     }
                 }
                 Section {
@@ -264,28 +263,18 @@ struct SettingsView: View {
                         HStack { Image(systemName:"person.2.fill").foregroundStyle(AppTheme.accent);Text("교대조 설정").font(.subheadline);Spacer();Text(store.group+"조").font(.subheadline);Image(systemName:"chevron.right").font(.caption) }
                     }.accessibilityIdentifier("menu-group-settings")
                 }
-                Section("내 캘린더") {
-                    Button { connectingCalendars=true } label: { Label("iCloud · Google 일정 표시",systemImage:"calendar.badge.plus").foregroundStyle(AppTheme.accent) }
-                    Text("기기에 연결된 캘린더를 근무표와 함께 볼 수 있습니다. 원본 일정은 수정하지 않습니다.").font(.footnote).foregroundStyle(.secondary)
-                }
                 Section("백업 및 복원") {
                     Button { backup() } label: { Label("근무 변경·메모 백업",systemImage:"tray.and.arrow.up.fill").foregroundStyle(AppTheme.green) }.accessibilityIdentifier("backup-schedule")
                     Button { importing=true } label: { Label("백업 파일 복원",systemImage:"tray.and.arrow.down.fill").foregroundStyle(AppTheme.orange) }
                     if !message.isEmpty { Text(message).font(.footnote) }
                 }
-                Section("급여·공유") {
-                    Link("급여 계산 · 급여 변화 확인",destination:URL(string:"https://h-lyart-ten.vercel.app/?view=payroll")!)
-                    Link("실시간 근무표 공유",destination:URL(string:"https://h-lyart-ten.vercel.app/")!)
-                    Text("웹에 저장한 근무표와 급여 기준으로 계획합니다. 앱에만 저장된 변경은 포함되지 않습니다.").font(.footnote).foregroundStyle(.secondary)
-                }
-                Section("기존 Shift_cal 기능") {
-                    Link("웹 근무표·급여·식단·Google 연동 열기",destination:URL(string:"https://h-lyart-ten.vercel.app/")!)
-                    Text("급여 계산과 식단은 웹에서 이용합니다. 로그인하면 근무 변경과 메모를 계정에 동기화할 수 있습니다.").font(.footnote).foregroundStyle(.secondary)
+                Section("웹 기능") {
+                    Link(destination:URL(string:"https://h-lyart-ten.vercel.app/?view=payroll")!) { Label("급여 계산기",systemImage:"banknote").foregroundStyle(AppTheme.accent) }
+                    Link(destination:URL(string:"https://h-lyart-ten.vercel.app/?view=leave")!) { Label("시급·연차",systemImage:"calendar.badge.checkmark").foregroundStyle(AppTheme.green) }
                 }
 
             }.scrollContentBackground(.hidden).background(AppTheme.page).navigationTitle("내 근무")
             .toolbar { ToolbarItem(placement:.topBarTrailing) { NavigationLink { AppPreferencesView() } label: { Image(systemName:"gearshape") }.accessibilityLabel("앱 환경") }; if showClose { ToolbarItem(placement:.cancellationAction) { Button("닫기") { dismiss() }.accessibilityIdentifier("close-menu") } } }
-            .sheet(isPresented:$connectingCalendars) { DeviceCalendarsView() }
             .sheet(isPresented:$loggingIn) { NativeAccountView(store:store) }
             .sheet(isPresented:$changingGroup) { GroupSelectionView(store:store) }
             .fileImporter(isPresented:$importing,allowedContentTypes:[.json]) { result in
@@ -453,8 +442,10 @@ struct AppPreferencesView:View {
     @AppStorage("display-holidays") private var holidays=true
     @AppStorage("display-memos") private var memos=true
     @AppStorage("display-circle") private var circle=false
+    @State private var connectingCalendars=false
     var body:some View {
         List {
+            Section("내 캘린더") { Button { connectingCalendars=true } label: { Label("iCloud · Google 일정 표시",systemImage:"calendar.badge.plus").foregroundStyle(AppTheme.accent) } }
             Section("테마") { Picker("달력 스타일",selection:$theme) { Text("1").tag("current");Text("2").tag("toss");Text("3").tag("gpt") } }
             Section("화면 표시") {
                 Toggle("공휴일 이름",isOn:$holidays)
@@ -467,7 +458,7 @@ struct AppPreferencesView:View {
                 NavigationLink("개인정보 처리방침") { PrivacyView() }
                 Link("서비스 이용약관",destination:URL(string:"https://h-lyart-ten.vercel.app/terms.html")!)
             }
-        }.scrollContentBackground(.hidden).background(AppTheme.page).navigationTitle("앱 환경").navigationBarTitleDisplayMode(.inline).tint(AppTheme.accent)
+        }.sheet(isPresented:$connectingCalendars) { DeviceCalendarsView() }.scrollContentBackground(.hidden).background(AppTheme.page).navigationTitle("앱 환경").navigationBarTitleDisplayMode(.inline).tint(AppTheme.accent)
     }
 }
 

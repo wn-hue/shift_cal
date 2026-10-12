@@ -76,4 +76,4 @@ xcodebuild -project ShiftCalAlarms.xcodeproj -scheme ShiftCalAlarms \
 
 내 근무 상단에서 Google·Apple 로그인과 근무 변경·메모 동기화를 사용할 수 있습니다. Apple 로그인은 서버의 Services ID·개인 키 등 개발자 구성이 완료된 뒤 활성화됩니다. Google 로그인은 시스템 인증 브라우저와 PKCE 반환을 사용하며 로그인 토큰은 Keychain에 보관합니다. 급여 기준은 웹에서 관리합니다. 데이터 충돌 시 계정/기기 근무표를 선택하고, 로그인 화면에서 계정 데이터를 삭제할 수 있습니다.
 
-내 캘린더에서 기기에 등록된 iCloud·Google 캘린더를 선택하면 근무표에 외부 일정을 함께 표시합니다. 원본 일정은 수정하지 않고 계정 동기화/공유에 포함하지 않습니다. Google 계정이 목록에 없으면 iPhone 캘린더 계정 설정에 추가하세요. 웹 캘린더 가져오기와 Apple 설정은 저장소 루트 ACCOUNT-CALENDAR-SETUP.md를 참고하세요.
+톱니바퀴 → 내 캘린더에서 기기에 등록된 iCloud·Google 캘린더를 선택하면 근무표에 외부 일정을 함께 표시합니다. 원본 일정은 수정하지 않고 계정 동기화/공유에 포함하지 않습니다. Google 계정이 목록에 없으면 iPhone 캘린더 계정 설정에 추가하세요. 웹 캘린더 가져오기와 Apple 설정은 저장소 루트 ACCOUNT-CALENDAR-SETUP.md를 참고하세요.

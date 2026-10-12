@@ -80,6 +80,8 @@ final class ShiftCalUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Google로 로그인"].waitForExistence(timeout:5))
         XCTAssertTrue(app.buttons["Apple로 로그인"].exists)
         app.buttons["닫기"].tap()
+        XCTAssertFalse(app.buttons["iCloud · Google 일정 표시"].exists)
+        app.buttons["앱 환경"].tap()
         app.buttons["iCloud · Google 일정 표시"].tap()
         XCTAssertTrue(app.buttons["캘린더 접근 허용"].waitForExistence(timeout:5))
         XCTAssertTrue(app.navigationBars["내 캘린더"].exists)
