@@ -9,8 +9,8 @@
     function estimate(gross, profile = null) {
         if (!Number.isFinite(gross) || Math.abs(gross) > Number.MAX_SAFE_INTEGER) throw new RangeError('총 지급액을 확인해주세요.');
         if (profile !== null && !validProfile(profile)) throw new RangeError('공제 기준을 확인해주세요.');
-        gross = Math.max(0, Math.round(gross));
-        const total = Math.round(gross * (profile ? minimalProfile(profile).rate : rate));
+        gross = Math.max(0, Math.trunc(gross));
+        const total = Math.trunc(gross * (profile ? minimalProfile(profile).rate : rate));
         return { gross, total, net: gross - total };
     }
     function estimatePayments(parts, profile = null, bonusProfile = null) {

@@ -76,8 +76,8 @@ assert.equal(elem('payroll-bonus-sms-text').value,'');assert.ok(![...saved.value
 elem('inp-bonus-check').checked=true;evaluate('calculatePayrollFromInputs()');
 assert.match(elem('payroll-estimate-basis').textContent,/상여:.*5.00%/);
 const bonusGross=payAmount('row-bonus-pay'),regularGross=payAmount('row-payment-subtotal')-bonusGross;
-assert.equal(elem('hero-bonus-pay').innerText,(bonusGross-Math.round(bonusGross*.05)).toLocaleString('ko-KR')+' 원');
-assert.equal(payAmount('row-gross-pay'),regularGross-Math.round(regularGross*.15)+bonusGross-Math.round(bonusGross*.05));
+assert.equal(elem('hero-bonus-pay').innerText,(bonusGross-Math.trunc(bonusGross*.05)).toLocaleString('ko-KR')+' 원');
+assert.equal(payAmount('row-gross-pay'),regularGross-Math.trunc(regularGross*.15)+bonusGross-Math.trunc(bonusGross*.05));
 const before=saved.get('shift_payroll_sms_reference_v1');
 elem('payroll-sms-text').value='기본시급 22,000';elem('payroll-bonus-sms-text').value='상여 읽을 수 없음';click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),10100);assert.equal(saved.get('shift_payroll_sms_reference_v1'),before);

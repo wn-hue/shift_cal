@@ -1601,7 +1601,7 @@
             holidayBonus: 0
         };
 
-        function fmt(n) { return Math.round(n).toLocaleString('ko-KR'); }
+        function fmt(n) { return Math.trunc(n).toLocaleString('ko-KR'); }
         function toDateKey(y, m, d) {
             return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
         }
@@ -2351,17 +2351,17 @@
             const B8 = config.ordinaryHourly;
             const baseHours = config.baseHours || 209;
 
-            const rawBasicPay = B7 * baseHours;
+            const rawBasicPay = Math.trunc(B7 * baseHours);
             const rawDutyPay = config.dutyPay;
             const rawSeniorityPay = ShiftPlannerCore.seniorityPay(config.employmentMonth, `${currentPayDate.getFullYear()}-${String(currentPayDate.getMonth()+1).padStart(2,'0')}-15`);
             document.getElementById('input-seniority-pay').value=rawSeniorityPay.toLocaleString('ko-KR')+'원';
             document.getElementById('seniority-pay-setting').hidden=!(rawSeniorityPay>0);
             document.getElementById('wage-allowance-settings').hidden=!(rawDutyPay>0||rawSeniorityPay>0);
 
-            // 1/27 공제 계산 (반올림)
-            const basicDeduction = Math.round(rawBasicPay * (syncedUnpaidDays / 27));
-            const dutyDeduction = Math.round(rawDutyPay * (syncedUnpaidDays / 27));
-            const seniorityDeduction = Math.round(rawSeniorityPay * (syncedUnpaidDays / 27));
+            // 금액별 원 미만 버림 후 1/27 공제 계산
+            const basicDeduction = Math.trunc(rawBasicPay * (syncedUnpaidDays / 27));
+            const dutyDeduction = Math.trunc(rawDutyPay * (syncedUnpaidDays / 27));
+            const seniorityDeduction = Math.trunc(rawSeniorityPay * (syncedUnpaidDays / 27));
 
             const basicPay = Math.max(0, rawBasicPay - basicDeduction);
             const dutyPay = Math.max(0, rawDutyPay - dutyDeduction);
@@ -2374,11 +2374,11 @@
             const totalOtHours = effectiveOtDays * 2.5;
             document.getElementById('disp-ot-hours').value = `${totalOtHours.toFixed(1)}h (${effectiveOtDays}일 적용)`;
 
-            const otPay = Math.round(B8 * 1.5 * totalOtHours);
-            const nightPay = Math.round(B8 * 0.5 * 7.0 * E3);
-            const holPay = Math.round(B8 * 1.5 * 8.0 * (E4 + E5));
-            const holOtPay = Math.round(B8 * 2.0 * 2.5 * (E4 + E5));
-            const holNightPay = Math.round(B8 * 0.5 * 7.0 * E5);
+            const otPay = Math.trunc(B8 * 1.5 * totalOtHours);
+            const nightPay = Math.trunc(B8 * 0.5 * 7.0 * E3);
+            const holPay = Math.trunc(B8 * 1.5 * 8.0 * (E4 + E5));
+            const holOtPay = Math.trunc(B8 * 2.0 * 2.5 * (E4 + E5));
+            const holNightPay = Math.trunc(B8 * 0.5 * 7.0 * E5);
 
             const hireVal = config.hireDate;
             let isUnderOneYear = false;
@@ -2408,9 +2408,9 @@
                     const diff2 = ((B8 * 2 * 2.5 * E4) + (B8 * 2 * 3 * E5)) - (B8 * 2 * 2.5 * (E4 + E5));
                     const diff3 = (B8 * 0.5 * 8 * E5) - (B8 * 0.5 * 7 * E5);
                     const diff4 = (B8 * 0.5 * 8 * E3) - (B8 * 0.5 * 7 * E3);
-                    otherPay = Math.round(diff1 + diff2 + diff3 + diff4);
+                    otherPay = Math.trunc(diff1 + diff2 + diff3 + diff4);
                 } else if (hireYear < 2020) {
-                    otherPay = Math.round((B8 * 0.5 * 8 * E5) + (B8 * 0.5 * 8 * E3) - (nightPay + holNightPay));
+                    otherPay = Math.trunc(B8 * 0.5 * (E5 + E3));
                 }
             }
 
@@ -2435,8 +2435,8 @@
             } else {
                 entryBonus = 0;
                 if (hasBonusCheck) {
-                    const rawBonusPay = Math.round(rawBasicPay * 0.5) + rawSeniorityPay;
-                    const bonusDeduction = Math.round(rawBonusPay * (syncedUnpaidDays / 27));
+                    const rawBonusPay = Math.trunc(rawBasicPay * 0.5) + rawSeniorityPay;
+                    const bonusDeduction = Math.trunc(rawBonusPay * (syncedUnpaidDays / 27));
                     bonusPay = Math.max(0, rawBonusPay - bonusDeduction);
                     totalUnpaidDeduction += bonusDeduction;
 
@@ -2717,7 +2717,7 @@
         };
     </script>
     <script src="./payroll-sms.js?v=3"></script>
-    <script src="./payroll-estimate.js?v=seniority-7"></script>
+    <script src="./payroll-estimate.js?v=truncate-8"></script>
     <script src="./calendar-integration.js?v=3"></script>
     <script src="./schedule-share.js?v=2"></script>
     <script src="./google-sync-core.js?v=5"></script>
@@ -2728,7 +2728,7 @@
     <script src="./settings-ui.js?v=5"></script>
     <script src="./account-sync.js?v=privacy-13"></script>
     <script src="./google-sync.js?v=11"></script>
-<script src="planner-core.js?v=3"></script><script src="shift-tools.js?v=6"></script>
+<script src="planner-core.js?v=4"></script><script src="shift-tools.js?v=6"></script>
 <script src="./external-calendars.js?v=3"></script>
 </body>
 </html>

@@ -21,3 +21,6 @@ assert.equal(estimatePayments({regular:1000000,bonus:1000000}).bonus.total,18000
 assert.deepEqual(require('../payroll-estimate.js').minimalProfile({gross:1000000,total:50000}),{rate:0.05});
 assert.equal(estimate(1000000,{rate:0.05}).total,50000);
 assert.equal(require('../payroll-estimate.js').validProfile({rate:1.01}),false);
+
+assert.deepEqual(estimate(10.9),{gross:10,total:1,net:9});
+assert.equal(estimate(101,{rate:0.5}).total,50);
