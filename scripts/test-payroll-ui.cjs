@@ -40,7 +40,7 @@ const payAmount=id=>Number(elem(id).innerText.replace(/[−,]/g,''));
 const itemSum=['row-base-pay','row-duty-pay','row-seniority-pay','row-ot-pay','row-night-pay','row-hol-pay','row-hol-ot-pay','row-hol-night-pay','row-other-pay','row-holiday-bonus','row-bonus-pay','row-entry-bonus'].reduce((sum,id)=>sum+payAmount(id),0);
 assert.equal(itemSum-payAmount('row-attendance-deduction'),payAmount('row-gross-pay'),'SMS-style gross items minus attendance deduction must reconcile to the total, including bonus deductions');
 assert.equal(elem('tr-attendance-deduction').hidden,false);
-evaluate('syncedUnpaidDays=0');elem('inp-bonus-check').checked=false;
+evaluate("syncedUnpaidDays=0;config.hireDate=''");elem('inp-bonus-check').checked=false;
 evaluate('applyPayrollStatement({dutyPay:0,seniorityPay:0})');assert.equal(elem('wage-allowance-settings').hidden,true);
 const gross=Number(elem('row-gross-pay').innerText.replace(/,/g,''));
 elem('payroll-estimate-toggle').checked=true;for(const f of elem('payroll-estimate-toggle').handlers.change)f();
@@ -110,8 +110,8 @@ console.log('PASS: automatic other pay thresholds/visibility, SMS-only wages and
 
 assert.equal(html.includes('id="payroll-sms-read"'),false);assert.equal(html.includes('app-brand-summary'),false);
 
-// Actual hire month, independently of the regular conversion date, determines seniority.
-evaluate("config.employmentMonth='2017-12';currentPayDate=new Date(2018,10,1);calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'0');
+// The date already entered in leave settings determines seniority.
+evaluate("config.hireDate='2017-12-20';currentPayDate=new Date(2018,10,1);calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'0');
 evaluate("currentPayDate=new Date(2018,11,1);calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'10,000');
 evaluate("currentPayDate=new Date(2026,9,1);calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'70,000');
-evaluate("config.employmentMonth='2018-01';calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'0');
+evaluate("config.hireDate='2018-01-20';calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'0');

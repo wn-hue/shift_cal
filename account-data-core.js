@@ -20,7 +20,7 @@
                 const allowed = ['hireDate','employmentMonth','totalLeave','leaveByYear','baseHourly','ordinaryHourly','baseHours','dutyPay','seniorityPay','applyRetroPay','holidayBonus'];
                 if (Object.keys(value).some(k => !allowed.includes(k))) throw Error('알 수 없는 급여 설정입니다.');
                 for (const [k,v] of Object.entries(value)) {
-                    if (k === 'employmentMonth') { if(typeof v !== 'string'||(v && !/^(19|20)\d{2}-(0[1-9]|1[0-2])$/.test(v)))throw Error('입사년월을 확인하세요.'); }
+                    if (k === 'employmentMonth') continue;
                     else if (k === 'hireDate') { if (v !== '' && !dateOK(v)) throw Error('입사일을 확인하세요.'); }
                     else if (k === 'applyRetroPay') { if (typeof v !== 'boolean') throw Error('수당 설정을 확인하세요.'); }
                     else if (k === 'leaveByYear') {
@@ -74,7 +74,7 @@
     function meaningful(data) {
         return Object.entries(data).some(([key,v]) => {
             if (v === null || key === 'shift_active_group') return false;
-            if (key === 'shift_salary_config_master') return ['hireDate','employmentMonth','totalLeave','baseHourly','ordinaryHourly','dutyPay','seniorityPay','holidayBonus','applyRetroPay'].some(k => !!v[k]) || Object.values(v.leaveByYear || {}).some(n => n > 0) || (v.baseHours !== undefined && v.baseHours !== 209);
+            if (key === 'shift_salary_config_master') return ['hireDate','totalLeave','baseHourly','ordinaryHourly','dutyPay','seniorityPay','holidayBonus','applyRetroPay'].some(k => !!v[k]) || Object.values(v.leaveByYear || {}).some(n => n > 0) || (v.baseHours !== undefined && v.baseHours !== 209);
             return object(v) && Object.keys(v).length > 0;
         });
     }

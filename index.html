@@ -1178,7 +1178,6 @@
                         <input type="text" id="input-seniority-pay" value="0원" readonly aria-describedby="wage-sms-hint">
                     </div>
                 </div>
-                <div class="input-group"><label for="input-employment-month">근속 기준 입사년월</label><input type="month" id="input-employment-month" onchange="onEmploymentMonthChange()"><p class="account-hint">실제 입사년월을 입력하세요. 정규직 전환일과 별도입니다. 2018년 이전 입사자만 매년 같은 월에 1만원씩 증가하며 최대 7만원입니다.</p></div>
                 <p id="wage-sms-hint" class="account-hint">하단 전체 → 시급 설정에서 급여 문자를 붙여넣어 주세요. 적용한 금액이 여기에 표시됩니다.</p>
                 <div class="btn-action-group">
                     <button class="btn-save" onclick="manualSaveData()">설정 저장</button>
@@ -2356,7 +2355,7 @@
 
             const rawBasicPay = Math.trunc(B7 * baseHours);
             const rawDutyPay = config.dutyPay;
-            const rawSeniorityPay = ShiftPlannerCore.seniorityPay(config.employmentMonth, `${currentPayDate.getFullYear()}-${String(currentPayDate.getMonth()+1).padStart(2,'0')}-15`);
+            const rawSeniorityPay = ShiftPlannerCore.seniorityPay((config.hireDate||'').slice(0,7), `${currentPayDate.getFullYear()}-${String(currentPayDate.getMonth()+1).padStart(2,'0')}-15`);
             document.getElementById('input-seniority-pay').value=rawSeniorityPay.toLocaleString('ko-KR')+'원';
             document.getElementById('seniority-pay-setting').hidden=!(rawSeniorityPay>0);
             document.getElementById('wage-allowance-settings').hidden=!(rawDutyPay>0||rawSeniorityPay>0);
@@ -2589,7 +2588,6 @@
             document.getElementById('input-total-leave').value = getGrantedLeave(currentCalDate.getFullYear());
             document.getElementById('input-base-hourly').value = fmt(config.baseHourly) + '원';
             document.getElementById('input-ordinary-hourly').value = fmt(config.ordinaryHourly) + '원';
-            document.getElementById('input-employment-month').value=config.employmentMonth||'';
             document.getElementById('input-duty-pay').value = fmt(config.dutyPay) + '원';
             document.getElementById('input-seniority-pay').value = fmt(config.seniorityPay) + '원';
             document.getElementById('duty-pay-setting').hidden = !(config.dutyPay > 0);
@@ -2599,11 +2597,6 @@
             config.applyRetroPay = !!config.hireDate && parseInt(config.hireDate.slice(0,4),10) < 2020;
         }
 
-        function onEmploymentMonthChange() {
-            config.employmentMonth=document.getElementById('input-employment-month').value;
-            config.seniorityPay=0;
-            saveConfig();calculatePayrollFromInputs();renderCalendar();
-        }
         function applyPayrollStatement(wages) {
             const next = { ...config };
             for (const key of ['baseHourly', 'ordinaryHourly', 'dutyPay']) {
@@ -2724,14 +2717,14 @@
     <script src="./calendar-integration.js?v=3"></script>
     <script src="./schedule-share.js?v=2"></script>
     <script src="./google-sync-core.js?v=5"></script>
-    <script src="./account-data-core.js?v=seniority-4"></script>
+    <script src="./account-data-core.js?v=shared-date-5"></script>
     <script src="./calendar-ui.js?v=7"></script>
     <script src="./today-menu.js?v=4"></script>
     <script src="./app-menu.js?v=3"></script>
     <script src="./settings-ui.js?v=5"></script>
     <script src="./account-sync.js?v=privacy-13"></script>
     <script src="./google-sync.js?v=11"></script>
-<script src="planner-core.js?v=4"></script><script src="shift-tools.js?v=6"></script>
+<script src="planner-core.js?v=5"></script><script src="shift-tools.js?v=6"></script>
 <script src="./external-calendars.js?v=3"></script>
 </body>
 </html>

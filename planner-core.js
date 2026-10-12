@@ -9,7 +9,7 @@ function seniorityPay(month,end){
  if(year<1900||year>=2018)return 0;
  const years=ey-year-(em<m?1:0);return Math.min(70000,Math.max(0,years)*10000);
 }
-function payments(c,cfg,end){const base=Math.trunc((cfg.baseHourly||0)*(cfg.baseHours||209)),ordinary=cfg.ordinaryHourly||0,duty=cfg.dutyPay||0,seniority=seniorityPay(cfg.employmentMonth,end);const net=x=>Math.max(0,x-Math.trunc(x*c.unpaid/27));const hy=Number((cfg.hireDate||'').slice(0,4));const under=isUnderOneYear(cfg.hireDate,end);
+function payments(c,cfg,end){const base=Math.trunc((cfg.baseHourly||0)*(cfg.baseHours||209)),ordinary=cfg.ordinaryHourly||0,duty=cfg.dutyPay||0,seniority=seniorityPay((cfg.hireDate||'').slice(0,7),end);const net=x=>Math.max(0,x-Math.trunc(x*c.unpaid/27));const hy=Number((cfg.hireDate||'').slice(0,4));const under=isUnderOneYear(cfg.hireDate,end);
 let other=0;if(hy>0&&hy<2018)other=Math.trunc(ordinary*1.5*.5*c.night+ordinary*2*.5*c.spNight+ordinary*.5*(c.night+c.spNight));else if(hy>=2018&&hy<2020)other=Math.trunc(ordinary*.5*(c.night+c.spNight));
 const support=under?300000:0;const bonus=under?0:Number(end.slice(5,7))%2===0?net(Math.trunc(base*.5)+seniority):0;
 return {support,bonus,regular:net(base)+net(duty)+net(seniority)+Math.trunc(ordinary*1.5*Math.max(0,c.day+c.night-c.noOT)*2.5)+Math.trunc(ordinary*.5*7*c.night)+Math.trunc(ordinary*1.5*8*(c.spDay+c.spNight))+Math.trunc(ordinary*2*2.5*(c.spDay+c.spNight))+Math.trunc(ordinary*.5*7*c.spNight)+other};}

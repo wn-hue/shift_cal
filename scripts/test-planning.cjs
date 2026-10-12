@@ -52,3 +52,5 @@ for(const [hourly,ordinary,hire,duty,day,night,spDay,spNight,total] of [
  [8820,8820,'2020-06-29',0,0,0,0,0,2765070]]) {
  assert.equal(C.gross({day,night,spDay,spNight,noOT:0,unpaid:0},{baseHourly:hourly,ordinaryHourly:ordinary,hireDate:hire,employmentMonth:hire.slice(0,7),dutyPay:duty},'2026-02-15'),total);
 }
+
+assert.equal(C.payments({day:0,night:0,spDay:0,spNight:0,noOT:0,unpaid:0},{baseHourly:10000,hireDate:'2017-12-20',employmentMonth:'2020-01'},'2026-11-15').regular,2160000);
