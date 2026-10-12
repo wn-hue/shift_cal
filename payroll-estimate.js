@@ -2,13 +2,15 @@
     'use strict';
     const rate = 0.18, storageKey = 'shift_payroll_sms_reference_v1', bonusKey = 'shift_bonus_sms_reference_v1';
     function validProfile(p) {
+        if(p && Object.keys(p).length===1 && Number.isFinite(p.rate) && p.rate>=0 && p.rate<=1)return true;
         return p && Number.isSafeInteger(p.gross) && p.gross > 0 && p.gross <= 1000000000 && Number.isSafeInteger(p.total) && p.total >= 0 && p.total <= p.gross;
     }
+    function minimalProfile(p) { return validProfile(p)?{rate:p.rate ?? p.total/p.gross}:null; }
     function estimate(gross, profile = null) {
         if (!Number.isFinite(gross) || Math.abs(gross) > Number.MAX_SAFE_INTEGER) throw new RangeError('총 지급액을 확인해주세요.');
         if (profile !== null && !validProfile(profile)) throw new RangeError('공제 기준을 확인해주세요.');
         gross = Math.max(0, Math.round(gross));
-        const total = Math.round(gross * (profile ? profile.total / profile.gross : rate));
+        const total = Math.round(gross * (profile ? minimalProfile(profile).rate : rate));
         return { gross, total, net: gross - total };
     }
     function estimatePayments(parts, profile = null, bonusProfile = null) {
@@ -16,7 +18,7 @@
         return { regular, bonus, support, gross: regular.gross + bonus.gross + support.gross,
             total: regular.total + bonus.total + support.total, net: regular.net + bonus.net + support.net };
     }
-    const api = { rate, validProfile, estimate, estimatePayments };
+    const api = { rate, validProfile, minimalProfile, estimate, estimatePayments };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     root.PayrollEstimate = api;
     if (typeof document === 'undefined') return;
@@ -31,9 +33,9 @@
     const labels = {baseHourly:'기본시급', ordinaryHourly:'통상시급', dutyPay:'직책수당', seniorityPay:'근속수당'};
     const fmt = value => value.toLocaleString('ko-KR') + ' 원';
     let parts = {regular:0,bonus:0,support:0}, profile = null, bonusProfile = null;
-    function loadProfile(key) { try {const p=JSON.parse(localStorage.getItem(key));return validProfile(p)?p:null;}catch(_){return null;} }
+    function loadProfile(key) { try {const p=JSON.parse(localStorage.getItem(key));const minimal=minimalProfile(p);if(minimal)localStorage.setItem(key,JSON.stringify(minimal));return minimal;}catch(_){return null;} }
     profile=loadProfile(storageKey);bonusProfile=loadProfile(bonusKey);
-    const basis = (name,p) => name + ': ' + (p ? '적용한 문자 공제율 ' + (100*p.total/p.gross).toFixed(2) + '%' : '기본 예상 공제율 18% (문자 기준 없음)');
+    const basis = (name,p) => name + ': ' + (p ? '적용한 문자 공제율 ' + (100*minimalProfile(p).rate).toFixed(2) + '%' : '기본 예상 공제율 18% (문자 기준 없음)');
     function render() {
         panel.hidden = !toggle.checked;
         document.getElementById('payroll-estimate-state').textContent = toggle.checked ? 'ON' : 'OFF';
@@ -89,7 +91,7 @@
         try {
             const {salary,bonus}=parseDraft(),lines=[];
             if(salary) {
-                lines.push('급여 설정');
+                lines.push('저장할 시급·수당');
                 for(const [key,value] of Object.entries(salary.wages)) if(!['dutyPay','seniorityPay'].includes(key)||value>0)lines.push(labels[key]+': '+fmt(value));
                 if(salary.profile)lines.push('지급 합계: '+fmt(salary.profile.gross),'공제 합계: '+fmt(salary.profile.total),basis('급여',salary.profile));
                 status.textContent=salary.warnings.join(' ');
@@ -104,8 +106,8 @@
         try{draft=parseDraft();}catch(error){status.textContent=error.message;return;}
         const previous=[storageKey,bonusKey].map(key=>[key,localStorage.getItem(key)]);
         try {
-            if(draft.salary?.profile)localStorage.setItem(storageKey,JSON.stringify(draft.salary.profile));
-            if(draft.bonus)localStorage.setItem(bonusKey,JSON.stringify(draft.bonus.profile));
+            if(draft.salary?.profile)localStorage.setItem(storageKey,JSON.stringify(minimalProfile(draft.salary.profile)));
+            if(draft.bonus)localStorage.setItem(bonusKey,JSON.stringify(minimalProfile(draft.bonus.profile)));
             if(draft.salary&&Object.keys(draft.salary.wages).length)root.applyPayrollStatement(draft.salary.wages);
         }catch(_){
             for(const [key,value] of previous)try{if(value===null)localStorage.removeItem(key);else localStorage.setItem(key,value);}catch(_){}

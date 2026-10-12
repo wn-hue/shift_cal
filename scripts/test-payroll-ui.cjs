@@ -71,7 +71,7 @@ assert.match(elem('payroll-estimate-basis').textContent,/15.00%/);
 elem('payroll-bonus-sms-text').value='성명 비공개상여테스트\n기본시급 999,999\n지급내역\n상여 1,000,000\n소계(ⓐ) 1,000,000\n공제내역\n소계(ⓑ) 50,000';
 for(const f of elem('payroll-bonus-sms-text').handlers.input||[])f();click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),10100);assert.equal(evaluate('config.ordinaryHourly'),12100);
-assert.deepEqual(JSON.parse(saved.get('shift_bonus_sms_reference_v1')),{gross:1000000,total:50000});
+assert.deepEqual(JSON.parse(saved.get('shift_bonus_sms_reference_v1')),{rate:0.05});
 assert.equal(elem('payroll-bonus-sms-text').value,'');assert.ok(![...saved.values()].join('').includes('비공개상여테스트'));
 elem('inp-bonus-check').checked=true;evaluate('calculatePayrollFromInputs()');
 assert.match(elem('payroll-estimate-basis').textContent,/상여:.*5.00%/);

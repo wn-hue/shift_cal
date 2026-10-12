@@ -2,6 +2,12 @@
     'use strict';
     const C=AccountDataCore, $=id=>document.getElementById(id);
     const ownerKey='shift_account_owner_v1', basePrefix='shift_account_base_v1_', cachePrefix='shift_account_cache_v1_';
+    // Minimize previously cached references without touching unrelated storage.
+    for (let i=0;i<localStorage.length;i++) {
+        const key=localStorage.key(i);
+        if(!key?.startsWith(basePrefix)&&!key?.startsWith(cachePrefix))continue;
+        try { localStorage.setItem(key,JSON.stringify(C.normalize(JSON.parse(localStorage.getItem(key))))); } catch(_) {}
+    }
     let auth=null, baseline=null, parents=[], busy=false, suppressed=false, timer=null, pending=null, epoch=0, renderedOwner;
     const api=window.AccountSync={ready:false,changed,sessionChanged:init,disconnected,prepareLogout};
     function openManager() {

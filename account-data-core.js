@@ -28,8 +28,11 @@
                     safe[k] = v;
                 }
             } else if (['shift_payroll_sms_reference_v1','shift_bonus_sms_reference_v1'].includes(key)) {
-                if (Object.keys(value).some(k => !['gross','total'].includes(k)) || !Number.isSafeInteger(value.gross) || value.gross <= 0 || value.gross > 1000000000 || !Number.isSafeInteger(value.total) || value.total < 0 || value.total > value.gross) throw Error('공제 기준을 확인하세요.');
-                safe.gross = value.gross; safe.total = value.total;
+                if (Object.keys(value).length === 1 && Number.isFinite(value.rate) && value.rate >= 0 && value.rate <= 1) safe.rate=value.rate;
+                else {
+                    if (Object.keys(value).some(k => !['gross','total'].includes(k)) || !Number.isSafeInteger(value.gross) || value.gross <= 0 || value.gross > 1000000000 || !Number.isSafeInteger(value.total) || value.total < 0 || value.total > value.gross) throw Error('공제 기준을확인하세요.');
+                    safe.rate = value.total / value.gross;
+                }
             } else {
                 if (Object.keys(value).length > 10000) throw Error('저장할 날짜가 너무 많습니다.');
                 for (const [date,v] of Object.entries(value)) {

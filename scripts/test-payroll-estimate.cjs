@@ -17,3 +17,7 @@ const separate=estimatePayments({regular:4000000,bonus:1000000,support:0},{gross
 assert.equal(separate.total,850000);assert.equal(separate.net,4150000);assert.equal(separate.gross,separate.total+separate.net);
 assert.equal(estimatePayments({regular:4000000,bonus:0,support:300000},{gross:1000000,total:100000},{gross:1000000,total:500000}).support.total,30000);
 assert.equal(estimatePayments({regular:1000000,bonus:1000000}).bonus.total,180000);
+
+assert.deepEqual(require('../payroll-estimate.js').minimalProfile({gross:1000000,total:50000}),{rate:0.05});
+assert.equal(estimate(1000000,{rate:0.05}).total,50000);
+assert.equal(require('../payroll-estimate.js').validProfile({rate:1.01}),false);

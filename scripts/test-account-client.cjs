@@ -50,7 +50,7 @@ async function run(){
     assert.deepEqual(server.A[0].data.shift_day_memos,{'2026-10-01':'original','2026-10-02':'a edit','2026-10-03':'b edit'});
     await a.click('account-sync-now');assert.deepEqual(a.snapshot(),server.A[0].data);
     a.change('shift_bonus_sms_reference_v1',{gross:1000000,total:50000});await a.tick();
-    await b.click('account-sync-now');assert.deepEqual(b.snapshot().shift_bonus_sms_reference_v1,{gross:1000000,total:50000});
+    await b.click('account-sync-now');assert.deepEqual(b.snapshot().shift_bonus_sms_reference_v1,{rate:0.05});
     // Local edits during upload must still be sent on the next save.
     a.change('shift_day_memos',{...a.snapshot().shift_day_memos,'2026-10-04':'first'});
     a.beforeWrite=async()=>{a.beforeWrite=null;
