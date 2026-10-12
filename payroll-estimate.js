@@ -24,7 +24,6 @@
     if (typeof document === 'undefined') return;
     const toggle = document.getElementById('payroll-estimate-toggle'), panel = document.getElementById('payroll-estimate-panel');
     const text = document.getElementById('payroll-sms-text'), bonusText = document.getElementById('payroll-bonus-sms-text');
-    const salaryChoice=document.getElementById('payroll-salary-estimate-choice'), bonusChoice=document.getElementById('payroll-bonus-estimate-choice');
     const status = document.getElementById('payroll-sms-status'), preview = document.getElementById('payroll-sms-preview');
     const apply = document.getElementById('payroll-sms-apply'), dialog = document.getElementById('payroll-sms-dialog');
     api.open = () => { dialog.showModal(); text.focus(); };
@@ -70,7 +69,7 @@
     api.update = (gross, breakdown) => { parts=breakdown || {regular:gross,bonus:0,support:0}; render(); };
     api.reloadReference = () => {profile=loadProfile(storageKey);bonusProfile=loadProfile(bonusKey);render();};
     toggle.checked = false; toggle.addEventListener('change', render);
-    function clearDraft() { if(salaryChoice)salaryChoice.checked=false;if(bonusChoice){bonusChoice.checked=false;bonusText.disabled=true;}text.placeholder='기본시급: 10,000원\n통상시급: 12,000원\n자격: 0원\n직무: 0원\n가족: 0원\n직책: 0원'; text.value='';bonusText.value='';apply.disabled=true;preview.textContent='';status.textContent=''; }
+    function clearDraft() { text.placeholder='기본시급: 10,000원\n통상시급: 12,000원\n자격: 0원\n직무: 0원\n가족: 0원\n직책: 0원'; text.value='';bonusText.value='';apply.disabled=true;preview.textContent='';status.textContent=''; }
     api.clearDraft = () => { clearDraft(); if(dialog.open)dialog.close(); };
     api.clearReference = () => {
         localStorage.removeItem(storageKey);localStorage.removeItem(bonusKey);profile=null;bonusProfile=null;api.clearDraft();render();
@@ -79,9 +78,7 @@
     };
     function parseDraft() {
         const salary=text.value.trim()?root.PayrollSMS.parse(text.value):null;
-        const bonus=(!bonusChoice||bonusChoice.checked)&&bonusText.value.trim()?root.PayrollSMS.parse(bonusText.value):null;
-        if(salary&&salaryChoice&&!salaryChoice.checked){salary.profile=null;salary.warnings=[];if(!Object.keys(salary.wages).length)throw new Error('시급·고정수당을 입력하거나 급여 세후 추정을 선택해 주세요.');}
-        if(salaryChoice?.checked&&salary&&!salary.profile)throw new Error('급여 세후 추정에는 지급 합계와 공제 합계가 필요합니다.');
+        const bonus=bonusText.value.trim()?root.PayrollSMS.parse(bonusText.value):null;
         if(!salary&&!bonus)throw new Error('급여 또는 상여 문자를 붙여넣어 주세요.');
         if(salary?.profile&&!validProfile(salary.profile))throw new Error('급여 지급·공제 합계를 확인해 주세요.');
         if(bonus?.profile&&!validProfile(bonus.profile))throw new Error('상여 지급·공제 합계를 확인해 주세요.');
@@ -103,8 +100,6 @@
             preview.textContent=lines.join('\n');apply.disabled=false;
         }catch(error){status.textContent=error.message;}
     }
-    salaryChoice?.addEventListener('change',()=>{text.placeholder=salaryChoice.checked?'급여 문자를 붙여넣으세요. 이름·사번·계좌번호는 제외해 주세요. 지급 합계·공제 합계가 필요합니다.':'기본시급: 10,000원\n통상시급: 12,000원\n자격: 0원\n직무: 0원\n가족: 0원\n직책: 0원';refreshPreview();});
-    bonusChoice?.addEventListener('change',()=>{bonusText.disabled=!bonusChoice.checked;if(!bonusChoice.checked)bonusText.value='';refreshPreview();});
     text.addEventListener('input',refreshPreview);bonusText.addEventListener('input',refreshPreview);
     apply.addEventListener('click', () => {
         let draft;
