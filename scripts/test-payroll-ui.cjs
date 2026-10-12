@@ -12,7 +12,7 @@ for(const match of html.matchAll(/<[^>]*\bid="([^"]+)"[^>]*>/g)){
 const ctx={document:{getElementById:elem,querySelector:()=>null},localStorage:{getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(k,String(v)),removeItem:k=>saved.delete(k)},TextEncoder,URLSearchParams,Date,alert:()=>{},confirm:()=>true,setTimeout:()=>0};
 ctx.window=ctx;vm.createContext(ctx);
 for(const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))if(match[1].trim())vm.runInContext(match[1],ctx);
-ctx.PayrollSMS=require('../payroll-sms.js');
+ctx.PayrollSMS=require('../payroll-sms.js');ctx.ShiftPlannerCore=require('../planner-core.js');
 vm.runInContext(fs.readFileSync(require.resolve('../payroll-estimate.js'),'utf8'),ctx);
 const evaluate=code=>vm.runInContext(code,ctx),click=id=>{for(const f of elem(id).handlers.click||[])f()};
 evaluate(`currentPayDate=new Date(2026,9,1);currentCalDate=new Date(2026,9,1);config={hireDate:'2017-01-01',totalLeave:0,leaveByYear:{},baseHourly:10000,ordinaryHourly:12000,baseHours:209,dutyPay:0,seniorityPay:0,holidayBonus:0,applyRetroPay:false};`);
@@ -32,8 +32,8 @@ evaluate('applyPayrollStatement({dutyPay:70000,seniorityPay:0})');
 assert.equal(elem('wage-allowance-settings').hidden,false);assert.equal(elem('duty-pay-setting').hidden,false);assert.equal(elem('seniority-pay-setting').hidden,true);
 assert.equal(elem('tr-duty-pay').hidden,false);assert.equal(elem('tr-seniority-pay').hidden,true);
 evaluate('applyPayrollStatement({dutyPay:0,seniorityPay:70000})');
-assert.equal(elem('duty-pay-setting').hidden,true);assert.equal(elem('seniority-pay-setting').hidden,false);
-assert.equal(elem('tr-duty-pay').hidden,true);assert.equal(elem('tr-seniority-pay').hidden,false);
+assert.equal(elem('duty-pay-setting').hidden,true);assert.equal(elem('seniority-pay-setting').hidden,true);
+assert.equal(elem('tr-duty-pay').hidden,true);assert.equal(elem('tr-seniority-pay').hidden,true);
 evaluate(`syncedUnpaidDays=1;config.hireDate='2017-01-01';calculatePayrollFromInputs()`);
 elem('inp-bonus-check').checked=true;evaluate('calculatePayrollFromInputs()');
 const payAmount=id=>Number(elem(id).innerText.replace(/[−,]/g,''));
@@ -109,3 +109,9 @@ assert.deepEqual(detailLabels.slice(0,9),['기본','직책','근속','연장','�
 console.log('PASS: automatic other pay thresholds/visibility, SMS-only wages and conditional read-only allowances, preserved hidden base hours, net/gross recalculation, private draft clearing, compact account placement, ICS removal and calendar dialog opening.');
 
 assert.equal(html.includes('id="payroll-sms-read"'),false);assert.equal(html.includes('app-brand-summary'),false);
+
+// Actual hire month, independently of the regular conversion date, determines seniority.
+evaluate("config.employmentMonth='2017-12';currentPayDate=new Date(2018,10,1);calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'0');
+evaluate("currentPayDate=new Date(2018,11,1);calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'10,000');
+evaluate("currentPayDate=new Date(2026,9,1);calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'70,000');
+evaluate("config.employmentMonth='2018-01';calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'0');

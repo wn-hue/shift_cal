@@ -1170,7 +1170,7 @@
                 </div>
                 <div id="wage-allowance-settings" class="two-cols" hidden>
                     <div id="duty-pay-setting" class="input-group" hidden>
-                        <label for="input-duty-pay">직책수당 (원)</label>
+                        <label for="input-duty-pay">직책 (원)</label>
                         <input type="text" id="input-duty-pay" value="0원" readonly aria-describedby="wage-sms-hint">
                     </div>
                     <div id="seniority-pay-setting" class="input-group" hidden>
@@ -1178,6 +1178,7 @@
                         <input type="text" id="input-seniority-pay" value="0원" readonly aria-describedby="wage-sms-hint">
                     </div>
                 </div>
+                <div class="input-group"><label for="input-employment-month">근속 기준 입사년월</label><input type="month" id="input-employment-month" onchange="onEmploymentMonthChange()"><p class="account-hint">실제 입사년월을 입력하세요. 정규직 전환일과 별도입니다. 2018년 이전 입사자만 매년 같은 월에 1만원씩 증가하며 최대 7만원입니다.</p></div>
                 <p id="wage-sms-hint" class="account-hint">하단 전체 → 시급 설정에서 급여 문자를 붙여넣어 주세요. 적용한 금액이 여기에 표시됩니다.</p>
                 <div class="btn-action-group">
                     <button class="btn-save" onclick="manualSaveData()">설정 저장</button>
@@ -1356,11 +1357,10 @@
         <label for="payroll-sms-text" class="sms-input-label">급여 문자</label>
         <textarea id="payroll-sms-text" maxlength="30000" rows="4" placeholder="기본시급: 10,000원
 통상시급: 12,000원
-직책수당: 0원
-근속수당: 0원" class="sms-textarea"></textarea>
+직책: 0원" class="sms-textarea"></textarea>
         <label for="payroll-bonus-sms-text" class="sms-input-label" style="margin-top:16px">상여금 문자 (선택)</label>
         <textarea id="payroll-bonus-sms-text" maxlength="30000" rows="4" placeholder="공제율을 적용하려면 지급 합계·공제 합계 두 줄만 붙여넣으세요." class="sms-textarea"></textarea>
-        <p class="sms-privacy">이름·사번·계좌번호는 제외해 주세요. 원문은 기기에서만 인식하고 적용·닫기 시 지웁니다. 저장 항목은 시급·통상시급·직책수당·근속수당과 선택한 공제율입니다. 지급·공제 합계는 저장하지 않습니다. 로그인하여 동기화를 연결하면 저장 항목도 본인 계정에 전송됩니다. <a href="./privacy.html">저장 안내</a></p>
+        <p class="sms-privacy">이름·사번·계좌번호는 제외해 주세요. 원문은 기기에서만 인식하고 적용·닫기 시 지웁니다. 저장 항목은 시급·통상시급·직책과 선택한 공제율입니다. 지급·공제 합계는 저장하지 않습니다. 로그인하여 동기화를 연결하면 저장 항목도 본인 계정에 전송됩니다. <a href="./privacy.html">저장 안내</a></p>
         <div class="sms-actions">
             <button type="button" id="payroll-sms-apply" class="sms-primary-btn" disabled>설정 적용</button>
             <button type="button" id="payroll-sms-clear" class="sms-clear-btn">지우기</button>
@@ -2353,7 +2353,10 @@
 
             const rawBasicPay = B7 * baseHours;
             const rawDutyPay = config.dutyPay;
-            const rawSeniorityPay = config.seniorityPay;
+            const rawSeniorityPay = ShiftPlannerCore.seniorityPay(config.employmentMonth, `${currentPayDate.getFullYear()}-${String(currentPayDate.getMonth()+1).padStart(2,'0')}-15`);
+            document.getElementById('input-seniority-pay').value=rawSeniorityPay.toLocaleString('ko-KR')+'원';
+            document.getElementById('seniority-pay-setting').hidden=!(rawSeniorityPay>0);
+            document.getElementById('wage-allowance-settings').hidden=!(rawDutyPay>0||rawSeniorityPay>0);
 
             // 1/27 공제 계산 (반올림)
             const basicDeduction = Math.round(rawBasicPay * (syncedUnpaidDays / 27));
@@ -2583,6 +2586,7 @@
             document.getElementById('input-total-leave').value = getGrantedLeave(currentCalDate.getFullYear());
             document.getElementById('input-base-hourly').value = fmt(config.baseHourly) + '원';
             document.getElementById('input-ordinary-hourly').value = fmt(config.ordinaryHourly) + '원';
+            document.getElementById('input-employment-month').value=config.employmentMonth||'';
             document.getElementById('input-duty-pay').value = fmt(config.dutyPay) + '원';
             document.getElementById('input-seniority-pay').value = fmt(config.seniorityPay) + '원';
             document.getElementById('duty-pay-setting').hidden = !(config.dutyPay > 0);
@@ -2592,9 +2596,14 @@
             config.applyRetroPay = !!config.hireDate && parseInt(config.hireDate.slice(0,4),10) < 2020;
         }
 
+        function onEmploymentMonthChange() {
+            config.employmentMonth=document.getElementById('input-employment-month').value;
+            config.seniorityPay=0;
+            saveConfig();calculatePayrollFromInputs();renderCalendar();
+        }
         function applyPayrollStatement(wages) {
             const next = { ...config };
-            for (const key of ['baseHourly', 'ordinaryHourly', 'dutyPay', 'seniorityPay']) {
+            for (const key of ['baseHourly', 'ordinaryHourly', 'dutyPay']) {
                 if (Number.isSafeInteger(wages[key]) && wages[key] >= 0) next[key] = wages[key];
             }
             localStorage.setItem('shift_salary_config_master', JSON.stringify(next));
@@ -2707,19 +2716,19 @@
             checkPayslipPopup();
         };
     </script>
-    <script src="./payroll-sms.js?v=2"></script>
-    <script src="./payroll-estimate.js?v=privacy-6"></script>
+    <script src="./payroll-sms.js?v=3"></script>
+    <script src="./payroll-estimate.js?v=seniority-7"></script>
     <script src="./calendar-integration.js?v=3"></script>
     <script src="./schedule-share.js?v=2"></script>
     <script src="./google-sync-core.js?v=5"></script>
-    <script src="./account-data-core.js?v=privacy-3"></script>
+    <script src="./account-data-core.js?v=seniority-4"></script>
     <script src="./calendar-ui.js?v=7"></script>
     <script src="./today-menu.js?v=4"></script>
     <script src="./app-menu.js?v=3"></script>
     <script src="./settings-ui.js?v=5"></script>
     <script src="./account-sync.js?v=privacy-13"></script>
     <script src="./google-sync.js?v=11"></script>
-<script src="planner-core.js?v=2"></script><script src="shift-tools.js?v=6"></script>
+<script src="planner-core.js?v=3"></script><script src="shift-tools.js?v=6"></script>
 <script src="./external-calendars.js?v=3"></script>
 </body>
 </html>

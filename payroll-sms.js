@@ -10,7 +10,6 @@
             ['baseHourly', /^(?:기본시급|기준 기본시급)/, 'wage'],
             ['ordinaryHourly', /^(?:통상시급|통상임금\(시급\))/, 'wage'],
             ['dutyPay', /^(?:직책수당|직책)/, 'pay'],
-            ['seniorityPay', /^(?:근속수당|근속)/, 'pay'],
             ['income', /^(?:근로소득세|소득세)/, 'deduct'],
             ['local', /^(?:지방소득세|주민세)/, 'deduct'],
             ['pension', /^(?:국민연금|연금)/, 'deduct'],
@@ -54,7 +53,7 @@
         // Only a complete payment section establishes that an omitted allowance is absent.
         // Partial wage snippets and unreadable allowance amounts must not erase saved values.
         if (hasPaySection && Number.isSafeInteger(gross)) {
-            for (const key of ['dutyPay', 'seniorityPay']) {
+            for (const key of ['dutyPay']) {
                 if (!seenAllowances.has(key)) wages[key] = 0;
             }
         }

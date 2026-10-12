@@ -30,7 +30,7 @@
     document.getElementById('payroll-sms-open').addEventListener('click', api.open);
     document.getElementById('payroll-sms-close').addEventListener('click', () => dialog.close());
     dialog.addEventListener('close', () => { clearDraft();document.getElementById('payroll-sms-open')?.focus(); });
-    const labels = {baseHourly:'기본시급', ordinaryHourly:'통상시급', dutyPay:'직책수당', seniorityPay:'근속수당'};
+    const labels = {baseHourly:'기본시급', ordinaryHourly:'통상시급', dutyPay:'직책'};
     const fmt = value => value.toLocaleString('ko-KR') + ' 원';
     let parts = {regular:0,bonus:0,support:0}, profile = null, bonusProfile = null;
     function loadProfile(key) { try {const p=JSON.parse(localStorage.getItem(key));const minimal=minimalProfile(p);if(minimal)localStorage.setItem(key,JSON.stringify(minimal));return minimal;}catch(_){return null;} }
@@ -92,7 +92,7 @@
             const {salary,bonus}=parseDraft(),lines=[];
             if(salary) {
                 lines.push('저장할 시급·수당');
-                for(const [key,value] of Object.entries(salary.wages)) if(!['dutyPay','seniorityPay'].includes(key)||value>0)lines.push(labels[key]+': '+fmt(value));
+                for(const [key,value] of Object.entries(salary.wages)) if(!['dutyPay'].includes(key)||value>0)lines.push(labels[key]+': '+fmt(value));
                 if(salary.profile)lines.push('지급 합계: '+fmt(salary.profile.gross),'공제 합계: '+fmt(salary.profile.total),basis('급여',salary.profile));
                 status.textContent=salary.warnings.join(' ');
             }

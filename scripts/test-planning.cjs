@@ -13,9 +13,9 @@ async function call(method,url,user,body,csrf='csrf',target=run){let text;const 
 // Compare the pure preview with the actual calculator across payroll periods and hire dates.
 const fs=require('node:fs'),vm=require('node:vm'),html=fs.readFileSync(require.resolve('../index.html'),'utf8');
 const elements=new Map(),el=id=>{if(!elements.has(id))elements.set(id,{value:'',checked:false,style:{},hidden:false,innerText:'',textContent:'',classList:{add(){},remove(){},toggle(){}}});return elements.get(id)};
-const ctx={document:{getElementById:el},localStorage:{getItem(){return null},setItem(){}},Date,setTimeout(){},alert(){}};ctx.window=ctx;vm.createContext(ctx);for(const m of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))if(m[1].trim())vm.runInContext(m[1],ctx);
+const ctx={document:{getElementById:el},localStorage:{getItem(){return null},setItem(){}},Date,setTimeout(){},alert(){}};ctx.window=ctx;ctx.ShiftPlannerCore=C;vm.createContext(ctx);for(const m of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))if(m[1].trim())vm.runInContext(m[1],ctx);
 for(const month of [9,10])for(const hire of ['2017-01-01','2018-01-01','2020-01-01','2026-09-01'])for(const unpaid of [0,.5,1]){
-const cfg={baseHourly:10000,ordinaryHourly:12000,baseHours:209,dutyPay:100000,seniorityPay:50000,hireDate:hire};const c={day:7,night:8,spDay:2,spNight:1,noOT:1.5,unpaid};vm.runInContext(`config=${JSON.stringify(cfg)};currentPayDate=new Date(2026,${month},1);syncedUnpaidDays=${unpaid}`,ctx);for(const[id,v]of [['inp-day-days',c.day],['inp-night-days',c.night],['inp-daysp-days',c.spDay],['inp-nightsp-days',c.spNight],['inp-no-ot-days',c.noOT]])el(id).value=v;el('inp-bonus-check').checked=(month+1)%2===0;vm.runInContext('calculatePayrollFromInputs()',ctx);const actual=Number(el('hero-gross-pay').innerText.replace(/[^0-9]/g,''));assert.equal(C.gross(c,cfg,`2026-${month+1}-15`),actual,JSON.stringify({month,hire,unpaid}));}
+const cfg={baseHourly:10000,ordinaryHourly:12000,baseHours:209,dutyPay:100000,seniorityPay:50000,employmentMonth:hire.slice(0,7),hireDate:hire};const c={day:7,night:8,spDay:2,spNight:1,noOT:1.5,unpaid};vm.runInContext(`config=${JSON.stringify(cfg)};currentPayDate=new Date(2026,${month},1);syncedUnpaidDays=${unpaid}`,ctx);for(const[id,v]of [['inp-day-days',c.day],['inp-night-days',c.night],['inp-daysp-days',c.spDay],['inp-nightsp-days',c.spNight],['inp-no-ot-days',c.noOT]])el(id).value=v;el('inp-bonus-check').checked=(month+1)%2===0;vm.runInContext('calculatePayrollFromInputs()',ctx);const actual=Number(el('hero-gross-pay').innerText.replace(/[^0-9]/g,''));assert.equal(C.gross(c,cfg,`2026-${month+1}-15`),actual,JSON.stringify({month,hire,unpaid}));}
 console.log('PASS preview parity with existing payroll calculator (24 cases)');
 
 (async()=>{let stored,version=0,release,entered;const gate=new Promise(r=>release=r),signal=new Promise(r=>entered=r);let pause=false;
@@ -36,3 +36,11 @@ assert.equal(Number(el('stat-total').textContent.replace(/[^0-9]/g,'')),expected
 assert.equal(vm.runInContext('currentPayDate.getMonth()',ctx),10,'Statistics do not move the calculator');
 el('payroll-estimate-toggle').checked=true;vm.runInContext('openMonthStatsModal()',ctx);assert.equal(el('stat-total-label').textContent,'세후 추정 합계');assert.ok(Number(el('stat-total').textContent.replace(/[^0-9]/g,''))<expectedStats);
 console.log('PASS viewed-month statistics and correct gross/net labeling');
+
+assert.equal(C.seniorityPay('2017-12','2018-11-15'),0);
+assert.equal(C.seniorityPay('2017-12','2018-12-15'),10000);
+assert.equal(C.seniorityPay('2017-12','2024-11-15'),60000);
+assert.equal(C.seniorityPay('2017-12','2024-12-15'),70000);
+assert.equal(C.seniorityPay('2017-12','2026-12-15'),70000);
+assert.equal(C.seniorityPay('2018-01','2026-12-15'),0);
+assert.equal(C.seniorityPay('','2026-12-15'),0);
