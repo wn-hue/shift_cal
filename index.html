@@ -935,7 +935,7 @@
         <aside id="first-use-guide" class="first-use-guide" aria-labelledby="first-use-title" hidden>
             <strong id="first-use-title">내 근무표를 시작해 보세요</strong>
             <p id="first-use-copy">교대조·정규직 전환일·급여 기준을 설정하면 내 근무표와 연차·예상 급여를 확인할 수 있어요.</p>
-            <div><button type="button" onclick="SettingsUI.openMenu('group')" hidden>교대조 설정</button><button type="button" onclick="SettingsUI.openMenu('leave')">정규직 전환일 설정</button><button type="button" onclick="SettingsUI.openMenu('salary')">급여 설정</button></div>
+            <div><button type="button" onclick="SettingsUI.openMenu('group')" hidden>교대조 설정</button><button type="button" onclick="SettingsUI.openMenu('leave')">정규직 전환일 설정</button><button type="button" onclick="SettingsUI.openMenu('salary')">시급 설정</button></div>
         </aside>
         <section id="view-calendar" class="view-page active">
             <div class="calendar-month-controls" hidden></div>
@@ -1178,7 +1178,7 @@
                         <input type="text" id="input-seniority-pay" value="0원" readonly aria-describedby="wage-sms-hint">
                     </div>
                 </div>
-                <p id="wage-sms-hint" class="account-hint">하단 전체 → 급여 설정에서 급여 문자를 붙여넣어 주세요. 적용한 금액이 여기에 표시됩니다.</p>
+                <p id="wage-sms-hint" class="account-hint">하단 전체 → 시급 설정에서 급여 문자를 붙여넣어 주세요. 적용한 금액이 여기에 표시됩니다.</p>
                 <div class="btn-action-group">
                     <button class="btn-save" onclick="manualSaveData()">설정 저장</button>
                     <button class="btn-reset-data" onclick="resetDefaults()">초기화</button>
@@ -1223,7 +1223,7 @@
 
         <section class="all-shortcuts" aria-labelledby="all-shortcuts-title"><h2 id="all-shortcuts-title">내 근무 도구</h2><div class="all-shortcut-grid">
           <div id="menu-leave-settings"><button type="button" class="all-shortcut" onclick="SettingsUI.openLeave()"><span class="all-shortcut-icon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4m-9 10 3 3 5-6"/></svg></span><strong>연차 설정</strong><span class="all-shortcut-caption">잔여 <span id="quick-remain-leave">0</span>일</span></button></div>
-          <div id="menu-salary-settings"><button type="button" id="payroll-sms-open" class="all-shortcut"><span class="all-shortcut-icon lavender"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><circle cx="12" cy="12" r="3"/></svg></span><strong>급여 설정</strong><span class="all-shortcut-caption">급여 · 상여 문자</span></button></div>
+          <div id="menu-salary-settings"><button type="button" id="payroll-sms-open" class="all-shortcut"><span class="all-shortcut-icon lavender"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><circle cx="12" cy="12" r="3"/></svg></span><strong>시급 설정</strong><span class="all-shortcut-caption">급여 · 상여 문자</span></button></div>
         </div></section>
         <details class="all-account-card"><summary>계정 연결 및 동기화 안내</summary>
         <div class="all-account-details">
@@ -1239,7 +1239,7 @@
     </section>
     </div>
 
-<dialog id="app-preferences-dialog" class="app-preferences"><div class="preferences-header"><h2>앱 환경</h2><button class="override-close" aria-label="앱 환경 닫기" onclick="document.getElementById('app-preferences-dialog').close()">✕</button></div><section class="external-calendars"><h2>내 캘린더</h2><p>개인 일정을 근무표와 함께 확인하세요.</p><a class="external-connect" href="/api/google-calendar?action=login&amp;storage=1&amp;external=1">Google 캘린더 연결</a><div id="external-calendar-list"></div><p id="external-calendar-status" role="status"></p></section><section class="preferences-card"><h3>테마</h3><label>달력 스타일<select id="pref-theme"><option value="current">1</option><option value="toss">2</option><option value="gpt">3</option></select></label></section><section class="preferences-card"><h3>화면 표시</h3><label>이전 · 다음 달 근무<input type="checkbox" id="pref-adjacent" checked></label><label>공휴일 이름<input type="checkbox" id="pref-holidays" checked></label><label>달력 메모<input type="checkbox" id="pref-memos" checked></label><label>근무 배지 모양<select id="pref-shape"><option value="square">둥근 네모</option><option value="circle">원</option></select></label></section>        <section class="all-info-section" aria-labelledby="all-info-title"><h2 id="all-info-title">앱 안내</h2><div class="all-info-list">
+<dialog id="app-preferences-dialog" class="app-preferences"><div class="preferences-header"><h2>앱 환경</h2><button class="override-close" aria-label="앱 환경 닫기" onclick="document.getElementById('app-preferences-dialog').close()">✕</button></div><section class="preferences-card"><h3>테마</h3><label>달력 스타일<select id="pref-theme"><option value="current">1</option><option value="toss">2</option><option value="gpt">3</option></select></label></section><section class="preferences-card"><h3>화면 표시</h3><label>이전 · 다음 달 근무<input type="checkbox" id="pref-adjacent" checked></label><label>공휴일 이름<input type="checkbox" id="pref-holidays" checked></label><label>달력 메모<input type="checkbox" id="pref-memos" checked></label><label>근무 배지 모양<select id="pref-shape"><option value="square">둥근 네모</option><option value="circle">원</option></select></label></section><section class="external-calendars"><h2>내 캘린더</h2><p>개인 일정을 근무표와 함께 확인하세요.</p><a class="external-connect" href="/api/google-calendar?action=login&amp;storage=1&amp;external=1">Google 캘린더 연결</a><div id="external-calendar-list"></div><p id="external-calendar-status" role="status"></p></section>        <section class="all-info-section" aria-labelledby="all-info-title"><h2 id="all-info-title">앱 안내</h2><div class="all-info-list">
           <a id="iphone-alarm-guide-link" href="./iphone-alarms.html"><span>아이폰 근무 알람 · 단축어 설정</span><span aria-hidden="true">›</span></a>
           <a href="./about.html"><span>앱 소개 · 문의</span><span aria-hidden="true">›</span></a>
           <a href="./privacy.html"><span>개인정보처리방침</span><span aria-hidden="true">›</span></a>
