@@ -2,19 +2,22 @@
     'use strict';
     const rate = 0.18, storageKey = 'shift_payroll_sms_reference_v1', bonusKey = 'shift_bonus_sms_reference_v1';
     function validProfile(p) {
+        if(p?.model==='monthly-insurance')return Object.keys(p).length===6 && ['rate','taxRate','employmentRate'].every(k=>Number.isFinite(p[k])&&p[k]>=0&&p[k]<=1) && ['fixedInsurance','otherFixed'].every(k=>Number.isSafeInteger(p[k])&&p[k]>=0&&p[k]<=1000000000) && p.taxRate+p.employmentRate<=1;
         if(p && Object.keys(p).length===1 && Number.isFinite(p.rate) && p.rate>=0 && p.rate<=1)return true;
         return p && Number.isSafeInteger(p.gross) && p.gross > 0 && p.gross <= 1000000000 && Number.isSafeInteger(p.total) && p.total >= 0 && p.total <= p.gross;
     }
-    function minimalProfile(p) { return validProfile(p)?{rate:p.rate ?? p.total/p.gross}:null; }
+    function minimalProfile(p) { return validProfile(p)?p.model==='monthly-insurance'?{rate:p.rate,model:p.model,fixedInsurance:p.fixedInsurance,taxRate:p.taxRate,employmentRate:p.employmentRate,otherFixed:p.otherFixed}:{rate:p.rate ?? p.total/p.gross}:null; }
     function estimate(gross, profile = null) {
         if (!Number.isFinite(gross) || Math.abs(gross) > Number.MAX_SAFE_INTEGER) throw new RangeError('총 지급액을 확인해주세요.');
         if (profile !== null && !validProfile(profile)) throw new RangeError('공제 기준을 확인해주세요.');
         gross = Math.max(0, Math.trunc(gross));
-        const total = Math.trunc(gross * (profile ? minimalProfile(profile).rate : rate));
+        const p=minimalProfile(profile);
+        const total = p?.model==='monthly-insurance'?Math.min(gross,gross===0?0:p.fixedInsurance+p.otherFixed+Math.trunc(gross*p.taxRate+1e-7)+(p.employmentRate===0.009?Math.trunc((gross*p.employmentRate+1e-7)/10)*10:Math.trunc(gross*p.employmentRate+1e-7))):Math.trunc(gross * (p ? p.rate : rate));
         return { gross, total, net: gross - total };
     }
     function estimatePayments(parts, profile = null, bonusProfile = null) {
-        const regular = estimate(parts.regular, profile), bonus = estimate(parts.bonus, bonusProfile), support = estimate(parts.support || 0, profile);
+        let regular = estimate(parts.regular, profile), bonus = estimate(parts.bonus, bonusProfile), support = estimate(parts.support || 0, profile);
+        if(profile?.model==='monthly-insurance'){const combined=estimate(parts.regular+(parts.support||0),profile);const supportTotal=Math.max(0,combined.total-regular.gross,Math.min(combined.total,support.gross,Math.trunc(support.gross*(profile.taxRate+profile.employmentRate))));support={gross:support.gross,total:supportTotal,net:support.gross-supportTotal};regular={gross:regular.gross,total:combined.total-supportTotal,net:regular.gross-(combined.total-supportTotal)};}
         return { regular, bonus, support, gross: regular.gross + bonus.gross + support.gross,
             total: regular.total + bonus.total + support.total, net: regular.net + bonus.net + support.net };
     }
@@ -35,7 +38,7 @@
     let parts = {regular:0,bonus:0,support:0}, profile = null, bonusProfile = null;
     function loadProfile(key) { try {const p=JSON.parse(localStorage.getItem(key));const minimal=minimalProfile(p);if(minimal)localStorage.setItem(key,JSON.stringify(minimal));return minimal;}catch(_){return null;} }
     profile=loadProfile(storageKey);bonusProfile=loadProfile(bonusKey);
-    const basis = (name,p) => name + ': ' + (p ? '적용한 문자 공제율 ' + (100*minimalProfile(p).rate).toFixed(2) + '%' : '개인 기준 미등록 · 기본 공제율 18% 단순 추정');
+    const basis = (name,p) => name + ': ' + (p ? p.model==='monthly-insurance'?'월 보험료 '+fmt(p.fixedInsurance)+' · 세금 문자 비율 '+(p.taxRate*100).toFixed(2)+'% · 고용 '+(p.employmentRate*100).toFixed(2)+'%'+(p.otherFixed?' · 기타 월 공제 '+fmt(p.otherFixed):''):'적용한 문자 공제율 ' + (100*minimalProfile(p).rate).toFixed(2) + '%' : '개인 기준 미등록 · 기본 공제율 18% 단순 추정');
     function render() {
         panel.hidden = !toggle.checked;
         document.getElementById('payroll-estimate-state').textContent = toggle.checked ? 'ON' : 'OFF';
@@ -78,7 +81,7 @@
     };
     function parseDraft() {
         const salary=text.value.trim()?root.PayrollSMS.parse(text.value):null;
-        const bonus=bonusText.value.trim()?root.PayrollSMS.parse(bonusText.value):null;
+        const bonus=bonusText.value.trim()?root.PayrollSMS.parse(bonusText.value,{kind:'bonus'}):null;
         if(!salary&&!bonus)throw new Error('급여 또는 상여 문자를 붙여넣어 주세요.');
         if(salary?.profile&&!validProfile(salary.profile))throw new Error('급여 지급·공제 합계를 확인해 주세요.');
         if(bonus?.profile&&!validProfile(bonus.profile))throw new Error('상여 지급·공제 합계를 확인해 주세요.');
@@ -93,7 +96,7 @@
             if(salary) {
                 lines.push('저장할 시급·수당');
                 for(const [key,value] of Object.entries(salary.wages)) if(!['dutyPay'].includes(key)||value>0)lines.push(labels[key]+': '+fmt(value));
-                if(salary.profile)lines.push('지급 합계: '+fmt(salary.profile.gross),'공제 합계: '+fmt(salary.profile.total),basis('급여',salary.profile));
+                if(salary.profile){if(salary.profile.model==='monthly-insurance')lines.push(basis('급여',salary.profile));else lines.push('지급 합계: '+fmt(salary.profile.gross),'공제 합계: '+fmt(salary.profile.total),basis('급여',salary.profile));}
                 status.textContent=salary.warnings.join(' ');
             }
             if(bonus)lines.push('\n상여 공제 기준','지급 합계: '+fmt(bonus.profile.gross),'공제 합계: '+fmt(bonus.profile.total),basis('상여',bonus.profile));

@@ -30,3 +30,21 @@ console.log('Payroll SMS: aliases, sections, Unicode totals, conflicts, partial 
 
 assert.equal(parse('기본시급 11,050\n자격 10,000\n직무 20,000\n가족 30,000\n직책 70,000\n근속 70,000').wages.dutyPay,130000);
 assert.throws(()=>parse('직책 70,000\n직책 80,000'));
+
+// Anonymous financial fixture only: no identifying fields or original user message.
+const assessed='지급내역\n소계(ⓐ) 4,400,900\n공제내역\n근로소득세 276,320\n지방소득세 27,630\n연금 248,560 법정요율\n건강 215,800 법정요율\n고용 39,600 법정요율\n소계(ⓑ) 807,910';
+const monthly=parse(assessed).profile;
+assert.equal(monthly.model,'monthly-insurance');assert.equal(monthly.fixedInsurance,464360);assert.equal(monthly.employmentRate,0.009);
+assert.equal(estimate(4400900,monthly).total,807910);assert.equal(estimate(4400900,monthly).net,3592990);
+assert.equal(estimate(5000000,monthly).total,464360+Math.trunc(5000000*monthly.taxRate)+45000);
+assert.equal(parse(assessed,{kind:'bonus'}).profile.model,undefined,'Bonus must not acquire salary monthly insurance');
+assert.equal(parse(assessed.replace('39,600','30,000')).profile.employmentRate,30000/4400900,'Different taxable insurance base must retain observed ratio');
+const minimal=require('../payroll-estimate.js').minimalProfile(monthly);
+assert.deepEqual(require('../account-data-core.js').normalize({shift_payroll_sms_reference_v1:minimal}).shift_payroll_sms_reference_v1,minimal);
+const payments=require('../payroll-estimate.js').estimatePayments;
+const withSupport=payments({regular:4000000,support:400900,bonus:0},monthly);
+assert.equal(withSupport.total,807910,'Monthly assessment deducted once across salary and support');
+for(const amounts of [{regular:0,support:100000,bonus:0},{regular:10000,support:10000,bonus:0},{regular:0,support:0,bonus:0}]){
+ const x=payments(amounts,monthly);assert.ok(x.regular.net>=0&&x.support.net>=0);assert.equal(x.gross,x.total+x.net);
+}
+assert.throws(()=>require('../account-data-core.js').normalize({shift_bonus_sms_reference_v1:minimal}));

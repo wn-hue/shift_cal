@@ -29,7 +29,8 @@
                     safe[k] = v;
                 }
             } else if (['shift_payroll_sms_reference_v1','shift_bonus_sms_reference_v1'].includes(key)) {
-                if (Object.keys(value).length === 1 && Number.isFinite(value.rate) && value.rate >= 0 && value.rate <= 1) safe.rate=value.rate;
+                if(value.model==='monthly-insurance'){if(key!=='shift_payroll_sms_reference_v1'||Object.keys(value).length!==6||Object.keys(value).some(k=>!['rate','model','fixedInsurance','taxRate','employmentRate','otherFixed'].includes(k))||!['rate','taxRate','employmentRate'].every(k=>Number.isFinite(value[k])&&value[k]>=0&&value[k]<=1)||!['fixedInsurance','otherFixed'].every(k=>Number.isSafeInteger(value[k])&&value[k]>=0&&value[k]<=1000000000)||value.taxRate+value.employmentRate>1)throw Error('공제 기준을 확인하세요.');Object.assign(safe,value);}
+                else if (Object.keys(value).length === 1 && Number.isFinite(value.rate) && value.rate >= 0 && value.rate <= 1) safe.rate=value.rate;
                 else {
                     if (Object.keys(value).some(k => !['gross','total'].includes(k)) || !Number.isSafeInteger(value.gross) || value.gross <= 0 || value.gross > 1000000000 || !Number.isSafeInteger(value.total) || value.total < 0 || value.total > value.gross) throw Error('공제 기준을확인하세요.');
                     safe.rate = value.total / value.gross;
