@@ -1,3 +1,38 @@
 .identity-card,.external-calendars{background:var(--surface,#fff);border:1px solid var(--theme-line,#edf0f3);border-radius:20px;padding:20px;margin-bottom:18px}.identity-heading{display:flex;gap:12px;align-items:center}.identity-heading img{border-radius:12px}.identity-card h2,.external-calendars h2{font-size:18px;margin:0 0 6px}.identity-card p,.external-calendars p{font-size:13px;color:var(--text-sub,#717680);line-height:1.6}.identity-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.identity-buttons .account-login{position:static!important;display:inline-flex;align-items:center;min-height:44px;max-width:none!important;width:auto!important;transform:none!important;overflow:visible!important}.identity-buttons .google-login-image{width:180px!important;height:40px!important;max-width:none!important}.apple-signin{display:flex;gap:9px;align-items:center;justify-content:center;background:#000;color:#fff!important;text-decoration:none;font-size:14px;font-weight:500;border-radius:6px;padding:0 16px;min-height:40px}.identity-actions{display:flex;gap:8px;margin-top:12px}.identity-note{margin-bottom:0}.external-connect{display:inline-block;color:var(--accent,#356c87);font-size:14px;font-weight:600;padding:10px 0;text-decoration:none;cursor:pointer}.external-calendar-row{display:flex;align-items:center;gap:9px;font-size:14px;padding:11px 0}.external-calendar-row input{width:20px;height:20px;accent-color:var(--accent,#356c87)}.external-dot{width:10px;height:10px;border-radius:50%;flex:none}.external-event{font-size:9px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:2px solid #5385bd;margin:3px 0 0;padding-left:3px;color:var(--theme-text,#404650)}.external-calendars summary{font-size:14px;cursor:pointer;padding:12px 0}.identity-buttons [hidden],.identity-actions [hidden]{display:none!important}
 
 .apple-signin[aria-disabled="true"]{opacity:.55;cursor:default}.identity-actions{flex-wrap:wrap}.identity-heading p{overflow-wrap:anywhere}.external-calendars #external-calendar-status{font-size:12px}
+
+/* A quiet menu: account header, compact group row, then two useful actions. */
+#view-all .all-topline{margin-bottom:22px}
+#view-all .identity-card{border:0;border-radius:0;background:transparent;padding:0 0 22px;margin:0 0 22px;border-bottom:1px solid var(--theme-line)}
+#view-all .identity-heading img{width:40px;height:40px;border-radius:11px}
+#view-all .identity-heading h2{font-size:17px;font-weight:600;margin-bottom:4px}
+#view-all .identity-heading p{margin:0;font-size:12px}
+#view-all .identity-buttons{gap:8px;margin-top:16px}
+#view-all .identity-buttons .google-login-image{width:158px!important;height:auto!important}
+#view-all .apple-signin{font-size:13px;padding:0 12px;min-height:36px}
+#view-all .identity-note{font-size:11px;margin:10px 0 0}
+#view-all .identity-note:empty,#view-all .identity-actions:not(:has(button:not([hidden]))){display:none}
+#view-all .sync-feedback[data-state="info"]{font-size:11px;color:var(--text-sub);margin:8px 0 0}
+#view-all .identity-actions button{font-size:12px;padding:8px 10px;min-height:36px;width:auto;flex:none}
+#view-all .all-settings-section{margin-bottom:28px}
+#view-all .all-settings-card{padding:12px 14px;border-radius:12px;border:0}
+#view-all .all-shortcuts h2{font-size:12px;font-weight:500;color:var(--text-sub);margin-bottom:10px}
+#view-all .all-shortcut-grid{display:flex;flex-direction:column;gap:0}
+#view-all .all-shortcut{display:flex;align-items:center;gap:12px;min-height:64px;padding:12px 0;background:transparent;border:0;border-bottom:1px solid var(--theme-line);border-radius:0;text-align:left}
+#view-all .all-shortcut strong{font-size:15px;font-weight:500;flex:1}
+#view-all .all-shortcut-icon{width:34px;height:34px;border-radius:10px;flex:none}
+#view-all .all-shortcut-caption{font-size:12px;color:var(--text-sub);margin:0}
+#view-all .all-account-card{margin:24px 0 0;background:transparent}
+#view-all .all-account-card summary{font-size:12px}
+.app-preferences .external-calendars{border:0;border-radius:16px;padding:16px;margin:0 0 18px;background:var(--surface)}
+.app-preferences .external-calendars h2{font-size:14px;font-weight:600}
+.app-preferences .external-calendars p{margin:6px 0;font-size:12px}
+.app-preferences .external-connect{display:block;padding:12px 0 4px;font-size:14px}
+#view-all .all-shortcut{flex-direction:row;text-align:left;justify-content:flex-start}
+#view-all .all-shortcut strong{width:auto;text-align:left;margin:0}
+#view-all .all-shortcut-caption{width:auto;text-align:right;flex:none}
+#view-all .all-shortcut-icon{margin:0}
+#view-all .all-settings-card .group-select-wrapper{width:110px}
+#view-all .all-settings-card .group-select{font-size:13px}
+body[data-view="all"] .app-header{display:none}
