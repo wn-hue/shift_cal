@@ -407,7 +407,7 @@ struct WorkStatisticsView: View {
                     Divider()
                     VStack(alignment:.leading,spacing:16) {
                         Text("예상 급여").font(.subheadline.weight(.semibold))
-                        Text("급여 설정과 계산은 웹에서 확인할 수 있어요.").font(.caption).foregroundStyle(.secondary)
+                        Text("시급 설정과 급여 계산은 웹에서 확인할 수 있어요.").font(.caption).foregroundStyle(.secondary)
                         Link(destination:URL(string:"https://h-lyart-ten.vercel.app/")!) {
                             HStack { Text("급여 계산기 열기");Spacer();Image(systemName:"chevron.right") }
                                 .font(.subheadline.weight(.medium)).padding(14)
@@ -445,13 +445,13 @@ struct AppPreferencesView:View {
     @State private var connectingCalendars=false
     var body:some View {
         List {
-            Section("내 캘린더") { Button { connectingCalendars=true } label: { Label("iCloud · Google 일정 표시",systemImage:"calendar.badge.plus").foregroundStyle(AppTheme.accent) } }
             Section("테마") { Picker("달력 스타일",selection:$theme) { Text("1").tag("current");Text("2").tag("toss");Text("3").tag("gpt") } }
             Section("화면 표시") {
                 Toggle("공휴일 이름",isOn:$holidays)
                 Toggle("달력 메모",isOn:$memos)
                 Toggle("원형 근무 배지",isOn:$circle)
             }
+            Section("내 캘린더") { Button { connectingCalendars=true } label: { Label("iCloud · Google 일정 표시",systemImage:"calendar.badge.plus").foregroundStyle(AppTheme.accent) } }
             Section("앱 정보") {
                 Text("Shift_cal 1.0 · iOS 26 이상")
                 NavigationLink("도움말 및 문의") { SupportView() }
