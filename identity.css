@@ -36,3 +36,5 @@
 #view-all .all-settings-card .group-select-wrapper{width:110px}
 #view-all .all-settings-card .group-select{font-size:13px}
 body[data-view="all"] .app-header{display:none}
+
+.wage-trial-tabs{display:flex;gap:4px;background:var(--surface-soft);border-radius:12px;padding:4px;margin:16px 0}.wage-trial-tabs button{flex:1;border:0;background:transparent;color:var(--text-sub);padding:12px;border-radius:9px;font:inherit}.wage-trial-tabs button[aria-selected="true"]{background:var(--accent);color:white}.wage-trial-values{margin:20px 0}.wage-trial-values div{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--theme-line)}.wage-trial-values dd{margin:0;font-weight:600}#wage-trial-table select{width:100%;margin:8px 0 16px;padding:12px;border-radius:10px;border:1px solid var(--theme-line);background:var(--surface);color:var(--theme-text)}
