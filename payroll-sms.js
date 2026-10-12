@@ -3,13 +3,16 @@
     const deductionKeys = ['income', 'local', 'pension', 'health', 'employment', 'care'];
     function parse(text) {
         if (typeof text !== 'string' || text.length > 30000) throw new Error('문자는 30,000자 이내로 붙여넣어주세요.');
-        const wages = {}, deductions = {}, warnings = [];
+        const wages = {}, deductions = {}, warnings = [], fixedAllowances = {};
         let section = '', gross, statedTotal, hasPaySection = false;
         const seenAllowances = new Set();
         const definitions = [
             ['baseHourly', /^(?:기본시급|기준 기본시급)/, 'wage'],
             ['ordinaryHourly', /^(?:통상시급|통상임금\(시급\))/, 'wage'],
-            ['dutyPay', /^(?:직책수당|직책)/, 'pay'],
+            ['duty', /^(?:직책수당|직책)/, 'fixed'],
+            ['qualification', /^(?:자격수당|자격)/, 'fixed'],
+            ['job', /^(?:직무수당|직무)/, 'fixed'],
+            ['family', /^(?:가족수당|가족)/, 'fixed'],
             ['income', /^(?:근로소득세|소득세)/, 'deduct'],
             ['local', /^(?:지방소득세|주민세)/, 'deduct'],
             ['pension', /^(?:국민연금|연금)/, 'deduct'],
@@ -41,13 +44,14 @@
             }
             for (const [key, pattern, kind] of definitions) {
                 const m = line.match(pattern);
-                if (!m || (kind === 'pay' && section === 'deduct')) continue;
-                if (kind === 'pay') seenAllowances.add(key);
+                if (!m || (['pay','fixed'].includes(kind) && section === 'deduct')) continue;
+                if (kind === 'fixed') seenAllowances.add('dutyPay');
                 const rest = line.slice(m[0].length).replace(/^\s*[:：]\s*/, '');
                 const value = amount(rest.trim() ? rest : (lines[i + 1] || ''));
-                if (value !== null) assign(kind === 'deduct' ? deductions : wages, key, value);
+                if (value !== null) assign(kind === 'deduct' ? deductions : kind === 'fixed' ? fixedAllowances : wages, key, value);
             }
         }
+        if(Object.keys(fixedAllowances).length)wages.dutyPay=Object.values(fixedAllowances).reduce((sum,n)=>sum+n,0);
         gross = totals.pay;
         statedTotal = totals.deduct;
         // Only a complete payment section establishes that an omitted allowance is absent.

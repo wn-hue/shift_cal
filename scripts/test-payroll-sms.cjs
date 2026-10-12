@@ -27,3 +27,6 @@ assert.equal(parse(sample.replace(/\n/g,'\r\n')).profile.total,300000);
 assert.throws(() => parse('x'.repeat(30001)));
 assert.ok(!JSON.stringify(result).includes('사번'));
 console.log('Payroll SMS: aliases, sections, Unicode totals, conflicts, partial input and calibrated estimates passed.');
+
+assert.equal(parse('기본시급 11,050\n자격 10,000\n직무 20,000\n가족 30,000\n직책 70,000\n근속 70,000').wages.dutyPay,130000);
+assert.throws(()=>parse('직책 70,000\n직책 80,000'));

@@ -30,12 +30,12 @@
     document.getElementById('payroll-sms-open').addEventListener('click', api.open);
     document.getElementById('payroll-sms-close').addEventListener('click', () => dialog.close());
     dialog.addEventListener('close', () => { clearDraft();document.getElementById('payroll-sms-open')?.focus(); });
-    const labels = {baseHourly:'기본시급', ordinaryHourly:'통상시급', dutyPay:'직책'};
+    const labels = {baseHourly:'기본시급', ordinaryHourly:'통상시급', dutyPay:'자격·직무·가족·직책 (고정수당)'};
     const fmt = value => value.toLocaleString('ko-KR') + ' 원';
     let parts = {regular:0,bonus:0,support:0}, profile = null, bonusProfile = null;
     function loadProfile(key) { try {const p=JSON.parse(localStorage.getItem(key));const minimal=minimalProfile(p);if(minimal)localStorage.setItem(key,JSON.stringify(minimal));return minimal;}catch(_){return null;} }
     profile=loadProfile(storageKey);bonusProfile=loadProfile(bonusKey);
-    const basis = (name,p) => name + ': ' + (p ? '적용한 문자 공제율 ' + (100*minimalProfile(p).rate).toFixed(2) + '%' : '기본 예상 공제율 18% (문자 기준 없음)');
+    const basis = (name,p) => name + ': ' + (p ? '적용한 문자 공제율 ' + (100*minimalProfile(p).rate).toFixed(2) + '%' : '개인 기준 미등록 · 기본 공제율 18% 단순 추정');
     function render() {
         panel.hidden = !toggle.checked;
         document.getElementById('payroll-estimate-state').textContent = toggle.checked ? 'ON' : 'OFF';
