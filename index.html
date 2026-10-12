@@ -1406,7 +1406,7 @@
           
           <div class="stats-row"><span>월 급여</span><strong id="stat-salary"></strong></div>
           <div class="stats-row"><span id="stat-bonus-label">상여금</span><strong id="stat-bonus"></strong></div>
-          <div class="stats-row stats-total"><span>세전 합계</span><strong id="stat-total"></strong></div>
+          <div class="stats-row stats-total"><span id="stat-total-label">세전 합계</span><strong id="stat-total"></strong></div>
         </section><section class="stats-section"><div class="stats-row"><span>급여 기간 사용 연차</span><strong id="modal-pill-leave"></strong></div><div class="stats-row"><span>잔여 연차</span><strong id="stat-remaining"></strong></div></section>
       </div>
     </div>
@@ -1928,8 +1928,15 @@
             document.getElementById('stat-daysp').textContent=counts.specialDay+'일';
             document.getElementById('stat-nightsp').textContent=counts.specialNight+'일';
             const configured=Number(config.ordinaryHourly)>0;
-            const sameMonth=currentPayDate.getFullYear()===year && currentPayDate.getMonth()===month;
-            for(const [target,source] of [['stat-salary','hero-regular-pay'],['stat-bonus','hero-bonus-pay'],['stat-total','hero-gross-pay']])document.getElementById(target).textContent=configured && sameMonth ? document.getElementById(source).innerText : '설정 필요';
+            const parts=ShiftPlannerCore.payments(ShiftPlannerCore.counts(ShiftPlannerCore.range(startStr,endStr).map(k=>getActualShift(ShiftPlannerCore.date(k),currentGroup))),config,endStr);
+            const estimated=document.getElementById('payroll-estimate-toggle').checked;
+            const result=window.PayrollEstimate?.forParts(parts);
+            const salary=estimated&&result?result.regular.net:parts.regular;
+            const bonus=estimated&&result?result.bonus.net+result.support.net:parts.bonus+parts.support;
+            document.getElementById('stat-salary').textContent=configured?fmt(salary)+'원':'설정 필요';
+            document.getElementById('stat-bonus').textContent=configured?fmt(bonus)+'원':'설정 필요';
+            document.getElementById('stat-total').textContent=configured?fmt(salary+bonus)+'원':'설정 필요';
+            document.getElementById('stat-total-label').textContent=estimated?'세후 추정 합계':'세전 합계';
             document.getElementById('stat-bonus-label').textContent=ShiftPlannerCore.isUnderOneYear(config.hireDate,endStr)?'지원금':'상여금';
             document.getElementById('stat-remaining').textContent=config.hireDate ? document.getElementById('stat-remain-leave').innerText : '정규직 전환일 설정 필요';
             document.getElementById('modal-month-stats').classList.add('active');
@@ -2703,7 +2710,7 @@
         };
     </script>
     <script src="./payroll-sms.js?v=2"></script>
-    <script src="./payroll-estimate.js?v=5"></script>
+    <script src="./payroll-estimate.js?v=6"></script>
     <script src="./calendar-integration.js?v=3"></script>
     <script src="./schedule-share.js?v=2"></script>
     <script src="./google-sync-core.js?v=5"></script>
@@ -2712,10 +2719,10 @@
     <script src="./today-menu.js?v=4"></script>
     <script src="./app-menu.js?v=3"></script>
     <script src="./settings-ui.js?v=5"></script>
-    <script src="./account-sync.js?v=10"></script>
+    <script src="./account-sync.js?v=13"></script>
     <script src="./google-sync.js?v=11"></script>
-<script src="planner-core.js?v=1"></script><script src="shift-tools.js?v=5"></script>
-<script src="./external-calendars.js?v=2"></script>
+<script src="planner-core.js?v=2"></script><script src="shift-tools.js?v=6"></script>
+<script src="./external-calendars.js?v=3"></script>
 </body>
 </html>
 

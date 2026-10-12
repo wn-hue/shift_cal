@@ -2,7 +2,7 @@
     'use strict';
     const C=AccountDataCore, $=id=>document.getElementById(id);
     const ownerKey='shift_account_owner_v1', basePrefix='shift_account_base_v1_', cachePrefix='shift_account_cache_v1_';
-    let auth=null, baseline=null, parents=[], busy=false, suppressed=false, timer=null, pending=null, epoch=0;
+    let auth=null, baseline=null, parents=[], busy=false, suppressed=false, timer=null, pending=null, epoch=0, renderedOwner;
     const api=window.AccountSync={ready:false,changed,sessionChanged:init,disconnected,prepareLogout};
     function openManager() {
         switchView('all');
@@ -43,6 +43,8 @@
     }
     function renderAuth() {
         const connected=!!auth?.connected;
+        const owner=connected?auth.user.id:null;
+        if(owner!==renderedOwner){renderedOwner=owner;if(typeof CustomEvent==='function')window.dispatchEvent(new CustomEvent('shift-account-changed',{detail:{owner}}));}
         $('account-email').textContent=connected?auth.user.email:'로그인하면 다른 기기에서도 이어서 사용할 수 있습니다.';
         $('account-login').hidden=!!auth?.cloudConnected;
         if($('apple-login'))$('apple-login').hidden=connected;
@@ -86,7 +88,7 @@
         for(const version of versions) {
             const button=document.createElement('button');button.type='button';button.className='sms-primary-btn';
             const date=new Date(version.updatedAt);
-            button.textContent='구글 저장 데이터 사용'+(Number.isFinite(date.getTime())?' · '+date.toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}):'');
+            button.textContent='계정 저장 데이터 사용'+(Number.isFinite(date.getTime())?' · '+date.toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}):'');
             button.addEventListener('click',()=>resolve(version.data));choices.append(button);
         }
         if(!$('account-conflict-dialog').open)$('account-conflict-dialog').showModal();
@@ -154,7 +156,7 @@
             status('동기화 실패 · '+(e.message||'기기 데이터는 유지됩니다.'),'error');
             $('account-setup-help').hidden=e.code!=='DRIVE_SETUP';
             if(e.status>=400 && e.status<500)api.ready=false;
-            if(['RECONNECT','DRIVE_PERMISSION'].includes(e.code)){$('account-login').hidden=false;$('account-login').setAttribute('aria-label','Google 계정 다시 연결');}
+            if(['RECONNECT','DRIVE_PERMISSION'].includes(e.code)){const apple=auth?.provider==='apple';const login=$(apple?'apple-login':'account-login');if(login){login.hidden=false;login.setAttribute('aria-label',apple?'Apple 계정 다시 연결':'Google 계정 다시 연결');}}
             if(e.code==='CLOUD_CONFLICT') {clearTimeout(timer);timer=setTimeout(sync,1000);}
         } finally {
             setBusy(false);

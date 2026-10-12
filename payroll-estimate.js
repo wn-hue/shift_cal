@@ -63,6 +63,7 @@
         document.getElementById('estimate-total').textContent = fmt(result.total);
         document.getElementById('estimate-net').textContent = fmt(result.net);
     }
+    api.forParts = breakdown => estimatePayments(breakdown,profile,bonusProfile);
     api.update = (gross, breakdown) => { parts=breakdown || {regular:gross,bonus:0,support:0}; render(); };
     api.reloadReference = () => {profile=loadProfile(storageKey);bonusProfile=loadProfile(bonusKey);render();};
     toggle.checked = false; toggle.addEventListener('change', render);

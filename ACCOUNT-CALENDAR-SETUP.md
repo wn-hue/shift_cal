@@ -35,3 +35,20 @@ Apple 웹 로그인은 기본 앱과 연결된 Services ID를 사용합니다. �
 
 ## 수정이 반영되는 공유 링크
 웹과 iOS 모두 로그인 후 선택한 조·월의 같은 링크를 재사용합니다. 근무를 저장하면 활성 링크를 갱신하며 인터넷 연결이 필요합니다. 급여·메모·외부 캘린더는 링크에 포함하지 않습니다. 공유받은 화면은 60초마다 또는 다시 열 때 최신 내용을 읽습니다. 이미지 공유는 그대로 제공하며 캘린더 파일 보내기는 제거했습니다.
+
+## 2026-10-12 Apple 설정 점검 결과
+운영 서버에는 APPLE_CLIENT_ID, APPLE_TEAM_ID, APPLE_KEY_ID, APPLE_PRIVATE_KEY 네 항목이 모두 없습니다. Apple 로그인 코드는 있으나 실제 로그인은 아직 활성화되지 않았습니다. 사용자의 Apple Developer 계정 멤버십 화면에는 접근하지 않았으므로 가입 상태를 직접 확인한 것은 아닙니다.
+
+개발자 가입 승인 후 다음 순서로 등록합니다.
+1. 기본 App ID: iOS 프로젝트의 Bundle ID인 `com.wnhue.shiftcal.alarms`를 등록하고 Sign in with Apple을 활성화합니다.
+2. Services ID: 웹 로그인용 고유 식별자를 새로 등록하고 위 App ID와 연결합니다. 예: `com.wnhue.shiftcal.web` (예시이며 등록된 ID가 아닙니다). 이 값이 APPLE_CLIENT_ID입니다.
+3. 도메인: `h-lyart-ten.vercel.app`
+4. Return URL: `https://h-lyart-ten.vercel.app/api/apple-account?action=callback`
+5. Keys에서 Sign in with Apple용 키를 만들고 같은 기본 App ID에 연결합니다. Key ID는 APPLE_KEY_ID, 내려받은 .p8 내용은 APPLE_PRIVATE_KEY입니다. .p8은 공개 저장소나 채팅에 붙여넣지 말고 서버 비밀 환경 변수로 넣습니다.
+6. Membership에서 Team ID를 확인해 APPLE_TEAM_ID에 설정합니다.
+7. 서버 환경 변수 설정과 재배포 후 실제 Apple 계정 로그인·웹/iOS 반환·동기화·로그아웃·계정 데이터 삭제를 확인합니다.
+
+앱 서명용 인증서와 Apple 로그인용 .p8 키는 별개입니다. iOS 앱의 기본 캘린더 읽기(EventKit)는 Apple 로그인 키와 무관합니다.
+
+공식 절차: https://developer.apple.com/help/account/capabilities/configure-sign-in-with-apple-for-the-web/
+로그인 키 발급: https://developer.apple.com/help/account/capabilities/create-a-sign-in-with-apple-private-key/

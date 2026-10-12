@@ -28,3 +28,11 @@ assert.equal(C.isUnderOneYear('2026-10-16','2026-10-15'),false);
 assert.equal(C.isUnderOneYear('', '2026-10-15'),false);
 assert.equal(C.isUnderOneYear('2024-02-29','2025-03-01'),false);
 console.log('PASS regular conversion anniversary/support boundary');
+// Statistics must calculate the viewed period even if the calculator is on another month.
+ctx.ShiftPlannerCore=C;ctx.PayrollEstimate={forParts:p=>require('../payroll-estimate.js').estimatePayments(p)};
+vm.runInContext('currentCalDate=new Date(2026,11,1);currentPayDate=new Date(2026,10,1);openMonthStatsModal()',ctx);
+const expectedStats=vm.runInContext("ShiftPlannerCore.gross(ShiftPlannerCore.counts(ShiftPlannerCore.range('2026-11-16','2026-12-15').map(k=>getActualShift(ShiftPlannerCore.date(k),currentGroup))),config,'2026-12-15')",ctx);
+assert.equal(Number(el('stat-total').textContent.replace(/[^0-9]/g,'')),expectedStats);
+assert.equal(vm.runInContext('currentPayDate.getMonth()',ctx),10,'Statistics do not move the calculator');
+el('payroll-estimate-toggle').checked=true;vm.runInContext('openMonthStatsModal()',ctx);assert.equal(el('stat-total-label').textContent,'세후 추정 합계');assert.ok(Number(el('stat-total').textContent.replace(/[^0-9]/g,''))<expectedStats);
+console.log('PASS viewed-month statistics and correct gross/net labeling');

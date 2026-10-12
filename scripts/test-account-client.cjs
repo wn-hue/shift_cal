@@ -4,10 +4,10 @@ const clone=x=>JSON.parse(JSON.stringify(x)), blank=C.normalize({});
 const memo=x=>C.normalize({shift_day_memos:x});
 const version=(data)=>({revision:crypto.randomUUID().replace(/-/g,''),updatedAt:new Date().toISOString(),data:clone(data)});
 const flush=async()=>{for(let n=0;n<12;n++)await new Promise(resolve=>setImmediate(resolve));};
-function device(server,{local={},user='A',connected=true,cloudConnected=true}={}) {
+function device(server,{local={},user='A',connected=true,cloudConnected=true,provider='google'}={}) {
     const saved=new Map(Object.entries(local)),elements=new Map(),events={},timers=new Map();let timerId=0;
     function element(id){if(!elements.has(id))elements.set(id,{textContent:'',hidden:false,open:false,attributes:{},setAttribute(k,v){this.attributes[k]=v},handlers:{},children:[],addEventListener(k,f){this.handlers[k]=f;},replaceChildren(){this.children=[];},append(x){this.children.push(x);},close(){this.open=false;},showModal(){this.open=true;}});return elements.get(id);}
-    const d={user,connected,cloudConnected,disabled:false,beforeWrite:null,calls:[],saved,element};
+    const d={user,connected,cloudConnected,provider,disabled:false,reconnect:false,beforeWrite:null,calls:[],saved,element};
     const ctx={AccountDataCore:C,navigator:{onLine:true},crypto,URLSearchParams,Date,console,location:{search:''},switchView:v=>{d.view=v;},
         localStorage:{getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(k,String(v)),removeItem:k=>saved.delete(k)},
         document:{hidden:false,getElementById:element,createElement:()=>element('new'+Math.random()),addEventListener:(k,f)=>events[k]=f},
@@ -17,8 +17,9 @@ function device(server,{local={},user='A',connected=true,cloudConnected=true}={}
         fetch:async(url,options)=>{
             const action=new URL(url,'https://shift.example').searchParams.get('action');d.calls.push(action);
             const result=(body,status=200)=>({ok:status===200,status,json:async()=>clone(body)});
-            if(action==='status')return result({connected:d.connected,cloudConnected:d.cloudConnected,user:{id:d.user,email:d.user+'@example.com'},csrf:d.user+'-csrf'});
+            if(action==='status')return result({connected:d.connected,cloudConnected:d.cloudConnected,provider:d.provider,user:{id:d.user,email:d.user+'@example.com'},csrf:d.user+'-csrf'});
             if(action==='logout'){d.connected=false;d.cloudConnected=false;return result({ok:true});}
+            if(d.reconnect)return result({error:'RECONNECT',message:'Reconnect'},401);
             if(d.disabled)return result({error:'DRIVE_SETUP',message:'Enable Google Drive API'},403);
             if(options.headers['X-Shift-CSRF']!==d.user+'-csrf')return result({error:'CSRF'},403);
             if(action==='cloud-read')return result({versions:server[d.user]||[]});
@@ -38,6 +39,7 @@ function device(server,{local={},user='A',connected=true,cloudConnected=true}={}
     d.timers=timers;return d;
 }
 async function run(){
+    const expiredApple=device({}, {provider:'apple'});await expiredApple.start();expiredApple.reconnect=true;await expiredApple.click('account-sync-now');assert.equal(expiredApple.element('apple-login').hidden,false);assert.equal(expiredApple.element('apple-login').attributes['aria-label'],'Apple 계정 다시 연결');
     const server={A:[version(memo({'2026-10-01':'original'}))],B:[version(memo({'2026-10-09':'other account'}))]};
     const a=device(server),b=device(server);await a.start();await b.start();
     const callback=device({});callback.ctx.location.search='?cloud=connected';await callback.start();
