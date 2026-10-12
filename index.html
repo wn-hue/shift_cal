@@ -1350,18 +1350,22 @@
 
     <dialog id="payroll-sms-dialog" class="sms-dialog" aria-labelledby="payroll-sms-title">
         <div class="sms-dialog-header">
-            <div><h2 id="payroll-sms-title">시급 설정</h2><p>필요한 금액이 있는 줄만 복사해 주세요.</p></div>
+            <div><h2 id="payroll-sms-title">시급 설정</h2><p>문자 입력과 세후 추정은 선택사항입니다.</p></div>
             <button type="button" id="payroll-sms-close" class="sms-close-btn" aria-label="급여 문자 설정 닫기">×</button>
         </div>
-        <label for="payroll-sms-text" class="sms-input-label">급여문자 확인</label>
+        <label for="payroll-sms-text" class="sms-input-label">급여문자 확인 (선택)</label>
+        <p class="sms-privacy">시급·고정수당만 확인하거나, 세금·보험료 공제 추정까지 선택할 수 있습니다.</p>
+        <label class="sms-privacy"><input type="checkbox" id="payroll-salary-estimate-choice"> 급여 세후 추정도 설정 (선택 · 문자 원문 붙여넣기)</label>
         <textarea id="payroll-sms-text" maxlength="30000" rows="4" placeholder="기본시급: 10,000원
 통상시급: 12,000원
 자격: 0원
 직무: 0원
 가족: 0원
 직책: 0원" class="sms-textarea"></textarea>
-        <label for="payroll-bonus-sms-text" class="sms-input-label" style="margin-top:16px">상여금 문자 (선택)</label>
-        <textarea id="payroll-bonus-sms-text" maxlength="30000" rows="4" placeholder="공제율을 적용하려면 지급 합계·공제 합계 두 줄만 붙여넣으세요." class="sms-textarea"></textarea>
+        <label for="payroll-bonus-sms-text" class="sms-input-label" style="margin-top:16px">상여금 문자 확인 (선택)</label>
+        <p class="sms-privacy">상여금은 기존 지급 기준으로 계산합니다. 개인 공제율을 적용하려는 경우에만 문자를 입력하세요.</p>
+        <label class="sms-privacy"><input type="checkbox" id="payroll-bonus-estimate-choice"> 상여금 세후 추정도 설정 (선택 · 문자 원문 붙여넣기)</label>
+        <textarea id="payroll-bonus-sms-text" maxlength="30000" rows="4" disabled placeholder="세후 추정을 선택한 뒤 상여금 문자를 붙여넣으세요. 지급 합계·공제 합계 두 줄만으로도 설정할 수 있습니다." class="sms-textarea"></textarea>
         <p class="sms-privacy">이름·사번·계좌번호는 제외해 주세요. 원문은 기기에서만 인식하고 적용·닫기 시 지웁니다. 저장 항목은 시급·통상시급·고정수당 합계와 선택한 공제율입니다. 지급·공제 합계는 저장하지 않습니다. 로그인하여 동기화를 연결하면 저장 항목도 본인 계정에 전송됩니다. <a href="./privacy.html">저장 안내</a></p>
         <div class="sms-actions">
             <button type="button" id="payroll-sms-apply" class="sms-primary-btn" disabled>설정 적용</button>
@@ -1369,7 +1373,7 @@
         </div>
         <p id="payroll-sms-status" class="sms-status" role="status"></p>
         <div id="payroll-sms-preview" class="sms-preview"></div>
-        <details class="sms-help"><summary>어떤 항목이 적용되나요?</summary><p>급여문자 확인에서 시급과 자격·직무·가족·직책 줄을 붙여넣으세요. 인식한 네 수당의 합계를 고정수당으로 적용합니다. 수당을 바꿀 때는 해당되는 네 항목을 함께 붙여넣어 주세요. 공제율은 선택 사항이며 지급 합계·공제 합계 두 줄로 계산합니다. 상여 문자에서는 상여금 공제율만 적용하며 시급·수당은 바꾸지 않습니다. 비워둔 칸의 기존 설정은 유지됩니다. 급여와 상여 공제는 각 명세서의 공제 합계 ÷ 지급 합계로 따로 추정합니다. 각 문자에 지급·공제 합계가 없으면 해당 급여 또는 상여는 기본 예상 공제율 18%를 사용합니다. 이는 개인별 세금·보험료를 계산한 값이 아닙니다. 상여 문자만으로 급여 공제율을 추정하지 않습니다. 상여 지급액·근무일수 계산은 기존 규칙을 유지하며 추정 공제액은 실제 세액과 다를 수 있습니다.</p></details>
+        <details class="sms-help"><summary>어떤 항목이 적용되나요?</summary><p>급여문자 확인에서 시급과 자격·직무·가족·직책 줄을 붙여넣으세요. 인식한 네 수당의 합계를 고정수당으로 적용합니다. 수당을 바꿀 때는 해당되는 네 항목을 함께 붙여넣어 주세요. 공제율은 선택 사항이며 지급 합계·공제 합계 두 줄로 계산합니다. 상여 문자에서는 상여금 공제율만 적용하며 시급·수당은 바꾸지 않습니다. 비워둔 칸의 기존 설정은 유지됩니다. 급여와 상여 공제는 각 명세서의 공제 합계 ÷ 지급 합계로 따로 추정합니다. 선택하지 않은 공제율은 변경하지 않습니다. 저장된 공제율이 없으면 세후 추정 화면은 기본 공제율 18%를 사용합니다. 이는 개인별 세금·보험료를 정확히 계산한 값이 아닙니다. 상여 문자만으로 급여 공제율을 추정하지 않습니다. 상여 지급액·근무일수 계산은 기존 규칙을 유지하며 추정 공제액은 실제 세액과 다를 수 있습니다.</p></details>
     </dialog>
 
     <!-- 모달: 연/월 선택 피커 (캘린더 & 급여계산기 공용) -->
@@ -2713,7 +2717,7 @@
         };
     </script>
     <script src="./payroll-sms.js?v=4"></script>
-    <script src="./payroll-estimate.js?v=fixed-9"></script>
+    <script src="./payroll-estimate.js?v=optional-fixed-9"></script>
     <script src="./calendar-integration.js?v=3"></script>
     <script src="./schedule-share.js?v=2"></script>
     <script src="./google-sync-core.js?v=5"></script>

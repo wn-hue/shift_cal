@@ -54,6 +54,7 @@ elem('payroll-estimate-toggle').checked=false;for(const f of elem('payroll-estim
 assert.equal(elem('row-gross-pay').innerText,gross.toLocaleString('ko-KR'));assert.equal(elem('tr-estimated-deduction').hidden,true);
 assert.equal(elem('tr-payment-subtotal').hidden,true);
 evaluate('applyPayrollStatement({dutyPay:30000,seniorityPay:40000})');
+elem('payroll-salary-estimate-choice').checked=true;
 elem('payroll-sms-text').value='성명 합성테스트\n사번 123456\n기본시급 10,100\n통상시급 12,100\n지급내역\n소계(ⓐ) 2,000,000\n공제내역\n소계(ⓑ) 300,000';
 for(const f of elem('payroll-sms-text').handlers.input||[])f();
 assert.equal(/직책|근속/.test(elem('payroll-sms-preview').textContent),false,'Absent allowances must also be omitted from the SMS preview');
@@ -68,6 +69,7 @@ assert.equal(elem('payroll-sms-text').value,'');assert.ok(![...saved.values()].j
 elem('payroll-estimate-toggle').checked=true;for(const f of elem('payroll-estimate-toggle').handlers.change)f();
 assert.match(elem('payroll-estimate-basis').textContent,/15.00%/);
 // Independent bonus reference, one-step import, and invalid drafts do not overwrite salary settings.
+elem('payroll-bonus-estimate-choice').checked=true;
 elem('payroll-bonus-sms-text').value='성명 비공개상여테스트\n기본시급 999,999\n지급내역\n상여 1,000,000\n소계(ⓐ) 1,000,000\n공제내역\n소계(ⓑ) 50,000';
 for(const f of elem('payroll-bonus-sms-text').handlers.input||[])f();click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),10100);assert.equal(evaluate('config.ordinaryHourly'),12100);
@@ -79,10 +81,12 @@ const bonusGross=payAmount('row-bonus-pay'),regularGross=payAmount('row-payment-
 assert.equal(elem('hero-bonus-pay').innerText,(bonusGross-Math.trunc(bonusGross*.05)).toLocaleString('ko-KR')+' 원');
 assert.equal(payAmount('row-gross-pay'),regularGross-Math.trunc(regularGross*.15)+bonusGross-Math.trunc(bonusGross*.05));
 const before=saved.get('shift_payroll_sms_reference_v1');
+elem('payroll-bonus-estimate-choice').checked=true;
 elem('payroll-sms-text').value='기본시급 22,000';elem('payroll-bonus-sms-text').value='상여 읽을 수 없음';click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),10100);assert.equal(saved.get('shift_payroll_sms_reference_v1'),before);
 assert.match(elem('payroll-sms-status').textContent,/인식/);
 ctx.PayrollEstimate.clearDraft();
+elem('payroll-bonus-estimate-choice').checked=true;
 elem('payroll-sms-text').value='기본시급 22,000';elem('payroll-bonus-sms-text').value='통상시급 12,000';click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),10100);assert.match(elem('payroll-sms-status').textContent,/상여 문자/);
 ctx.PayrollEstimate.clearDraft();
