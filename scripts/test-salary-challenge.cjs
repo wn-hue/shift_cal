@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict');
+const {rank,profile}=require('../salary-challenge.js');
+assert.deepEqual(rank(5000000,[6000000,5000000,4000000]),{rank:2,total:4,topPercent:75});
+assert.equal(rank(5000000,[5000000,5000000]).topPercent,100,'All tied participants must not appear to be top 1%');
+assert.deepEqual(rank(5000000,[4000000,3000000]),{rank:1,total:3,topPercent:34});
+assert.equal(rank(1000000,[2000000,3000000]).topPercent,100);
+assert.equal(rank(1000000,[]).topPercent,100);
+assert.equal(rank(4400000,[6800000,6350000,6000000,5700000,5450000,5250000,5050000,4900000,4700000,4500000,4300000,4150000,4000000,3850000,3700000,3550000,3400000,3200000,2900000]).topPercent,55);
+for(const value of [NaN,Infinity,-1,0,0.5,1000000001])assert.throws(()=>rank(value,[]));
+assert.throws(()=>rank(1000,[NaN]));
+assert.deepEqual(profile({nickname:' 달빛 ',emoji:'🌙',salary:1000000,realName:'ignored'}),{nickname:'달빛',emoji:'🌙'});
+assert.throws(()=>profile({nickname:'',emoji:'🌙'}));
+assert.throws(()=>profile({nickname:'너무긴닉네임입니다너무긴닉네임',emoji:'🌙'}));
+assert.throws(()=>profile({nickname:'나',emoji:'<script>'}));
+console.log('PASS salary challenge: ties, percentiles, invalid salary, nickname limits and minimal local profile');
