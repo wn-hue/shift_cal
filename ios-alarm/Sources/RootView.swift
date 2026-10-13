@@ -11,7 +11,7 @@ enum AppTheme {
     static var style:String { UserDefaults.standard.string(forKey:"calendar-theme") ?? "current" }
     static func rgb(_ hex:UInt)->Color { Color(red:Double((hex>>16)&255)/255,green:Double((hex>>8)&255)/255,blue:Double(hex&255)/255) }
     static var accent:Color { rgb(dark ? 0x83bce0 : style == "gpt" ? 0x212121 : style == "current" ? 0x202433 : 0x2874e8) }
-    static var attendance:Color { rgb(dark ? 0xee9aaa : style == "gpt" ? 0xb55b61 : style == "toss" ? 0xc94d61 : 0xc64b58) }
+    static var attendance:Color { rgb(dark ? 0xb1bcc9 : style == "gpt" ? 0x707070 : style == "toss" ? 0x657b95 : 0x66717f) }
     static var green:Color { style == "current" ? Color(red:21/255,green:150/255,blue:106/255) : accent }
     static var orange:Color { style == "current" ? Color(red:223/255,green:140/255,blue:37/255) : accent }
     static var surface:Color { Color(.systemBackground) }
