@@ -29,7 +29,7 @@
     const text = document.getElementById('payroll-sms-text'), bonusText = document.getElementById('payroll-bonus-sms-text');
     const status = document.getElementById('payroll-sms-status'), preview = document.getElementById('payroll-sms-preview');
     const apply = document.getElementById('payroll-sms-apply'), dialog = document.getElementById('payroll-sms-dialog');
-    api.open = () => { dialog.showModal(); text.focus(); };
+    api.open = () => { dialog.showModal(); };
     document.getElementById('payroll-sms-open').addEventListener('click', api.open);
     document.getElementById('payroll-sms-close').addEventListener('click', () => dialog.close());
     dialog.addEventListener('close', () => { clearDraft();document.getElementById('payroll-sms-open')?.focus(); });
