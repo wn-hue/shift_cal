@@ -7,14 +7,15 @@ import Security
 import Combine
 
 enum AppTheme {
+    static var dark:Bool { UserDefaults.standard.string(forKey:"display-mode") == "dark" || (UserDefaults.standard.string(forKey:"display-mode") == "auto" && UITraitCollection.current.userInterfaceStyle == .dark) }
     static var style:String { UserDefaults.standard.string(forKey:"calendar-theme") ?? "current" }
     static func rgb(_ hex:UInt)->Color { Color(red:Double((hex>>16)&255)/255,green:Double((hex>>8)&255)/255,blue:Double(hex&255)/255) }
-    static var accent:Color { rgb(style == "gpt" ? 0x212121 : style == "current" ? 0x356c87 : 0x2874e8) }
+    static var accent:Color { rgb(dark ? 0x83bce0 : style == "gpt" ? 0x212121 : style == "current" ? 0x356c87 : 0x2874e8) }
     static var attendance:Color { rgb(style == "gpt" ? 0xb55b61 : style == "toss" ? 0xc94d61 : 0xc64b58) }
     static var green:Color { style == "current" ? Color(red:21/255,green:150/255,blue:106/255) : accent }
     static var orange:Color { style == "current" ? Color(red:223/255,green:140/255,blue:37/255) : accent }
     static var surface:Color { Color(.systemBackground) }
-    static var page:Color { style == "toss" ? rgb(0xf5f7fa) : style == "gpt" ? Color(.systemBackground) : Color(.systemGroupedBackground) }
+    static var page:Color { dark ? Color(.systemGroupedBackground) : style == "toss" ? rgb(0xf5f7fa) : style == "gpt" ? Color(.systemBackground) : Color(.systemGroupedBackground) }
 }
 
 extension WorkType {
@@ -64,6 +65,7 @@ extension WorkType {
 struct RootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("calendar-theme") private var theme="current"
+    @AppStorage("display-mode") private var displayMode="light"
     @ObservedObject var model: AlarmModel
     @ObservedObject var schedule: ScheduleStore
     @State private var month = Date()
@@ -73,7 +75,7 @@ struct RootView: View {
             ScheduleShareView(store:schedule,month:$month).tabItem { Label("공유",systemImage:"square.and.arrow.up") }
             AlarmView(model:model).tabItem { Label("알람",systemImage:"alarm") }
             SettingsView(store:schedule).tabItem { Label("내 근무",systemImage:"line.3.horizontal") }
-        }.onChange(of:scenePhase) { _,phase in if phase == .active {Task{await NativeCloudAccount.shared.sync()};CalendarOverlay.shared.refresh(month)} }.task { NativeCloudAccount.shared.attach(schedule) }.tint(AppTheme.accent).toolbarBackground(AppTheme.surface,for:.tabBar).toolbarBackground(.visible,for:.tabBar)
+        }.preferredColorScheme(displayMode == "dark" ? .dark : displayMode == "auto" ? nil : .light).onChange(of:scenePhase) { _,phase in if phase == .active {Task{await NativeCloudAccount.shared.sync()};CalendarOverlay.shared.refresh(month)} }.task { NativeCloudAccount.shared.attach(schedule) }.tint(AppTheme.accent).toolbarBackground(AppTheme.surface,for:.tabBar).toolbarBackground(.visible,for:.tabBar)
     }
 }
 
@@ -439,13 +441,14 @@ struct WorkStatisticsView: View {
 
 struct AppPreferencesView:View {
     @AppStorage("calendar-theme") private var theme="current"
+    @AppStorage("display-mode") private var displayMode="light"
     @AppStorage("display-holidays") private var holidays=true
     @AppStorage("display-memos") private var memos=true
     @AppStorage("display-circle") private var circle=false
     @State private var connectingCalendars=false
     var body:some View {
         List {
-            Section("테마") { Picker("달력 스타일",selection:$theme) { Text("1").tag("current");Text("2").tag("toss");Text("3").tag("gpt") } }
+            Section("테마") { Picker("화면 모드",selection:$displayMode) { Text("라이트").tag("light");Text("다크").tag("dark");Text("기기 설정").tag("auto") }; Picker("달력 스타일",selection:$theme) { Text("1").tag("current");Text("2").tag("toss");Text("3").tag("gpt") } }
             Section("화면 표시") {
                 Toggle("공휴일 이름",isOn:$holidays)
                 Toggle("달력 메모",isOn:$memos)
