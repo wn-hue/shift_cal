@@ -746,49 +746,5 @@ body[data-pref-theme="dark"] .sub-tag{color:#e6edf5!important;background:#303f50
 body[data-pref-theme="dark"] #modal-override .override-base{background:#303f50!important;color:#dce8f5!important;border-color:#536b83!important}
 body[data-pref-theme="dark"] #modal-date-text{color:#bac9db!important}
 
-/* Mobile browser chrome and Android keyboards must not hide sheet actions. */
-html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
-body { min-height:100dvh; }
-.modal-sheet { max-height:90dvh; overscroll-behavior-y:contain; }
-#modal-override .override-sheet { min-height:min(540px,85dvh); max-height:90dvh; }
-.shift-scroll { overscroll-behavior-x:contain; }
-.bottom-nav .nav-item { min-height:52px; }
-@media (max-width:400px) {
-    .bottom-nav { padding-left:6px; padding-right:6px; }
-    .bottom-nav .nav-visual { padding-left:1px; padding-right:1px; }
-    .settings-dialog, .sms-dialog { overflow-wrap:anywhere; }
-}
-@media (max-height:500px) and (orientation:landscape) {
-    .modal-sheet, #modal-override .override-sheet { min-height:0; max-height:94dvh; }
-    #modal-override #memo-panel textarea { min-height:120px; height:35dvh; max-height:none; }
-    .account-drawer { padding-top:12px; padding-bottom:12px; }
-}
-
 /* Neutral work choices; retain theme-specific selection outlines and checks. */
 body[data-pref-theme] #modal-override #work-panel .opt-btn:not(.reset) { background:var(--choice-bg)!important;color:var(--choice-ink)!important;border:1px solid var(--theme-line)!important; }
-
-/* Safari keeps its layout viewport when the software keyboard opens. */
-:root { --visible-height:100dvh; --visible-top:0px; }
-.modal-overlay { top:var(--visible-top); bottom:auto; height:var(--visible-height); }
-.modal-sheet, #modal-override .override-sheet { max-height:calc(var(--visible-height) - 16px); }
-#modal-override .override-sheet { min-height:min(540px,calc(var(--visible-height) - 16px)); }
-body:has(.modal-overlay.active), body:has(dialog[open]) { overflow:hidden; }
-body[data-keyboard="open"] .bottom-nav { visibility:hidden; pointer-events:none; }
-input, textarea { scroll-margin-block:80px; }
-@media(max-width:600px) {
-    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select { font-size:16px!important; }
-    .sms-dialog, .settings-dialog { max-height:calc(var(--visible-height) - 32px); }
-}
-@media(max-height:500px) and (orientation:landscape) {
-    #modal-override .override-sheet { min-height:0; }
-}
-
-/* Anchor to the measured visible bottom, including Safari's first-page layout. */
-.bottom-nav { top:calc(var(--visible-top) + var(--visible-height)); bottom:auto; transform:translateY(-100%); }
-
-/* Keep the home-indicator inset separate from Safari's visible-screen height.
-   A temporarily inflated initial inset must not create a tall empty nav footer. */
-:root { --system-bottom-inset:env(safe-area-inset-bottom,0px); --app-bottom-inset:clamp(0px,var(--system-bottom-inset),34px); }
-.bottom-nav { padding-bottom:calc(6px + var(--app-bottom-inset)); }
-body { padding-bottom:calc(76px + var(--app-bottom-inset)); }
-.cal-grid { min-height:clamp(440px,calc(100dvh - env(safe-area-inset-top) - var(--app-bottom-inset) - 200px),680px); }
