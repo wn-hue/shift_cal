@@ -912,7 +912,7 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=33">
+    <link rel="stylesheet" href="./calendar-ui.css?v=34">
     <link rel="stylesheet" href="./today-menu.css?v=2">
 <link rel="stylesheet" href="./identity.css?v=3">
 <link rel="stylesheet" href="./salary-challenge.css?v=1">
@@ -1240,7 +1240,7 @@
     </section>
     </div>
 
-<dialog id="app-preferences-dialog" class="app-preferences"><div class="preferences-header"><h2>앱 환경</h2><button class="override-close" aria-label="앱 환경 닫기" onclick="document.getElementById('app-preferences-dialog').close()">✕</button></div><section class="preferences-card"><h3>테마</h3><label>달력 스타일<select id="pref-theme"><option value="current">1</option><option value="toss">2</option><option value="gpt">3</option></select></label></section><section class="preferences-card"><h3>화면 표시</h3><label>이전 · 다음 달 근무<input type="checkbox" id="pref-adjacent" checked></label><label>공휴일 이름<input type="checkbox" id="pref-holidays" checked></label><label>달력 메모<input type="checkbox" id="pref-memos" checked></label><label>근무 배지 모양<select id="pref-shape"><option value="square">둥근 네모</option><option value="circle">원</option></select></label></section><section class="external-calendars"><h2>내 캘린더</h2><p>개인 일정을 근무표와 함께 확인하세요.</p><a class="external-connect" href="/api/google-calendar?action=login&amp;storage=1&amp;external=1">Google 캘린더 연결</a><div id="external-calendar-list"></div><p id="external-calendar-status" role="status"></p></section>        <section class="all-info-section" aria-labelledby="all-info-title"><h2 id="all-info-title">앱 안내</h2><div class="all-info-list">
+<dialog id="app-preferences-dialog" class="app-preferences"><div class="preferences-header"><h2>앱 환경</h2><button class="override-close" aria-label="앱 환경 닫기" onclick="document.getElementById('app-preferences-dialog').close()">✕</button></div><section class="preferences-card"><h3>테마</h3><label>화면 모드<select id="pref-mode"><option value="light">라이트</option><option value="dark">다크</option><option value="auto">기기 설정</option></select></label><label>달력 스타일<select id="pref-theme"><option value="current">1</option><option value="toss">2</option><option value="gpt">3</option></select></label></section><section class="preferences-card"><h3>화면 표시</h3><label>이전 · 다음 달 근무<input type="checkbox" id="pref-adjacent" checked></label><label>공휴일 이름<input type="checkbox" id="pref-holidays" checked></label><label>달력 메모<input type="checkbox" id="pref-memos" checked></label><label>근무 배지 모양<select id="pref-shape"><option value="square">둥근 네모</option><option value="circle">원</option></select></label></section><section class="external-calendars"><h2>내 캘린더</h2><p>개인 일정을 근무표와 함께 확인하세요.</p><a class="external-connect" href="/api/google-calendar?action=login&amp;storage=1&amp;external=1">Google 캘린더 연결</a><div id="external-calendar-list"></div><p id="external-calendar-status" role="status"></p></section>        <section class="all-info-section" aria-labelledby="all-info-title"><h2 id="all-info-title">앱 안내</h2><div class="all-info-list">
           <a id="iphone-alarm-guide-link" href="./iphone-alarms.html"><span>아이폰 근무 알람 · 단축어 설정</span><span aria-hidden="true">›</span></a>
           <a href="./about.html"><span>앱 소개 · 문의</span><span aria-hidden="true">›</span></a>
           <a href="./privacy.html"><span>개인정보처리방침</span><span aria-hidden="true">›</span></a>
@@ -2740,7 +2740,7 @@
     <script src="./account-data-core.js?v=monthly-insurance-6"></script>
     <script src="./calendar-ui.js?v=7"></script>
     <script src="./today-menu.js?v=4"></script>
-    <script src="./app-menu.js?v=3"></script>
+    <script src="./app-menu.js?v=4"></script>
     <script src="./settings-ui.js?v=5"></script>
     <script src="./account-sync.js?v=privacy-13"></script>
     <script src="./google-sync.js?v=11"></script>
