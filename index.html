@@ -915,7 +915,7 @@
     <link rel="stylesheet" href="./calendar-ui.css?v=43">
     <link rel="stylesheet" href="./today-menu.css?v=3">
 <link rel="stylesheet" href="./identity.css?v=3">
-<link rel="stylesheet" href="./salary-challenge.css?v=1">
+
     <link rel="stylesheet" href="./today-weather.css?v=3">
 </head>
 <body data-view="calendar">
@@ -1413,19 +1413,12 @@
           <div class="stats-row"><span>월 급여</span><strong id="stat-salary"></strong></div>
           <div class="stats-row"><span id="stat-bonus-label">상여금</span><strong id="stat-bonus"></strong></div>
           <div class="stats-row stats-total"><span id="stat-total-label">세전 합계</span><strong id="stat-total"></strong></div>
-        </section><section class="stats-section"><button type="button" id="salary-challenge-open" class="calendar-link-entry">급여 랭킹 체험 <span style="font-size:11px">· 테스트</span> ›</button></section><section class="stats-section"><div class="stats-row"><span>급여 기간 사용 연차</span><strong id="modal-pill-leave"></strong></div><div class="stats-row"><span>잔여 연차</span><strong id="stat-remaining"></strong></div></section>
+        </section><section class="stats-section"><div class="stats-row"><span>급여 기간 사용 연차</span><strong id="modal-pill-leave"></strong></div><div class="stats-row"><span>잔여 연차</span><strong id="stat-remaining"></strong></div></section>
       </div>
     </div>
 
 
-<dialog id="salary-challenge-dialog" class="sms-dialog challenge-dialog" aria-labelledby="challenge-title">
- <div class="sms-dialog-header"><div><span class="challenge-badge">가상 참가자 테스트</span><h2 id="challenge-title">이번 달 나의 위치</h2><p id="challenge-period"></p></div><button id="challenge-close" type="button" class="sms-close-btn" aria-label="급여 랭킹 체험 닫기">×</button></div>
- <p class="challenge-note">실제 사용자 순위가 아닙니다. 가상 참가자 19명과 비교하는 체험이며, 참여는 선택사항입니다. 프로필만 이 기기에 저장하고 급여는 저장·전송하지 않습니다.</p>
- <div class="challenge-summary"><p id="challenge-me"></p><h3 id="challenge-result"></h3><p id="challenge-rank" class="challenge-note"></p><p id="challenge-my-pay"></p></div>
- <form id="challenge-profile-form"><label class="sms-input-label" for="challenge-nickname">닉네임</label><input id="challenge-nickname" maxlength="24" autocomplete="off" placeholder="1~12자"><div id="challenge-emojis" class="challenge-emojis" role="group" aria-label="이모지 프로필 선택"></div><button type="submit" class="sms-primary-btn">프로필 저장</button></form>
- <div class="challenge-summary"><label class="sms-input-label" for="challenge-amount">비교할 테스트 급여</label><input id="challenge-amount" type="number" min="1" max="1000000000" step="1" inputmode="numeric"><p id="challenge-source" class="challenge-note"></p><button id="challenge-use-pay" type="button" class="sms-clear-btn">내 예상 급여로 체험</button><p class="challenge-note">전월 16일~당월 15일 · 세전 합계(상여금·지원금 포함)<br>급여 차이는 근무시간·직급·입사 시기 등에 따른 것으로, 성과 평가가 아닙니다.</p></div>
- <h3 style="font-size:15px">가상 TOP 5</h3><ol id="challenge-list" class="challenge-list"></ol><p class="challenge-note">상위 비율은 나와 동점인 참가자까지 포함합니다. 다른 참가자는 모두 가상 프로필이며 개별 급여는 표시하지 않습니다.</p><p id="challenge-status" class="sms-status" role="status" aria-live="polite"></p><button id="challenge-reset" type="button" class="sms-clear-btn">테스트 프로필 삭제</button>
-</dialog>
+
 
     <!-- Optional Google Calendar sync; credentials are handled by the server. -->
     <div class="modal-overlay" id="modal-calendar-link" onclick="closeCalendarIntegration(event)">
@@ -1886,13 +1879,6 @@
         }
 
         /* 탭1 근무 통계: 캘린더에서 보고 있는 달의 급여 기준날짜(전월 16일 ~ 당월 15일) 기준 집계 */
-        window.getSalaryChallengeContext = function() {
-            const y=currentCalDate.getFullYear(),m=currentCalDate.getMonth();
-            const startDate=new Date(y,m-1,16),endDate=new Date(y,m,15);
-            const a=toDateKey(startDate.getFullYear(),startDate.getMonth(),16),b=toDateKey(endDate.getFullYear(),endDate.getMonth(),15);
-            const parts=ShiftPlannerCore.payments(ShiftPlannerCore.counts(ShiftPlannerCore.range(a,b).map(k=>getActualShift(ShiftPlannerCore.date(k),currentGroup))),config,b);
-            return {period:a+' – '+b,group:currentGroup,amount:Number(config.ordinaryHourly)>0?Math.trunc(parts.regular+parts.bonus+parts.support):0};
-        };
         function openMonthStatsModal() {
             const year = currentCalDate.getFullYear();
             const month = currentCalDate.getMonth();
@@ -2742,7 +2728,7 @@
     </script>
     <script src="./payroll-sms.js?v=monthly-4"></script>
     <script src="./payroll-estimate.js?v=monthly-fixed-10"></script>
-    <script src="./calendar-integration.js?v=4"></script>
+    <script src="./calendar-integration.js?v=5"></script>
     <script src="./schedule-share.js?v=3"></script>
     <script src="./google-sync-core.js?v=6"></script>
     <script src="./account-data-core.js?v=special-noot-7"></script>
@@ -2754,7 +2740,7 @@
     <script src="./google-sync.js?v=12"></script>
 <script src="planner-core.js?v=7"></script><script src="shift-tools.js?v=6"></script>
 <script src="./external-calendars.js?v=3"></script>
-<script src="./salary-challenge.js?v=1"></script>
+
     <dialog id="today-weather" class="weather-card sms-dialog" aria-labelledby="weather-dialog-title">
         <div class="sms-dialog-header"><h2 id="weather-dialog-title">오늘 날씨</h2><button type="button" class="sms-close-btn" aria-label="날씨 닫기" onclick="document.getElementById('today-weather').close()">×</button></div>
         <p id="weather-status" role="status" aria-live="polite">지역 날씨 확인</p>

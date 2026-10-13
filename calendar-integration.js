@@ -60,6 +60,8 @@
 
 /* These handlers access the existing app's schedule; payroll rules are unchanged. */
 function openCalendarIntegration() {
+    const preferences=document.getElementById('app-preferences-dialog');
+    if(preferences?.open)preferences.close();
     document.getElementById('calendar-link-group').textContent = `${currentGroup}조`;
     document.getElementById('modal-calendar-link').classList.add('active');
     if(window.GoogleSync){GoogleSync.render();GoogleSync.refreshStatus();}
