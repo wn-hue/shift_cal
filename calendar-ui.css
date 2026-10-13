@@ -766,3 +766,19 @@ body { min-height:100dvh; }
 
 /* Neutral work choices; retain theme-specific selection outlines and checks. */
 body[data-pref-theme] #modal-override #work-panel .opt-btn:not(.reset) { background:var(--choice-bg)!important;color:var(--choice-ink)!important;border:1px solid var(--theme-line)!important; }
+
+/* Safari keeps its layout viewport when the software keyboard opens. */
+:root { --visible-height:100dvh; --visible-top:0px; }
+.modal-overlay { top:var(--visible-top); bottom:auto; height:var(--visible-height); }
+.modal-sheet, #modal-override .override-sheet { max-height:calc(var(--visible-height) - 16px); }
+#modal-override .override-sheet { min-height:min(540px,calc(var(--visible-height) - 16px)); }
+body:has(.modal-overlay.active), body:has(dialog[open]) { overflow:hidden; }
+body[data-keyboard="open"] .bottom-nav { visibility:hidden; pointer-events:none; }
+input, textarea { scroll-margin-block:80px; }
+@media(max-width:600px) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select { font-size:16px!important; }
+    .sms-dialog, .settings-dialog { max-height:calc(var(--visible-height) - 32px); }
+}
+@media(max-height:500px) and (orientation:landscape) {
+    #modal-override .override-sheet { min-height:0; }
+}
