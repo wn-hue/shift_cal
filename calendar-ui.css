@@ -745,3 +745,21 @@ body[data-pref-theme="dark"] #modal-override .base-tag{background:#2b394a!import
 body[data-pref-theme="dark"] .sub-tag{color:#e6edf5!important;background:#303f50!important}
 body[data-pref-theme="dark"] #modal-override .override-base{background:#303f50!important;color:#dce8f5!important;border-color:#536b83!important}
 body[data-pref-theme="dark"] #modal-date-text{color:#bac9db!important}
+
+/* Mobile browser chrome and Android keyboards must not hide sheet actions. */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { min-height:100dvh; }
+.modal-sheet { max-height:90dvh; overscroll-behavior-y:contain; }
+#modal-override .override-sheet { min-height:min(540px,85dvh); max-height:90dvh; }
+.shift-scroll { overscroll-behavior-x:contain; }
+.bottom-nav .nav-item { min-height:52px; }
+@media (max-width:400px) {
+    .bottom-nav { padding-left:6px; padding-right:6px; }
+    .bottom-nav .nav-visual { padding-left:1px; padding-right:1px; }
+    .settings-dialog, .sms-dialog { overflow-wrap:anywhere; }
+}
+@media (max-height:500px) and (orientation:landscape) {
+    .modal-sheet, #modal-override .override-sheet { min-height:0; max-height:94dvh; }
+    #modal-override #memo-panel textarea { min-height:120px; height:35dvh; max-height:none; }
+    .account-drawer { padding-top:12px; padding-bottom:12px; }
+}
