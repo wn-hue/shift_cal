@@ -23,3 +23,5 @@ body[data-pref-theme] #modal-override .override-reset { display:inline-flex;alig
 body[data-pref-theme] #modal-override .override-reset { flex-direction:row;flex:none;margin:0; }
 #modal-override .override-reset > svg { width:19px;height:19px;min-height:19px;flex:0 0 19px; }
 #modal-override .override-reset .selection-check { display:none!important; }
+body[data-pref-theme] :is(#calendar-grid,#modal-override) .shift-badge.special-day.special-no-ot { background:var(--special-day-no-ot)!important;color:#26343a!important; }
+body[data-pref-theme] :is(#calendar-grid,#modal-override) .shift-badge.special-night.special-no-ot { background:var(--special-night-no-ot)!important;color:#26343a!important; }
