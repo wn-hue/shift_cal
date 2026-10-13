@@ -5,7 +5,7 @@ body[data-pref-theme="current"] {
  --page-bg:#fbfaf7;--bg-main:#fbfaf7;--surface:#fff;--surface-soft:#fff9e8;--theme-text:var(--midnight);--text-main:var(--midnight);--text-sub:#666975;--theme-line:#e8e5dc;
  --shift-day:var(--daylight);--shift-night:var(--midnight);--choice-bg:#f0f1f4;--choice-ink:#383d4c;
 }
-body[data-pref-theme="current"] .bottom-nav .nav-item.active .nav-visual { background:var(--daylight-soft);color:var(--midnight); }
+body[data-pref-theme="current"] .bottom-nav .nav-item.active .nav-visual { background:var(--midnight);color:#fff; }
 body[data-pref-theme="current"] #modal-override .editor-tabs { background:#f0f1f4; }
 body[data-pref-theme="current"] #modal-override .editor-tabs button[aria-selected="true"] { background:var(--midnight);color:var(--daylight);box-shadow:none; }
 body[data-pref-theme="current"] #modal-override #work-panel .opt-btn[aria-pressed="true"] { outline:2px solid var(--midnight); }
@@ -22,10 +22,10 @@ body[data-pref-theme="current"] #view-payroll .payroll-disclosure-state,body[dat
 body[data-pref-theme="current"] #view-payroll .payroll-disclosure[open] { border-color:#d5bd64; }
 body[data-pref-theme="current"] #view-leave :is(.leave-overview,.leave-money-summary) { background:#fff; }
 body[data-pref-theme="current"] #view-leave .wage-settings-card { background:#fff; }
-body[data-pref-theme="current"] :is(.preferences-card select,.all-shortcut-icon,.settings-year) { background:var(--daylight-soft);color:var(--midnight); }
+body[data-pref-theme="current"] :is(.preferences-card select,.settings-year) { background:var(--daylight-soft);color:var(--midnight); }
 body[data-pref-theme="current"] :is(.preferences-card input,.estimate-toggle input) { accent-color:var(--midnight); }
-body[data-pref-theme="current"] .all-shortcut-icon :is(svg,span) { color:var(--midnight); }
-body[data-pref-theme="current"] .all-settings-card { background:#fff9e8;border-color:var(--theme-line); }
+body[data-pref-theme="current"] .all-shortcut-icon :is(svg,span) { color:#fff; }
+body[data-pref-theme="current"] .all-settings-card { background:var(--midnight);border-color:var(--midnight); }
 body[data-pref-theme="current"] .meal-category { background:var(--daylight-soft);color:var(--midnight); }
 body[data-pref-theme="current"] .meal-card h2 { color:var(--midnight); }
 body[data-pref-theme="current"] :is(.sms-dialog-header h2,.override-header h2,.stats-header h2) { color:var(--midnight); }
@@ -42,3 +42,11 @@ body[data-pref-theme="current"] :is(#view-payroll,#view-leave) .btn-save { backg
 body[data-pref-theme="current"] #view-payroll .period-tag { background:#f2f3f5;color:#666975; }
 body[data-pref-theme="current"] #view-payroll .payroll-disclosure[open] { border-color:#d7dbe1; }
 body[data-pref-theme="current"] #view-leave .leave-remaining .stat-value { color:#367b70!important; }
+
+/* Midnight navigation and work tools for the night and day theme. */
+body[data-pref-theme="current"] .all-shortcut-icon { background:var(--midnight);color:#fff; }
+body[data-pref-theme="current"] .all-shortcut-icon.mint path,
+body[data-pref-theme="current"] .all-shortcut-icon.lavender circle { stroke:var(--midnight); }
+body[data-pref-theme="current"] #menu-group-settings :is(.drawer-section-label,.drawer-section-label svg,.group-selection-status) { color:#fff; }
+body[data-pref-theme="current"] #menu-group-settings .group-select { background:#353a4b;color:#fff;border-color:#535a70;color-scheme:dark; }
+body[data-pref-theme="current"] #menu-group-settings .group-select-wrapper::after { color:#fff; }
