@@ -751,3 +751,6 @@ body[data-pref-theme="dark"] #modal-date-text{color:#bac9db!important}
 
 /* SMS inputs must stay at the readable size Safari expects on focus. */
 #payroll-sms-dialog .sms-textarea { font-size:16px; }
+
+/* Give the first calendar screen breathing room below its toolbar. */
+body[data-view="calendar"] #view-calendar .calendar-card { margin-top:24px; }
