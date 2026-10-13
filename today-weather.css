@@ -1,10 +1,9 @@
 .weather-card { margin:0 0 14px;padding:14px 16px;background:var(--surface,#fff);color:var(--text-main);border:1px solid var(--theme-line,#e5e5e5);border-radius:16px; }
-.weather-card summary { display:flex;align-items:center;gap:10px;cursor:pointer;list-style:none;min-height:28px; }
-.weather-card summary::-webkit-details-marker { display:none; }
-.weather-title { font-size:13px;font-weight:600;white-space:nowrap; }
-#weather-temperature { font-size:22px;font-weight:650;margin-left:auto; }
-#weather-status { font-size:12px;color:var(--text-sub);overflow-wrap:anywhere; }
-.weather-chevron { font-size:13px;color:var(--text-sub); }
+#weather-temperature { font-size:16px;font-weight:600;white-space:nowrap; }
+.header-calendar-actions .weather-trigger { width:auto;min-width:44px;padding:0 6px; }
+#weather-status { font-size:14px;color:var(--text-sub);overflow-wrap:anywhere; }
+#today-weather { margin:auto;width:calc(100% - 24px);max-width:480px;padding:24px; }
+#today-weather::backdrop { background:#11182766; }
 .weather-controls { display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 12px;align-items:center; }
 .weather-controls select { font-size:16px;min-width:0;padding:8px;border:1px solid var(--theme-line,#ddd);border-radius:9px;background:var(--surface,#fff);color:var(--text-main); }
 .weather-controls button { min-height:40px;padding:8px 12px;border:1px solid var(--theme-line,#ddd);border-radius:9px;background:var(--surface,#fff);color:var(--text-main);font:inherit;font-size:12px; }
