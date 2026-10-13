@@ -10,12 +10,12 @@ enum AppTheme {
     static var dark:Bool { style == "dark" }
     static var style:String { UserDefaults.standard.string(forKey:"calendar-theme") ?? "current" }
     static func rgb(_ hex:UInt)->Color { Color(red:Double((hex>>16)&255)/255,green:Double((hex>>8)&255)/255,blue:Double(hex&255)/255) }
-    static var accent:Color { rgb(dark ? 0x83bce0 : style == "gpt" ? 0x212121 : style == "current" ? 0x202433 : 0x2874e8) }
+    static var accent:Color { rgb(dark ? 0x83bce0 : style == "gpt" ? 0x212121 : style == "current" ? 0x2874e8 : 0x2874e8) }
     static var attendance:Color { rgb(dark ? 0xb1bcc9 : style == "gpt" ? 0x707070 : style == "toss" ? 0x657b95 : 0x66717f) }
     static var green:Color { style == "current" ? Color(red:21/255,green:150/255,blue:106/255) : accent }
     static var orange:Color { style == "current" ? Color(red:223/255,green:140/255,blue:37/255) : accent }
     static var surface:Color { Color(.systemBackground) }
-    static var page:Color { style == "current" ? rgb(0xfbfaf7) : dark ? Color(.systemGroupedBackground) : style == "toss" ? rgb(0xf5f7fa) : style == "gpt" ? Color(.systemBackground) : Color(.systemGroupedBackground) }
+    static var page:Color { style == "current" ? rgb(0xffffff) : dark ? Color(.systemGroupedBackground) : style == "toss" ? rgb(0xf5f7fa) : style == "gpt" ? Color(.systemBackground) : Color(.systemGroupedBackground) }
 }
 
 extension WorkType {
@@ -42,8 +42,8 @@ extension WorkType {
             }
         }
         switch self {
-        case .day: return AppTheme.rgb(0xffda54)
-        case .night: return AppTheme.rgb(0x202433)
+        case .day: return AppTheme.rgb(0xffd600)
+        case .night: return AppTheme.rgb(0x424242)
         case .specialDay, .specialDayNoOT: return Color(red:71/255,green:214/255,blue:220/255)
         case .specialNight, .specialNightNoOT: return Color(red:84/255,green:133/255,blue:238/255)
         case .off: return Color(red:232/255,green:104/255,blue:127/255)
@@ -185,13 +185,16 @@ struct EditWorkView: View {
                 VStack(alignment:.leading,spacing:24) {
                     VStack(alignment:.leading,spacing:8) {
                         Text(ScheduleDisplay.title(day.date,format:"M월 d일 EEEE")).font(.title2.weight(.semibold))
-                        Text("\(store.group)조 · 기본 근무 \(store.engine.day(day.date,group:store.group).label)").font(.subheadline).foregroundStyle(.secondary)
+                        HStack(spacing:12) {
+                            Text(day.baseType.shortLabel).font(.headline).foregroundStyle(day.baseType.badgeTextColor).frame(width:48,height:48).background(day.baseType.color,in:Circle())
+                            Text("\(store.group)조 · 기본 근무 \(store.engine.day(day.date,group:store.group).label)").font(.subheadline).foregroundStyle(.secondary)
+                        }
                         if !day.holiday.isEmpty { Text(day.holiday).font(.caption).foregroundStyle(.secondary) }
-                    }.padding(.top,12)
+                    }.padding(16).frame(maxWidth:.infinity,alignment:.leading).background(AppTheme.style == "current" && day.baseType == .day ? AppTheme.rgb(0xfff9d8) : Color(.secondarySystemBackground),in:RoundedRectangle(cornerRadius:20))
                     HStack(spacing:4) {
                         editorTab("근무",index:0)
                         editorTab("메모",index:1)
-                    }.padding(4).background(Color(.secondarySystemBackground),in:RoundedRectangle(cornerRadius:12))
+                    }.padding(.bottom,4)
                     if tab == 0 {
                         Text("근무").font(.subheadline.weight(.medium))
                         options([.day,.night,.off,.specialDay,.specialNight,.specialDayNoOT,.specialNightNoOT,.noOT])
@@ -217,9 +220,9 @@ struct EditWorkView: View {
     private func editorTab(_ title:String,index:Int)->some View {
         Button { tab=index } label: {
             Text(title).font(.system(size:16,weight:.semibold))
-                .foregroundStyle(tab==index ? (AppTheme.dark ? AppTheme.rgb(0x15202b) : AppTheme.style == "current" ? AppTheme.rgb(0xffda54) : Color.white) : Color.secondary)
+                .foregroundStyle(tab==index ? Color.primary : Color.secondary)
                 .frame(maxWidth:.infinity,minHeight:44)
-                .background(tab==index ? AppTheme.accent : Color.clear,in:RoundedRectangle(cornerRadius:9))
+                .overlay(alignment:.bottom) { Rectangle().fill(tab==index ? Color.primary : Color.clear).frame(height:3) }
         }.buttonStyle(.plain).accessibilityIdentifier("editor-tab-\(index)")
             .accessibilityAddTraits(tab==index ? .isSelected : [])
     }
