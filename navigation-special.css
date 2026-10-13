@@ -25,3 +25,8 @@ body[data-pref-theme] #modal-override .override-reset { flex-direction:row;flex:
 #modal-override .override-reset .selection-check { display:none!important; }
 body[data-pref-theme] :is(#calendar-grid,#modal-override) .shift-badge.special-day.special-no-ot { background:var(--special-day-no-ot)!important;color:#26343a!important; }
 body[data-pref-theme] :is(#calendar-grid,#modal-override) .shift-badge.special-night.special-no-ot { background:var(--special-night-no-ot)!important;color:#26343a!important; }
+
+/* Slightly larger calendar toolbar symbols, without widening the controls. */
+.header-calendar-actions .icon-button svg { width:27px;height:27px; }
+.header-calendar-actions #weather-temperature { font-size:18px; }
+.header-calendar-actions #weather-icon { font-size:19px; }
