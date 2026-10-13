@@ -11,13 +11,13 @@ body[data-pref-theme="current"] #modal-override .editor-tabs button[aria-selecte
 body[data-pref-theme="current"] #modal-override #work-panel .opt-btn[aria-pressed="true"] { outline:2px solid var(--midnight); }
 body[data-pref-theme="current"] .planning-preview { background:var(--daylight-soft);color:var(--midnight); }
 body[data-pref-theme="current"] :is(.btn-save,.sms-primary-btn) { background:var(--midnight);color:var(--daylight); }
-body[data-pref-theme="current"] #view-payroll .salary-hero { background:var(--midnight);border-color:var(--midnight);color:#fff; }
-body[data-pref-theme="current"] #view-payroll .hero-amount { color:var(--daylight); }
-body[data-pref-theme="current"] #view-payroll .hero-label { color:#d3d5df; }
-body[data-pref-theme="current"] #view-payroll .hero-subgrid { border-color:#4b5061; }
-body[data-pref-theme="current"] #view-payroll #hero-regular-pay { color:var(--daylight)!important; }
-body[data-pref-theme="current"] #view-payroll #hero-bonus-pay { color:#fff!important; }
-body[data-pref-theme="current"] #view-payroll .period-tag { background:#353a4c;color:#fff1b9; }
+body[data-pref-theme="current"] #view-payroll .salary-hero { background:var(--daylight-soft);border-color:var(--theme-line);color:var(--midnight); }
+body[data-pref-theme="current"] #view-payroll .hero-amount { color:var(--midnight); }
+body[data-pref-theme="current"] #view-payroll .hero-label { color:var(--text-sub); }
+body[data-pref-theme="current"] #view-payroll .hero-subgrid { border-color:var(--theme-line); }
+body[data-pref-theme="current"] #view-payroll #hero-regular-pay { color:var(--midnight)!important; }
+body[data-pref-theme="current"] #view-payroll #hero-bonus-pay { color:var(--midnight)!important; }
+body[data-pref-theme="current"] #view-payroll .period-tag { background:#f0efeb;color:#666975; }
 body[data-pref-theme="current"] #view-payroll .payroll-disclosure-state,body[data-pref-theme="current"] #view-payroll .payroll-disclosure-amount { color:var(--midnight); }
 body[data-pref-theme="current"] #view-payroll .payroll-disclosure[open] { border-color:#d5bd64; }
 body[data-pref-theme="current"] #view-leave :is(.leave-overview,.leave-money-summary) { background:var(--daylight-soft); }
@@ -36,4 +36,4 @@ body[data-pref-theme="current"] :is(.sms-dialog-header h2,.override-header h2,.s
 body[data-pref-theme="current"] :is(.account-login-note,.payroll-disclosure-state) { color:var(--midnight); }
 body[data-pref-theme="current"] :is(#modal-override,#view-payroll,#view-leave,.settings-dialog) .btn-save,body[data-pref-theme="current"] #payroll-sms-dialog .sms-primary-btn { background:var(--midnight);color:var(--daylight); }
 body[data-pref-theme="current"] #view-leave .stat-value { color:var(--midnight); }
-body[data-pref-theme="current"] #view-payroll .salary-hero .hero-amount { color:var(--daylight)!important; }
+body[data-pref-theme="current"] #view-payroll .salary-hero .hero-amount { color:var(--midnight)!important; }
