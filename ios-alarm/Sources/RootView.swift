@@ -230,8 +230,8 @@ struct EditWorkView: View {
             ForEach(types) { type in
                 Button { choice=type.rawValue } label: {
                     VStack(spacing:8) {
-                        Text(type.isSpecialNoOT ? type.label.replacingOccurrences(of:" ",with:"\n") : type.isAttendance || type == .noOT ? type.label : type.shortLabel).font(.system(size:type.isAttendance || type == .noOT || type.isSpecialNoOT ? 11 : 15,weight:.semibold)).foregroundStyle(type.isAttendance || type == .noOT ? (AppTheme.dark ? AppTheme.rgb(0xe8f0fa) : Color(red:70/255,green:86/255,blue:106/255)) : type == .off ? type.color : type.badgeTextColor)
-                            .frame(width:displayCircle ? 58 : 44,height:displayCircle ? 58 : 40).background(type.isAttendance || type == .noOT ? (AppTheme.dark ? AppTheme.rgb(0x303f50) : Color(red:237/255,green:241/255,blue:245/255)) : type == .off ? Color.clear : type.color,in:RoundedRectangle(cornerRadius:displayCircle ? 29 : 10))
+                        Text(type.isSpecialNoOT ? type.label.replacingOccurrences(of:" ",with:"\n") : type.isAttendance || type == .noOT ? type.label : type.shortLabel).font(.system(size:type.isAttendance || type == .noOT || type.isSpecialNoOT ? 11 : 15,weight:.semibold)).foregroundStyle(AppTheme.dark ? AppTheme.rgb(0xe8f0fa) : Color(red:70/255,green:86/255,blue:106/255))
+                            .frame(width:displayCircle ? 58 : 44,height:displayCircle ? 58 : 40).background(AppTheme.dark ? AppTheme.rgb(0x303f50) : Color(red:237/255,green:241/255,blue:245/255),in:RoundedRectangle(cornerRadius:displayCircle ? 29 : 10))
                             .padding(3).overlay(RoundedRectangle(cornerRadius:displayCircle ? 32 : 13).stroke(selectedType==type ? AppTheme.accent : .clear,lineWidth:3))
                     }.frame(width:displayCircle ? 66 : 58,height:displayCircle ? 66 : 48)
                         .overlay(alignment:.topTrailing) { if selectedType==type { Image(systemName:"checkmark.circle.fill").font(.system(size:16,weight:.semibold)).symbolRenderingMode(.palette).foregroundStyle(AppTheme.dark ? AppTheme.rgb(0x15202b) : .white,AppTheme.accent).padding(2).accessibilityHidden(true) } }
