@@ -1,0 +1,15 @@
+/* Editor choices mirror calendar colors; only calendar badges use the shape preference. */
+body[data-pref-theme] #modal-override #work-panel .opt-btn:not(.reset) { width:58px;min-width:58px;height:58px;min-height:58px;flex:0 0 58px;padding:0 2px;border-radius:50%;box-sizing:border-box;white-space:normal;font-size:11px;line-height:1.3;display:flex;align-items:center;justify-content:center;border:1px solid transparent!important; }
+body[data-pref-theme] #modal-override #work-panel .opt-btn.day-sp { background:var(--shift-special-day)!important;color:var(--work-ink)!important; }
+body[data-pref-theme] #modal-override #work-panel .opt-btn.night-sp { background:var(--shift-special-night)!important;color:var(--work-ink)!important; }
+body[data-pref-theme] #modal-override #work-panel :is(.opt-btn.leave,.opt-btn.half,.opt-btn.unpaid,.opt-btn.unpaid-half) { background:var(--attendance)!important;color:var(--work-ink)!important; }
+body[data-pref-theme] #modal-override[data-base="DAY"] #work-panel .opt-btn.no-ot { background:var(--shift-day)!important;color:#424242!important; }
+body[data-pref-theme] #modal-override[data-base="NIGHT"] #work-panel .opt-btn.no-ot { background:var(--shift-night)!important;color:var(--work-ink)!important; }
+body[data-pref-theme="dark"] #modal-override[data-base="DAY"] #work-panel .opt-btn.no-ot { color:var(--work-ink)!important; }
+body[data-pref-theme] #modal-override #work-panel .opt-btn.reset { border-radius:12px;width:100%;height:44px;min-height:44px;padding:10px 16px;flex:none; }
+body[data-pref-theme="current"] #modal-override #work-panel .opt-btn[aria-pressed="true"] { outline:2px solid #202433;outline-offset:2px; }
+/* The meal date and refresh treatment stays the same for all themes. */
+body[data-pref-theme] #view-menu .meal-date-card { background:#202433!important;border-color:#202433!important; }
+body[data-pref-theme] #view-menu .meal-date-card h1 { color:#ffda54!important; }
+body[data-pref-theme] #view-menu .meal-date-card :is(.meal-eyebrow,.meal-note,.meal-status) { color:#d3d5df!important; }
+body[data-pref-theme] #view-menu .meal-date-card .meal-refresh { background:#ffda54!important;color:#202433!important;border-color:#ffda54!important; }

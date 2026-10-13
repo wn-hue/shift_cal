@@ -8,7 +8,7 @@ body[data-pref-theme="current"] {
 body[data-pref-theme="current"] .bottom-nav .nav-item.active .nav-visual { background:var(--daylight-soft);color:var(--midnight); }
 body[data-pref-theme="current"] #modal-override .editor-tabs { background:#f0f1f4; }
 body[data-pref-theme="current"] #modal-override .editor-tabs button[aria-selected="true"] { background:var(--midnight);color:var(--daylight);box-shadow:none; }
-body[data-pref-theme="current"] #modal-override #work-panel .opt-btn[aria-pressed="true"] { background:var(--daylight-soft)!important;color:var(--midnight)!important;outline:2px solid var(--midnight); }
+body[data-pref-theme="current"] #modal-override #work-panel .opt-btn[aria-pressed="true"] { outline:2px solid var(--midnight); }
 body[data-pref-theme="current"] .planning-preview { background:var(--daylight-soft);color:var(--midnight); }
 body[data-pref-theme="current"] :is(.btn-save,.sms-primary-btn) { background:var(--midnight);color:var(--daylight); }
 body[data-pref-theme="current"] #view-payroll .salary-hero { background:var(--midnight);border-color:var(--midnight);color:#fff; }

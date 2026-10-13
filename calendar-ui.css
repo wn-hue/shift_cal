@@ -747,7 +747,7 @@ body[data-pref-theme="dark"] #modal-override .override-base{background:#303f50!i
 body[data-pref-theme="dark"] #modal-date-text{color:#bac9db!important}
 
 /* Neutral work choices; retain theme-specific selection outlines and checks. */
-body[data-pref-theme] #modal-override #work-panel .opt-btn:not(.reset) { background:var(--choice-bg)!important;color:var(--choice-ink)!important;border:1px solid var(--theme-line)!important; }
+
 
 /* SMS inputs must stay at the readable size Safari expects on focus. */
 #payroll-sms-dialog .sms-textarea { font-size:16px; }
