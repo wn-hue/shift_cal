@@ -10,12 +10,12 @@ enum AppTheme {
     static var dark:Bool { style == "dark" }
     static var style:String { UserDefaults.standard.string(forKey:"calendar-theme") ?? "current" }
     static func rgb(_ hex:UInt)->Color { Color(red:Double((hex>>16)&255)/255,green:Double((hex>>8)&255)/255,blue:Double(hex&255)/255) }
-    static var accent:Color { rgb(dark ? 0x83bce0 : style == "gpt" ? 0x212121 : style == "current" ? 0x356c87 : 0x2874e8) }
+    static var accent:Color { rgb(dark ? 0x83bce0 : style == "gpt" ? 0x212121 : style == "current" ? 0x202433 : 0x2874e8) }
     static var attendance:Color { rgb(dark ? 0xee9aaa : style == "gpt" ? 0xb55b61 : style == "toss" ? 0xc94d61 : 0xc64b58) }
     static var green:Color { style == "current" ? Color(red:21/255,green:150/255,blue:106/255) : accent }
     static var orange:Color { style == "current" ? Color(red:223/255,green:140/255,blue:37/255) : accent }
     static var surface:Color { Color(.systemBackground) }
-    static var page:Color { dark ? Color(.systemGroupedBackground) : style == "toss" ? rgb(0xf5f7fa) : style == "gpt" ? Color(.systemBackground) : Color(.systemGroupedBackground) }
+    static var page:Color { style == "current" ? rgb(0xfbfaf7) : dark ? Color(.systemGroupedBackground) : style == "toss" ? rgb(0xf5f7fa) : style == "gpt" ? Color(.systemBackground) : Color(.systemGroupedBackground) }
 }
 
 extension WorkType {
@@ -42,8 +42,8 @@ extension WorkType {
             }
         }
         switch self {
-        case .day: return Color(red:255/255,green:214/255,blue:0/255)
-        case .night: return Color(red:66/255,green:66/255,blue:66/255)
+        case .day: return AppTheme.rgb(0xffda54)
+        case .night: return AppTheme.rgb(0x202433)
         case .specialDay, .specialDayNoOT: return Color(red:71/255,green:214/255,blue:220/255)
         case .specialNight, .specialNightNoOT: return Color(red:84/255,green:133/255,blue:238/255)
         case .off: return Color(red:232/255,green:104/255,blue:127/255)
@@ -217,7 +217,7 @@ struct EditWorkView: View {
     private func editorTab(_ title:String,index:Int)->some View {
         Button { tab=index } label: {
             Text(title).font(.system(size:16,weight:.semibold))
-                .foregroundStyle(tab==index ? (AppTheme.dark ? AppTheme.rgb(0x15202b) : Color.white) : Color.secondary)
+                .foregroundStyle(tab==index ? (AppTheme.dark ? AppTheme.rgb(0x15202b) : AppTheme.style == "current" ? AppTheme.rgb(0xffda54) : Color.white) : Color.secondary)
                 .frame(maxWidth:.infinity,minHeight:44)
                 .background(tab==index ? AppTheme.accent : Color.clear,in:RoundedRectangle(cornerRadius:9))
         }.buttonStyle(.plain).accessibilityIdentifier("editor-tab-\(index)")
@@ -231,7 +231,7 @@ struct EditWorkView: View {
                 Button { choice=type.rawValue } label: {
                     VStack(spacing:8) {
                         Text(type.isSpecialNoOT ? type.label.replacingOccurrences(of:" ",with:"\n") : type.isAttendance || type == .noOT ? type.label : type.shortLabel).font(.system(size:type.isAttendance || type == .noOT || type.isSpecialNoOT ? 11 : 15,weight:.semibold)).foregroundStyle(AppTheme.dark ? AppTheme.rgb(0xe8f0fa) : Color(red:70/255,green:86/255,blue:106/255))
-                            .frame(width:displayCircle ? 58 : 44,height:displayCircle ? 58 : 40).background(AppTheme.dark ? AppTheme.rgb(0x303f50) : Color(red:237/255,green:241/255,blue:245/255),in:RoundedRectangle(cornerRadius:displayCircle ? 29 : 10))
+                            .frame(width:displayCircle ? 58 : 44,height:displayCircle ? 58 : 40).background(AppTheme.dark ? AppTheme.rgb(0x303f50) : AppTheme.style == "current" && selectedType==type ? AppTheme.rgb(0xfff5cf) : Color(red:237/255,green:241/255,blue:245/255),in:RoundedRectangle(cornerRadius:displayCircle ? 29 : 10))
                             .padding(3).overlay(RoundedRectangle(cornerRadius:displayCircle ? 32 : 13).stroke(selectedType==type ? AppTheme.accent : .clear,lineWidth:3))
                     }.frame(width:displayCircle ? 66 : 58,height:displayCircle ? 66 : 48)
                         .overlay(alignment:.topTrailing) { if selectedType==type { Image(systemName:"checkmark.circle.fill").font(.system(size:16,weight:.semibold)).symbolRenderingMode(.palette).foregroundStyle(AppTheme.dark ? AppTheme.rgb(0x15202b) : .white,AppTheme.accent).padding(2).accessibilityHidden(true) } }
