@@ -10,7 +10,7 @@ enum AppTheme {
     static var dark:Bool { style == "dark" }
     static var style:String { UserDefaults.standard.string(forKey:"calendar-theme") ?? "current" }
     static func rgb(_ hex:UInt)->Color { Color(red:Double((hex>>16)&255)/255,green:Double((hex>>8)&255)/255,blue:Double(hex&255)/255) }
-    static var accent:Color { rgb(dark ? 0x83bce0 : style == "gpt" ? 0x212121 : style == "current" ? 0x2874e8 : 0x2874e8) }
+    static var accent:Color { rgb(dark ? 0x83bce0 : style == "gpt" ? 0x212121 : style == "current" ? 0x303030 : 0x2874e8) }
     static var attendance:Color { rgb(dark ? 0xb1bcc9 : style == "gpt" ? 0x707070 : style == "toss" ? 0x657b95 : 0x66717f) }
     static var green:Color { style == "current" ? Color(red:21/255,green:150/255,blue:106/255) : accent }
     static var orange:Color { style == "current" ? Color(red:223/255,green:140/255,blue:37/255) : accent }
@@ -186,7 +186,7 @@ struct EditWorkView: View {
                     VStack(alignment:.leading,spacing:8) {
                         Text(ScheduleDisplay.title(day.date,format:"M월 d일 EEEE")).font(.title2.weight(.semibold))
                         HStack(spacing:12) {
-                            Text(day.baseType.shortLabel).font(.headline).foregroundStyle(day.baseType.badgeTextColor).frame(width:48,height:48).background(day.baseType.color,in:Circle())
+                            Text(day.baseType.shortLabel).font(.headline).foregroundStyle(day.baseType.badgeTextColor).frame(width:48,height:48).background(day.baseType.color,in:Circle()).overlay(Circle().stroke(day.baseType == .off ? Color.secondary.opacity(0.2) : Color.clear))
                             Text("\(store.group)조 · 기본 근무 \(store.engine.day(day.date,group:store.group).label)").font(.subheadline).foregroundStyle(.secondary)
                         }
                         if !day.holiday.isEmpty { Text(day.holiday).font(.caption).foregroundStyle(.secondary) }
@@ -202,7 +202,7 @@ struct EditWorkView: View {
                         Text("근태").font(.subheadline.weight(.medium))
                         options([.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost])
                         Divider()
-                        Button("기본 근무로 되돌리기") { choice="" }.font(.subheadline).foregroundStyle(.secondary).frame(maxWidth:.infinity,minHeight:44).background(AppTheme.surface,in:RoundedRectangle(cornerRadius:12)).overlay(RoundedRectangle(cornerRadius:12).stroke(Color.secondary.opacity(0.2))).accessibilityIdentifier("reset-shift").accessibilityValue(choice.isEmpty ? "선택됨" : "선택 안 됨")
+                        Button("기본 근무로 복구") { choice="" }.font(.system(size:12)).foregroundStyle(.secondary).padding(.horizontal,14).frame(minHeight:36).background(Color(.secondarySystemBackground),in:Capsule()).overlay(Capsule().stroke(Color.secondary.opacity(0.2))).accessibilityIdentifier("reset-shift").accessibilityValue(choice.isEmpty ? "선택됨" : "선택 안 됨")
                     } else {
                         TextField("메모를 남겨 주세요",text:$memo,axis:.vertical).lineLimit(12...18).frame(minHeight:240,alignment:.top).accessibilityIdentifier("memo-editor")
                         Divider()
