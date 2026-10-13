@@ -17,7 +17,20 @@
     viewport?.addEventListener('resize',schedule);
     viewport?.addEventListener('scroll',schedule);
     window.addEventListener('resize',schedule);
+    // Safari standalone can settle its viewport only after the first page paint,
+    // and restores from its page cache without a resize event.
+    function settle(){
+        schedule();
+        requestAnimationFrame(schedule);
+        setTimeout(schedule,150);
+        setTimeout(schedule,500);
+    }
+    window.addEventListener('load',settle);
+    window.addEventListener('pageshow',settle);
+    window.addEventListener('orientationchange',settle);
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)settle();});
     document.addEventListener('focusin',schedule);
     document.addEventListener('focusout',schedule);
     update();
+    settle();
 })();

@@ -782,3 +782,6 @@ input, textarea { scroll-margin-block:80px; }
 @media(max-height:500px) and (orientation:landscape) {
     #modal-override .override-sheet { min-height:0; }
 }
+
+/* Anchor to the measured visible bottom, including Safari's first-page layout. */
+.bottom-nav { top:calc(var(--visible-top) + var(--visible-height)); bottom:auto; transform:translateY(-100%); }
