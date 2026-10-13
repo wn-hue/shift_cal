@@ -69,7 +69,7 @@
         else if (record && remote.summary === record.summary && props.override) type = props.override;
         else type = C.infer(remote.summary,getBaseShift(dateObj(key),currentGroup).type);
         if (!type) return {valid:false,reason:'일정 제목에서 근무 종류를 확인할 수 없습니다. 근무 변경은 앱에서 지정해 주세요.'};
-        if (!['BASE','SPECIAL_DAY','SPECIAL_NIGHT','LEAVE','NO_OT','HALF_PRE','HALF_POST','UNPAID_HALF_PRE','UNPAID_HALF_POST','UNPAID_OFF','FORCED_OFF'].includes(type)) return {valid:false,reason:'지원하지 않는 근무 변경입니다.'};
+        if (!['BASE','SPECIAL_DAY','SPECIAL_NIGHT','SPECIAL_DAY_NO_OT','SPECIAL_NIGHT_NO_OT','LEAVE','NO_OT','HALF_PRE','HALF_POST','UNPAID_HALF_PRE','UNPAID_HALF_POST','UNPAID_OFF','FORCED_OFF'].includes(type)) return {valid:false,reason:'지원하지 않는 근무 변경입니다.'};
         const reason = validateDayOverride(key,type === 'BASE' ? null:type);
         if (reason) return {valid:false,reason};
         return {valid:true,value:C.local(type,C.memo(remote))};

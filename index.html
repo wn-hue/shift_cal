@@ -912,8 +912,8 @@
         .account-choices { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
         .account-actions [hidden], #account-setup-help[hidden] { display:none; }
     </style>
-    <link rel="stylesheet" href="./calendar-ui.css?v=35">
-    <link rel="stylesheet" href="./today-menu.css?v=2">
+    <link rel="stylesheet" href="./calendar-ui.css?v=36">
+    <link rel="stylesheet" href="./today-menu.css?v=3">
 <link rel="stylesheet" href="./identity.css?v=3">
 <link rel="stylesheet" href="./salary-challenge.css?v=1">
 </head>
@@ -1492,7 +1492,7 @@
                     <span>주특</span>
                 </button><button class="opt-btn night-sp" onclick="setDayOverride('SPECIAL_NIGHT')">
                     <span>야특</span>
-                </button><button class="opt-btn no-ot" onclick="setDayOverride('NO_OT')">
+                </button><button class="opt-btn day-sp special-no-ot" onclick="setDayOverride('SPECIAL_DAY_NO_OT')"><span>주특<br>잔업X</span></button><button class="opt-btn night-sp special-no-ot" onclick="setDayOverride('SPECIAL_NIGHT_NO_OT')"><span>야특<br>잔업X</span></button><button class="opt-btn no-ot" onclick="setDayOverride('NO_OT')">
                     <span>O.T 해제</span>
                 </button></div><h3 class="override-section-title">근태</h3><div class="shift-scroll"><button class="opt-btn leave" onclick="setDayOverride('LEAVE')">
                     <span>연차</span>
@@ -1601,7 +1601,7 @@
 
         let overrides = {};
         let dayMemos = {};
-        let syncedUnpaidDays = 0;
+        let syncedUnpaidDays = 0, syncedSpecialDayNoOT = 0, syncedSpecialNightNoOT = 0;
 
         let config = {
             hireDate: '',
@@ -1687,6 +1687,8 @@
             if (overrides[dateStr]) {
                 const ov = overrides[dateStr];
                 if(['DAY','NIGHT','OFF'].includes(ov))return {type:ov,name:ov==='DAY'?'주간':ov==='NIGHT'?'야간':'휴무',hasOt:ov!=='OFF',isOff:ov==='OFF',holidayName:holiday?holiday.name:''};
+                if (ov === 'SPECIAL_DAY_NO_OT') return { type: ov, name: '주특 잔업X', subName:'잔업X', isSpecial:true, hasOt:false, holidayName:holiday?holiday.name:'' };
+                if (ov === 'SPECIAL_NIGHT_NO_OT') return { type: ov, name: '야특 잔업X', subName:'잔업X', isSpecial:true, hasOt:false, holidayName:holiday?holiday.name:'' };
                 if (ov === 'SPECIAL_DAY') return { type: 'SPECIAL_DAY', name: '주특', isSpecial: true, hasOt: true, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'SPECIAL_NIGHT') return { type: 'SPECIAL_NIGHT', name: '야특', isSpecial: true, hasOt: true, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'LEAVE') return { type: 'LEAVE', name: '연차', isLeave: true, leaveVal: 1.0, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
@@ -1738,7 +1740,7 @@
             grid.style.gridTemplateRows = `repeat(${rows}, minmax(88px, 1fr))`;
             const today = new Date();
             const todayStr = toDateKey(today.getFullYear(), today.getMonth(), today.getDate());
-            const labels = { DAY:'주', NIGHT:'야', OFF:'휴', LEAVE:'연차', HALF_PRE:'반전', HALF_POST:'반후', UNPAID_OFF:'무휴', UNPAID_HALF_PRE:'무전', UNPAID_HALF_POST:'무후', SPECIAL_DAY:'주특', SPECIAL_NIGHT:'야특' };
+            const labels = { DAY:'주', NIGHT:'야', OFF:'휴', LEAVE:'연차', HALF_PRE:'반전', HALF_POST:'반후', UNPAID_OFF:'무휴', UNPAID_HALF_PRE:'무전', UNPAID_HALF_POST:'무후', SPECIAL_DAY:'주특', SPECIAL_NIGHT:'야특', SPECIAL_DAY_NO_OT:'주특', SPECIAL_NIGHT_NO_OT:'야특' };
             function appendDay(dateObj, adjacent) {
                 const dateStr = toDateKey(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
                 const shift = getActualShift(dateObj, currentGroup);
@@ -1771,8 +1773,8 @@
                 let badgeClass = 'off';
                 if (shown.type === 'DAY') badgeClass = 'day';
                 else if (shown.type === 'NIGHT') badgeClass = 'night';
-                else if (shown.type === 'SPECIAL_DAY') badgeClass = 'special special-day';
-                else if (shown.type === 'SPECIAL_NIGHT') badgeClass = 'special special-night';
+                else if (['SPECIAL_DAY','SPECIAL_DAY_NO_OT'].includes(shown.type)) badgeClass = 'special special-day';
+                else if (['SPECIAL_NIGHT','SPECIAL_NIGHT_NO_OT'].includes(shown.type)) badgeClass = 'special special-night';
                 else if (shown.type === 'LEAVE') badgeClass = 'leave';
                 else if (shown.type === 'HALF_PRE' || shown.type === 'HALF_POST') badgeClass = 'half';
                 else if (shown.type === 'NO_OT') badgeClass = shown.origType === 'NIGHT' ? 'no-ot night' : 'no-ot day';
@@ -1914,9 +1916,9 @@
                 } else if (shift.type === 'NIGHT' || (shift.type === 'NO_OT' && shift.origType === 'NIGHT')) {
                     counts.night++;
                     counts.totalWork++;
-                } else if (shift.type === 'SPECIAL_DAY' || shift.type === 'SPECIAL_NIGHT') {
+                } else if (['SPECIAL_DAY','SPECIAL_NIGHT','SPECIAL_DAY_NO_OT','SPECIAL_NIGHT_NO_OT'].includes(shift.type)) {
                     counts.special++;
-                    if(shift.type === "SPECIAL_DAY")counts.specialDay++;else counts.specialNight++;
+                    if(["SPECIAL_DAY","SPECIAL_DAY_NO_OT"].includes(shift.type))counts.specialDay++;else counts.specialNight++;
                     counts.totalWork++;
                 } else if (shift.type === 'OFF' || shift.type === 'FORCED_OFF' || shift.type === 'UNPAID_OFF') {
                     counts.off++;
@@ -2193,7 +2195,7 @@
         }
 
         function isNightWork(shift) {
-            return shift.type === 'NIGHT' || shift.type === 'SPECIAL_NIGHT' ||
+            return shift.type === 'NIGHT' || ['SPECIAL_NIGHT','SPECIAL_NIGHT_NO_OT'].includes(shift.type) ||
                 ((shift.type === 'NO_OT' || shift.type === 'HALF_PRE' || shift.type === 'HALF_POST' ||
                   shift.type === 'UNPAID_HALF_PRE' || shift.type === 'UNPAID_HALF_POST') &&
                  shift.origType === 'NIGHT');
@@ -2201,6 +2203,7 @@
 
         function validateDayOverride(dateStr, type) {
             if (type === null) return '';
+            type=type==='SPECIAL_DAY_NO_OT'?'SPECIAL_DAY':type==='SPECIAL_NIGHT_NO_OT'?'SPECIAL_NIGHT':type;
             const [year, month, day] = dateStr.split('-').map(Number);
             const date = new Date(year, month - 1, day);
             const baseType = getBaseShift(date, currentGroup).type;
@@ -2219,7 +2222,7 @@
             // 뒤늦게 전날을 야간 특근으로 바꾸어도 이미 지정된 다음 날 주간 특근을 보호한다.
             const nextDate = new Date(year, month - 1, day + 1);
             const nextKey = toDateKey(nextDate.getFullYear(), nextDate.getMonth(), nextDate.getDate());
-            if (type === 'SPECIAL_NIGHT' && overrides[nextKey] === 'SPECIAL_DAY') {
+            if (type === 'SPECIAL_NIGHT' && ['SPECIAL_DAY','SPECIAL_DAY_NO_OT'].includes(overrides[nextKey])) {
                 return '다음 날 주간 특근이 지정되어 있어 전날에 야간 특근을 지정할 수 없습니다.';
             }
 
@@ -2300,6 +2303,7 @@
             document.getElementById('pay-period-label').innerText = `산정기간: ${startStr} ~ ${endStr}`;
 
             let E2 = 0, E3 = 0, E4 = 0, E5 = 0, noOtDays = 0, unpaidCount = 0;
+            syncedSpecialDayNoOT=0;syncedSpecialNightNoOT=0;
 
             let curr = new Date(startDate.getTime());
             while (curr <= endDate) {
@@ -2308,10 +2312,10 @@
                     E2++;
                 } else if (shift.type === 'NIGHT') {
                     E3++;
-                } else if (shift.type === 'SPECIAL_DAY') {
-                    E4++;
-                } else if (shift.type === 'SPECIAL_NIGHT') {
-                    E5++;
+                } else if (['SPECIAL_DAY','SPECIAL_DAY_NO_OT'].includes(shift.type)) {
+                    E4++;if(shift.type==='SPECIAL_DAY_NO_OT')syncedSpecialDayNoOT++;
+                } else if (['SPECIAL_NIGHT','SPECIAL_NIGHT_NO_OT'].includes(shift.type)) {
+                    E5++;if(shift.type==='SPECIAL_NIGHT_NO_OT')syncedSpecialNightNoOT++;
                 } else if (shift.type === 'NO_OT') {
                     if (shift.origType === 'NIGHT') E3++;
                     else E2++;
@@ -2399,8 +2403,9 @@
             const otPay = Math.trunc(B8 * 1.5 * totalOtHours);
             const nightPay = Math.trunc(B8 * 0.5 * 7.0 * E3);
             const holPay = Math.trunc(B8 * 1.5 * 8.0 * (E4 + E5));
-            const holOtPay = Math.trunc(B8 * 2.0 * 2.5 * (E4 + E5));
-            const holNightPay = Math.trunc(B8 * 0.5 * 7.0 * E5);
+            const specialDayNoOT=Math.min(E4,syncedSpecialDayNoOT),specialNightNoOT=Math.min(E5,syncedSpecialNightNoOT);
+            const holOtPay = Math.trunc(B8 * 2.0 * 2.5 * Math.max(0,E4 + E5-specialDayNoOT-specialNightNoOT));
+            const holNightPay = Math.trunc(B8 * 0.5 * (7.0 * E5-2.5*specialNightNoOT));
 
             const hireVal = config.hireDate;
             let isUnderOneYear = false;
@@ -2427,7 +2432,7 @@
             if (hireYear > 0 && hireYear < 2020) {
                 if (hireYear < 2018) {
                     const diff1 = ((B8 * 1.5 * 2.5 * E2) + (B8 * 1.5 * 3 * E3)) - (B8 * 1.5 * 2.5 * (E2 + E3));
-                    const diff2 = ((B8 * 2 * 2.5 * E4) + (B8 * 2 * 3 * E5)) - (B8 * 2 * 2.5 * (E4 + E5));
+                    const diff2 = B8 * 2 * 0.5 * (E5-specialNightNoOT);
                     const diff3 = (B8 * 0.5 * 8 * E5) - (B8 * 0.5 * 7 * E5);
                     const diff4 = (B8 * 0.5 * 8 * E3) - (B8 * 0.5 * 7 * E3);
                     otherPay = Math.trunc(diff1 + diff2 + diff3 + diff4);
@@ -2650,7 +2655,7 @@
                     hireDate: '', totalLeave: 0, leaveByYear: {}, baseHourly: 0, ordinaryHourly: 0,
                     baseHours: 209, dutyPay: 0, seniorityPay: 0, applyRetroPay: false, holidayBonus: 0
                 };
-                syncedUnpaidDays = 0;
+                syncedUnpaidDays = 0; syncedSpecialDayNoOT=0;syncedSpecialNightNoOT=0;
                 localStorage.removeItem('shift_salary_config_master');
                 localStorage.removeItem('shift_day_memos');
                 dayMemos = {};
@@ -2734,17 +2739,17 @@
     </script>
     <script src="./payroll-sms.js?v=monthly-4"></script>
     <script src="./payroll-estimate.js?v=monthly-fixed-9"></script>
-    <script src="./calendar-integration.js?v=3"></script>
-    <script src="./schedule-share.js?v=2"></script>
-    <script src="./google-sync-core.js?v=5"></script>
-    <script src="./account-data-core.js?v=monthly-insurance-6"></script>
+    <script src="./calendar-integration.js?v=4"></script>
+    <script src="./schedule-share.js?v=3"></script>
+    <script src="./google-sync-core.js?v=6"></script>
+    <script src="./account-data-core.js?v=special-noot-7"></script>
     <script src="./calendar-ui.js?v=7"></script>
     <script src="./today-menu.js?v=4"></script>
     <script src="./app-menu.js?v=5"></script>
     <script src="./settings-ui.js?v=5"></script>
     <script src="./account-sync.js?v=privacy-13"></script>
-    <script src="./google-sync.js?v=11"></script>
-<script src="planner-core.js?v=5"></script><script src="shift-tools.js?v=6"></script>
+    <script src="./google-sync.js?v=12"></script>
+<script src="planner-core.js?v=6"></script><script src="shift-tools.js?v=6"></script>
 <script src="./external-calendars.js?v=3"></script>
 <script src="./salary-challenge.js?v=1"></script>
 </body>

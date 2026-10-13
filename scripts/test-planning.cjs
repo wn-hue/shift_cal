@@ -54,3 +54,20 @@ for(const [hourly,ordinary,hire,duty,day,night,spDay,spNight,total] of [
 }
 
 assert.equal(C.payments({day:0,night:0,spDay:0,spNight:0,noOT:0,unpaid:0},{baseHourly:10000,hireDate:'2017-12-20',employmentMonth:'2020-01'},'2026-11-15').regular,2160000);
+
+ctx.PayrollEstimate=null;
+// Special shifts without overtime retain eight holiday hours but omit overtime/night overtime.
+for(const hire of ['2017-01-01','2018-01-01','2020-01-01'])for(const type of ['SPECIAL_DAY_NO_OT','SPECIAL_NIGHT_NO_OT']){
+ const c=C.counts([{type}]),cfg={baseHourly:11050,ordinaryHourly:14482,hireDate:hire,dutyPay:0,baseHours:209};
+ vm.runInContext(`config=${JSON.stringify(cfg)};currentPayDate=new Date(2026,10,1);syncedUnpaidDays=0;syncedSpecialDayNoOT=${c.spDayNoOT||0};syncedSpecialNightNoOT=${c.spNightNoOT||0}`,ctx);
+ for(const[id,v]of [['inp-day-days',0],['inp-night-days',0],['inp-daysp-days',c.spDay],['inp-nightsp-days',c.spNight],['inp-no-ot-days',0]])el(id).value=v;
+ el('inp-bonus-check').checked=false;vm.runInContext('calculatePayrollFromInputs()',ctx);
+ assert.equal(Number(el('hero-gross-pay').innerText.replace(/[^0-9]/g,'')),C.gross(c,cfg,'2026-11-15'));
+ assert.equal(Number(el('row-hol-ot-pay').innerText.replace(/[^0-9]/g,'')),0);
+ if(type==='SPECIAL_NIGHT_NO_OT')assert.equal(Number(el('row-hol-night-pay').innerText.replace(/[^0-9]/g,'')),Math.trunc(14482*.5*4.5));
+ const normalized=require('../account-data-core.js').normalize({shift_overrides_C:{'2026-10-03':type}});assert.equal(normalized.shift_overrides_C['2026-10-03'],type);
+ assert.equal(api.normalize({group:'C',month:'2026-10',days:Array.from({length:31},()=>({type}))}).days[0].type,type);
+}
+assert.equal(require('../google-sync-core.js').infer('C조 야특 잔업X','OFF'),'SPECIAL_NIGHT_NO_OT');
+assert.equal(require('../google-sync-core.js').colorId({type:'SPECIAL_NIGHT_NO_OT'}),'1');
+console.log('PASS special no-overtime payroll parity, night hours, account/shared storage and Google mapping');

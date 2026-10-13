@@ -49,8 +49,8 @@ function shareScheduleImage() {
     const c=canvas.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,canvas.width,canvas.height);
     c.fillStyle='#424242';c.font='bold 30px sans-serif';c.fillText(`${currentCalDate.getFullYear()}.${String(currentCalDate.getMonth()+1).padStart(2,'0')}  ${currentGroup}조`,24,48);
     c.font='20px sans-serif';['일','월','화','수','목','금','토'].forEach((v,i)=>{c.fillStyle=i===0?'#e8687f':i===6?'#5485ee':'#737373';c.fillText(v,i*120+46,100);});
-    const colors={DAY:'#ffd600',NIGHT:'#424242',SPECIAL_DAY:'#47d6dc',SPECIAL_NIGHT:'#5485ee',LEAVE:'#24724b'};
-    const labels={DAY:'주',NIGHT:'야',OFF:'휴',FORCED_OFF:'휴',SPECIAL_DAY:'주특',SPECIAL_NIGHT:'야특',UNPAID_OFF:'무휴',HALF_PRE:'반전',HALF_POST:'반후',UNPAID_HALF_PRE:'무전',UNPAID_HALF_POST:'무후',NO_OT:'OT−'};
+    const colors={DAY:'#ffd600',NIGHT:'#424242',SPECIAL_DAY:'#47d6dc',SPECIAL_NIGHT:'#5485ee',SPECIAL_DAY_NO_OT:'#47d6dc',SPECIAL_NIGHT_NO_OT:'#5485ee',LEAVE:'#24724b'};
+    const labels={DAY:'주',NIGHT:'야',OFF:'휴',FORCED_OFF:'휴',SPECIAL_DAY:'주특',SPECIAL_NIGHT:'야특',SPECIAL_DAY_NO_OT:'주특X',SPECIAL_NIGHT_NO_OT:'야특X',UNPAID_OFF:'무휴',HALF_PRE:'반전',HALF_POST:'반후',UNPAID_HALF_PRE:'무전',UNPAID_HALF_POST:'무후',NO_OT:'OT−'};
     days.forEach(({date,shift},i)=>{
         const slot=offset+i,x=slot%7*120,y=120+Math.floor(slot/7)*150;
         c.strokeStyle='#eee';c.strokeRect(x,y,120,150);c.fillStyle='#424242';c.font='20px sans-serif';c.fillText(String(date.getDate()),x+10,y+28);

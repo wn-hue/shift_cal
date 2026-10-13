@@ -6,7 +6,7 @@
     function colorId(shift) {
         if(shift.type === 'LEAVE')return '2';
         if(['OFF','FORCED_OFF','UNPAID_OFF'].includes(shift.type))return null;
-        return shift.type === 'NIGHT' || shift.type === 'SPECIAL_NIGHT' || shift.origType === 'NIGHT' ? '1' : '5';
+        return shift.type === 'NIGHT' || ['SPECIAL_NIGHT','SPECIAL_NIGHT_NO_OT'].includes(shift.type) || shift.origType === 'NIGHT' ? '1' : '5';
     }
     function signature(event) {
         if (!event || event.status === 'cancelled') return null;
@@ -22,7 +22,7 @@
     function memo(event) { const text = (event.description || '').replace(/\r\n?/g,'\n'); return text.startsWith(PREFIX) ? text.slice(PREFIX.length) : text; }
     function infer(summary,baseType) {
         const text = (summary || '').replace(/^[ABC]조\s*/,'').trim();
-        const maps = [ [/^무급 반차\(전\)/,'UNPAID_HALF_PRE'],[/^무급 반차\(후\)/,'UNPAID_HALF_POST'],[/^무반\(전\)/,'UNPAID_HALF_PRE'],[/^무반\(후\)/,'UNPAID_HALF_POST'],
+        const maps = [ [/^(?:주간 특근|주특)\s*잔업\s*[xX×]/,'SPECIAL_DAY_NO_OT'],[/^(?:야간 특근|야특)\s*잔업\s*[xX×]/,'SPECIAL_NIGHT_NO_OT'], [/^무급 반차\(전\)/,'UNPAID_HALF_PRE'],[/^무급 반차\(후\)/,'UNPAID_HALF_POST'],[/^무반\(전\)/,'UNPAID_HALF_PRE'],[/^무반\(후\)/,'UNPAID_HALF_POST'],
             [/^반차\(전\)/,'HALF_PRE'],[/^반차\(후\)/,'HALF_POST'],[/^연차(?:\s|$|·)/,'LEAVE'],[/^(?:주간 특근|주특)(?:\s|$|·)/,'SPECIAL_DAY'],
             [/^(?:야간 특근|야특)(?:\s|$|·)/,'SPECIAL_NIGHT'],[/^무급(?:\s|$|·)/,'UNPAID_OFF'],[/^휴무(?:\s|$|·)/,baseType === 'OFF' ? 'BASE':'FORCED_OFF'] ];
         for (const [pattern,type] of maps) if (pattern.test(text)) return type;

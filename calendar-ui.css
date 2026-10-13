@@ -735,3 +735,13 @@ body[data-pref-theme="dark"] :is(#view-payroll,#view-leave) :is(h2,h3,h4,label,s
 body[data-pref-theme="dark"] :is(#view-payroll,#view-leave) .input-group label{color:var(--text-main)!important}
 body[data-pref-theme="dark"] #view-leave .leave-money-summary span{color:var(--text-main)!important}
 body[data-pref-theme="dark"] #view-all .all-info-list a{color:var(--accent)!important}
+.special-no-ot span{font-size:11px;line-height:1.4}
+body[data-pref-theme="dark"] #modal-override :is(.editor-tabs,.override-section){background:var(--surface)!important;color:var(--text-main)!important}
+body[data-pref-theme="dark"] #modal-override .editor-tabs{background:#2b394a!important}
+body[data-pref-theme="dark"] #modal-override .editor-tabs button{background:transparent!important;color:#dce8f5!important;border-color:#536b83!important}
+body[data-pref-theme="dark"] #modal-override .editor-tabs button[aria-selected="true"]{background:#a4cef0!important;color:#101c29!important}
+body[data-pref-theme="dark"] #modal-override :is(h3,.override-section-title,.sub-tag,.override-base,.override-date,.base-tag){color:#e6edf5!important}
+body[data-pref-theme="dark"] #modal-override .base-tag{background:#2b394a!important}
+body[data-pref-theme="dark"] .sub-tag{color:#e6edf5!important;background:#303f50!important}
+body[data-pref-theme="dark"] #modal-override .override-base{background:#303f50!important;color:#dce8f5!important;border-color:#536b83!important}
+body[data-pref-theme="dark"] #modal-date-text{color:#bac9db!important}

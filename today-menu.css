@@ -37,3 +37,10 @@ body[data-view="menu"] #first-use-guide { display:none; }
     .nav-item svg { width:23px; height:23px; }
 }
 @media (prefers-reduced-motion:reduce) { .meal-refresh[aria-busy="true"]::before { animation:none; } }
+body[data-pref-theme="dark"] :is(.meal-date-card,.meal-card,.meal-empty){background:#1c222c!important;border-color:#42566c!important;color:#e6edf5!important}
+body[data-pref-theme="dark"] :is(.meal-date-row h1,.meal-card h2,.meal-items,.meal-items li,.meal-extras h3){color:#e6edf5!important}
+body[data-pref-theme="dark"] :is(.meal-eyebrow,.meal-status,.meal-extras summary,.meal-footer,.meal-note){color:#bac9db!important}
+body[data-pref-theme="dark"] .meal-category{background:#303f50!important;color:#d9e8fa!important}
+body[data-pref-theme="dark"] .meal-refresh{background:#303f50!important;color:#e6edf5!important;border-color:#607993!important}
+body[data-pref-theme="dark"] .meal-extras{border-color:#42566c!important}
+body[data-pref-theme="dark"] .meal-footer a{color:#a4cef0!important}

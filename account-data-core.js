@@ -1,7 +1,7 @@
 (function (root) {
     'use strict';
     const keys = ['shift_salary_config_master','shift_active_group','shift_day_memos','shift_overrides_A','shift_overrides_B','shift_overrides_C','shift_payroll_sms_reference_v1','shift_bonus_sms_reference_v1'];
-    const types = new Set(['DAY','NIGHT','OFF','SPECIAL_DAY','SPECIAL_NIGHT','LEAVE','NO_OT','HALF_PRE','HALF_POST','UNPAID_HALF_PRE','UNPAID_HALF_POST','UNPAID_OFF','FORCED_OFF']);
+    const types = new Set(['DAY','NIGHT','OFF','SPECIAL_DAY','SPECIAL_NIGHT','SPECIAL_DAY_NO_OT','SPECIAL_NIGHT_NO_OT','LEAVE','NO_OT','HALF_PRE','HALF_POST','UNPAID_HALF_PRE','UNPAID_HALF_POST','UNPAID_OFF','FORCED_OFF']);
     const object = x => x !== null && typeof x === 'object' && !Array.isArray(x);
     function dateOK(x) { return typeof x === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(x) && Number.isFinite(Date.parse(x+'T00:00:00Z')) && new Date(x+'T00:00:00Z').toISOString().slice(0,10) === x; }
     function normalize(input) {

@@ -25,6 +25,8 @@
     function dateValue(key) { return key.replace(/-/g, ''); }
     function makeEvent(key, group, shift, memo = '', kind = 'personal') {
         let label = shift.name;
+        if (shift.type === 'SPECIAL_DAY_NO_OT') label = '주특 잔업X';
+        if (shift.type === 'SPECIAL_NIGHT_NO_OT') label = '야특 잔업X';
         if (shift.type === 'SPECIAL_DAY') label = '주간 특근';
         if (shift.type === 'SPECIAL_NIGHT') label = '야간 특근';
         if (shift.type === 'UNPAID_OFF') label = '무급 휴무';
