@@ -2405,7 +2405,7 @@
             const holPay = Math.trunc(B8 * 1.5 * 8.0 * (E4 + E5));
             const specialDayNoOT=Math.min(E4,syncedSpecialDayNoOT),specialNightNoOT=Math.min(E5,syncedSpecialNightNoOT);
             const holOtPay = Math.trunc(B8 * 2.0 * 2.5 * Math.max(0,E4 + E5-specialDayNoOT-specialNightNoOT));
-            const holNightPay = Math.trunc(B8 * 0.5 * (7.0 * E5-2.5*specialNightNoOT));
+            const holNightPay = Math.trunc(B8 * 0.5 * 7.0 * E5);
 
             const hireVal = config.hireDate;
             let isUnderOneYear = false;
@@ -2749,7 +2749,7 @@
     <script src="./settings-ui.js?v=5"></script>
     <script src="./account-sync.js?v=privacy-13"></script>
     <script src="./google-sync.js?v=12"></script>
-<script src="planner-core.js?v=6"></script><script src="shift-tools.js?v=6"></script>
+<script src="planner-core.js?v=7"></script><script src="shift-tools.js?v=6"></script>
 <script src="./external-calendars.js?v=3"></script>
 <script src="./salary-challenge.js?v=1"></script>
 </body>
