@@ -49,6 +49,11 @@
     }
     function renderAuth() {
         const connected=!!auth?.connected;
+        const trigger=$('account-sheet-open'),label=$('account-sheet-label');
+        if($('account-login-dialog'))$('account-login-dialog').setAttribute('data-connected',String(connected));
+        if(label)label.textContent=connected?'내 계정':'로그인';
+        if(trigger)trigger.setAttribute('aria-label',connected?'내 계정 및 동기화':'로그인');
+        if($('login-sheet-title'))$('login-sheet-title').textContent=connected?'내 계정':'로그인 또는 회원가입';
         const owner=connected?auth.user.id:null;
         if(owner!==renderedOwner){renderedOwner=owner;if(typeof CustomEvent==='function')window.dispatchEvent(new CustomEvent('shift-account-changed',{detail:{owner}}));}
         $('account-email').textContent=connected?auth.user.email:'로그인하면 다른 기기에서도 이어서 사용할 수 있습니다.';

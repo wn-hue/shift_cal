@@ -1,0 +1,20 @@
+.account-sheet-open{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;min-height:42px;border:1px solid var(--theme-line,#e5e7eb);border-radius:24px;background:var(--surface,#fff);color:var(--theme-text,#202433);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.account-sheet-open svg{width:23px;height:23px;flex:none}
+.account-login-dialog{position:fixed;inset:auto 0 0;margin:0 auto;width:min(100%,480px);max-width:100%;max-height:90dvh;overflow:auto;box-sizing:border-box;border:1px solid var(--theme-line,#e5e7eb);border-bottom:0;border-radius:28px 28px 0 0;padding:12px 24px calc(28px + env(safe-area-inset-bottom));background:var(--surface,#fff);color:var(--theme-text,#202433)}
+.account-login-dialog::backdrop{background:rgba(0,0,0,.42)}
+.login-sheet-handle{width:38px;height:4px;border-radius:4px;background:var(--theme-line,#ddd);margin:0 auto 24px}
+.login-sheet-close{position:absolute;right:14px;top:18px;width:36px;height:36px;border:0;background:transparent;color:inherit;font:inherit;font-size:26px;cursor:pointer;border-radius:50%}
+.account-login-dialog .identity-card{margin:0;padding:12px 0 0;border:0;background:transparent}
+.account-login-dialog .identity-heading{display:block;text-align:center;padding:0 12px}
+.account-login-dialog h2{font-size:25px;font-weight:650;letter-spacing:-.6px;margin:0 0 14px}
+.account-login-dialog .identity-heading p{margin:0;font-size:14px;line-height:1.6}
+.account-login-dialog .identity-buttons{flex-direction:column;gap:12px;margin-top:28px}
+.account-login-dialog .identity-buttons :is(.account-login,.apple-signin){display:flex!important;align-items:center;justify-content:center;gap:10px;width:100%!important;min-height:52px;padding:10px 12px;box-sizing:border-box;border:1px solid var(--theme-line,#ddd);border-radius:28px;background:var(--surface,#fff);color:var(--theme-text,#202433)!important;font-size:15px;font-weight:600;text-decoration:none}
+.account-login-dialog .identity-buttons [hidden]{display:none!important}
+.account-login-dialog .identity-note{font-size:12px;margin-top:18px;text-align:center}
+.account-login-dialog .identity-actions{justify-content:center;flex-wrap:wrap}
+.account-login-dialog .identity-actions button{min-height:44px;font-size:13px}
+.account-login-dialog :is(.account-sheet-open,.account-login,.apple-signin,.login-sheet-close):focus-visible,.account-sheet-open:focus-visible{outline:2px solid var(--accent,#202433);outline-offset:3px}
+@media(min-width:700px){.account-login-dialog{inset:0;margin:auto;height:fit-content;max-height:85dvh;border-radius:28px;border-bottom:1px solid var(--theme-line,#e5e7eb);padding-bottom:32px}}
+
+.account-login-dialog .identity-note:empty,.account-login-dialog[data-connected="false"] .sync-feedback[data-state="info"]{display:none}
