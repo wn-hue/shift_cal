@@ -16,3 +16,4 @@ body[data-pref-theme="current"] #leave-settings-dialog .leave-stat-box .stat-val
 body[data-pref-theme="current"] .settings-year { background:#f3f3f3; }
 body[data-pref-theme] #leave-settings-dialog .leave-money-summary { border:0!important;border-top:1px solid var(--theme-line)!important; }
 body[data-pref-theme="current"] :is(button,a,select,input,textarea):focus-visible { outline-color:#303030!important; }
+#view-payroll .wage-settings-card .sms-open-btn { display:inline-flex;align-items:center;justify-content:center;min-height:34px;width:auto;max-width:100%;padding:6px 12px;margin-top:12px;border:1px solid var(--theme-line);border-radius:18px;font-size:12px;line-height:1.4; }

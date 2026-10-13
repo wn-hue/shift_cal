@@ -69,3 +69,9 @@ for(const page of ['about.html','privacy.html','terms.html']) {
  assert.ok(source.includes('aria-label="전체 메뉴로 돌아가기"'));
  assert.ok(!source.includes('>웹앱</a>'));
 }
+// Rest-day attendance cannot create deductions or artificial work.
+for(const type of ['LEAVE','HALF_PRE','HALF_POST','UNPAID_OFF','UNPAID_HALF_PRE','UNPAID_HALF_POST','NO_OT']) {
+    assert.match(run(`validateDayOverride('2026-10-04','${type}')`),/휴무일/);
+    assert.equal(run(`validateDayOverride('2026-10-07','${type}')`),'');
+}
+assert.equal(run("validateDayOverride('2026-10-04',null)"),'');
