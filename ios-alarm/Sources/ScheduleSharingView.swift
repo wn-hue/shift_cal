@@ -70,7 +70,7 @@ struct MonthGrid: View {
                                 .background(shown==WorkType.off ? Color.clear : shown.color,in:RoundedRectangle(cornerRadius:displayCircle ? 15 : 7))
                                 .frame(maxWidth:.infinity)
                             if day.type.isAttendance {
-                                Text(day.type.attendanceLabel).font(.system(size:9,weight:.medium)).foregroundStyle(.white).frame(maxWidth:.infinity).padding(.vertical,2).background(AppTheme.attendance,in:RoundedRectangle(cornerRadius:5))
+                                Text(day.type.attendanceLabel).font(.system(size:9,weight:.medium)).foregroundStyle(AppTheme.dark ? AppTheme.rgb(0x15202b) : .white).frame(maxWidth:.infinity).padding(.vertical,2).background(AppTheme.attendance,in:RoundedRectangle(cornerRadius:5))
                             }
                             HStack(spacing:3) {
                                 if day.changed { Image(systemName:"pencil").font(.system(size:7)) }

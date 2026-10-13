@@ -7,11 +7,11 @@ import Security
 import Combine
 
 enum AppTheme {
-    static var dark:Bool { UserDefaults.standard.string(forKey:"display-mode") == "dark" || (UserDefaults.standard.string(forKey:"display-mode") == "auto" && UITraitCollection.current.userInterfaceStyle == .dark) }
+    static var dark:Bool { style == "dark" }
     static var style:String { UserDefaults.standard.string(forKey:"calendar-theme") ?? "current" }
     static func rgb(_ hex:UInt)->Color { Color(red:Double((hex>>16)&255)/255,green:Double((hex>>8)&255)/255,blue:Double(hex&255)/255) }
     static var accent:Color { rgb(dark ? 0x83bce0 : style == "gpt" ? 0x212121 : style == "current" ? 0x356c87 : 0x2874e8) }
-    static var attendance:Color { rgb(style == "gpt" ? 0xb55b61 : style == "toss" ? 0xc94d61 : 0xc64b58) }
+    static var attendance:Color { rgb(dark ? 0xee9aaa : style == "gpt" ? 0xb55b61 : style == "toss" ? 0xc94d61 : 0xc64b58) }
     static var green:Color { style == "current" ? Color(red:21/255,green:150/255,blue:106/255) : accent }
     static var orange:Color { style == "current" ? Color(red:223/255,green:140/255,blue:37/255) : accent }
     static var surface:Color { Color(.systemBackground) }
@@ -20,6 +20,16 @@ enum AppTheme {
 
 extension WorkType {
     var color: Color {
+        if AppTheme.dark {
+            switch self {
+            case .day:return AppTheme.rgb(0xf5ce68)
+            case .night:return AppTheme.rgb(0xb6adff)
+            case .specialDay:return AppTheme.rgb(0x6cd4c4)
+            case .specialNight:return AppTheme.rgb(0x7daaff)
+            case .off:return AppTheme.rgb(0xff9aa9)
+            default:return AppTheme.attendance
+            }
+        }
         if AppTheme.style != "current" {
             let gpt=AppTheme.style == "gpt"
             switch self {
@@ -45,7 +55,7 @@ extension WorkType {
     }
     var isAttendance:Bool { [.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost].contains(self) }
     var attendanceLabel:String { switch self { case .leave: "연차 1";case .halfPre:"반차 전";case .halfPost:"반차 후";case .unpaid:"무급 1";case .unpaidHalfPre:"무반 전";case .unpaidHalfPost:"무반 후";default:label } }
-    var badgeTextColor: Color { self == .day ? AppTheme.rgb(0x424242) : .white }
+    var badgeTextColor: Color { AppTheme.dark ? AppTheme.rgb(0x15202b) : self == .day ? AppTheme.rgb(0x424242) : .white }
     var shortLabel:String {
         switch self {
         case .day: "주"
@@ -65,7 +75,6 @@ extension WorkType {
 struct RootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("calendar-theme") private var theme="current"
-    @AppStorage("display-mode") private var displayMode="light"
     @ObservedObject var model: AlarmModel
     @ObservedObject var schedule: ScheduleStore
     @State private var month = Date()
@@ -75,7 +84,7 @@ struct RootView: View {
             ScheduleShareView(store:schedule,month:$month).tabItem { Label("공유",systemImage:"square.and.arrow.up") }
             AlarmView(model:model).tabItem { Label("알람",systemImage:"alarm") }
             SettingsView(store:schedule).tabItem { Label("내 근무",systemImage:"line.3.horizontal") }
-        }.preferredColorScheme(displayMode == "dark" ? .dark : displayMode == "auto" ? nil : .light).onChange(of:scenePhase) { _,phase in if phase == .active {Task{await NativeCloudAccount.shared.sync()};CalendarOverlay.shared.refresh(month)} }.task { NativeCloudAccount.shared.attach(schedule) }.tint(AppTheme.accent).toolbarBackground(AppTheme.surface,for:.tabBar).toolbarBackground(.visible,for:.tabBar)
+        }.onAppear { let saved=UserDefaults.standard.string(forKey:"display-mode");if saved == "dark" || (saved == "auto" && UITraitCollection.current.userInterfaceStyle == .dark) {theme="dark"};UserDefaults.standard.removeObject(forKey:"display-mode") }.preferredColorScheme(theme == "dark" ? .dark : .light).onChange(of:scenePhase) { _,phase in if phase == .active {Task{await NativeCloudAccount.shared.sync()};CalendarOverlay.shared.refresh(month)} }.task { NativeCloudAccount.shared.attach(schedule) }.tint(AppTheme.accent).toolbarBackground(AppTheme.surface,for:.tabBar).toolbarBackground(.visible,for:.tabBar)
     }
 }
 
@@ -206,7 +215,7 @@ struct EditWorkView: View {
     private func editorTab(_ title:String,index:Int)->some View {
         Button { tab=index } label: {
             Text(title).font(.system(size:16,weight:.semibold))
-                .foregroundStyle(tab==index ? Color.white : Color.secondary)
+                .foregroundStyle(tab==index ? (AppTheme.dark ? AppTheme.rgb(0x15202b) : Color.white) : Color.secondary)
                 .frame(maxWidth:.infinity,minHeight:44)
                 .background(tab==index ? AppTheme.accent : Color.clear,in:RoundedRectangle(cornerRadius:9))
         }.buttonStyle(.plain).accessibilityIdentifier("editor-tab-\(index)")
@@ -219,11 +228,11 @@ struct EditWorkView: View {
             ForEach(types) { type in
                 Button { choice=type.rawValue } label: {
                     VStack(spacing:8) {
-                        Text(type.isAttendance || type == .noOT ? type.label : type.shortLabel).font(.system(size:type.isAttendance || type == .noOT ? 11 : 15,weight:.semibold)).foregroundStyle(type.isAttendance || type == .noOT ? Color(red:70/255,green:86/255,blue:106/255) : type == .off ? type.color : type.badgeTextColor)
-                            .frame(width:displayCircle ? 58 : 44,height:displayCircle ? 58 : 40).background(type.isAttendance || type == .noOT ? Color(red:237/255,green:241/255,blue:245/255) : type == .off ? Color.clear : type.color,in:RoundedRectangle(cornerRadius:displayCircle ? 29 : 10))
+                        Text(type.isAttendance || type == .noOT ? type.label : type.shortLabel).font(.system(size:type.isAttendance || type == .noOT ? 11 : 15,weight:.semibold)).foregroundStyle(type.isAttendance || type == .noOT ? (AppTheme.dark ? AppTheme.rgb(0xe8f0fa) : Color(red:70/255,green:86/255,blue:106/255)) : type == .off ? type.color : type.badgeTextColor)
+                            .frame(width:displayCircle ? 58 : 44,height:displayCircle ? 58 : 40).background(type.isAttendance || type == .noOT ? (AppTheme.dark ? AppTheme.rgb(0x303f50) : Color(red:237/255,green:241/255,blue:245/255)) : type == .off ? Color.clear : type.color,in:RoundedRectangle(cornerRadius:displayCircle ? 29 : 10))
                             .padding(3).overlay(RoundedRectangle(cornerRadius:displayCircle ? 32 : 13).stroke(selectedType==type ? AppTheme.accent : .clear,lineWidth:3))
                     }.frame(width:displayCircle ? 66 : 58,height:displayCircle ? 66 : 48)
-                        .overlay(alignment:.topTrailing) { if selectedType==type { Image(systemName:"checkmark.circle.fill").font(.system(size:16,weight:.semibold)).symbolRenderingMode(.palette).foregroundStyle(.white,AppTheme.accent).padding(2).accessibilityHidden(true) } }
+                        .overlay(alignment:.topTrailing) { if selectedType==type { Image(systemName:"checkmark.circle.fill").font(.system(size:16,weight:.semibold)).symbolRenderingMode(.palette).foregroundStyle(AppTheme.dark ? AppTheme.rgb(0x15202b) : .white,AppTheme.accent).padding(2).accessibilityHidden(true) } }
                 }.buttonStyle(.plain).accessibilityLabel(type.label).accessibilityValue(selectedType==type ? "선택됨" : "선택 안 됨").accessibilityIdentifier("shift-"+type.rawValue)
                     .accessibilityAddTraits(selectedType==type ? .isSelected : [])
             }
@@ -441,14 +450,13 @@ struct WorkStatisticsView: View {
 
 struct AppPreferencesView:View {
     @AppStorage("calendar-theme") private var theme="current"
-    @AppStorage("display-mode") private var displayMode="light"
     @AppStorage("display-holidays") private var holidays=true
     @AppStorage("display-memos") private var memos=true
     @AppStorage("display-circle") private var circle=false
     @State private var connectingCalendars=false
     var body:some View {
         List {
-            Section("테마") { Picker("화면 모드",selection:$displayMode) { Text("라이트").tag("light");Text("다크").tag("dark");Text("기기 설정").tag("auto") }; Picker("달력 스타일",selection:$theme) { Text("1").tag("current");Text("2").tag("toss");Text("3").tag("gpt") } }
+            Section("테마") { Picker("달력 스타일",selection:$theme) { Text("1").tag("current");Text("2").tag("toss");Text("3").tag("gpt");Text("4 · 다크").tag("dark") } }
             Section("화면 표시") {
                 Toggle("공휴일 이름",isOn:$holidays)
                 Toggle("달력 메모",isOn:$memos)
