@@ -17,9 +17,11 @@ struct ShiftRules: Decodable {
 
 enum WorkType: String, Codable, CaseIterable, Identifiable {
     case day = "DAY", night = "NIGHT", off = "OFF", specialDay = "SPECIAL_DAY", specialNight = "SPECIAL_NIGHT"
+    case specialDayNoOT = "SPECIAL_DAY_NO_OT", specialNightNoOT = "SPECIAL_NIGHT_NO_OT"
     case leave = "LEAVE", halfPre = "HALF_PRE", halfPost = "HALF_POST", unpaid = "UNPAID_OFF"
     case unpaidHalfPre = "UNPAID_HALF_PRE", unpaidHalfPost = "UNPAID_HALF_POST", noOT = "NO_OT"
     var id: String { rawValue }
+    var isSpecialNoOT:Bool { self == .specialDayNoOT || self == .specialNightNoOT }
     var label: String {
         switch self {
         case .day: "주간"
@@ -27,6 +29,8 @@ enum WorkType: String, Codable, CaseIterable, Identifiable {
         case .off: "휴무"
         case .specialDay: "주특"
         case .specialNight: "야특"
+        case .specialDayNoOT: "주특 잔업X"
+        case .specialNightNoOT: "야특 잔업X"
         case .leave: "연차"
         case .halfPre: "반차(전)"
         case .halfPost: "반차(후)"
@@ -38,8 +42,8 @@ enum WorkType: String, Codable, CaseIterable, Identifiable {
     }
     var symbol: String {
         switch self {
-        case .day, .specialDay: "sun.max.fill"
-        case .night, .specialNight: "moon.fill"
+        case .day, .specialDay, .specialDayNoOT: "sun.max.fill"
+        case .night, .specialNight, .specialNightNoOT: "moon.fill"
         case .leave, .halfPre, .halfPost: "leaf.fill"
         case .noOT: "clock.badge.checkmark"
         case .unpaid, .unpaidHalfPre, .unpaidHalfPost: "minus.circle"
@@ -61,8 +65,8 @@ struct WorkDay: Identifiable {
     var label: String { type == .noOT ? baseType.label + " · O.T 해제" : type.label }
     var alarmHour: Int? {
         switch type {
-        case .day, .specialDay: 6
-        case .night, .specialNight: 18
+        case .day, .specialDay, .specialDayNoOT: 6
+        case .night, .specialNight, .specialNightNoOT: 18
         case .noOT: baseType == .day ? 6 : baseType == .night ? 18 : nil
         default: nil
         }

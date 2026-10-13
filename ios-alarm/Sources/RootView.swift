@@ -24,8 +24,8 @@ extension WorkType {
             switch self {
             case .day:return AppTheme.rgb(0xf5ce68)
             case .night:return AppTheme.rgb(0xb6adff)
-            case .specialDay:return AppTheme.rgb(0x6cd4c4)
-            case .specialNight:return AppTheme.rgb(0x7daaff)
+            case .specialDay, .specialDayNoOT:return AppTheme.rgb(0x6cd4c4)
+            case .specialNight, .specialNightNoOT:return AppTheme.rgb(0x7daaff)
             case .off:return AppTheme.rgb(0xff9aa9)
             default:return AppTheme.attendance
             }
@@ -35,8 +35,8 @@ extension WorkType {
             switch self {
             case .day:return AppTheme.rgb(gpt ? 0xddd9d0 : 0xe8f2ff)
             case .night:return AppTheme.rgb(gpt ? 0x343434 : 0x2453a6)
-            case .specialDay:return AppTheme.rgb(gpt ? 0x555555 : 0x3182f6)
-            case .specialNight:return AppTheme.rgb(gpt ? 0x212121 : 0x1b64da)
+            case .specialDay, .specialDayNoOT:return AppTheme.rgb(gpt ? 0x555555 : 0x3182f6)
+            case .specialNight, .specialNightNoOT:return AppTheme.rgb(gpt ? 0x212121 : 0x1b64da)
             case .off:return AppTheme.rgb(gpt ? 0x777777 : 0xd95769)
             default:return AppTheme.attendance
             }
@@ -44,8 +44,8 @@ extension WorkType {
         switch self {
         case .day: return Color(red:255/255,green:214/255,blue:0/255)
         case .night: return Color(red:66/255,green:66/255,blue:66/255)
-        case .specialDay: return Color(red:71/255,green:214/255,blue:220/255)
-        case .specialNight: return Color(red:84/255,green:133/255,blue:238/255)
+        case .specialDay, .specialDayNoOT: return Color(red:71/255,green:214/255,blue:220/255)
+        case .specialNight, .specialNightNoOT: return Color(red:84/255,green:133/255,blue:238/255)
         case .off: return Color(red:232/255,green:104/255,blue:127/255)
         case .leave: return Color(red:195/255,green:91/255,blue:24/255)
         case .halfPre, .halfPost: return Color(red:128/255,green:86/255,blue:181/255)
@@ -58,6 +58,8 @@ extension WorkType {
     var badgeTextColor: Color { AppTheme.dark ? AppTheme.rgb(0x15202b) : self == .day ? AppTheme.rgb(0x424242) : .white }
     var shortLabel:String {
         switch self {
+        case .specialDay, .specialDayNoOT: "주특"
+        case .specialNight, .specialNightNoOT: "야특"
         case .day: "주"
         case .night: "야"
         case .off: "휴"
@@ -192,7 +194,7 @@ struct EditWorkView: View {
                     }.padding(4).background(Color(.secondarySystemBackground),in:RoundedRectangle(cornerRadius:12))
                     if tab == 0 {
                         Text("근무").font(.subheadline.weight(.medium))
-                        options([.day,.night,.off,.specialDay,.specialNight,.noOT])
+                        options([.day,.night,.off,.specialDay,.specialNight,.specialDayNoOT,.specialNightNoOT,.noOT])
                         Divider()
                         Text("근태").font(.subheadline.weight(.medium))
                         options([.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost])
@@ -228,7 +230,7 @@ struct EditWorkView: View {
             ForEach(types) { type in
                 Button { choice=type.rawValue } label: {
                     VStack(spacing:8) {
-                        Text(type.isAttendance || type == .noOT ? type.label : type.shortLabel).font(.system(size:type.isAttendance || type == .noOT ? 11 : 15,weight:.semibold)).foregroundStyle(type.isAttendance || type == .noOT ? (AppTheme.dark ? AppTheme.rgb(0xe8f0fa) : Color(red:70/255,green:86/255,blue:106/255)) : type == .off ? type.color : type.badgeTextColor)
+                        Text(type.isSpecialNoOT ? type.label.replacingOccurrences(of:" ",with:"\n") : type.isAttendance || type == .noOT ? type.label : type.shortLabel).font(.system(size:type.isAttendance || type == .noOT || type.isSpecialNoOT ? 11 : 15,weight:.semibold)).foregroundStyle(type.isAttendance || type == .noOT ? (AppTheme.dark ? AppTheme.rgb(0xe8f0fa) : Color(red:70/255,green:86/255,blue:106/255)) : type == .off ? type.color : type.badgeTextColor)
                             .frame(width:displayCircle ? 58 : 44,height:displayCircle ? 58 : 40).background(type.isAttendance || type == .noOT ? (AppTheme.dark ? AppTheme.rgb(0x303f50) : Color(red:237/255,green:241/255,blue:245/255)) : type == .off ? Color.clear : type.color,in:RoundedRectangle(cornerRadius:displayCircle ? 29 : 10))
                             .padding(3).overlay(RoundedRectangle(cornerRadius:displayCircle ? 32 : 13).stroke(selectedType==type ? AppTheme.accent : .clear,lineWidth:3))
                     }.frame(width:displayCircle ? 66 : 58,height:displayCircle ? 66 : 48)
@@ -385,7 +387,7 @@ struct WorkStatisticsView: View {
     private func amount(_ type:WorkType)->Double {
         days.reduce(0) { sum,day in
             if type == .off { return sum + (day.type == .off || day.type == .unpaid ? 1 : [.unpaidHalfPre,.unpaidHalfPost].contains(day.type) ? 0.5 : 0) }
-            if day.type == type { return sum+1 }
+            if day.type == type || type == .specialDay && day.type == .specialDayNoOT || type == .specialNight && day.type == .specialNightNoOT { return sum+1 }
             if type == .day || type == .night {
                 let base=store.engine.day(day.date,group:store.group).type
                 let direction:WorkType = [.night,.specialNight].contains(base) ? .night : .day

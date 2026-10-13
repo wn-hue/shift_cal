@@ -69,6 +69,7 @@ struct MonthGrid: View {
                                 .frame(width:30,height:displayCircle ? 30 : 27)
                                 .background(shown==WorkType.off ? Color.clear : shown.color,in:RoundedRectangle(cornerRadius:displayCircle ? 15 : 7))
                                 .frame(maxWidth:.infinity)
+                            if day.type.isSpecialNoOT { Text("잔업X").font(.system(size:9)).foregroundStyle(.primary) }
                             if day.type.isAttendance {
                                 Text(day.type.attendanceLabel).font(.system(size:9,weight:.medium)).foregroundStyle(AppTheme.dark ? AppTheme.rgb(0x15202b) : .white).frame(maxWidth:.infinity).padding(.vertical,2).background(AppTheme.attendance,in:RoundedRectangle(cornerRadius:5))
                             }
