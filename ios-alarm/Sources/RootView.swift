@@ -456,7 +456,7 @@ struct AppPreferencesView:View {
     @State private var connectingCalendars=false
     var body:some View {
         List {
-            Section("테마") { Picker("달력 스타일",selection:$theme) { Text("1").tag("current");Text("2").tag("toss");Text("3").tag("gpt");Text("4 · 다크").tag("dark") } }
+            Section("테마") { Picker("달력 스타일",selection:$theme) { Text("1. 밤과 낮").tag("current");Text("2. 블루컬러").tag("toss");Text("3. 그레이").tag("gpt");Text("4. 다크모드").tag("dark") } }
             Section("화면 표시") {
                 Toggle("공휴일 이름",isOn:$holidays)
                 Toggle("달력 메모",isOn:$memos)
