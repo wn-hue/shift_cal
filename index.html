@@ -1016,7 +1016,7 @@
 
             <div class="card wage-settings-card">
                 <div class="card-header">
-                    <span>시급 · 수당</span>
+                    <span id="wage-settings-title">시급</span>
                 </div>
                 <div class="two-cols">
                     <div class="input-group">
@@ -1043,7 +1043,7 @@
             </div>
             <div class="card payroll-input-card">
                 <div class="card-header">
-                    <span>출근 · 수당</span>
+                    <span>근무일수</span>
                     <div style="display:flex; gap:8px; align-items:center;">
 
                         <button style="border:none; background:none; color:var(--primary); font-size:11.5px; font-weight:bold; cursor:pointer;" onclick="syncFromCalendar()">캘린더 반영</button>
@@ -2606,6 +2606,7 @@
             document.getElementById('duty-pay-setting').hidden = !(config.dutyPay > 0);
             document.getElementById('seniority-pay-setting').hidden = !(config.seniorityPay > 0);
             document.getElementById('wage-allowance-settings').hidden = !(config.dutyPay > 0 || config.seniorityPay > 0);
+            document.getElementById('wage-settings-title').textContent = (config.dutyPay > 0 || config.seniorityPay > 0) ? '시급 · 수당' : '시급';
             document.getElementById('inp-holiday-bonus').value = config.holidayBonus || 0;
             config.applyRetroPay = !!config.hireDate && parseInt(config.hireDate.slice(0,4),10) < 2020;
         }
