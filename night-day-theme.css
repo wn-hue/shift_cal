@@ -11,7 +11,7 @@ body[data-pref-theme="current"] #modal-override .editor-tabs button[aria-selecte
 body[data-pref-theme="current"] #modal-override #work-panel .opt-btn[aria-pressed="true"] { outline:2px solid var(--midnight); }
 body[data-pref-theme="current"] .planning-preview { background:var(--daylight-soft);color:var(--midnight); }
 body[data-pref-theme="current"] :is(.btn-save,.sms-primary-btn) { background:var(--midnight);color:var(--daylight); }
-body[data-pref-theme="current"] #view-payroll .salary-hero { background:var(--daylight-soft);border-color:var(--theme-line);color:var(--midnight); }
+body[data-pref-theme="current"] #view-payroll .salary-hero { background:#fff;border-color:var(--theme-line);color:var(--midnight); }
 body[data-pref-theme="current"] #view-payroll .hero-amount { color:var(--midnight); }
 body[data-pref-theme="current"] #view-payroll .hero-label { color:var(--text-sub); }
 body[data-pref-theme="current"] #view-payroll .hero-subgrid { border-color:var(--theme-line); }
@@ -20,16 +20,12 @@ body[data-pref-theme="current"] #view-payroll #hero-bonus-pay { color:var(--midn
 body[data-pref-theme="current"] #view-payroll .period-tag { background:#f0efeb;color:#666975; }
 body[data-pref-theme="current"] #view-payroll .payroll-disclosure-state,body[data-pref-theme="current"] #view-payroll .payroll-disclosure-amount { color:var(--midnight); }
 body[data-pref-theme="current"] #view-payroll .payroll-disclosure[open] { border-color:#d5bd64; }
-body[data-pref-theme="current"] #view-leave :is(.leave-overview,.leave-money-summary) { background:var(--daylight-soft); }
+body[data-pref-theme="current"] #view-leave :is(.leave-overview,.leave-money-summary) { background:#fff; }
 body[data-pref-theme="current"] #view-leave .wage-settings-card { background:#fff; }
 body[data-pref-theme="current"] :is(.preferences-card select,.all-shortcut-icon,.settings-year) { background:var(--daylight-soft);color:var(--midnight); }
 body[data-pref-theme="current"] :is(.preferences-card input,.estimate-toggle input) { accent-color:var(--midnight); }
 body[data-pref-theme="current"] .all-shortcut-icon :is(svg,span) { color:var(--midnight); }
 body[data-pref-theme="current"] .all-settings-card { background:#fff9e8;border-color:var(--theme-line); }
-body[data-pref-theme="current"] .meal-date-card { background:var(--midnight);border-color:var(--midnight); }
-body[data-pref-theme="current"] .meal-date-card :is(.meal-eyebrow,.meal-note,.meal-status) { color:#d3d5df; }
-body[data-pref-theme="current"] .meal-date-card h1 { color:var(--daylight); }
-body[data-pref-theme="current"] .meal-date-card .meal-refresh { background:var(--daylight);color:var(--midnight);border-color:var(--daylight); }
 body[data-pref-theme="current"] .meal-category { background:var(--daylight-soft);color:var(--midnight); }
 body[data-pref-theme="current"] .meal-card h2 { color:var(--midnight); }
 body[data-pref-theme="current"] :is(.sms-dialog-header h2,.override-header h2,.stats-header h2) { color:var(--midnight); }
@@ -37,3 +33,12 @@ body[data-pref-theme="current"] :is(.account-login-note,.payroll-disclosure-stat
 body[data-pref-theme="current"] :is(#modal-override,#view-payroll,#view-leave,.settings-dialog) .btn-save,body[data-pref-theme="current"] #payroll-sms-dialog .sms-primary-btn { background:var(--midnight);color:var(--daylight); }
 body[data-pref-theme="current"] #view-leave .stat-value { color:var(--midnight); }
 body[data-pref-theme="current"] #view-payroll .salary-hero .hero-amount { color:var(--midnight)!important; }
+
+/* Calm financial pages: white cards, cool neutral details, restrained daylight accents. */
+body[data-pref-theme="current"] :is(#view-payroll,#view-leave) { --surface-soft:#f5f6f8;--theme-line:#e5e7eb; }
+body[data-pref-theme="current"] #view-payroll .salary-hero,
+body[data-pref-theme="current"] #view-leave .leave-overview { border-top:3px solid #e5c45d; }
+body[data-pref-theme="current"] :is(#view-payroll,#view-leave) .btn-save { background:var(--midnight);color:#fff; }
+body[data-pref-theme="current"] #view-payroll .period-tag { background:#f2f3f5;color:#666975; }
+body[data-pref-theme="current"] #view-payroll .payroll-disclosure[open] { border-color:#d7dbe1; }
+body[data-pref-theme="current"] #view-leave .leave-remaining .stat-value { color:#367b70!important; }
