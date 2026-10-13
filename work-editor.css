@@ -1,0 +1,22 @@
+/* Date and current shift above a plain tabbed editing area. */
+#modal-override .override-sheet { padding:0;border-radius:28px 28px 0 0;overflow:auto;min-height:0;max-height:90dvh; }
+#modal-override .override-header { position:relative;padding:30px 24px 24px;margin:0;background:var(--surface-soft);min-height:155px;box-sizing:border-box; }
+#modal-override .override-header::before { content:"";position:absolute;top:10px;left:calc(50% - 19px);width:38px;height:4px;border-radius:4px;background:#c6c6c6; }
+#modal-override .override-header h2 { font-size:12px;font-weight:500;color:var(--text-sub);margin:0 0 8px; }
+#modal-override #modal-date-text { font-size:24px;font-weight:650;color:var(--theme-text);letter-spacing:-.5px;margin:0 0 16px; }
+#modal-override .override-base { background:transparent;padding:0;color:var(--text-sub);font-size:12px; }
+#modal-override .editor-current-shift { display:flex;align-items:center;gap:12px; }
+#modal-override .editor-current-shift .shift-badge { width:48px;height:48px;min-width:48px;min-height:48px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;font-size:17px;box-sizing:border-box; }
+#modal-override .override-close { background:transparent;color:var(--text-sub); }
+#modal-override .editor-content { background:var(--surface);border-radius:24px 24px 0 0;padding:20px 24px 24px; }
+body[data-pref-theme] #modal-override .editor-tabs { display:flex;gap:24px;padding:0;margin:0 0 24px;border-radius:0;background:transparent!important; }
+body[data-pref-theme] #modal-override .editor-tabs button { width:auto;flex:none;min-height:44px;padding:6px 4px;border-radius:0;border:0;border-bottom:3px solid transparent;background:transparent!important;box-shadow:none!important;color:var(--text-sub)!important;font-size:18px; }
+body[data-pref-theme] #modal-override .editor-tabs button[aria-selected="true"] { background:transparent!important;color:var(--theme-text)!important;border-bottom-color:var(--theme-text); }
+#modal-override #work-panel .shift-scroll { gap:14px;margin-bottom:24px;padding:6px 5px 10px; }
+#modal-override .override-section-title { color:var(--text-sub);font-size:14px; }
+#modal-override #work-panel .opt-btn[aria-pressed="true"] { outline:3px solid var(--accent);outline-offset:3px; }
+#modal-override .planning-preview { background:var(--surface-soft); }
+body[data-pref-theme="current"] #modal-override[data-base="DAY"] .override-header { background:#fff9d8; }
+body[data-pref-theme="current"] #modal-override[data-base="NIGHT"] .override-header { background:#f1f2f4; }
+body[data-pref-theme="current"] #modal-override[data-base="OFF"] .override-header { background:#f7f7f7; }
+@media(max-width:360px){#modal-override .override-header{padding-left:18px;padding-right:18px}#modal-override .editor-content{padding-left:18px;padding-right:18px}#modal-override #modal-date-text{font-size:22px}}

@@ -1,52 +1,21 @@
-/* Theme 1: daylight yellow accents and midnight actions across the app. */
+/* Night and day keeps color in work badges; all other surfaces stay neutral. */
 body[data-pref-theme="current"] {
- --midnight:#202433;--daylight:#ffda54;--daylight-soft:#fff5cf;
- --accent:var(--midnight);--accent-soft:var(--daylight-soft);--primary:var(--midnight);--primary-dark:#10131c;
- --page-bg:#fbfaf7;--bg-main:#fbfaf7;--surface:#fff;--surface-soft:#fff9e8;--theme-text:var(--midnight);--text-main:var(--midnight);--text-sub:#666975;--theme-line:#e8e5dc;
- --shift-day:var(--daylight);--shift-night:var(--midnight);--choice-bg:#f0f1f4;--choice-ink:#383d4c;
+ --accent:#2874e8;--accent-soft:#f3f5f7;--primary:#2874e8;--primary-dark:#1c5fc7;
+ --page-bg:#fff;--bg-main:#fff;--surface:#fff;--surface-soft:#f7f7f7;
+ --theme-text:#303030;--text-main:#303030;--text-sub:#737373;--theme-line:#e5e5e5;
+ --shift-day:#ffd600;--shift-night:#424242;--shift-special-day:#47d6dc;--shift-special-night:#5485ee;
+ --choice-bg:#f3f4f5;--choice-ink:#555;
 }
-body[data-pref-theme="current"] .bottom-nav .nav-item.active .nav-visual { background:var(--midnight);color:#fff; }
-body[data-pref-theme="current"] #modal-override .editor-tabs { background:#f0f1f4; }
-body[data-pref-theme="current"] #modal-override .editor-tabs button[aria-selected="true"] { background:var(--midnight);color:var(--daylight);box-shadow:none; }
-body[data-pref-theme="current"] #modal-override #work-panel .opt-btn[aria-pressed="true"] { outline:2px solid var(--midnight); }
-body[data-pref-theme="current"] .planning-preview { background:var(--daylight-soft);color:var(--midnight); }
-body[data-pref-theme="current"] :is(.btn-save,.sms-primary-btn) { background:var(--midnight);color:var(--daylight); }
-body[data-pref-theme="current"] #view-payroll .salary-hero { background:#fff;border-color:var(--theme-line);color:var(--midnight); }
-body[data-pref-theme="current"] #view-payroll .hero-amount { color:var(--midnight); }
-body[data-pref-theme="current"] #view-payroll .hero-label { color:var(--text-sub); }
-body[data-pref-theme="current"] #view-payroll .hero-subgrid { border-color:var(--theme-line); }
-body[data-pref-theme="current"] #view-payroll #hero-regular-pay { color:var(--midnight)!important; }
-body[data-pref-theme="current"] #view-payroll #hero-bonus-pay { color:var(--midnight)!important; }
-body[data-pref-theme="current"] #view-payroll .period-tag { background:#f0efeb;color:#666975; }
-body[data-pref-theme="current"] #view-payroll .payroll-disclosure-state,body[data-pref-theme="current"] #view-payroll .payroll-disclosure-amount { color:var(--midnight); }
-body[data-pref-theme="current"] #view-payroll .payroll-disclosure[open] { border-color:#d5bd64; }
-body[data-pref-theme="current"] #view-leave :is(.leave-overview,.leave-money-summary) { background:#fff; }
-body[data-pref-theme="current"] #view-leave .wage-settings-card { background:#fff; }
-body[data-pref-theme="current"] :is(.preferences-card select,.settings-year) { background:var(--daylight-soft);color:var(--midnight); }
-body[data-pref-theme="current"] :is(.preferences-card input,.estimate-toggle input) { accent-color:var(--midnight); }
-body[data-pref-theme="current"] .all-shortcut-icon :is(svg,span) { color:#fff; }
-body[data-pref-theme="current"] .all-settings-card { background:var(--midnight);border-color:var(--midnight); }
-body[data-pref-theme="current"] .meal-category { background:var(--daylight-soft);color:var(--midnight); }
-body[data-pref-theme="current"] .meal-card h2 { color:var(--midnight); }
-body[data-pref-theme="current"] :is(.sms-dialog-header h2,.override-header h2,.stats-header h2) { color:var(--midnight); }
-body[data-pref-theme="current"] :is(.account-login-note,.payroll-disclosure-state) { color:var(--midnight); }
-body[data-pref-theme="current"] :is(#modal-override,#view-payroll,#view-leave,.settings-dialog) .btn-save,body[data-pref-theme="current"] #payroll-sms-dialog .sms-primary-btn { background:var(--midnight);color:var(--daylight); }
-body[data-pref-theme="current"] #view-leave .stat-value { color:var(--midnight); }
-body[data-pref-theme="current"] #view-payroll .salary-hero .hero-amount { color:var(--midnight)!important; }
-
-/* Calm financial pages: white cards, cool neutral details, restrained daylight accents. */
-body[data-pref-theme="current"] :is(#view-payroll,#view-leave) { --surface-soft:#f5f6f8;--theme-line:#e5e7eb; }
+body[data-pref-theme="current"] .bottom-nav .nav-item.active .nav-visual { background:transparent;color:var(--accent); }
+body[data-pref-theme="current"] :is(.all-settings-card,.all-shortcut-icon,.preferences-card select,.settings-year,.meal-category) { background:#f5f5f5;color:#555; }
+body[data-pref-theme="current"] .all-shortcut-icon :is(svg,span),body[data-pref-theme="current"] #menu-group-settings .drawer-section-label svg { color:#555; }
+body[data-pref-theme="current"] #menu-group-settings .group-select { background:#fff;color:#303030;border-color:#e5e5e5;color-scheme:light; }
 body[data-pref-theme="current"] #view-payroll .salary-hero,
-body[data-pref-theme="current"] #view-leave .leave-overview { border-top:3px solid #e5c45d; }
-body[data-pref-theme="current"] :is(#view-payroll,#view-leave) .btn-save { background:var(--midnight);color:#fff; }
-body[data-pref-theme="current"] #view-payroll .period-tag { background:#f2f3f5;color:#666975; }
-body[data-pref-theme="current"] #view-payroll .payroll-disclosure[open] { border-color:#d7dbe1; }
-body[data-pref-theme="current"] #view-leave .leave-remaining .stat-value { color:#367b70!important; }
-
-/* Midnight navigation and work tools for the night and day theme. */
-body[data-pref-theme="current"] .all-shortcut-icon { background:var(--midnight);color:#fff; }
-body[data-pref-theme="current"] .all-shortcut-icon.mint path,
-body[data-pref-theme="current"] .all-shortcut-icon.lavender circle { stroke:var(--midnight); }
-body[data-pref-theme="current"] #menu-group-settings :is(.drawer-section-label,.drawer-section-label svg,.group-selection-status) { color:#fff; }
-body[data-pref-theme="current"] #menu-group-settings .group-select { background:#353a4b;color:#fff;border-color:#535a70;color-scheme:dark; }
-body[data-pref-theme="current"] #menu-group-settings .group-select-wrapper::after { color:#fff; }
+body[data-pref-theme="current"] #view-leave :is(.leave-overview,.leave-money-summary,.wage-settings-card) { background:#fff;border:1px solid #e5e5e5; }
+body[data-pref-theme="current"] #view-payroll :is(.hero-amount,#hero-regular-pay,#hero-bonus-pay) { color:#303030!important; }
+body[data-pref-theme="current"] #view-payroll .hero-label { color:#737373; }
+body[data-pref-theme="current"] #view-payroll .period-tag { background:#f3f3f3;color:#737373; }
+body[data-pref-theme="current"] #view-leave .stat-value { color:#303030; }
+body[data-pref-theme="current"] #view-leave .leave-remaining .stat-value { color:#2d8069!important; }
+body[data-pref-theme="current"] .cal-day.today { background:#e7f2ff;box-shadow:inset 0 0 0 2px #3182f6;border-radius:0; }
+body[data-pref-theme="current"] .cal-day.today .day-num { color:#2874e8!important; }

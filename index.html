@@ -918,8 +918,9 @@
 <link rel="stylesheet" href="./login-sheet.css?v=1">
 
     <link rel="stylesheet" href="./today-weather.css?v=4">
-    <link rel="stylesheet" href="./night-day-theme.css?v=5">
+    <link rel="stylesheet" href="./night-day-theme.css?v=6">
     <link rel="stylesheet" href="./work-choice-theme.css?v=2">
+<link rel="stylesheet" href="./work-editor.css?v=1">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1483,10 +1484,10 @@
     <div class="modal-overlay" id="modal-override" onclick="closeModal(event)">
         <div class="modal-sheet override-sheet" role="dialog" aria-modal="true" aria-labelledby="override-title" onclick="event.stopPropagation()">
             <div class="override-header">
-                <div><h2 id="override-title">근무 변경</h2><p id="modal-date-text"></p><span id="modal-orig-text" class="override-base"></span></div>
+                <div><h2 id="override-title">근무 변경</h2><p id="modal-date-text"></p><div class="editor-current-shift"><span id="editor-current-badge" class="shift-badge"></span><span id="modal-orig-text" class="override-base"></span></div></div>
                 <button type="button" class="override-close" aria-label="근무 변경 닫기" onclick="closeModalDirect()">✕</button>
             </div>
-            <div class="editor-tabs" role="tablist"><button id="work-tab" role="tab" aria-selected="true" onclick="switchEditorTab('work')">근무</button><button id="memo-tab" role="tab" aria-selected="false" onclick="switchEditorTab('memo')">메모</button></div>
+            <div class="editor-content"><div class="editor-tabs" role="tablist"><button id="work-tab" role="tab" aria-selected="true" onclick="switchEditorTab('work')">근무</button><button id="memo-tab" role="tab" aria-selected="false" onclick="switchEditorTab('memo')">메모</button></div>
             <section id="work-panel" class="override-section" role="tabpanel" aria-labelledby="work-tab"><h3 class="override-section-title">근무</h3><div class="shift-scroll"><button class="opt-btn day-sp" onclick="setDayOverride('SPECIAL_DAY')">
                     <span>주특</span>
                 </button><button class="opt-btn night-sp" onclick="setDayOverride('SPECIAL_NIGHT')">
@@ -1512,7 +1513,7 @@
                 <label for="modal-memo-input" class="override-section-title">메모</label>
                 <textarea id="modal-memo-input" placeholder="메모 입력" maxlength="16000"></textarea>
                 <button class="btn-save" onclick="saveMemoDirect()">메모 저장</button>
-            </section>
+            </section></div>
         </div>
     </div>
 
@@ -2139,10 +2140,16 @@
             selectedDateStr = dateStr;
             switchEditorTab("work");
             const weekNames = ['일', '월', '화', '수', '목', '금', '토'];
-            document.getElementById('modal-date-text').innerText = `${dateStr} (${weekNames[dateObj.getDay()]})`;
+            document.getElementById('modal-date-text').innerText = `${dateObj.getMonth()+1}월 ${dateObj.getDate()}일 ${weekNames[dateObj.getDay()]}요일`;
 
             const base = getBaseShift(dateObj, currentGroup);
             document.getElementById("modal-override").setAttribute("data-base",base.type);
+            const badge=document.getElementById('editor-current-badge');
+            const badgeType=currentShift.type||base.type;
+            const badgeClass={DAY:'day',NIGHT:'night',OFF:'off',SPECIAL_DAY:'special-day',SPECIAL_NIGHT:'special-night',SPECIAL_DAY_NO_OT:'special-day',SPECIAL_NIGHT_NO_OT:'special-night'}[badgeType]||base.type.toLowerCase();
+            badge.className='shift-badge '+badgeClass;
+            badge.textContent={day:'주',night:'야',off:'휴','special-day':'주특','special-night':'야특'}[badgeClass]||base.name;
+
             document.getElementById('modal-orig-text').innerText = `[기본: ${base.name}${currentShift.holidayName ? ' · ' + currentShift.holidayName : ''}]`;
 
             document.getElementById('modal-memo-input').value = dayMemos[dateStr] || '';
