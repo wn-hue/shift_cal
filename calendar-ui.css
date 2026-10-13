@@ -690,32 +690,48 @@ body[data-pref-theme="current"] #view-leave .leave-remaining .stat-value { color
 #modal-override .opt-btn[aria-pressed="true"] .selection-check { display:block; }
 #modal-override .opt-btn.reset .selection-check { right:12px;top:50%;transform:translateY(-50%); }
 
-/* Appearance is independent of the three calendar themes. */
-body[data-pref-mode="dark"]{color-scheme:dark;--page-bg:#12161d;--bg-main:#12161d;--surface:#1c222c;--card-bg:#1c222c;--surface-soft:#242e3a;--theme-text:#e6edf5;--text-main:#e6edf5;--text-sub:#a6b3c3;--theme-line:#354151;--border:#354151;--cal-line:#303b49;--accent:#83bce0;--accent-soft:#223747;--primary:#83bce0;--primary-dark:#a7d1ed;--choice-bg:#2b3644;--choice-ink:#d4deeb;--attendance:#bf5669;--work-ink:#fff;background:var(--page-bg);color:var(--theme-text)}
-body[data-pref-mode="dark"][data-pref-theme="toss"]{--accent:#82b4ff;--primary:#82b4ff;--accent-soft:#213858;--shift-day:#c2dcff;--shift-night:#2453a6}
-body[data-pref-mode="dark"][data-pref-theme="gpt"]{--accent:#d3ded9;--primary:#d3ded9;--accent-soft:#2c3533;--shift-day:#ddd9d0;--shift-night:#343434}
-body[data-pref-mode="dark"] :is(.cal-grid,.cal-day.other-month,.calendar-card,.card,.modal-sheet,.sms-dialog,.app-preferences,.preferences-card,.account-drawer,.all-panel,.all-info-list,.all-account-card,.meal-date-card,.meal-card,.meal-table,.identity-card,.external-calendars,.bottom-nav,.app-header,.reference-header,.payslip-modal,.picker-sheet){background:var(--surface)!important;color:var(--theme-text);border-color:var(--theme-line)!important;box-shadow:none}
-body[data-pref-mode="dark"] :is(.cal-day,.cal-weekdays,.stats-section,.stats-row,.pay-table td,.pay-table th,.all-shortcut,.input-group,.preferences-card label){border-color:var(--theme-line)}
-body[data-pref-mode="dark"] :is(h1,h2,h3,h4,.month-title-btn,.header-view-title,.account-menu-button,.icon-button,.day-num,.cal-weekdays,.stats-row,.pay-table,.input-group label,.all-shortcut strong,.preferences-card label,.sms-input-label,.hero-label,.sub-label,.stat-label,.nav-item,.override-date){color:var(--theme-text)}
-body[data-pref-mode="dark"] :is(.sms-privacy,.sms-help,.sms-status,.stats-header p,.stats-section p,.challenge-note,.calendar-group-caption,.estimate-caption,.estimate-note,.estimate-disclaimer,.all-info-section p){color:var(--text-sub)}
-body[data-pref-mode="dark"] :is(.cal-day.today,.override-tab-bar,.override-tabs,.all-settings-card,.salary-hero,.leave-overview,.leave-money-summary,.toggle-box,.estimate-net,.pay-table tr.total-row,.pay-table .bonus-row,.planning-preview,.account-choices button,.account-hint,.google-sync-section,.meal-table th){background:var(--surface-soft)!important;color:var(--theme-text);border-color:var(--theme-line)!important}
-body[data-pref-mode="dark"] :is(input:not([type="checkbox"]),select,textarea,.sms-textarea,.memo-input,.sms-clear-btn,.override-close,.sms-close-btn,.calendar-link-entry,.nav-arrow-btn,.today-btn,.picker-year-btn){background:var(--surface)!important;color:var(--theme-text)!important;border-color:var(--theme-line)!important}
-body[data-pref-mode="dark"] #modal-override .opt-btn.reset{background:var(--surface)!important;color:var(--theme-text)!important;border-color:var(--theme-line)!important}
-body[data-pref-mode="dark"] #modal-override .override-tab.active,body[data-pref-mode="dark"] :is(.btn-primary,.btn-save,.sms-primary-btn){background:var(--accent)!important;color:#12161d!important}
-body[data-pref-mode="dark"] :is(.nav-item.active,.all-shortcut-icon,.salary-hero .hero-amount){color:var(--accent)!important}
-body[data-pref-mode="dark"] .nav-item.active{background:var(--accent-soft)}
-body[data-pref-mode="dark"] .cal-day.today .day-num{color:#12161d}
-body[data-pref-mode="dark"] :is(.cal-day.sunday .day-num,.cal-day.holiday .day-num,.cal-weekdays>:first-child,.holiday-bar){color:#ff8b98}
-body[data-pref-mode="dark"] :is(.cal-day.saturday:not(.holiday) .day-num,.cal-weekdays>:last-child){color:#8ab9ff}
-body[data-pref-mode="dark"] :is(.stats-badge.day,.shift-badge.day){color:#283746!important}
-body[data-pref-mode="dark"] :is(.shift-badge.off,.stats-badge.off){color:#ff8b98!important}
-body[data-pref-mode="dark"] .cal-day.other-month{opacity:.4}
-body[data-pref-mode="dark"] .icon-button:hover,body[data-pref-mode="dark"] .account-menu-button:hover{background:var(--surface-soft)}
-body[data-pref-mode="dark"] :is(.hero-amount,.sub-val,#hero-regular-pay,#hero-bonus-pay,#estimate-net,#val-total-leave-pay){color:var(--accent)!important}
-body[data-pref-mode="dark"] :is(.cal-day,.cal-weekdays){background:var(--surface)!important}
-body[data-pref-mode="dark"] .cal-day.today{background:var(--surface-soft)!important}
-body[data-pref-mode="dark"] .reference-header .month-title-btn,body[data-pref-mode="dark"] .cal-day.today .day-num{color:var(--theme-text)!important}
-body[data-pref-mode="dark"] .month-title-nav{background:var(--surface)!important;border-color:var(--theme-line)}
-body[data-pref-mode="dark"] :is(.hero-label,.period-tag,.estimate-title,.all-settings-label,.group-caption,.all-shortcut-copy,.leave-overview p){color:var(--text-sub)!important}
-body[data-pref-mode="dark"] .period-tag{background:var(--surface)!important}
-body[data-pref-mode="dark"] .sync-feedback{background:var(--surface-soft)!important;color:var(--text-sub)!important}
+/* Dedicated fourth theme: dark surfaces with independent readable work colors. */
+body[data-pref-theme="dark"]{color-scheme:dark;--page-bg:#12161d;--bg-main:#12161d;--surface:#1c222c;--card-bg:#1c222c;--surface-soft:#242e3a;--theme-text:#e6edf5;--text-main:#e6edf5;--text-sub:#a6b3c3;--theme-line:#354151;--border:#354151;--cal-line:#303b49;--accent:#83bce0;--accent-soft:#223747;--primary:#83bce0;--primary-dark:#a7d1ed;--choice-bg:#2b3644;--choice-ink:#d4deeb;--attendance:#ee9aaa;--work-ink:#15202b;--shift-day:#f5ce68;--shift-night:#b6adff;--shift-special-day:#6cd4c4;--shift-special-night:#7daaff;--shift-off:#ff9aa9;background:var(--page-bg);color:var(--theme-text)}
+body[data-pref-theme="dark"] :is(.cal-grid,.cal-day.other-month,.calendar-card,.card,.modal-sheet,.sms-dialog,.app-preferences,.preferences-card,.account-drawer,.all-panel,.all-info-list,.all-account-card,.meal-date-card,.meal-card,.meal-table,.identity-card,.external-calendars,.bottom-nav,.app-header,.reference-header,.payslip-modal,.picker-sheet){background:var(--surface)!important;color:var(--theme-text);border-color:var(--theme-line)!important;box-shadow:none}
+body[data-pref-theme="dark"] :is(.cal-day,.cal-weekdays,.stats-section,.stats-row,.pay-table td,.pay-table th,.all-shortcut,.input-group,.preferences-card label){border-color:var(--theme-line)}
+body[data-pref-theme="dark"] :is(h1,h2,h3,h4,.month-title-btn,.header-view-title,.account-menu-button,.icon-button,.day-num,.cal-weekdays,.stats-row,.pay-table,.input-group label,.all-shortcut strong,.preferences-card label,.sms-input-label,.hero-label,.sub-label,.stat-label,.nav-item,.override-date){color:var(--theme-text)}
+body[data-pref-theme="dark"] :is(.sms-privacy,.sms-help,.sms-status,.stats-header p,.stats-section p,.challenge-note,.calendar-group-caption,.estimate-caption,.estimate-note,.estimate-disclaimer,.all-info-section p){color:var(--text-sub)}
+body[data-pref-theme="dark"] :is(.cal-day.today,.override-tab-bar,.override-tabs,.all-settings-card,.salary-hero,.leave-overview,.leave-money-summary,.toggle-box,.estimate-net,.pay-table tr.total-row,.pay-table .bonus-row,.planning-preview,.account-choices button,.account-hint,.google-sync-section,.meal-table th){background:var(--surface-soft)!important;color:var(--theme-text);border-color:var(--theme-line)!important}
+body[data-pref-theme="dark"] :is(input:not([type="checkbox"]),select,textarea,.sms-textarea,.memo-input,.sms-clear-btn,.override-close,.sms-close-btn,.calendar-link-entry,.nav-arrow-btn,.today-btn,.picker-year-btn){background:var(--surface)!important;color:var(--theme-text)!important;border-color:var(--theme-line)!important}
+body[data-pref-theme="dark"] #modal-override .opt-btn.reset{background:var(--surface)!important;color:var(--theme-text)!important;border-color:var(--theme-line)!important}
+body[data-pref-theme="dark"] #modal-override .override-tab.active,body[data-pref-theme="dark"] :is(.btn-primary,.btn-save,.sms-primary-btn){background:var(--accent)!important;color:#12161d!important}
+body[data-pref-theme="dark"] :is(.nav-item.active,.all-shortcut-icon,.salary-hero .hero-amount){color:var(--accent)!important}
+body[data-pref-theme="dark"] .nav-item.active{background:var(--accent-soft)}
+body[data-pref-theme="dark"] .cal-day.today .day-num{color:#12161d}
+body[data-pref-theme="dark"] :is(.cal-day.sunday .day-num,.cal-day.holiday .day-num,.cal-weekdays>:first-child,.holiday-bar){color:#ff8b98}
+body[data-pref-theme="dark"] :is(.cal-day.saturday:not(.holiday) .day-num,.cal-weekdays>:last-child){color:#8ab9ff}
+body[data-pref-theme="dark"] :is(.stats-badge.day,.shift-badge.day){color:#283746!important}
+body[data-pref-theme="dark"] :is(.shift-badge.off,.stats-badge.off){color:#ff8b98!important}
+body[data-pref-theme="dark"] .cal-day.other-month{opacity:.4}
+body[data-pref-theme="dark"] .icon-button:hover,body[data-pref-theme="dark"] .account-menu-button:hover{background:var(--surface-soft)}
+body[data-pref-theme="dark"] :is(.hero-amount,.sub-val,#hero-regular-pay,#hero-bonus-pay,#estimate-net,#val-total-leave-pay){color:var(--accent)!important}
+body[data-pref-theme="dark"] :is(.cal-day,.cal-weekdays){background:var(--surface)!important}
+body[data-pref-theme="dark"] .cal-day.today{background:var(--surface-soft)!important}
+body[data-pref-theme="dark"] .reference-header .month-title-btn,body[data-pref-theme="dark"] .cal-day.today .day-num{color:var(--theme-text)!important}
+body[data-pref-theme="dark"] .month-title-nav{background:var(--surface)!important;border-color:var(--theme-line)}
+body[data-pref-theme="dark"] :is(.hero-label,.period-tag,.estimate-title,.all-settings-label,.group-caption,.all-shortcut-copy,.leave-overview p){color:var(--text-sub)!important}
+body[data-pref-theme="dark"] .period-tag{background:var(--surface)!important}
+body[data-pref-theme="dark"] .sync-feedback{background:var(--surface-soft)!important;color:var(--text-sub)!important}body[data-pref-theme="dark"] :is(.shift-badge.day,.stats-badge.day,#modal-override .opt-btn.day){background:var(--shift-day)!important;color:var(--work-ink)!important}
+body[data-pref-theme="dark"] :is(.shift-badge.night,.stats-badge.night,#modal-override .opt-btn.night){background:var(--shift-night)!important;color:var(--work-ink)!important}
+body[data-pref-theme="dark"] :is(.shift-badge.special-day,.stats-badge.day-sp,#modal-override .opt-btn.day-sp){background:var(--shift-special-day)!important;color:var(--work-ink)!important}
+body[data-pref-theme="dark"] :is(.shift-badge.special-night,.stats-badge.night-sp,#modal-override .opt-btn.night-sp){background:var(--shift-special-night)!important;color:var(--work-ink)!important}
+body[data-pref-theme="dark"] .attendance-pill{background:var(--attendance)!important;color:#15202b!important}
+body[data-pref-theme="dark"] :is(.stats-badge.off,.shift-badge.off){background:transparent!important;color:var(--shift-off)!important}
+body[data-pref-theme="dark"] #modal-override :is(.opt-btn.leave,.opt-btn.half,.opt-btn.unpaid,.opt-btn.unpaid-half,.opt-btn.no-ot){background:#303f50!important;color:#e8f0fa!important;border-color:#61758b!important}
+body[data-pref-theme="dark"] #modal-override .opt-btn[aria-pressed="true"]{outline:3px solid #f2f7fc;outline-offset:2px}
+body[data-pref-theme="dark"] :is(.override-tabs,.override-tab-bar){background:var(--surface-soft)!important}
+body[data-pref-theme="dark"] #modal-override .override-tab:not(.active){color:#c3d0de!important}
+body[data-pref-theme="dark"] :is(.stat-value,.stat-number,.stat-label,.account-hint,.override-base,.override-subtitle,.stats-header p,.sms-help){color:var(--text-main)!important}
+body[data-pref-theme="dark"] .hero-subgrid{border-color:var(--theme-line)!important}
+body[data-pref-theme="dark"] .all-settings-card :is(span,strong,label){color:var(--theme-text)!important}
+body[data-pref-theme="dark"] :is(.stats-row strong,.stats-shifts strong,.stats-header h2){color:var(--text-main)!important}
+body[data-pref-theme="dark"] #modal-override .selection-check{background:#f2f7fc;color:#15202b}
+body[data-pref-theme="dark"] :is(#view-payroll,#view-leave) :is(h2,h3,h4,label,summary,caption,small,.dropdown-arrow,.when-closed,.when-open,.estimate-caption){color:var(--text-main)!important}
+body[data-pref-theme="dark"] :is(#view-payroll,#view-leave) .input-group label{color:var(--text-main)!important}
+body[data-pref-theme="dark"] #view-leave .leave-money-summary span{color:var(--text-main)!important}
+body[data-pref-theme="dark"] #view-all .all-info-list a{color:var(--accent)!important}
