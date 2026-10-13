@@ -8,20 +8,21 @@ const gpsOption=document.createElement('option');gpsOption.value='';gpsOption.te
 let location=cities.find(c=>c[0]===select.value),serial=0,controller,loaded=0,busy=false;
 function describe(code){if(code===0)return '맑음';if([1,2].includes(code))return '구름 조금';if(code===3)return '흐림';if([45,48].includes(code))return '안개';if([51,53,55,56,57].includes(code))return '이슬비';if([61,63,65,66,67,80,81,82].includes(code))return '비';if([71,73,75,77,85,86].includes(code))return '눈';if([95,96,99].includes(code))return '뇌우';return '날씨 정보';}
 function weatherIcon(code){if(code===0)return '☀️';if([1,2].includes(code))return '🌤️';if(code===3)return '☁️';if([45,48].includes(code))return '🌫️';if([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code))return '☂️';if([71,73,75,77,85,86].includes(code))return '❄️';if([95,96,99].includes(code))return '⛈️';return '';}
-function clear(){$('weather-icon').textContent='';$('weather-open').setAttribute('aria-label','오늘 날씨 확인');$('weather-temperature').textContent='--°';for(const id of ['weather-detail','weather-updated'])$(id).textContent='';}
+function clear(){$('weather-icon').textContent='';$('weather-alert').textContent='';$('weather-alert').hidden=true;$('weather-open').setAttribute('aria-label','오늘 날씨 확인');$('weather-temperature').textContent='--°';for(const id of ['weather-detail','weather-updated','weather-forecast'])$(id).textContent='';}
 function number(v){return Number.isFinite(v)?Math.round(v):null;}
 async function load(){
 const request=++serial;controller?.abort();controller=new AbortController();const activeController=controller;
 busy=true;$('weather-refresh').disabled=true;status.textContent='날씨를 불러오는 중…';clear();
 const timeout=setTimeout(()=>activeController.abort(),12000);
 try{
-const query=new URLSearchParams({latitude:location[1].toFixed(2),longitude:location[2].toFixed(2),current:'temperature_2m,apparent_temperature,weather_code,wind_speed_10m',daily:'temperature_2m_max,temperature_2m_min,precipitation_probability_max',timezone:'auto',forecast_days:'1'});
+const query=new URLSearchParams({latitude:location[1].toFixed(2),longitude:location[2].toFixed(2),current:'temperature_2m,apparent_temperature,weather_code,wind_speed_10m',daily:'temperature_2m_max,temperature_2m_min,precipitation_probability_max',hourly:'rain,showers,snowfall,precipitation_probability,weather_code',timezone:'auto',forecast_days:'2'});
 const response=await fetch('https://api.open-meteo.com/v1/forecast?'+query,{signal:activeController.signal});if(!response.ok)throw Error('weather');
 const data=await response.json();if(request!==serial)return;
 const c=data.current,d=data.daily;
 if(!c||!d||!Number.isFinite(c.temperature_2m)||!Number.isFinite(c.apparent_temperature)||!Number.isFinite(c.weather_code)||!Number.isFinite(c.wind_speed_10m)||![d.temperature_2m_max?.[0],d.temperature_2m_min?.[0],d.precipitation_probability_max?.[0]].every(Number.isFinite)||c.time?.slice(0,10)!==d.time?.[0])throw Error('invalid');
 $('weather-icon').textContent=weatherIcon(c.weather_code);$('weather-temperature').textContent=number(c.temperature_2m)+'°';$('weather-open').setAttribute('aria-label',location[0]+' 오늘 날씨 '+describe(c.weather_code)+' '+number(c.temperature_2m)+'도, 상세 보기');status.textContent=location[0]+' · '+describe(c.weather_code);
 $('weather-detail').textContent=`체감 ${number(c.apparent_temperature)}° · 최저 ${number(d.temperature_2m_min[0])}° / 최고 ${number(d.temperature_2m_max[0])}° · 오늘 강수확률 ${number(d.precipitation_probability_max[0])}% · 바람 ${number(c.wind_speed_10m)}km/h`;
+const forecast=ShiftWeatherForecast.summarize(data.hourly,c.time);$('weather-alert').textContent=forecast.label;$('weather-alert').hidden=!forecast.label;$('weather-forecast').textContent=forecast.detail;if(forecast.label)$('weather-open').setAttribute('aria-label',$('weather-open').getAttribute('aria-label')+' · 앞으로 24시간 '+forecast.label);
 $('weather-updated').textContent=c.time.replace('T',' ')+' 기준 · '+data.timezone;loaded=Date.now();
 }catch(error){if(request!==serial)return;status.textContent='날씨를 불러오지 못했어요. 새로고침을 눌러 주세요.';loaded=0;}
 finally{clearTimeout(timeout);if(request===serial){busy=false;$('weather-refresh').disabled=false;}}

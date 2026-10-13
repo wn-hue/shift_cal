@@ -16,3 +16,9 @@
 .header-calendar-actions .weather-trigger { gap:4px; }
 #weather-icon { font-size:17px;line-height:1; }
 #weather-icon:empty { display:none; }
+
+.header-calendar-actions .weather-trigger { flex-direction:column;gap:1px; }
+.weather-current { display:flex;gap:4px;align-items:center; }
+#weather-alert { font-size:10px;line-height:1.3;color:var(--accent,var(--primary));white-space:nowrap; }
+#weather-alert[hidden] { display:none; }
+.weather-forecast { white-space:pre-line;font-size:13px;line-height:1.8;margin-top:12px;color:var(--text-main); }
