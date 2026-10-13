@@ -12,3 +12,7 @@
 .weather-footnote { margin-top:10px;font-size:11px;line-height:1.7;color:var(--text-sub); }
 .weather-card a { color:var(--accent,var(--primary)); }
 .weather-card :focus-visible { outline:2px solid var(--accent,var(--primary));outline-offset:3px; }
+
+.header-calendar-actions .weather-trigger { gap:4px; }
+#weather-icon { font-size:17px;line-height:1; }
+#weather-icon:empty { display:none; }
