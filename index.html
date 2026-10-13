@@ -916,6 +916,7 @@
     <link rel="stylesheet" href="./today-menu.css?v=3">
 <link rel="stylesheet" href="./identity.css?v=3">
 <link rel="stylesheet" href="./salary-challenge.css?v=1">
+    <link rel="stylesheet" href="./today-weather.css?v=1">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -939,6 +940,11 @@
             <div><button type="button" onclick="SettingsUI.openMenu('group')" hidden>교대조 설정</button><button type="button" onclick="SettingsUI.openMenu('leave')">정규직 전환일 설정</button><button type="button" onclick="SettingsUI.openMenu('salary')">시급 설정</button></div>
         </aside>
         <section id="view-calendar" class="view-page active">
+            <details class="weather-card" id="today-weather">
+                <summary><span class="weather-title">오늘 날씨</span><span id="weather-status" role="status" aria-live="polite">지역 날씨 확인</span><strong id="weather-temperature"></strong><span class="weather-chevron" aria-hidden="true">⌄</span></summary>
+                <div class="weather-controls"><label for="weather-city">지역</label><select id="weather-city" aria-label="날씨 지역"></select><button type="button" id="weather-locate">현재 위치</button><button type="button" id="weather-refresh">새로고침</button></div>
+                <p id="weather-detail"></p><p class="weather-footnote"><span id="weather-updated"></span><br>현재 위치는 선택 사항입니다. 대략적인 좌표를 Open-Meteo에 보내 날씨를 조회하며 위치는 저장·계정 동기화하지 않습니다.<br>날씨: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · 예보는 실제 날씨와 다를 수 있어요.</p>
+            </details>
             <div class="calendar-month-controls" hidden></div>
 
             <div class="calendar-card">
@@ -2752,6 +2758,7 @@
 <script src="planner-core.js?v=7"></script><script src="shift-tools.js?v=6"></script>
 <script src="./external-calendars.js?v=3"></script>
 <script src="./salary-challenge.js?v=1"></script>
+<script src="./today-weather.js?v=1"></script>
 </body>
 </html>
 
