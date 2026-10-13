@@ -785,3 +785,10 @@ input, textarea { scroll-margin-block:80px; }
 
 /* Anchor to the measured visible bottom, including Safari's first-page layout. */
 .bottom-nav { top:calc(var(--visible-top) + var(--visible-height)); bottom:auto; transform:translateY(-100%); }
+
+/* Keep the home-indicator inset separate from Safari's visible-screen height.
+   A temporarily inflated initial inset must not create a tall empty nav footer. */
+:root { --system-bottom-inset:env(safe-area-inset-bottom,0px); --app-bottom-inset:clamp(0px,var(--system-bottom-inset),34px); }
+.bottom-nav { padding-bottom:calc(6px + var(--app-bottom-inset)); }
+body { padding-bottom:calc(76px + var(--app-bottom-inset)); }
+.cal-grid { min-height:clamp(440px,calc(100dvh - env(safe-area-inset-top) - var(--app-bottom-inset) - 200px),680px); }
