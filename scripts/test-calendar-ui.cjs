@@ -22,19 +22,20 @@ let prevented=false;days[0].onkeydown({key:'Enter',preventDefault(){prevented=tr
 assert.ok(prevented);assert.equal(opened[0],'2026-10-01');
 run("currentCalDate=new Date(2026,4,1);renderCalendar()");assert.equal(grid.children.length,42);
 run("currentCalDate=new Date(2028,1,1);renderCalendar()");assert.equal(grid.children.filter(e=>e.attributes.role==='button').length,29);
-ctx.ShiftUI.showView('leave');assert.equal(ctx.document.body.dataset.view,'leave');assert.equal(elements.get('cal-month-title-btn').hidden,true);assert.equal(elements.get('header-calendar-actions').hidden,true);
+ctx.ShiftUI.showView('all');assert.equal(ctx.document.body.dataset.view,'all');assert.equal(elements.get('cal-month-title-btn').hidden,true);assert.equal(elements.get('header-calendar-actions').hidden,true);
 ctx.ShiftUI.showView('calendar');assert.equal(elements.get('cal-month-title-btn').hidden,false);assert.equal(elements.get('header-view-title').hidden,true);
-ctx.document.querySelectorAll=selector=>(selector==='.nav-item'?['bnav-cal','bnav-pay','bnav-leave','bnav-menu','account-menu-button']:['view-calendar','view-payroll','view-leave','view-menu','view-all']).map(id=>elements.get(id));
+ctx.document.querySelectorAll=selector=>(selector==='.nav-item'?['bnav-cal','bnav-pay','bnav-menu','account-menu-button']:['view-calendar','view-payroll','view-menu','view-all']).map(id=>elements.get(id));
 ctx.scrollTo=()=>{};run('syncFromCalendar=()=>{}');
 let menuLoads=0;ctx.TodayMenu={load:()=>menuLoads++};
-const navIds=['bnav-cal','bnav-pay','bnav-leave','bnav-menu','account-menu-button'];
-for(const [view,id] of [['calendar','bnav-cal'],['payroll','bnav-pay'],['leave','bnav-leave'],['menu','bnav-menu'],['all','account-menu-button']]){
+const navIds=['bnav-cal','bnav-pay','bnav-menu','account-menu-button'];
+for(const [view,id] of [['calendar','bnav-cal'],['payroll','bnav-pay'],['menu','bnav-menu'],['all','account-menu-button']]){
     run(`switchView('${view}')`);
     assert.ok(elements.get('view-'+view).classList.contains('active'));
     assert.deepEqual(navIds.filter(id=>elements.get(id).classList.contains('active')),[id]);
     assert.deepEqual(navIds.filter(id=>elements.get(id).attributes['aria-current']==='page'),[id]);
 }
 assert.equal(menuLoads,1);assert.equal(elements.get('header-view-title').textContent,'전체');
+let leaveOpened=0;ctx.SettingsUI={openLeave:()=>leaveOpened++};run("switchView('leave')");assert.equal(leaveOpened,1);assert.ok(elements.get('view-all').classList.contains('active'));assert.equal(elements.has('bnav-leave'),false);
 let animations=0,cancelled=0,reducedMotion=false;
 const visual={getAnimations:()=>[{cancel:()=>cancelled++}],animate:(frames,options)=>{animations++;assert.equal(frames.at(-1).backgroundColor,'transparent');assert.ok(options.duration<500)}};
 ctx.matchMedia=()=>({matches:reducedMotion});

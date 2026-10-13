@@ -1,6 +1,6 @@
 /* Night and day keeps color in work badges; all other surfaces stay neutral. */
 body[data-pref-theme="current"] {
- --accent:#2874e8;--accent-soft:#f3f5f7;--primary:#2874e8;--primary-dark:#1c5fc7;
+ --accent:#303030;--accent-soft:#f3f5f7;--primary:#303030;--primary-dark:#202020;
  --page-bg:#fff;--bg-main:#fff;--surface:#fff;--surface-soft:#f7f7f7;
  --theme-text:#303030;--text-main:#303030;--text-sub:#737373;--theme-line:#e5e5e5;
  --shift-day:#ffd600;--shift-night:#424242;--shift-special-day:#47d6dc;--shift-special-night:#5485ee;
@@ -11,11 +11,11 @@ body[data-pref-theme="current"] :is(.all-settings-card,.all-shortcut-icon,.prefe
 body[data-pref-theme="current"] .all-shortcut-icon :is(svg,span),body[data-pref-theme="current"] #menu-group-settings .drawer-section-label svg { color:#555; }
 body[data-pref-theme="current"] #menu-group-settings .group-select { background:#fff;color:#303030;border-color:#e5e5e5;color-scheme:light; }
 body[data-pref-theme="current"] #view-payroll .salary-hero,
-body[data-pref-theme="current"] #view-leave :is(.leave-overview,.leave-money-summary,.wage-settings-card) { background:#fff;border:1px solid #e5e5e5; }
+body[data-pref-theme="current"] #leave-settings-dialog :is(.leave-overview,.leave-money-summary,.wage-settings-card) { background:#fff;border:1px solid #e5e5e5; }
 body[data-pref-theme="current"] #view-payroll :is(.hero-amount,#hero-regular-pay,#hero-bonus-pay) { color:#303030!important; }
 body[data-pref-theme="current"] #view-payroll .hero-label { color:#737373; }
 body[data-pref-theme="current"] #view-payroll .period-tag { background:#f3f3f3;color:#737373; }
-body[data-pref-theme="current"] #view-leave .stat-value { color:#303030; }
-body[data-pref-theme="current"] #view-leave .leave-remaining .stat-value { color:#2d8069!important; }
-body[data-pref-theme="current"] .cal-day.today { background:#e7f2ff;box-shadow:inset 0 0 0 2px #3182f6;border-radius:0; }
-body[data-pref-theme="current"] .cal-day.today .day-num { color:#2874e8!important; }
+body[data-pref-theme="current"] #leave-settings-dialog .stat-value { color:#303030; }
+body[data-pref-theme="current"] #leave-settings-dialog .leave-remaining .stat-value { color:#2d8069!important; }
+body[data-pref-theme="current"] .cal-day.today { background:#f7f7f7;box-shadow:inset 0 0 0 1.5px #737373;border-radius:0; }
+body[data-pref-theme="current"] .cal-day.today .day-num { color:#303030!important; }

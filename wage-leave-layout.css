@@ -1,0 +1,18 @@
+.bottom-nav { grid-template-columns:repeat(4,minmax(0,1fr)); }
+#view-payroll .wage-settings-card .two-cols { display:flex;flex-direction:column;gap:0;margin:0; }
+#view-payroll .wage-settings-card .input-group { display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;border-bottom:1px solid var(--theme-line); }
+#view-payroll .wage-settings-card .input-group label { margin:0;font-size:13px;color:var(--text-sub); }
+#view-payroll .wage-settings-card input[readonly] { width:125px;min-width:0;background:transparent!important;border:0!important;box-shadow:none;color:var(--theme-text);text-align:right;font:inherit;font-size:15px;font-weight:600;padding:12px 0; }
+#leave-settings-dialog .leave-overview { padding:16px;margin:18px 0;background:var(--surface); }
+#leave-settings-dialog .leave-money-summary { background:transparent!important;border:0;border-top:1px solid var(--theme-line);padding:16px 0 0; }
+#leave-settings-dialog :is(#val-leave-daily-rate,#val-total-leave-pay) { font-family:inherit;font-variant-numeric:tabular-nums;font-weight:600;font-size:18px;line-height:1.5;letter-spacing:0;color:var(--theme-text)!important;white-space:nowrap; }
+#leave-settings-dialog .leave-money-total { gap:10px; }
+#leave-settings-dialog .leave-stat-box .stat-value { font-family:inherit;font-size:24px; }
+body[data-pref-theme="current"] :is(.settings-year,#view-payroll .sms-open-btn,#leave-settings-dialog .card-header) { color:#303030; }
+body[data-pref-theme="current"] #view-payroll .sms-open-btn { background:#f5f5f5; }
+body[data-pref-theme="current"] #leave-settings-dialog .card-header > span:first-child::before { background:#737373; }
+.menu-leave-summary[hidden] { display:none!important; }
+body[data-pref-theme="current"] #leave-settings-dialog .leave-stat-box .stat-value { color:#303030; }
+body[data-pref-theme="current"] .settings-year { background:#f3f3f3; }
+body[data-pref-theme] #leave-settings-dialog .leave-money-summary { border:0!important;border-top:1px solid var(--theme-line)!important; }
+body[data-pref-theme="current"] :is(button,a,select,input,textarea):focus-visible { outline-color:#303030!important; }
