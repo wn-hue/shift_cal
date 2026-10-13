@@ -141,6 +141,7 @@ final class ScheduleStore: ObservableObject {
     }
     func setGroup(_ group: String) { guard ["A","B","C"].contains(group) else { return }; self.group=group; save() }
     func update(_ date: Date, type: WorkType?, memo: String) {
+        if let type,engine.day(date,group:group).baseType == .off && (type.isAttendance || type == .noOT) { storageMessage="휴무일에는 근태를 사용할 수 없습니다.";return }
         let k=storageKey(ScheduleEngine.key(date));overrides[k]=type
         memos[k]=memo.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty ? nil : memo
         save()

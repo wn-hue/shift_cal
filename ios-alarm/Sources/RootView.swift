@@ -24,8 +24,10 @@ extension WorkType {
             switch self {
             case .day:return AppTheme.rgb(0xf5ce68)
             case .night:return AppTheme.rgb(0xb6adff)
-            case .specialDay, .specialDayNoOT:return AppTheme.rgb(0x6cd4c4)
-            case .specialNight, .specialNightNoOT:return AppTheme.rgb(0x7daaff)
+            case .specialDay:return AppTheme.rgb(0x8fbbb1)
+            case .specialDayNoOT:return AppTheme.rgb(0xb9d0c9)
+            case .specialNight:return AppTheme.rgb(0xa0aecb)
+            case .specialNightNoOT:return AppTheme.rgb(0xc8cddd)
             case .off:return AppTheme.rgb(0xff9aa9)
             default:return AppTheme.attendance
             }
@@ -35,8 +37,10 @@ extension WorkType {
             switch self {
             case .day:return AppTheme.rgb(gpt ? 0xddd9d0 : 0xe8f2ff)
             case .night:return AppTheme.rgb(gpt ? 0x343434 : 0x2453a6)
-            case .specialDay, .specialDayNoOT:return AppTheme.rgb(gpt ? 0x555555 : 0x3182f6)
-            case .specialNight, .specialNightNoOT:return AppTheme.rgb(gpt ? 0x212121 : 0x1b64da)
+            case .specialDay:return AppTheme.rgb(gpt ? 0x66766d : 0x496f98)
+            case .specialDayNoOT:return AppTheme.rgb(gpt ? 0xc8d3cc : 0xb8cee4)
+            case .specialNight:return AppTheme.rgb(gpt ? 0x616a77 : 0x455e86)
+            case .specialNightNoOT:return AppTheme.rgb(gpt ? 0xcbd0d8 : 0xc5cbd9)
             case .off:return AppTheme.rgb(gpt ? 0x777777 : 0xd95769)
             default:return AppTheme.attendance
             }
@@ -44,8 +48,10 @@ extension WorkType {
         switch self {
         case .day: return AppTheme.rgb(0xffd600)
         case .night: return AppTheme.rgb(0x424242)
-        case .specialDay, .specialDayNoOT: return Color(red:71/255,green:214/255,blue:220/255)
-        case .specialNight, .specialNightNoOT: return Color(red:84/255,green:133/255,blue:238/255)
+        case .specialDay: return AppTheme.rgb(0x437c77)
+        case .specialDayNoOT: return AppTheme.rgb(0xbfd9d4)
+        case .specialNight: return AppTheme.rgb(0x586f94)
+        case .specialNightNoOT: return AppTheme.rgb(0xc3cde0)
         case .off: return Color(red:232/255,green:104/255,blue:127/255)
         case .leave: return Color(red:195/255,green:91/255,blue:24/255)
         case .halfPre, .halfPost: return Color(red:128/255,green:86/255,blue:181/255)
@@ -55,7 +61,7 @@ extension WorkType {
     }
     var isAttendance:Bool { [.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost].contains(self) }
     var attendanceLabel:String { switch self { case .leave: "연차 1";case .halfPre:"반차 전";case .halfPost:"반차 후";case .unpaid:"무급 1";case .unpaidHalfPre:"무반 전";case .unpaidHalfPost:"무반 후";default:label } }
-    var badgeTextColor: Color { AppTheme.dark ? AppTheme.rgb(0x15202b) : self == .day ? AppTheme.rgb(0x424242) : .white }
+    var badgeTextColor: Color { AppTheme.dark || self.isSpecialNoOT ? AppTheme.rgb(0x15202b) : self == .day ? AppTheme.rgb(0x424242) : .white }
     var shortLabel:String {
         switch self {
         case .specialDay, .specialDayNoOT: "주특"
@@ -80,12 +86,19 @@ struct RootView: View {
     @ObservedObject var model: AlarmModel
     @ObservedObject var schedule: ScheduleStore
     @State private var month = Date()
+    @State private var selectedTab = 0
     var body: some View {
-        TabView {
-            ScheduleView(store:schedule,month:$month).tabItem { Label("근무표",systemImage:"calendar") }
-            ScheduleShareView(store:schedule,month:$month).tabItem { Label("공유",systemImage:"square.and.arrow.up") }
-            AlarmView(model:model).tabItem { Label("알람",systemImage:"alarm") }
-            SettingsView(store:schedule).tabItem { Label("내 근무",systemImage:"line.3.horizontal") }
+        TabView(selection:$selectedTab) {
+            ScheduleView(store:schedule,month:$month).tag(0).tabItem { Label("근무표",systemImage:"calendar") }
+            ScheduleShareView(store:schedule,month:$month).tag(1).tabItem { Label("공유",systemImage:"square.and.arrow.up") }
+            AlarmView(model:model).tag(2).tabItem { Label("알람",systemImage:"alarm") }
+            SettingsView(store:schedule).tag(3).tabItem { Label("내 근무",systemImage:"line.3.horizontal") }
+        }.toolbar(.hidden,for:.tabBar).safeAreaInset(edge:.bottom) {
+            HStack {
+                ForEach(0..<4) { index in
+                    Button { selectedTab=index } label: { Image(systemName:["calendar","square.and.arrow.up","alarm","line.3.horizontal"][index]).font(.system(size:25,weight:.medium)).foregroundStyle(Color.black).frame(maxWidth:.infinity,minHeight:50).background(selectedTab==index ? Color(white:0.94) : Color.clear,in:Capsule()) }.buttonStyle(.plain).accessibilityLabel(["근무표","공유","알람","내 근무"][index]).accessibilityAddTraits(selectedTab==index ? .isSelected : [])
+                }
+            }.padding(5).background(Color.white,in:Capsule()).overlay(Capsule().stroke(Color(white:0.91))).padding(.horizontal,16).padding(.bottom,6)
         }.onAppear { let saved=UserDefaults.standard.string(forKey:"display-mode");if saved == "dark" || (saved == "auto" && UITraitCollection.current.userInterfaceStyle == .dark) {theme="dark"};UserDefaults.standard.removeObject(forKey:"display-mode") }.preferredColorScheme(theme == "dark" ? .dark : .light).onChange(of:scenePhase) { _,phase in if phase == .active {Task{await NativeCloudAccount.shared.sync()};CalendarOverlay.shared.refresh(month)} }.task { NativeCloudAccount.shared.attach(schedule) }.tint(AppTheme.accent).toolbarBackground(AppTheme.surface,for:.tabBar).toolbarBackground(.visible,for:.tabBar)
     }
 }
@@ -202,7 +215,7 @@ struct EditWorkView: View {
                         Text("근태").font(.subheadline.weight(.medium))
                         options([.leave,.halfPre,.halfPost,.unpaid,.unpaidHalfPre,.unpaidHalfPost])
                         Divider()
-                        Button("기본 근무로 복구") { choice="" }.font(.system(size:12)).foregroundStyle(.secondary).padding(.horizontal,14).frame(minHeight:36).background(Color(.secondarySystemBackground),in:Capsule()).overlay(Capsule().stroke(Color.secondary.opacity(0.2))).accessibilityIdentifier("reset-shift").accessibilityValue(choice.isEmpty ? "선택됨" : "선택 안 됨")
+
                     } else {
                         TextField("메모를 남겨 주세요",text:$memo,axis:.vertical).lineLimit(12...18).frame(minHeight:240,alignment:.top).accessibilityIdentifier("memo-editor")
                         Divider()
@@ -212,6 +225,7 @@ struct EditWorkView: View {
             .navigationTitle("근무 변경").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement:.cancellationAction) { Button("취소") { dismiss() }.foregroundStyle(.secondary) }
+                ToolbarItem(placement:.topBarTrailing) { Button { choice="";tab=0 } label: { Label("복구",systemImage:"arrow.counterclockwise").font(.system(size:12)) }.accessibilityLabel("기본 근무로 복구") }
                 ToolbarItem(placement:.confirmationAction) { Button("저장") { store.update(day.date,type:WorkType(rawValue:choice),memo:memo);dismiss() }.fontWeight(.semibold).accessibilityIdentifier("save-shift") }
             }
             .onAppear { choice=day.changed ? day.type.rawValue : "";memo=day.memo }
@@ -238,7 +252,7 @@ struct EditWorkView: View {
                             .padding(3).overlay(RoundedRectangle(cornerRadius:32).stroke(selectedType==type ? AppTheme.accent : .clear,lineWidth:3))
                     }.frame(width:66,height:66)
                         .overlay(alignment:.topTrailing) { if selectedType==type { Image(systemName:"checkmark.circle.fill").font(.system(size:16,weight:.semibold)).symbolRenderingMode(.palette).foregroundStyle(AppTheme.dark ? AppTheme.rgb(0x15202b) : .white,AppTheme.accent).padding(2).accessibilityHidden(true) } }
-                }.buttonStyle(.plain).accessibilityLabel(type.label).accessibilityValue(selectedType==type ? "선택됨" : "선택 안 됨").accessibilityIdentifier("shift-"+type.rawValue)
+                }.buttonStyle(.plain).disabled(day.baseType == .off && (type.isAttendance || type == .noOT)).opacity(day.baseType == .off && (type.isAttendance || type == .noOT) ? 0.3 : 1).accessibilityLabel(type.label).accessibilityValue(selectedType==type ? "선택됨" : "선택 안 됨").accessibilityIdentifier("shift-"+type.rawValue)
                     .accessibilityAddTraits(selectedType==type ? .isSelected : [])
             }
         }
