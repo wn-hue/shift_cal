@@ -5,3 +5,5 @@
 .lost-choice-field{display:grid;gap:8px;min-width:0}.lost-choice-title,.lost-date-field>span{font-size:13px}.lost-choices{display:flex;flex-wrap:wrap;gap:7px}.lost-choices .lost-button{min-height:44px;padding:9px 13px;margin:0}.lost-choices .lost-button[aria-pressed=true]{border-color:var(--theme-text,#222);font-weight:600}.lost-date-field{display:grid;gap:8px}.lost-date-stepper{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:12px}.lost-date-stepper .lost-button{padding:0;font-size:26px;line-height:1;min-height:44px}.lost-date-stepper>div{text-align:center;display:grid;gap:4px}.lost-date-stepper strong{font-size:17px}.lost-date-stepper small{font-size:12px;color:var(--text-sub,#777)}.lost-date-field summary{font-size:12px;color:var(--text-sub,#777);padding:6px 0;cursor:pointer}.lost-date-field details label{margin-top:6px}.lost-choice-field[hidden],.lost-form select[hidden]{display:none!important}
 
 .lost-search-label[hidden]{display:none!important}
+
+.lost-date-stepper>strong{text-align:center}.lost-date-field>summary{font-size:13px}.lost-date-field[hidden]{display:none!important}
