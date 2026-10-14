@@ -20,6 +20,9 @@
     },
     "api/parking.js": {
       "maxDuration": 60
+    },
+    "api/lost-found.js": {
+      "maxDuration": 30
     }
   },
   "headers": [

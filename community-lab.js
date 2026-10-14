@@ -1,6 +1,6 @@
 /* Isolated local prototype: no community API, account upload, or raw salary access. */
 (()=>{'use strict';
-const KEY='shift_community_lab_v1',features=[['cover','대치 모집'],['caffeine','카페인'],['feed','시간대 피드'],['lost','분실물']];
+const KEY='shift_community_lab_v1',features=[['cover','대치 모집'],['caffeine','카페인'],['feed','시간대 피드']];
 let data={votes:{},posts:[],decisions:{},caffeine:null,bus:[],parking:null},active='cover',preview=false,timer,feedLane='arrive';
 try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&typeof saved==='object')data={...data,...saved};}catch{}
 const $=id=>document.getElementById(id),el=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e;},save=()=>{try{localStorage.setItem(KEY,JSON.stringify(data));$('lab-status').textContent='이 기기에 저장했습니다.';}catch{$('lab-status').textContent='저장 공간에 접근할 수 없습니다. 창을 닫으면 변경사항이 사라질 수 있습니다.';}};
@@ -9,7 +9,7 @@ const minuteOfDay=()=>{const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'As
 const parkingWindow=m=>m>=410&&m<=450;
 const caffeineMessage=()=>{if(!data.caffeine)return '☕ 다음 수면을 위해, 지금부터 카페인 대신 물이나 디카페인은 어때요?';const remaining=Math.max(0,Math.ceil((data.caffeine.sleep-Date.now())/60000));return `☕ 예정 취침까지 ${Math.floor(remaining/60)}시간 ${remaining%60}분. 지금부터 카페인 대신 물이나 디카페인은 어때요?`;};
 const group=()=>typeof currentGroup==='string'?currentGroup:'C';
-const dialog=el('dialog');dialog.id='community-lab';dialog.setAttribute('aria-label','생활 기능 실험실');dialog.innerHTML='<div class="lab-header"><h2>생활 기능 실험실</h2><button type="button" aria-label="실험실 닫기">×</button></div><p class="lab-note">테스트 전용 · 작성·선택은 이 기기에만 저장되며 다른 이용자에게 전달되지 않습니다. 식단 평가는 오늘 식단에서, 통근버스·주차장은 전체 메뉴에서 이용할 수 있어요.</p><div class="lab-tabs" role="tablist" aria-label="테스트 기능"></div><label class="lab-preview"><input type="checkbox" id="lab-preview">테스트 상황 보기 (시간 제한·샘플 데이터)</label><div id="lab-panel"></div><p id="lab-status" class="lab-status" role="status"></p><section class="lab-decision"><strong>이 기능을 어떻게 할까요?</strong><div id="lab-decisions" class="lab-actions"></div><div class="lab-actions"><button id="lab-export">검토 결과 저장</button><button id="lab-clear">테스트 데이터 초기화</button></div></section>';document.body.append(dialog);
+const dialog=el('dialog');dialog.id='community-lab';dialog.setAttribute('aria-label','생활 기능 실험실');dialog.innerHTML='<div class="lab-header"><h2>생활 기능 실험실</h2><button type="button" aria-label="실험실 닫기">×</button></div><p class="lab-note">테스트 전용 · 작성·선택은 이 기기에만 저장되며 다른 이용자에게 전달되지 않습니다. 식단 평가는 오늘 식단에서, 통근버스·주차장·분실물은 전체 메뉴에서 이용할 수 있어요.</p><div class="lab-tabs" role="tablist" aria-label="테스트 기능"></div><label class="lab-preview"><input type="checkbox" id="lab-preview">테스트 상황 보기 (시간 제한·샘플 데이터)</label><div id="lab-panel"></div><p id="lab-status" class="lab-status" role="status"></p><section class="lab-decision"><strong>이 기능을 어떻게 할까요?</strong><div id="lab-decisions" class="lab-actions"></div><div class="lab-actions"><button id="lab-export">검토 결과 저장</button><button id="lab-clear">테스트 데이터 초기화</button></div></section>';document.body.append(dialog);
 dialog.querySelector('.lab-header button').onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
 const entry=el('button','생활 기능 실험실  ›');entry.className='lab-entry';entry.type='button';let opener=entry;entry.onclick=()=>{opener=entry;render();dialog.showModal();};document.querySelector('#view-all .all-shortcuts').after(entry);dialog.addEventListener('close',()=>opener.focus());
 
@@ -34,23 +34,7 @@ if(active==='feed'){
  if(preview){if(feedLane!=='leave')card('출근 · 샘플','오늘도 안전하게! 퇴근하시는 분들은 푹 쉬세요.');if(feedLane!=='arrive')card('퇴근 · 샘플','오늘 야식은 따뜻한 국밥 어때요? 출근하시는 분들도 힘내세요.');}
 }
 
-if(active==='lost'){
- const c=card('분실물 · 습득물','현장에서 습득자가 보관하고 반장 공유방에 알립니다. 주인이 나타나지 않으면 경비실에 맡기는 흐름을 기록합니다. 이 테스트가 공유방에 메시지를 보내지는 않습니다.');
- const f=form(c,v=>{data.posts.unshift({id:crypto.randomUUID(),kind:'lost',type:v.get('type'),date:v.get('date'),place:v.get('place'),text:v.get('text'),storage:v.get('storage'),stage:v.get('type')==='습득'?'현장 보관 중':'찾는 중',history:[],done:false});save();render();});
- const l=el('label','분류'),select=el('select');select.name='type';for(const name of['분실','습득'])select.append(el('option',name));l.append(select);f.append(l);
- field(f,'날짜','date','date',date());field(f,'분실·습득 장소','place');field(f,'물건 특징','text','textarea');const storage=field(f,'보관·문의 위치 (습득 시)','storage');storage.required=false;storage.placeholder='예: 경비실에 보관';
- submit(f,'테스트 게시물 등록');c.append(el('p','이름·연락처·사번·신분증 정보는 적지 마세요. 반환 전에는 주인이 물건의 특징을 설명하도록 확인하세요.'));
- for(const p of data.posts.filter(p=>p.kind==='lost')){
-  const stage=p.stage||(p.done?'해결 완료':p.type==='습득'?'현장 보관 중':'찾는 중'),row=card(`${p.type} · ${p.place}`,`${p.date} · ${p.text}`);row.append(el('p','상태: '+stage));if(p.storage)row.append(el('p','보관·문의: '+p.storage));
-  for(const h of p.history||[])row.append(el('p',new Date(h.at).toLocaleString('ko-KR')+' · '+h.stage));
-  const a=actions(row),move=(next,where)=>{p.stage=next;p.done=['주인에게 반환','찾았어요'].includes(next);if(where)p.storage=where;p.history=[...(p.history||[]),{stage:next,at:Date.now()}];save();render();};
-  if(p.type==='습득'&&!p.done){
-   if(stage==='현장 보관 중')button(a,'반장 공유방에 알렸어요',()=>move('반장 공유방에 알림'));
-   if(stage==='반장 공유방에 알림')button(a,'경비실에 맡겼어요',()=>move('경비실 보관 중','경비실'));
-   button(a,'주인에게 반환했어요',()=>move('주인에게 반환'));
-  }else if(!p.done)button(a,'찾았어요',()=>move('찾았어요'));
- }
-}
+
 
 
 }
