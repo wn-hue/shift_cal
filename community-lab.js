@@ -49,7 +49,7 @@ if(active==='lost'){
  const c=card('분실물 · 습득물','현장에서 습득자가 보관하고 반장 공유방에 알립니다. 주인이 나타나지 않으면 경비실에 맡기는 흐름을 기록합니다. 이 테스트가 공유방에 메시지를 보내지는 않습니다.');
  const f=form(c,v=>{data.posts.unshift({id:crypto.randomUUID(),kind:'lost',type:v.get('type'),date:v.get('date'),place:v.get('place'),text:v.get('text'),storage:v.get('storage'),stage:v.get('type')==='습득'?'현장 보관 중':'찾는 중',history:[],done:false});save();render();});
  const l=el('label','분류'),select=el('select');select.name='type';for(const name of['분실','습득'])select.append(el('option',name));l.append(select);f.append(l);
- field(f,'날짜','date','date',date());field(f,'분실·습득 장소','place');field(f,'물건 특징','text','textarea');const storage=field(f,'보관·문의 위치 (습득 시)','storage');storage.required=false;storage.placeholder='예: 1라인 반장에게 문의';
+ field(f,'날짜','date','date',date());field(f,'분실·습득 장소','place');field(f,'물건 특징','text','textarea');const storage=field(f,'보관·문의 위치 (습득 시)','storage');storage.required=false;storage.placeholder='예: 경비실에 보관';
  submit(f,'테스트 게시물 등록');c.append(el('p','이름·연락처·사번·신분증 정보는 적지 마세요. 반환 전에는 주인이 물건의 특징을 설명하도록 확인하세요.'));
  for(const p of data.posts.filter(p=>p.kind==='lost')){
   const stage=p.stage||(p.done?'해결 완료':p.type==='습득'?'현장 보관 중':'찾는 중'),row=card(`${p.type} · ${p.place}`,`${p.date} · ${p.text}`);row.append(el('p','상태: '+stage));if(p.storage)row.append(el('p','보관·문의: '+p.storage));
