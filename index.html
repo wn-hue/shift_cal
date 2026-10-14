@@ -930,7 +930,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./lost-found.css?v=1">
 <link rel="stylesheet" href="./bright-menu.css?v=1">
-<link rel="stylesheet" href="./app-surfaces.css?v=1">
+<link rel="stylesheet" href="./app-surfaces.css?v=2">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1005,7 +1005,7 @@
             <div class="card payroll-summary" id="payroll-estimate-card">
                 <label class="estimate-toggle" for="payroll-estimate-toggle">
                     <span><span class="estimate-title">예상 실수령액</span><span class="estimate-caption">세금·보험 공제 적용</span></span>
-                    <span class="estimate-switch"><span id="payroll-estimate-state" class="estimate-state">OFF</span><input type="checkbox" id="payroll-estimate-toggle" role="switch" aria-controls="payroll-estimate-panel"></span>
+                    <span class="estimate-switch"><span id="payroll-estimate-state" class="estimate-state" aria-hidden="true">OFF</span><input type="checkbox" id="payroll-estimate-toggle" role="switch" aria-label="예상 실수령액 계산" aria-controls="payroll-estimate-panel"></span>
                 </label>
                 <div id="payroll-estimate-panel" hidden>
                     <div class="estimate-amounts" aria-live="polite">
@@ -1290,26 +1290,24 @@
 
     <dialog id="leave-settings-dialog" class="sms-dialog settings-dialog" aria-labelledby="leave-dialog-title">
         <div class="sms-dialog-header"><h2 id="leave-dialog-title">연차 설정</h2><button type="button" class="sms-close-btn" aria-label="연차 설정 닫기" onclick="document.getElementById('leave-settings-dialog').close()">×</button></div>
-        <p class="account-hint">입사 날짜는 정규직 전환일을 입력해 주세요. 급여 기간 마지막 날(15일) 기준 정규직 1년 미만은 지원금, 1년부터는 상여금이 적용됩니다. 연차 계산에도 같은 날짜를 사용하며 변경 내용은 자동 저장됩니다.</p>
+        <p class="account-hint">정규직 전환일을 기준으로 계산해요. 변경한 내용은 자동 저장돼요.</p><details class="leave-policy"><summary>연차·상여금 계산 기준</summary><p>입사 날짜는 정규직 전환일을 입력해 주세요. 급여 기간 마지막 날(15일) 기준 정규직 1년 미만은 지원금, 1년부터는 상여금이 적용됩니다. 연차 계산에도 같은 날짜를 사용하며 변경 내용은 자동 저장됩니다.</p></details>
         <div class="card leave-overview">
                 <div class="card-header">
                     <span>내 연차</span>
                     <span id="leave-year-label" class="settings-year">2026년</span>
                 </div>
 
-                <div class="leave-stat-grid">
-                    <div class="leave-stat-box">
-                        <div class="stat-label">총 연차</div>
-                        <div class="stat-value" id="stat-total-leave">0일</div>
-                    </div>
-                    <div class="leave-stat-box">
-                        <div class="stat-label">사용 연차</div>
-                        <div class="stat-value" id="stat-used-leave">0일</div>
-                    </div>
+                <div class="leave-balance">
                     <div class="leave-stat-box leave-remaining">
                         <div class="stat-label">잔여 연차</div>
                         <div class="stat-value" id="stat-remain-leave">0일</div>
+                        <p class="leave-balance-caption">사용 내역이 자동으로 반영돼요</p>
                     </div>
+                    <span class="leave-balance-art" aria-hidden="true"><svg viewBox="0 0 72 72" fill="none"><rect x="11" y="16" width="50" height="47" rx="13" fill="#c5e1ff"/><rect x="16" y="11" width="45" height="47" rx="12" fill="#3182f6"/><path d="M16 25h45" stroke="#8bc2ff" stroke-width="3"/><path d="M28 9v10m21-10v10" stroke="#1b64da" stroke-width="5" stroke-linecap="round"/><path d="m28 40 8 8 13-16" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
+                <div class="leave-stat-grid">
+                    <div class="leave-stat-box"><div class="stat-label">총 연차</div><div class="stat-value" id="stat-total-leave">0일</div></div>
+                    <div class="leave-stat-box"><div class="stat-label">사용 연차</div><div class="stat-value" id="stat-used-leave">0일</div></div>
                 </div>
 
                 <div class="leave-money-summary">
@@ -2763,7 +2761,7 @@
 <script src="./community-lab.js?v=1"></script>
 <script src="./meal-rating.js?v=1"></script>
 <script src="./commute-parking.js?v=1"></script>
-<script src="./lost-found.js?v=1"></script>
+<script src="./lost-found.js?v=2"></script>
 <script src="./bright-menu.js?v=1"></script>
 </body>
 </html>

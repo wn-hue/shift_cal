@@ -45,7 +45,7 @@ body[data-pref-theme] #view-payroll :is(#hero-regular-pay,#hero-bonus-pay){color
 #view-payroll #estimate-net{font-size:22px;letter-spacing:-.5px;font-weight:700;color:var(--ui-blue)}
 #view-payroll .estimate-disclaimer,#view-payroll .estimate-note{font-size:12px;line-height:1.7;color:var(--ui-muted)}
 #view-payroll .toggle-box{border:0;border-radius:14px;background:var(--ui-field);padding:16px;margin:8px 0 20px;color:var(--ui-copy)}
-#view-payroll input[type="checkbox"]{accent-color:var(--ui-blue);width:21px;height:21px}
+#view-payroll input[type="checkbox"]:not(#payroll-estimate-toggle){accent-color:var(--ui-blue);width:21px;height:21px}
 #view-payroll .btn-action-group{gap:10px;border:0;padding-top:0}
 #view-payroll :is(.btn-save,.sms-open-btn){border:0;border-radius:14px;background:var(--ui-blue)!important;color:#fff!important;font-size:15px;font-weight:600;min-height:48px;padding:12px 18px}
 #view-payroll .wage-settings-card .sms-open-btn{background:var(--ui-blue-soft)!important;color:var(--ui-blue)!important;width:auto;min-height:38px;font-size:13px;padding:8px 14px;margin-top:10px;border-radius:10px}
@@ -159,3 +159,61 @@ body[data-pref-theme] :is(#view-payroll,#leave-settings-dialog,#payroll-sms-dial
 body[data-pref-theme] :is(#view-payroll,#leave-settings-dialog,#payroll-sms-dialog,.modal-sheet) :is(.btn-save,.sms-primary-btn):disabled{background:var(--ui-field)!important;color:var(--ui-muted)!important}
 body[data-pref-theme="dark"] #view-payroll .sms-open-btn{color:var(--ui-card)!important}
 body[data-pref-theme="dark"] #view-payroll .wage-settings-card .sms-open-btn{color:var(--ui-blue)!important}
+/* A real switch, isolated from ordinary payroll checkboxes. */
+#view-payroll .estimate-toggle{min-height:48px;gap:16px;align-items:center}
+#view-payroll .estimate-switch{display:flex;align-items:center;justify-content:center;min-width:56px;min-height:44px;flex:none}
+#view-payroll .estimate-state{display:none}
+#view-payroll #payroll-estimate-toggle{-webkit-appearance:none;appearance:none;position:relative;display:block;flex:none;width:52px!important;min-width:52px;height:30px!important;min-height:30px;max-height:30px;margin:0;padding:0;border:0!important;border-radius:18px;background:#d5dae0!important;box-shadow:none;cursor:pointer;transition:background .15s}
+#view-payroll #payroll-estimate-toggle::before{content:'';position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #12223b26;transform:translateX(0);transition:transform .15s;pointer-events:none}
+#view-payroll #payroll-estimate-toggle:checked{background:var(--ui-blue)!important}
+#view-payroll #payroll-estimate-toggle:checked::before{transform:translateX(22px)}
+body[data-pref-theme="dark"] #view-payroll #payroll-estimate-toggle{background:#526174!important}
+body[data-pref-theme="dark"] #view-payroll #payroll-estimate-toggle:checked{background:#528ee5!important}
+/* Leave is a balance with supporting rows, rather than a three-column table. */
+#leave-settings-dialog .leave-overview{padding:22px!important}
+#leave-settings-dialog .card-header>span:first-child::before{display:none}
+#leave-settings-dialog .leave-balance{position:relative;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--ui-blue-soft);border-radius:20px;padding:24px 20px;margin:20px 0 14px;overflow:hidden}
+#leave-settings-dialog .leave-balance .leave-stat-box{border:0;padding:0;min-width:0;text-align:left}
+#leave-settings-dialog .leave-balance .stat-label{font-size:14px;color:var(--ui-muted);margin-bottom:10px}
+#leave-settings-dialog #stat-remain-leave{color:var(--ui-ink)!important;font-family:inherit;font-size:44px!important;font-weight:750!important;line-height:1.2;letter-spacing:-1px;white-space:nowrap}
+#leave-settings-dialog .leave-balance-caption{font-size:11px;line-height:1.6;color:var(--ui-muted);margin:10px 0 0}
+.leave-balance-art{width:70px;height:70px;flex:none;transform:rotate(-6deg)}
+.leave-balance-art svg{display:block;width:100%;height:100%}
+#leave-settings-dialog .leave-stat-grid{display:grid;grid-template-columns:1fr;gap:0;margin:0 0 16px}
+#leave-settings-dialog .leave-stat-grid .leave-stat-box{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border:0!important;text-align:left;border-radius:0}
+#leave-settings-dialog .leave-stat-grid .stat-label{font-size:14px;color:var(--ui-muted);margin:0}
+#leave-settings-dialog :is(#stat-total-leave,#stat-used-leave){font-size:18px!important;font-weight:600!important;color:var(--ui-copy)!important;line-height:1.5;letter-spacing:0}
+#leave-settings-dialog .leave-money-unit,#leave-settings-dialog .leave-money-total{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;min-height:44px;padding:8px 0}
+#leave-settings-dialog #val-total-leave-pay{font-size:21px!important;color:var(--ui-blue)!important}
+/* Each choice is a separate control; the two post intentions have clear labels. */
+#lost-found-dialog .lost-form{gap:22px}
+#lost-found-dialog .lost-choice-title{font-size:15px;font-weight:650;color:var(--ui-ink)}
+#lost-found-dialog .lost-choice-field{gap:12px}
+#lost-found-dialog .lost-choice-field:not(#lost-choice-type){border-top:1px solid var(--ui-line);padding-top:20px}
+#lost-found-dialog .lost-choices{gap:9px}
+#lost-found-dialog .lost-choices .lost-button{background:var(--ui-field);border:1px solid transparent;border-radius:12px;min-height:44px;padding:11px 14px;color:var(--ui-copy);font-size:14px}
+#lost-found-dialog .lost-choices .lost-button[aria-pressed="true"]{background:var(--ui-blue-soft);color:var(--ui-blue);border-color:var(--ui-blue);font-weight:650}
+#lost-found-dialog #lost-choice-type>.lost-choice-title{font-size:13px;font-weight:500;color:var(--ui-muted)}
+#lost-found-dialog #lost-choice-type>.lost-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#lost-found-dialog #lost-choice-type .lost-kind-button{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:7px;min-height:106px;background:var(--ui-card);border:1.5px solid var(--ui-line);border-radius:16px;padding:18px 12px;text-align:left}
+#lost-found-dialog .lost-kind-button strong{font-size:16px;font-weight:650;line-height:1.5}
+#lost-found-dialog .lost-kind-button small{font-size:11px;font-weight:400;line-height:1.6;color:var(--ui-muted)}
+#lost-found-dialog #lost-choice-type .lost-kind-button[aria-pressed="true"]{border-color:var(--ui-blue);background:var(--ui-blue-soft);box-shadow:0 0 0 .5px var(--ui-blue)}
+#lost-found-dialog .lost-kind-badge{font-weight:650;padding:7px 10px;border-radius:9px;font-size:12px}
+#lost-found-dialog .lost-kind-badge[data-kind="found"]{background:#e8f7f0;color:#147d57}
+#lost-found-dialog .lost-kind-badge[data-kind="lost"]{background:#eaf3ff;color:#1b64da}
+body[data-pref-theme="dark"] #lost-found-dialog .lost-kind-badge[data-kind="found"]{background:#1c453b;color:#8fe2bd}
+body[data-pref-theme="dark"] #lost-found-dialog .lost-kind-badge[data-kind="lost"]{background:#233b59;color:#a4caff}
+@media(max-width:360px){#leave-settings-dialog .leave-overview{padding:18px!important}#leave-settings-dialog .leave-balance{padding:20px 16px;gap:10px}.leave-balance-art{width:54px;height:54px}#leave-settings-dialog #stat-remain-leave{font-size:40px!important}#lost-found-dialog #lost-choice-type .lost-kind-button{padding:14px 10px}#lost-found-dialog .lost-kind-button strong{font-size:15px}#lost-found-dialog .lost-kind-button small{font-size:10px}}
+@media(prefers-reduced-motion:reduce){#view-payroll #payroll-estimate-toggle,#view-payroll #payroll-estimate-toggle::before{transition:none}}
+#leave-settings-dialog .leave-balance .leave-stat-box{display:flex;flex-direction:column;align-items:flex-start}
+#leave-settings-dialog .leave-balance :is(.stat-label,.stat-value){text-align:left}
+#leave-settings-dialog .leave-stat-grid .leave-stat-box{flex-direction:row}
+#leave-settings-dialog .leave-policy{font-size:12px;line-height:1.8;color:var(--ui-muted);margin:10px 0 16px}
+#leave-settings-dialog .leave-policy summary{cursor:pointer;min-height:30px}
+#leave-settings-dialog .leave-policy p{margin:8px 0 0}
+#lost-found-dialog .life-header{position:sticky;top:-24px;z-index:2;background:var(--ui-page);padding:12px 0;margin-bottom:8px}
+#lost-found-dialog #lost-form{scroll-margin-top:82px}
+@media(max-width:380px){#lost-found-dialog .life-header{top:-20px}}
+#lost-found-dialog.lost-writing>:is(.lost-toolbar,.lost-filters,.lost-note,#lost-auth,#lost-items,#lost-more,#lost-local,#lost-status){display:none!important}
+#lost-found-dialog.lost-writing #lost-form{margin-top:0}

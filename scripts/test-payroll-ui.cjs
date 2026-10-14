@@ -101,7 +101,8 @@ assert.equal(typeof ctx.exportPersonalCalendar,'undefined');assert.equal(typeof 
 const leaveMarkup=html.slice(html.indexOf('<dialog id="leave-settings-dialog"'),html.indexOf('</dialog>',html.indexOf('<dialog id="leave-settings-dialog"')));
 assert.equal(/회계연도|1일 연차 단가|매년 1월 1일|근속수당은/.test(leaveMarkup),false);
 assert.ok(leaveMarkup.includes('<span>1일 연차수당</span>'));
-assert.equal(/<details\b|<summary\b/.test(leaveMarkup),false,'Leave settings stay visible without an extra disclosure step');
+const leaveFormMarkup=leaveMarkup.replace(/<details class="leave-policy">[\s\S]*?<\/details>/,'');
+assert.equal(/<details\b|<summary\b/.test(leaveFormMarkup),false,'Leave balance and editable settings stay visible; only policy explanation may collapse');
 assert.ok(html.includes('정규직 전환일 (연차, 지원금 판정)'));
 assert.equal(elem('leave-year-label').textContent,'2026년');
 const detailLabels=[...html.slice(html.indexOf('<table class="pay-table">'),html.indexOf('</table>',html.indexOf('<table class="pay-table">'))).matchAll(/<tr[^>]*>\s*<td[^>]*>([^<]+)<\/td>/g)].map(m=>m[1]);
