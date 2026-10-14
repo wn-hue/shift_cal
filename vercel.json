@@ -17,6 +17,9 @@
     },
     "api/native-account.js": {
       "maxDuration": 60
+    },
+    "api/parking.js": {
+      "maxDuration": 60
     }
   },
   "headers": [
