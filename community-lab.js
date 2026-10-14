@@ -53,7 +53,8 @@ if(active==='lost'){
  }
 }
 if(active==='bus'){
- const c=card('통근버스 노선도 · 준비 중','공식 노선도를 첨부해 주시면 이곳에 반영하겠습니다. 현재는 임의 노선이나 시간표를 제공하지 않습니다.');c.append(el('p','예정 화면: 노선도 보기 · 내 노선 즐겨찾기 · 정류장 · 출발 시각 · 최종 갱신일'));
+ const root=el('section');$('lab-panel').append(root);window.ShiftBusBrowser.mount(root);
+
 }
 
 }
