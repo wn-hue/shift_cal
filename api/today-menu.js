@@ -57,7 +57,9 @@ async function handler(req, res) {
     if (req.method !== 'GET') {res.setHeader('Allow','GET'); return res.status(405).json({status:'error', message:'GET 요청만 지원합니다.'});}
     try {
         const result = await loadPdf();
-        return res.status(200).json({...extractToday(result.data), checkedAt:new Date(result.time).toISOString()});
+        const menu={...extractToday(result.data), checkedAt:new Date(result.time).toISOString()};
+        require('@vercel/functions').waitUntil(require('../lib/meal-weekly').saveMenu(menu).catch(()=>{}));
+        return res.status(200).json(menu);
     } catch (error) {
         const layout = error.message === 'MENU_LAYOUT';
         return res.status(503).json({status:'error', date:menuDate(), sourceUrl:SOURCE_URL, meals:[],
