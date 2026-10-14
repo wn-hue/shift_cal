@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+ <defs>
+  <linearGradient id="blue" x1="80" y1="20" x2="440" y2="512" gradientUnits="userSpaceOnUse"><stop stop-color="#4b9bff"/><stop offset="1" stop-color="#216de3"/></linearGradient>
+  <linearGradient id="paper" x1="160" y1="120" x2="350" y2="420" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="#edf5ff"/></linearGradient>
+  <clipPath id="page"><rect x="96" y="118" width="320" height="302" rx="60"/></clipPath>
+ </defs>
+ <path fill="url(#blue)" d="M0 0h512v512H0z"/>
+ <rect x="104" y="138" width="312" height="294" rx="60" fill="#185bc5" opacity=".24"/>
+ <rect x="96" y="118" width="320" height="302" rx="60" fill="url(#paper)"/>
+ <path d="M96 118h320v100H96z" clip-path="url(#page)" fill="#ddecff"/>
+ <path d="M176 98v66m160-66v66" stroke="#fff" stroke-width="28" stroke-linecap="round"/>
+ <path d="m180 299 52 52 102-111" fill="none" stroke="#3182f6" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+ <circle cx="396" cy="120" r="24" fill="#ffd96b"/>
+</svg>

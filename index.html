@@ -4,19 +4,19 @@
     <meta name="google-site-verification" content="8lue-CrOnUQ3qFfL84QdCd7v6IBQR3rApQ8LUYji0M8" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Shift_calander · 교대 캘린더 & 급여 계산기</title>
+    <title>근무온 · 교대 캘린더와 급여</title>
 
     <!-- iOS Safari & Android 홈 화면 추가 (단독 PWA 앱 규격) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Shift_calander">
+    <meta name="apple-mobile-web-app-title" content="근무온">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#ffffff">
-    <meta name="application-name" content="Shift_calander">
-    <meta name="description" content="Shift_calander는 교대 근무표, 예상 급여와 연차를 관리하고 Google Calendar 및 본인 Google 계정과 동기화하는 개인용 앱입니다.">
+    <meta name="application-name" content="근무온">
+    <meta name="description" content="근무온은 교대 근무표, 예상 급여와 연차를 관리하고 Google Calendar 및 본인 Google 계정과 동기화하는 개인용 앱입니다.">
 
-    <link rel="apple-touch-icon" sizes="512x512" href="./apple-touch-icon.png?v=4">
-    <link rel="icon" type="image/png" href="./apple-touch-icon.png?v=4">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=5">
+    <link rel="icon" type="image/png" href="./apple-touch-icon.png?v=5">
 
     <style>
         :root {
@@ -930,7 +930,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="stylesheet" href="./lost-found.css?v=1">
 <link rel="stylesheet" href="./bright-menu.css?v=1">
-<link rel="stylesheet" href="./app-surfaces.css?v=2">
+<link rel="stylesheet" href="./app-surfaces.css?v=3">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1109,7 +1109,7 @@
                 </div>
 
                 <div class="toggle-box" onclick="toggleBonusCheck(event)">
-                    <label id="lbl-bonus-check">짝수달 상여금 50% 지급</label>
+                    <label id="lbl-bonus-check">상여금 포함</label>
                     <input type="checkbox" id="inp-bonus-check" onchange="calculatePayrollFromInputs()">
                 </div>
 
@@ -1125,7 +1125,7 @@
                     <span class="payroll-disclosure-state"><span class="when-closed">자세히 보기</span><span class="when-open">간략히 보기</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
                 </summary>
                 <div class="payroll-detail-content">
-                    <div class="payroll-detail-meta"><span>항목별 지급액 · 단위 원</span><span id="bonus-badge">짝수달 상여</span></div>
+                    <div class="payroll-detail-meta"><span>항목별 지급액 · 단위 원</span><span id="bonus-badge">상여금 반영</span></div>
                 <table class="pay-table">
                     <tbody>
                         <tr><td>기본</td><td class="num" id="row-base-pay">0</td></tr>
@@ -1183,16 +1183,21 @@
     </section>
     <section id="view-all" class="view-page all-page" aria-labelledby="account-management-title">
       <div id="account-management-dialog" class="all-menu-content">
-        <div class="all-topline"><h1 id="account-management-title" class="all-page-title">내 근무</h1><button type="button" id="account-sheet-open" class="account-sheet-open" aria-haspopup="dialog" aria-controls="account-login-dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="9" r="3"/><path d="M5.5 18.3a7 7 0 0 1 13 0"/></svg><span id="account-sheet-label">로그인</span></button><button type="button" class="icon-button menu-preferences" aria-label="앱 환경" onclick="openAppPreferences()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><polygon points="12.00,4.00 13.56,4.15 15.83,2.76 17.56,3.69 17.66,6.34 18.65,7.56 21.24,8.17 21.81,10.05 20.00,12.00 19.85,13.56 21.24,15.83 20.31,17.56 17.66,17.66 16.44,18.65 15.83,21.24 13.95,21.81 12.00,20.00 10.44,19.85 8.17,21.24 6.44,20.31 6.34,17.66 5.35,16.44 2.76,15.83 2.19,13.95 4.00,12.00 4.15,10.44 2.76,8.17 3.69,6.44 6.34,6.34 7.56,5.35 8.17,2.76 10.05,2.19"/><circle cx="12" cy="12" r="3.2"/></svg></button></div>
+        <div class="all-topline"><h1 id="account-management-title" class="all-page-title"><img class="menu-brand-icon" src="./app-icon.svg" width="32" height="32" alt="">근무온</h1><button type="button" id="account-sheet-open" class="account-sheet-open" aria-haspopup="dialog" aria-controls="account-login-dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="9" r="3"/><path d="M5.5 18.3a7 7 0 0 1 13 0"/></svg><span id="account-sheet-label">로그인</span></button><button type="button" class="icon-button menu-preferences" aria-label="앱 환경" onclick="openAppPreferences()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><polygon points="12.00,4.00 13.56,4.15 15.83,2.76 17.56,3.69 17.66,6.34 18.65,7.56 21.24,8.17 21.81,10.05 20.00,12.00 19.85,13.56 21.24,15.83 20.31,17.56 17.66,17.66 16.44,18.65 15.83,21.24 13.95,21.81 12.00,20.00 10.44,19.85 8.17,21.24 6.44,20.31 6.34,17.66 5.35,16.44 2.76,15.83 2.19,13.95 4.00,12.00 4.15,10.44 2.76,8.17 3.69,6.44 6.34,6.34 7.56,5.35 8.17,2.76 10.05,2.19"/><circle cx="12" cy="12" r="3.2"/></svg></button></div>
         
 <section class="all-settings-section" aria-labelledby="all-settings-title"><h2 id="all-settings-title">내 근무 설정</h2>
         <div class="all-settings-card" id="menu-group-settings">
             <div class="drawer-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M16 4a3 3 0 0 1 0 6M18 14a5 5 0 0 1 4 5v2"/></svg><span>내 교대근무</span></div>
             <p class="all-company">3조 2교대</p>
-            <div class="group-select-wrapper">
-                <select id="group-select" class="group-select" aria-label="근무조 선택" aria-describedby="group-selection-status" onchange="setGroup(this.value)">
+            <div class="group-select-wrapper" hidden>
+                <select id="group-select" class="group-select" tabindex="-1" aria-label="근무조 선택" aria-describedby="group-selection-status" onchange="setGroup(this.value)">
                     <option value="" disabled selected>교대조 선택</option><option value="A">A조</option><option value="B">B조</option><option value="C">C조</option>
                 </select>
+            </div>
+            <div class="menu-group-choices" role="group" aria-label="내 교대조 선택">
+                <button type="button" id="menu-group-A" aria-pressed="false" onclick="setGroup('A')">A조</button>
+                <button type="button" id="menu-group-B" aria-pressed="false" onclick="setGroup('B')">B조</button>
+                <button type="button" id="menu-group-C" aria-pressed="false" onclick="setGroup('C')">C조</button>
             </div>
             <p id="group-selection-status" class="group-selection-status" role="status" aria-live="polite">교대조를 선택해 주세요.</p>
         </div>
@@ -1221,7 +1226,7 @@
           <a href="./about.html"><span>앱 소개 · 문의</span><span aria-hidden="true">›</span></a>
           <a href="./privacy.html"><span>개인정보처리방침</span><span aria-hidden="true">›</span></a>
           <a href="./terms.html"><span>서비스 이용약관</span><span aria-hidden="true">›</span></a>
-        </div><p class="all-brand">Shift_calander</p></section></dialog>
+        </div><p class="all-brand">근무온</p></section></dialog>
     <!-- 하단 네비게이션 바 -->
     <nav class="bottom-nav" aria-label="주요 화면"><div class="nav-capsule">
         <button type="button" class="nav-item active" id="bnav-cal" aria-label="교대 캘린더" aria-controls="view-calendar" aria-current="page" onclick="switchView('calendar', this)">
@@ -1300,456 +1305,7 @@
                 <div class="leave-balance">
                     <div class="leave-stat-box leave-remaining">
                         <div class="stat-label">잔여 연차</div>
-                        <div class="stat-value" id="stat-remain-leave">0일</div>
-                        <p class="leave-balance-caption">사용 내역이 자동으로 반영돼요</p>
-                    </div>
-                    <span class="leave-balance-art" aria-hidden="true"><svg viewBox="0 0 72 72" fill="none"><rect x="11" y="16" width="50" height="47" rx="13" fill="#c5e1ff"/><rect x="16" y="11" width="45" height="47" rx="12" fill="#3182f6"/><path d="M16 25h45" stroke="#8bc2ff" stroke-width="3"/><path d="M28 9v10m21-10v10" stroke="#1b64da" stroke-width="5" stroke-linecap="round"/><path d="m28 40 8 8 13-16" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                </div>
-                <div class="leave-stat-grid">
-                    <div class="leave-stat-box"><div class="stat-label">총 연차</div><div class="stat-value" id="stat-total-leave">0일</div></div>
-                    <div class="leave-stat-box"><div class="stat-label">사용 연차</div><div class="stat-value" id="stat-used-leave">0일</div></div>
-                </div>
-
-                <div class="leave-money-summary">
-                    <div class="leave-money-unit">
-                        <span>1일 연차수당</span>
-                        <strong id="val-leave-daily-rate">0원</strong>
-                    </div>
-                    <div class="leave-money-total">
-                        <span>예상 연차수당</span>
-                        <span id="val-total-leave-pay">0원</span>
-                    </div>
-                </div>
-                
-            </div>
-        <div class="menu-leave-summary" hidden><span id="menu-leave-year"></span><span>총 <strong id="menu-leave-total"></strong></span><span>사용 <strong id="menu-leave-used"></strong></span><span>잔여 <strong id="menu-leave-remain"></strong></span></div>
-                <div class="leave-edit-settings" aria-labelledby="leave-settings-title">
-                    <h3 id="leave-settings-title">정규직 전환일 · 총 연차</h3>
-                    <div class="two-cols">
-                        <div class="input-group">
-                            <label for="input-hire-date">정규직 전환일</label>
-                            <input type="date" id="input-hire-date" onchange="onHireDateChange()">
-                        </div>
-                        <div class="input-group">
-                            <label for="input-total-leave">총 연차</label>
-                            <div class="number-unit-field">
-                                <input type="number" id="input-total-leave" value="0" step="0.5" min="0" onchange="saveLeaveConfig()" placeholder="예: 19" aria-describedby="total-leave-unit">
-                                <span id="total-leave-unit">일</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        <button type="button" class="btn-save" onclick="document.getElementById('leave-settings-dialog').close()">완료</button>
-    </dialog>
-
-
-    <dialog id="account-conflict-dialog" class="sms-dialog" aria-labelledby="account-conflict-title">
-        <div class="sms-dialog-header"><div><h2 id="account-conflict-title">사용할 데이터 선택</h2><p>기기와 계정의 데이터가 다릅니다.</p></div><button type="button" id="account-conflict-close" class="sms-close-btn" aria-label="데이터 선택 닫기">×</button></div>
-        <p class="account-hint">한쪽 데이터를 자동으로 덮어쓰지 않습니다. 사용할 데이터를 선택하면 이후 변경사항은 자동 저장됩니다. 동시 저장 기록은 보관됩니다.</p>
-        <div id="account-conflict-choices" class="account-choices"></div>
-        <button type="button" id="account-use-local" class="sms-clear-btn" style="width:100%;margin-top:12px;">현재 기기 데이터 사용</button>
-    </dialog>
-
-    <dialog id="payroll-sms-dialog" class="sms-dialog" aria-labelledby="payroll-sms-title">
-        <div class="sms-dialog-header">
-            <div><h2 id="payroll-sms-title">시급 설정</h2><p>급여·상여 문자를 붙여넣으면 필요한 항목을 자동 인식합니다. 입력은 선택사항입니다.</p></div>
-            <button type="button" id="payroll-sms-close" class="sms-close-btn" aria-label="급여 문자 설정 닫기">×</button>
-        </div>
-        <label for="payroll-sms-text" class="sms-input-label">급여문자 확인 (선택)</label>
-        <p class="sms-privacy">시급·고정수당과 지급·공제 내역을 자동 인식합니다.</p>
-        <textarea id="payroll-sms-text" maxlength="30000" rows="4" placeholder="기본시급: 10,000원
-통상시급: 12,000원
-자격: 0원
-직무: 0원
-가족: 0원
-직책: 0원" class="sms-textarea"></textarea>
-        <label for="payroll-bonus-sms-text" class="sms-input-label" style="margin-top:16px">상여금 문자 확인 (선택)</label>
-        <p class="sms-privacy">상여금은 기존 지급 기준으로 계산합니다. 개인 공제율을 적용하려는 경우에만 문자를 입력하세요.</p>
-        <textarea id="payroll-bonus-sms-text" maxlength="30000" rows="4" placeholder="상여금 문자를 붙여넣으세요. 지급·공제 내역을 자동 인식합니다." class="sms-textarea"></textarea>
-        <p class="sms-privacy">이름·사번·계좌번호는 제외해 주세요. 원문은 기기에서만 인식하고 적용·닫기 시 지웁니다. 저장 항목은 시급·통상시급·고정수당 합계와 공제 기준입니다. 급여 법정요율 항목이 인식되면 월 보험료·기타 월 공제액과 세금·고용 비율을 저장합니다. 지급·공제 합계는 저장하지 않습니다. 로그인하여 동기화를 연결하면 저장 항목도 본인 계정에 전송됩니다. <a href="./privacy.html">저장 안내</a></p>
-        <div class="sms-actions">
-            <button type="button" id="payroll-sms-apply" class="sms-primary-btn" disabled>설정 적용</button>
-            <button type="button" id="payroll-sms-clear" class="sms-clear-btn">지우기</button>
-        </div>
-        <p id="payroll-sms-status" class="sms-status" role="status"></p>
-        <div id="payroll-sms-preview" class="sms-preview"></div>
-        <details class="sms-help"><summary>어떤 항목이 적용되나요?</summary><p>급여문자 확인에서 시급과 자격·직무·가족·직책 줄을 붙여넣으세요. 인식한 네 수당의 합계를 고정수당으로 적용합니다. 수당을 바꿀 때는 해당되는 네 항목을 함께 붙여넣어 주세요. 공제율은 선택 사항이며 지급 합계·공제 합계 두 줄로 계산합니다. 상여 문자에서는 상여금 공제율만 적용하며 시급·수당은 바꾸지 않습니다. 비워둔 칸의 기존 설정은 유지됩니다. 급여의 연금·건강·고용에 법정요율이 표시되고 세금 내역이 있으면, 연금·건강(별도 요양 포함)은 문자 월액으로 유지하고 고용은 문자와 일치하는 0.9% 또는 문자 비율로 추정합니다. 소득세·지방소득세는 문자 비율로 추정합니다. 기타 공제는 문자 월액으로 유지합니다. 해당 내역이 없으면 공제 합계 ÷ 지급 합계로 추정합니다. 상여금은 상여 문자 공제율만 사용하므로 급여 월 보험료를 다시 차감하지 않습니다. 보험료 정산·비과세·가족 수 변경 시 새 문자를 적용하세요. 비워둔 문자 칸의 기존 공제율은 변경하지 않습니다. 저장된 공제율이 없으면 세후 추정 화면은 기본 공제율 18%를 사용합니다. 이는 개인별 세금·보험료를 정확히 계산한 값이 아닙니다. 상여 문자만으로 급여 공제율을 추정하지 않습니다. 상여 지급액·근무일수 계산은 기존 규칙을 유지하며 추정 공제액은 실제 세액과 다를 수 있습니다.</p></details>
-    </dialog>
-
-    <!-- 모달: 연/월 선택 피커 (캘린더 & 급여계산기 공용) -->
-    <div class="modal-overlay" id="modal-year-month-picker" onclick="closeYearMonthPicker(event)">
-        <div class="modal-sheet" onclick="event.stopPropagation()">
-            <div class="modal-title">
-                <span id="picker-title-text">🗓️ 이동할 연도와 월 선택</span>
-                <button style="border: none; background: none; font-size: 18px; color: #5f6368; cursor: pointer;" onclick="closeYearMonthPickerDirect()">✕</button>
-            </div>
-
-            <div class="picker-year-bar">
-                <button class="picker-year-btn" onclick="changePickerYear(-1)">◀</button>
-                <div class="year-val" id="picker-year-text">2026년</div>
-                <button class="picker-year-btn" onclick="changePickerYear(1)">▶</button>
-            </div>
-
-            <div class="picker-month-grid" id="picker-month-grid"></div>
-
-            <button class="btn-reset-data" style="width:100%;" onclick="jumpPickerToToday()">📍 이번 달(오늘)로 이동</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modal-month-stats" onclick="closeMonthStatsModal(event)">
-      <div class="modal-sheet stats-sheet" role="dialog" aria-modal="true" aria-labelledby="stat-modal-title" onclick="event.stopPropagation()">
-        <div class="stats-header"><div><h2 id="stat-modal-title"></h2><p id="stat-modal-group"></p></div><button class="override-close" aria-label="근무 통계 닫기" onclick="closeMonthStatsModalDirect()">✕</button></div>
-        <section class="stats-section"><h3>급여 기간 근무</h3><p id="stat-month-period"></p><div class="stats-shifts">
-          <div><span class="stats-badge day">주</span><strong id="modal-pill-day"></strong></div>
-          <div><span class="stats-badge night">야</span><strong id="modal-pill-night"></strong></div>
-          <div><span class="stats-badge off">휴</span><strong id="modal-pill-off"></strong></div>
-          <div><span class="stats-badge day-sp">주특</span><strong id="stat-daysp"></strong></div>
-          <div><span class="stats-badge night-sp">야특</span><strong id="stat-nightsp"></strong></div>
-        </div><div class="stats-row"><span>총 출근</span><strong id="modal-pill-total-work"></strong></div><span id="modal-pill-special" hidden></span></section>
-        <section class="stats-section"><div class="stats-section-heading"><h3>예상 급여</h3><button onclick="closeMonthStatsModalDirect();switchView('payroll')">자세히 ›</button></div><p id="stat-modal-period"></p>
-          
-          <div class="stats-row"><span>월 급여</span><strong id="stat-salary"></strong></div>
-          <div class="stats-row"><span id="stat-bonus-label">상여금</span><strong id="stat-bonus"></strong></div>
-          <div class="stats-row stats-total"><span id="stat-total-label">세전 합계</span><strong id="stat-total"></strong></div>
-        </section><section class="stats-section"><div class="stats-row"><span>급여 기간 사용 연차</span><strong id="modal-pill-leave"></strong></div><div class="stats-row"><span>잔여 연차</span><strong id="stat-remaining"></strong></div></section>
-      </div>
-    </div>
-
-
-
-
-    <!-- Optional Google Calendar sync; credentials are handled by the server. -->
-    <div class="modal-overlay" id="modal-calendar-link" onclick="closeCalendarIntegration(event)">
-        <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="calendar-link-title" onclick="event.stopPropagation()">
-            <div class="modal-title">
-                <span id="calendar-link-title">캘린더 동기화 · <span id="calendar-link-group">C조</span></span>
-                <button type="button" class="nav-arrow-btn" aria-label="닫기" onclick="closeCalendarIntegration()">✕</button>
-            </div>
-            <div class="card" style="padding:12px;">
-                <strong id="google-sync-badge" style="font-size:14px;">구글 캘린더 동기화</strong>
-                <p id="google-sync-user" class="calendar-link-copy">동기화 상태 확인 중…</p>
-                <p class="calendar-link-copy">구글 전용 캘린더에 근무표·메모·개인 일정을 저장합니다. 앱 변경은 저장 후 반영하고, 구글·아이폰에서 바꾼 내용은 앱을 열면 가져옵니다. 열린 동안에는 약 30초마다 확인합니다.</p>
-                <a id="google-sync-login" class="account-login" href="/api/google-calendar?action=login" aria-label="Google 계정으로 캘린더 연결" aria-describedby="calendar-permission-notice" hidden><img class="google-login-image" src="./google-signin.png?v=3" width="180" height="40" alt="" aria-hidden="true"></a>
-                <p id="calendar-permission-notice" class="account-hint">계정 확인, 캘린더 목록 조회와 앱이 만든 캘린더의 일정 관리 권한을 요청합니다. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p>
-                <div id="google-sync-controls" hidden>
-                    <div class="calendar-link-actions">
-                        <button id="google-sync-enable" class="btn-save" onclick="GoogleSync.synchronize()">동기화</button>
-                    </div>
-                    <details class="calendar-link-help"><summary>동기화 관리</summary>
-                        <div class="calendar-link-actions"><button class="btn-reset-data" onclick="GoogleSync.stop()">자동 동기화 중지</button><button class="btn-reset-data" onclick="GoogleSync.disconnect()">이 기기 연결 해제</button></div>
-                        <button class="btn-reset-data" onclick="GoogleSync.relink()">이달 제외 일정 다시 검토</button>
-                        <p>중지·해제해도 구글에 저장된 일정은 남습니다. Google 계정의 앱 권한을 완전히 취소하려면 Google 계정 → 보안 → 연결된 앱에서 해제하세요.</p>
-                    </details>
-                </div>
-                <div id="google-sync-setup" hidden>
-                    <p id="google-sync-setup-message" class="calendar-link-copy"></p>
-                    <details class="calendar-link-help"><summary>관리자 최초 설정</summary>
-                        <p>Google Cloud에서 Calendar API를 켜고 웹 애플리케이션 OAuth 클라이언트를 만드세요. 개인 테스트에서는 본인 이메일을 테스트 사용자로 등록합니다.</p>
-                        <p>승인된 리디렉션 URI: <code id="google-sync-redirect" style="display:block;overflow-wrap:anywhere;"></code></p>
-                        <p>Vercel 프로젝트에 GOOGLE_CALENDAR_CLIENT_ID, GOOGLE_CALENDAR_CLIENT_SECRET, GOOGLE_CALENDAR_SESSION_SECRET(32자 이상 무작위 값), APP_URL(앱의 https 주소)을 등록하고 재배포하세요. 비밀 키는 코드·채팅에 붙여 넣지 마세요.</p>
-                        <a href="https://github.com/wn-hue/shift_cal/blob/main/GOOGLE_CALENDAR_SETUP.md" target="_blank" rel="noopener noreferrer">설정 순서 자세히 보기</a>
-                    </details>
-                </div>
-                <div id="google-sync-status" class="sync-feedback" role="status" aria-live="polite" aria-atomic="true"></div>
-                <div id="google-sync-review"></div>
-                <div id="google-personal-form" class="card" style="margin:12px 0 0;padding:12px;" hidden>
-                    <strong>개인 일정</strong>
-                    <input id="google-personal-id" type="hidden"><input id="google-personal-etag" type="hidden"><input id="google-personal-group" type="hidden">
-                    <div class="input-group" style="margin:10px 0;"><label for="google-personal-title">제목</label><input id="google-personal-title" maxlength="2000" placeholder="예: 병원 예약"></div>
-                    <div class="two-cols"><div class="input-group"><label for="google-personal-day">시작일</label><input id="google-personal-day" type="date"></div><div class="input-group"><label for="google-personal-end-day">종료일</label><input id="google-personal-end-day" type="date"></div></div>
-                    <label class="toggle-box"><span>종일 일정</span><input id="google-personal-allday" type="checkbox" checked onchange="document.getElementById('google-personal-time-fields').hidden=this.checked"></label>
-                    <div id="google-personal-time-fields" class="two-cols" hidden><div class="input-group"><label for="google-personal-start">시작 시간</label><input id="google-personal-start" type="time" value="09:00"></div><div class="input-group"><label for="google-personal-end">종료 시간</label><input id="google-personal-end" type="time" value="10:00"></div></div>
-                    <div class="input-group"><label for="google-personal-memo">메모</label><textarea id="google-personal-memo" rows="3" maxlength="16000"></textarea></div>
-                    <div class="calendar-link-actions"><button class="btn-save" onclick="GoogleSync.savePersonal()">구글에 저장</button><button class="btn-reset-data" onclick="document.getElementById('google-personal-form').hidden=true">취소</button></div>
-                    <button id="google-personal-delete" class="btn-reset-data" onclick="GoogleSync.savePersonal(true)" hidden>개인 일정 삭제</button>
-                </div>
-                <details class="calendar-link-help"><summary>아이폰 기본 캘린더에서 사용하기</summary>
-                    <p>아이폰 설정 → 앱 → 캘린더 → 캘린더 계정 → 계정 추가 → Google에서 같은 계정을 연결하고 캘린더를 켜세요. 기본 캘린더 앱에서 <b>앱 전용 A/B/C조 캘린더</b>를 선택합니다. 일정을 만들 때도 이 캘린더를 저장 위치로 선택해야 앱에 표시됩니다. 별도 iCloud 캘린더의 일정은 포함되지 않습니다.</p>
-                    <p>근무 종류를 구글에서 바꿀 때는 제목을 연차, 반차(전), 반차(후), 주간 특근, 야간 특근 등으로 지정하세요. 근태 변경·동시 수정·근무표 삭제는 앱에서 확인한 뒤 적용합니다. 단순 메모 변경과 개인 일정은 자동으로 가져옵니다.</p>
-                    <p>동기화를 누르면 현재 보고 있는 달의 근무표를 반영합니다. 이후 다른 달을 열면 그 달도 자동으로 동기화합니다. 개인 일정은 Google 또는 아이폰 기본 캘린더의 앱 전용 캘린더에서 추가할 수 있습니다.</p>
-                </details>
-            </div>
-
-        </div>
-    </div>
-
-<div class="modal-overlay" id="modal-schedule-share" onclick="closeScheduleShare(event)"><div class="modal-sheet share-sheet" role="dialog" aria-modal="true" aria-labelledby="share-title" onclick="event.stopPropagation()"><div class="override-header"><div><h2 id="share-title">근무표 보내기</h2><p id="share-month"></p></div><button type="button" class="override-close" aria-label="공유 닫기" onclick="closeScheduleShare()">✕</button></div><button class="share-row" onclick="shareScheduleImage()"><span>▧</span><strong>이미지로 보내기</strong><span>›</span></button><p id="share-status" role="status"></p></div></div>
-    <!-- 모달: 근태 및 메모 변경 (반차 전/후 & 무급반차 전/후 포함) -->
-    <div class="modal-overlay" id="modal-override" onclick="closeModal(event)">
-        <div class="modal-sheet override-sheet" role="dialog" aria-modal="true" aria-labelledby="override-title" onclick="event.stopPropagation()">
-            <div class="override-header">
-                <div><h2 id="override-title">근무 변경</h2><p id="modal-date-text"></p><div class="editor-current-shift"><span id="editor-current-badge" class="shift-badge"></span><span id="modal-orig-text" class="override-base"></span></div></div>
-                <div class="override-header-actions"><button type="button" class="opt-btn reset override-reset" aria-label="기본 근무로 복구" onclick="switchEditorTab('work');setDayOverride(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/></svg><span>복구</span></button><button type="button" class="override-close" aria-label="근무 변경 닫기" onclick="closeModalDirect()">✕</button></div>
-            </div>
-            <div class="editor-content"><div class="editor-tabs" role="tablist"><button id="work-tab" role="tab" aria-selected="true" onclick="switchEditorTab('work')">근무</button><button id="memo-tab" role="tab" aria-selected="false" onclick="switchEditorTab('memo')">메모</button></div>
-            <section id="work-panel" class="override-section" role="tabpanel" aria-labelledby="work-tab"><h3 class="override-section-title">근무</h3><div class="shift-scroll"><button class="opt-btn day-sp" onclick="setDayOverride('SPECIAL_DAY')">
-                    <span>주특</span>
-                </button><button class="opt-btn night-sp" onclick="setDayOverride('SPECIAL_NIGHT')">
-                    <span>야특</span>
-                </button><button class="opt-btn day-sp special-no-ot" onclick="setDayOverride('SPECIAL_DAY_NO_OT')"><span>주특<br>잔업X</span></button><button class="opt-btn night-sp special-no-ot" onclick="setDayOverride('SPECIAL_NIGHT_NO_OT')"><span>야특<br>잔업X</span></button><button class="opt-btn no-ot" onclick="setDayOverride('NO_OT')">
-                    <span>O.T 해제</span>
-                </button></div><h3 class="override-section-title">근태</h3><div class="shift-scroll"><button class="opt-btn leave" onclick="setDayOverride('LEAVE')">
-                    <span>연차</span>
-                </button><button class="opt-btn half" onclick="setDayOverride('HALF_PRE')">
-                    <span>반차 (전)</span>
-                </button><button class="opt-btn half" onclick="setDayOverride('HALF_POST')">
-                    <span>반차 (후)</span>
-                </button><button class="opt-btn unpaid" onclick="setDayOverride('UNPAID_OFF')">
-                    <span>무급 휴무</span>
-                </button><button class="opt-btn unpaid-half" onclick="setDayOverride('UNPAID_HALF_PRE')">
-                    <span>무반 (전)</span>
-                </button><button class="opt-btn unpaid-half" onclick="setDayOverride('UNPAID_HALF_POST')">
-                    <span>무반 (후)</span>
-                </button></div></section>
-            <section id="memo-panel" class="override-section override-memo" role="tabpanel" aria-labelledby="memo-tab" hidden>
-                <label for="modal-memo-input" class="override-section-title">메모</label>
-                <textarea id="modal-memo-input" placeholder="메모 입력" maxlength="16000"></textarea>
-                <button class="btn-save" onclick="saveMemoDirect()">메모 저장</button>
-            </section></div>
-        </div>
-    </div>
-
-    <script>
-        const BASE_DATE = new Date(2026, 8, 9);
-        const GROUP_OFFSETS = { 'C': 0, 'B': 4, 'A': 8 };
-
-        const SHUTDOWN_DAYS = new Set([
-            '2025-01-28', '2025-01-29', '2025-01-30',
-            '2025-10-05', '2025-10-06', '2025-10-07',
-            '2026-02-16', '2026-02-17', '2026-02-18',
-            '2026-09-24', '2026-09-25', '2026-09-26',
-            '2027-02-06', '2027-02-07', '2027-02-08',
-            '2027-09-14', '2027-09-15', '2027-09-16'
-        ]);
-
-        const HOLIDAYS = {
-            '2025-01-01': { name: '신정' },
-            '2025-01-28': { name: '설날연휴' },
-            '2025-01-29': { name: '설날' },
-            '2025-01-30': { name: '설날연휴' },
-            '2025-03-01': { name: '삼일절' },
-            '2025-03-03': { name: '대체공휴일' },
-            '2025-05-05': { name: '어린이날·부처님오신날' },
-            '2025-05-06': { name: '대체공휴일' },
-            '2025-06-06': { name: '현충일' },
-            '2025-08-15': { name: '광복절' },
-            '2025-10-03': { name: '개천절' },
-            '2025-10-05': { name: '추석연휴' },
-            '2025-10-06': { name: '추석' },
-            '2025-10-07': { name: '추석연휴' },
-            '2025-10-08': { name: '대체공휴일' },
-            '2025-10-09': { name: '한글날' },
-            '2025-12-25': { name: '성탄절' },
-
-            '2026-01-01': { name: '신정' },
-            '2026-02-16': { name: '설날연휴' },
-            '2026-02-17': { name: '설날' },
-            '2026-02-18': { name: '설날연휴' },
-            '2026-03-01': { name: '삼일절' },
-            '2026-03-02': { name: '대체공휴일' },
-            '2026-05-05': { name: '어린이날' },
-            '2026-05-24': { name: '부처님오신날' },
-            '2026-05-25': { name: '대체공휴일' },
-            '2026-06-06': { name: '현충일' },
-            '2026-08-15': { name: '광복절' },
-            '2026-08-17': { name: '대체공휴일' },
-            '2026-09-24': { name: '추석연휴' },
-            '2026-09-25': { name: '추석' },
-            '2026-09-26': { name: '추석연휴' },
-            '2026-10-03': { name: '개천절' },
-            '2026-10-05': { name: '대체공휴일' },
-            '2026-10-09': { name: '한글날' },
-            '2026-12-25': { name: '성탄절' },
-
-            '2027-01-01': { name: '신정' },
-            '2027-02-06': { name: '설날연휴' },
-            '2027-02-07': { name: '설날' },
-            '2027-02-08': { name: '설날연휴' },
-            '2027-02-09': { name: '대체공휴일' },
-            '2027-03-01': { name: '삼일절' },
-            '2027-05-05': { name: '어린이날' },
-            '2027-05-13': { name: '부처님오신날' },
-            '2027-06-06': { name: '현충일' },
-            '2027-08-15': { name: '광복절' },
-            '2027-08-16': { name: '대체공휴일' },
-            '2027-09-14': { name: '추석연휴' },
-            '2027-09-15': { name: '추석' },
-            '2027-09-16': { name: '추석연휴' },
-            '2027-10-03': { name: '개천절' },
-            '2027-10-04': { name: '대체공휴일' },
-            '2027-10-09': { name: '한글날' },
-            '2027-10-11': { name: '대체공휴일' },
-            '2027-12-25': { name: '성탄절' },
-            '2027-12-27': { name: '대체공휴일' }
-        };
-
-        let currentGroup = 'C';
-        let currentCalDate = new Date();
-        let currentPayDate = new Date();
-        let selectedDateStr = null;
-
-        let pickerDisplayYear = new Date().getFullYear();
-        let pickerTarget = 'calendar';
-
-        let overrides = {};
-        let dayMemos = {};
-        let syncedUnpaidDays = 0, syncedSpecialDayNoOT = 0, syncedSpecialNightNoOT = 0;
-
-        let config = {
-            hireDate: '',
-            totalLeave: 0,
-            leaveByYear: {},
-            baseHourly: 0,
-            ordinaryHourly: 0,
-            baseHours: 209,
-            dutyPay: 0,
-            seniorityPay: 0,
-            applyRetroPay: false,
-            holidayBonus: 0
-        };
-
-        function fmt(n) { return Math.trunc(n).toLocaleString('ko-KR'); }
-        function toDateKey(y, m, d) {
-            return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        }
-
-        function isHolidayOrWeekend(d) {
-            const day = d.getDay();
-            if (day === 0 || day === 6) return true;
-            const key = toDateKey(d.getFullYear(), d.getMonth(), d.getDate());
-            if (HOLIDAYS[key] || SHUTDOWN_DAYS.has(key)) return true;
-            return false;
-        }
-
-        function getPaydayAndSlipDate(year, month) {
-            let payday = new Date(year, month, 25);
-            while (isHolidayOrWeekend(payday)) {
-                payday.setDate(payday.getDate() - 1);
-            }
-            let slipDate = new Date(payday.getFullYear(), payday.getMonth(), payday.getDate() - 1);
-            while (isHolidayOrWeekend(slipDate)) {
-                slipDate.setDate(slipDate.getDate() - 1);
-            }
-            return { payday, slipDate };
-        }
-
-        function getBaseShift(date, group) {
-            const dateStr = toDateKey(date.getFullYear(), date.getMonth(), date.getDate());
-            if (SHUTDOWN_DAYS.has(dateStr)) {
-                return { type: 'OFF', name: '휴무', isShutdown: true };
-            }
-
-            const offset = GROUP_OFFSETS[group];
-            const targetMs = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-            const baseMs = Date.UTC(BASE_DATE.getFullYear(), BASE_DATE.getMonth(), BASE_DATE.getDate());
-
-            let effectiveDays = 0;
-            if (targetMs >= baseMs) {
-                let currMs = baseMs;
-                while (currMs < targetMs) {
-                    const cDt = new Date(currMs);
-                    const cStr = toDateKey(cDt.getUTCFullYear(), cDt.getUTCMonth(), cDt.getUTCDate());
-                    if (!SHUTDOWN_DAYS.has(cStr)) effectiveDays++;
-                    currMs += 86400000;
-                }
-            } else {
-                let currMs = targetMs;
-                while (currMs < baseMs) {
-                    const cDt = new Date(currMs);
-                    const cStr = toDateKey(cDt.getUTCFullYear(), cDt.getUTCMonth(), cDt.getUTCDate());
-                    if (!SHUTDOWN_DAYS.has(cStr)) effectiveDays--;
-                    currMs += 86400000;
-                }
-            }
-
-            let idx = (effectiveDays + offset) % 12;
-            if (idx < 0) idx += 12;
-
-            if (idx >= 0 && idx <= 3) return { type: 'DAY', name: '주간', dayNum: idx + 1 };
-            if (idx >= 4 && idx <= 5) return { type: 'OFF', name: '휴무', dayNum: idx - 3 };
-            if (idx >= 6 && idx <= 9) return { type: 'NIGHT', name: '야간', dayNum: idx - 5 };
-            return { type: 'OFF', name: '휴무', dayNum: idx - 9 };
-        }
-
-        function getActualShift(date, group) {
-            const dateStr = toDateKey(date.getFullYear(), date.getMonth(), date.getDate());
-            const base = getBaseShift(date, group);
-            const holiday = HOLIDAYS[dateStr] || null;
-
-            if (overrides[dateStr]) {
-                const ov = overrides[dateStr];
-                if(['DAY','NIGHT','OFF'].includes(ov))return {type:ov,name:ov==='DAY'?'주간':ov==='NIGHT'?'야간':'휴무',hasOt:ov!=='OFF',isOff:ov==='OFF',holidayName:holiday?holiday.name:''};
-                if (ov === 'SPECIAL_DAY_NO_OT') return { type: ov, name: '주특 잔업X', subName:'잔업X', isSpecial:true, hasOt:false, holidayName:holiday?holiday.name:'' };
-                if (ov === 'SPECIAL_NIGHT_NO_OT') return { type: ov, name: '야특 잔업X', subName:'잔업X', isSpecial:true, hasOt:false, holidayName:holiday?holiday.name:'' };
-                if (ov === 'SPECIAL_DAY') return { type: 'SPECIAL_DAY', name: '주특', isSpecial: true, hasOt: true, holidayName: holiday ? holiday.name : '' };
-                if (ov === 'SPECIAL_NIGHT') return { type: 'SPECIAL_NIGHT', name: '야특', isSpecial: true, hasOt: true, holidayName: holiday ? holiday.name : '' };
-                if (ov === 'LEAVE') return { type: 'LEAVE', name: '연차', isLeave: true, leaveVal: 1.0, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
-
-                // 유급 반차 (전): 잔업 수행 (2.5h OT 지급)
-                if (ov === 'HALF_PRE') {
-                    return { type: 'HALF_PRE', name: '반차(전)', subName: '잔업 2.5h', isLeave: true, leaveVal: 0.5, hasOt: true, origType: base.type, holidayName: holiday ? holiday.name : '' };
-                }
-                // 유급 반차 (후): 잔업 미수행 (O.T 해제)
-                if (ov === 'HALF_POST' || ov === 'HALF_LEAVE') {
-                    return { type: 'HALF_POST', name: '반차(후)', subName: 'O.T해제', isLeave: true, leaveVal: 0.5, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
-                }
-
-                // 무급 반차 (전): 4h 근무 + 잔업 수행 (2.5h OT 지급)
-                if (ov === 'UNPAID_HALF_PRE') {
-                    return { type: 'UNPAID_HALF_PRE', name: '무반(전)', subName: '잔업 2.5h', isUnpaidHalf: true, hasOt: true, origType: base.type, holidayName: holiday ? holiday.name : '' };
-                }
-                // 무급 반차 (후): 4h 근무 + 잔업 미수행 (O.T 해제)
-                if (ov === 'UNPAID_HALF_POST' || ov === 'UNPAID_HALF') {
-                    return { type: 'UNPAID_HALF_POST', name: '무반(후)', subName: 'O.T해제', isUnpaidHalf: true, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
-                }
-
-                if (ov === 'NO_OT') return { type: 'NO_OT', name: base.type === 'NIGHT' ? '야간' : '주간', subName: 'O.T해제', isNoOt: true, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
-                if (ov === 'UNPAID_OFF') return { type: 'UNPAID_OFF', name: '무급', isUnpaid: true, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
-                if (ov === 'FORCED_OFF') return { type: 'OFF', name: '휴무', isOff: true, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
-            }
-
-            if (base.type === 'OFF') {
-                return { ...base, isHoliday: !!holiday, holidayName: holiday ? holiday.name : '' };
-            }
-
-            if (holiday) {
-                if (base.type === 'DAY') return { type: 'SPECIAL_DAY', name: '주특', isSpecial: true, isHoliday: true, hasOt: true, holidayName: holiday.name };
-                if (base.type === 'NIGHT') return { type: 'SPECIAL_NIGHT', name: '야특', isSpecial: true, isHoliday: true, hasOt: true, holidayName: holiday.name };
-            }
-
-            return { ...base, hasOt: true, isHoliday: !!holiday, holidayName: holiday ? holiday.name : '' };
-        }
-
-        function renderCalendar() {
-            const year = currentCalDate.getFullYear();
-            const month = currentCalDate.getMonth();
-            document.getElementById('cal-month-title-text').innerText = `${year}. ${String(month + 1).padStart(2, '0')}`;
-            const firstDayIndex = new Date(year, month, 1).getDay();
-            const lastDate = new Date(year, month + 1, 0).getDate();
-            const rows = Math.ceil((firstDayIndex + lastDate) / 7);
-            const grid = document.getElementById('calendar-grid');
-            grid.innerHTML = '';
-            grid.style.gridTemplateRows = `repeat(${rows}, minmax(88px, 1fr))`;
-            const today = new Date();
-            const todayStr = toDateKey(today.getFullYear(), today.getMonth(), today.getDate());
-            const labels = { DAY:'주', NIGHT:'야', OFF:'휴', LEAVE:'연차', HALF_PRE:'반전', HALF_POST:'반후', UNPAID_OFF:'무휴', UNPAID_HALF_PRE:'무전', UNPAID_HALF_POST:'무후', SPECIAL_DAY:'주특', SPECIAL_NIGHT:'야특', SPECIAL_DAY_NO_OT:'주특', SPECIAL_NIGHT_NO_OT:'야특' };
-            function appendDay(dateObj, adjacent) {
-                const dateStr = toDateKey(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
-                const shift = getActualShift(dateObj, currentGroup);
-                const cell = document.createElement('div');
-                const classes = ['cal-day'];
-                if (adjacent) classes.push('other-month');
-                if (dateObj.getDay() === 0) classes.push('sunday');
-                if (dateObj.getDay() === 6) classes.push('saturday');
-                if (shift.holidayName) classes.push('holiday');
-                if (dateStr === todayStr && !adjacent) classes.push('today');
-                cell.dataset.date = dateStr;
-                cell.className = classes.join(' ');
-                if (!adjacent) {
-                    const openDay = () => openOverrideModal(dateStr, dateObj, shift);
-                    cell.onclick = openDay;
-                    cell.tabIndex = 0;
-                    cell.setAttribute('role', 'button');
+                        <div class="stat-v…11012 tokens truncated…l.setAttribute('role', 'button');
                     cell.setAttribute('aria-haspopup', 'dialog');
                     cell.setAttribute('aria-label', `${dateObj.getMonth() + 1}월 ${dateObj.getDate()}일 ${currentGroup}조 ${shift.name}${shift.holidayName ? ', ' + shift.holidayName : ''}${dayMemos[dateStr] ? ', 메모 있음' : ''}`);
                     cell.onkeydown = event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openDay(); } };
@@ -2449,9 +2005,9 @@
                 if (trEntry) trEntry.style.display = 'table-row';
                 if (bonusBadge) {
                     bonusBadge.style.display = 'inline-block';
-                    bonusBadge.innerText = '지원금 (정규직 1년 미만)';
-                    bonusBadge.style.background = '#fdf2f8';
-                    bonusBadge.style.color = '#db2777';
+                    bonusBadge.innerText = '지원금 반영';
+                    bonusBadge.style.background = '';
+                    bonusBadge.style.color = '';
                 }
             } else {
                 entryBonus = 0;
@@ -2463,9 +2019,9 @@
 
                     if (bonusBadge) {
                         bonusBadge.style.display = 'inline-block';
-                        bonusBadge.innerText = '짝수달 상여금';
-                        bonusBadge.style.background = '#faf5ff';
-                        bonusBadge.style.color = '#7c3aed';
+                        bonusBadge.innerText = '상여금 반영';
+                        bonusBadge.style.background = '';
+                        bonusBadge.style.color = '';
                     }
                 } else {
                     if (bonusBadge) bonusBadge.style.display = 'none';
@@ -2742,7 +2298,7 @@
 <dialog id="account-login-dialog" class="account-login-dialog" data-connected="false" aria-labelledby="login-sheet-title"><div class="login-sheet-handle" aria-hidden="true"></div><button type="button" class="login-sheet-close" aria-label="로그인 창 닫기">×</button><section class="identity-card" aria-label="로그인 및 동기화"><div class="identity-heading"><div><h2 id="login-sheet-title">로그인 또는 회원가입</h2><p id="account-email">로그인하면 근무표와 메모가 동기화됩니다.</p></div></div><div class="identity-buttons"><a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1" aria-label="Google로 로그인" aria-describedby="account-permission-notice"><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#4285f4" d="M43.6 24.5c0-1.4-.1-2.7-.4-4H24v7.7h11a9.4 9.4 0 0 1-4.1 6.2v5h6.7c3.9-3.6 6-8.8 6-14.9Z"/><path fill="#34a853" d="M24 44c5.4 0 10-1.8 13.6-5l-6.7-5c-1.8 1.2-4.1 1.9-6.9 1.9-5.2 0-9.7-3.5-11.3-8.2H5.8v5.2A20 20 0 0 0 24 44Z"/><path fill="#fbbc05" d="M12.7 27.7a12 12 0 0 1 0-7.4v-5.2H5.8a20 20 0 0 0 0 17.8l6.9-5.2Z"/><path fill="#ea4335" d="M24 12.1c3 0 5.6 1 7.7 3l5.8-5.8A19.3 19.3 0 0 0 24 4 20 20 0 0 0 5.8 15.1l6.9 5.2c1.6-4.7 6.1-8.2 11.3-8.2Z"/></svg><span>Google 계정으로 계속하기</span></a><a id="apple-login" aria-disabled="true" class="apple-signin" href="/api/apple-account?action=login" aria-label="Apple로 로그인"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M17.1 12.3c0-2 1.6-3 1.7-3.1-1-1.5-2.5-1.7-3.1-1.7-1.3-.2-2.5.8-3.2.8-.7 0-1.8-.8-2.9-.8-1.5 0-2.8.9-3.5 2.1-1.5 2.5-.4 6.3 1 8.3.7 1 1.5 2.1 2.6 2 1.1 0 1.5-.7 2.8-.7 1.3 0 1.7.7 2.9.7 1.2 0 1.9-1 2.6-2 .8-1.1 1.1-2.2 1.1-2.3-.1 0-2-.8-2-3.3M14.8 6.2c.6-.8 1.1-1.8 1-2.9-1 .1-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.8 1.1.1 2.1-.6 2.8-1.4"/></svg>Apple 계정으로 계속하기</a></div><p id="apple-login-status" class="identity-note" role="status"></p><div id="account-sync-status" class="sync-feedback" role="status" aria-live="polite" aria-atomic="true"></div><div class="identity-actions"><button id="account-sync-now" type="button" class="btn-save" hidden>지금 동기화</button><button id="account-logout" type="button" class="btn-reset-data" hidden>로그아웃</button><button id="account-delete" type="button" class="btn-reset-data" hidden>계정 데이터 삭제</button></div></section></dialog>
     <script src="./login-sheet.js?v=1"></script>
     <script src="./app-menu.js?v=5"></script>
-    <script src="./settings-ui.js?v=5"></script>
+    <script src="./settings-ui.js?v=6"></script>
     <script src="./account-sync.js?v=privacy-14"></script>
     <script src="./google-sync.js?v=12"></script>
 <script src="planner-core.js?v=7"></script><script src="shift-tools.js?v=rest-guard-1"></script>
@@ -2758,7 +2314,7 @@
 <script src="./today-weather.js?v=4"></script>
 <script src="./bus-routes.js?v=1"></script>
 <script src="./bus-browser.js?v=1"></script>
-<script src="./community-lab.js?v=1"></script>
+<script src="./community-lab.js?v=2"></script>
 <script src="./meal-rating.js?v=1"></script>
 <script src="./commute-parking.js?v=1"></script>
 <script src="./lost-found.js?v=2"></script>

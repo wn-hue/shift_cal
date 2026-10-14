@@ -217,3 +217,36 @@ body[data-pref-theme="dark"] #lost-found-dialog .lost-kind-badge[data-kind="lost
 @media(max-width:380px){#lost-found-dialog .life-header{top:-20px}}
 #lost-found-dialog.lost-writing>:is(.lost-toolbar,.lost-filters,.lost-note,#lost-auth,#lost-items,#lost-more,#lost-local,#lost-status){display:none!important}
 #lost-found-dialog.lost-writing #lost-form{margin-top:0}
+/* Group is always visible: three equal, directly tappable choices. */
+#view-all .all-page-title{display:flex;align-items:center;gap:9px}
+.menu-brand-icon{border-radius:10px;flex:none}
+#view-all #menu-group-settings{display:grid;grid-template-columns:1fr;gap:16px}
+#view-all #menu-group-settings .group-select-wrapper[hidden]{display:none!important}
+#view-all .menu-group-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%}
+#view-all .menu-group-choices button{min-height:48px;border:1px solid #d8e0ea;border-radius:13px;background:var(--menu-card);color:var(--menu-ink);font:inherit;font-size:17px;font-weight:650;cursor:pointer}
+#view-all .menu-group-choices button[aria-pressed="true"]{background:#2272df;border-color:#2272df;color:#fff;box-shadow:0 2px 7px #2272df20}
+body[data-pref-theme="dark"] #view-all .menu-group-choices button{border-color:#586b82;background:#263447;color:#e6edf5}
+body[data-pref-theme="dark"] #view-all .menu-group-choices button[aria-pressed="true"]{background:#8dbbff;color:#15263c;border-color:#8dbbff}
+/* Keep the experimental window and every control inside the phone viewport. */
+#community-lab{box-sizing:border-box;width:calc(100vw - 24px);max-width:560px;max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));margin:auto;padding:20px;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scroll-padding-top:76px}
+#community-lab .lab-header{position:sticky;top:-20px;z-index:3;gap:8px;padding:12px 0;background:var(--ui-page);margin-bottom:8px}
+#community-lab .lab-header h2{flex:1;min-width:0;font-size:21px;line-height:1.4}
+#community-lab .lab-header button{flex:none;width:40px;min-width:40px}
+#community-lab :is(.lab-card,.lab-form,.lab-form label,.lab-actions,#lab-panel){box-sizing:border-box;min-width:0;max-width:100%}
+#community-lab .lab-tabs{display:flex;flex-wrap:wrap;overflow:visible;gap:8px;padding-top:8px}
+#community-lab :is(input,select,textarea){display:block;min-width:0;width:100%;max-width:100%;box-sizing:border-box}
+#community-lab input[type="checkbox"]{display:inline-block;width:18px;min-width:18px;min-height:18px;vertical-align:middle}
+#community-lab .lab-actions button{white-space:normal;max-width:100%;overflow-wrap:anywhere}
+#community-lab .lab-preview{display:flex;align-items:center;gap:8px;line-height:1.6}
+/* Payouts use calm list rows, with the total separated from the details. */
+#view-payroll #payroll-payment-details{padding:22px}
+#view-payroll #payroll-payment-details>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;font-size:17px}
+#view-payroll #payroll-payment-details>summary::-webkit-details-marker{display:none}
+#view-payroll .payroll-detail-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border:0;margin:18px 0 10px;font-size:11px;line-height:1.6}
+#view-payroll #bonus-badge{background:var(--ui-blue-soft)!important;color:var(--ui-blue)!important;border:0;border-radius:8px;font-size:11px;font-weight:550;padding:6px 9px;white-space:normal}
+#view-payroll .pay-table td{border:0;padding:14px 0;font-size:14px;line-height:1.6;color:var(--ui-muted)}
+#view-payroll .pay-table td.num{color:var(--ui-ink);font-size:16px;font-weight:600;white-space:nowrap}
+#view-payroll .pay-table tr.total-row td{border-top:1px solid var(--ui-line);padding-top:22px;color:var(--ui-ink)}
+#view-payroll #row-gross-pay{color:var(--ui-blue)!important;font-size:22px!important}
+#view-payroll .payroll-input-card .toggle-box{margin-top:16px}
+@media(max-width:350px){#view-payroll #payroll-payment-details{padding:20px}#view-payroll #payroll-payment-details .payroll-disclosure-state>span{display:none}#community-lab{padding:16px}#community-lab .lab-header{top:-16px}#community-lab .lab-header h2{font-size:19px}}
