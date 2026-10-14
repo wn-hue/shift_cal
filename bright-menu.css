@@ -1,0 +1,45 @@
+/* Bright service menu: quiet surfaces, color reserved for small useful cues. */
+body:not([data-pref-theme="dark"])[data-view="all"]{background:#f3f5f7}
+body:not([data-pref-theme="dark"]) #view-all{--menu-card:#fff;--menu-ink:#333d4b;--menu-sub:#6b7684;--menu-line:#f2f4f6;--menu-blue:#3182f6;--menu-soft:#f2f6fb}
+body[data-pref-theme="dark"] #view-all{--menu-card:var(--surface);--menu-ink:var(--theme-text);--menu-sub:var(--text-sub);--menu-line:var(--theme-line);--menu-blue:#8dbbff;--menu-soft:var(--surface-soft)}
+#view-all{padding:18px 2px 28px}
+#view-all .all-topline{margin:0 4px 24px;gap:10px}
+#view-all .all-page-title{font-size:23px;font-weight:700;letter-spacing:-.5px;color:var(--menu-ink)}
+#view-all .account-sheet-open{background:var(--menu-card);border:0;padding:9px 13px;color:var(--menu-ink)}
+#view-all .menu-preferences{background:var(--menu-card);border:0;border-radius:50%;width:42px;height:42px;color:var(--menu-sub)}
+#view-all :is(.all-shortcuts,.life-section){padding:20px 18px 8px;margin:0 0 16px;border:0;border-radius:24px;background:var(--menu-card)}
+#view-all :is(.all-shortcuts,.life-section)>h2{font-size:15px;font-weight:650;letter-spacing:-.3px;color:var(--menu-ink);margin:0 0 8px}
+#view-all .all-shortcut-grid{display:flex;gap:0}
+#view-all .all-shortcut{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:12px;min-height:68px;padding:12px 0;border:0;color:var(--menu-ink)}
+#view-all .all-shortcut strong{font-size:15px;font-weight:550;white-space:normal;line-height:1.5}
+#view-all .all-shortcut-caption{font-size:11px;line-height:1.5;color:var(--menu-sub);max-width:110px}
+#view-all .all-shortcut-icon{width:38px;height:38px;border-radius:13px}
+#view-all .all-shortcut-icon svg{width:23px;height:23px;color:inherit}
+body:not([data-pref-theme="dark"]) #view-all .all-shortcut-icon.mint{background:#e9f8f1;color:#16aa78}
+body:not([data-pref-theme="dark"]) #view-all .all-shortcut-icon.lavender{background:#eaf2ff;color:#3182f6}
+body:not([data-pref-theme="dark"]) #view-all .all-shortcut-icon :is(svg,span){color:inherit}
+#view-all .all-settings-section{margin:0 0 16px}
+#view-all .all-settings-card{display:flex;flex-wrap:wrap;gap:12px;min-height:76px;box-sizing:border-box;border:0;border-radius:24px;background:var(--menu-card);padding:16px 18px;color:var(--menu-ink)}
+#view-all .all-settings-card .drawer-section-label{font-size:15px;display:flex;align-items:center;gap:12px;color:var(--menu-ink);margin:0}
+#view-all .all-settings-card .drawer-section-label svg{box-sizing:content-box;width:23px;height:23px;padding:8px;border-radius:13px;background:var(--menu-soft);color:var(--menu-blue)}
+#view-all .all-settings-card .group-select-wrapper{width:100px;flex:none}
+#view-all .all-settings-card .group-select{min-height:44px;font-size:16px!important;border:0;background:var(--menu-soft);color:var(--menu-blue);border-radius:12px}
+#view-all :is(.life-entry,.lab-entry){display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;min-height:72px;margin:0;padding:12px 0;background:transparent;border:0;border-radius:12px;color:var(--menu-ink);text-align:left}
+#view-all>.lab-entry,#view-all .all-menu-content>.lab-entry{margin:0 0 16px;background:var(--menu-card);border-radius:24px;padding:18px}
+.menu-service-icon{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:13px;flex:none;background:var(--service-bg);color:var(--service-color)}
+.menu-service-icon svg{width:23px;height:23px}
+.menu-service-copy{display:grid;gap:4px;flex:1;min-width:0}
+.menu-service-copy strong{font-size:15px;font-weight:550;line-height:1.5;letter-spacing:-.25px}
+.menu-service-copy small{font-size:12px;line-height:1.5;color:var(--menu-sub);overflow-wrap:anywhere}
+.menu-service-chevron{width:17px;height:17px;flex:none;color:#b0b8c1}
+#view-all .all-account-card{background:var(--menu-card);border:0;border-radius:24px;padding:18px;margin:0 0 16px;color:var(--menu-sub)}
+#view-all .all-account-card summary{font-size:13px;line-height:1.6;min-height:28px;cursor:pointer}
+#view-all .all-account-card .account-hint{color:var(--menu-sub)}
+#view-all :is(.all-shortcut,.life-entry,.lab-entry):active{background:var(--menu-soft)}
+#view-all button:focus-visible{outline:2px solid var(--menu-blue);outline-offset:3px}
+body:not([data-pref-theme="dark"]) :is(.life-dialog,#community-lab){border:0;box-shadow:0 12px 48px #182b4a17;background:#fff;color:#333d4b;--surface:#fff;--surface-soft:#f4f6f8;--theme-text:#333d4b;--text-sub:#6b7684;--theme-line:#e5e8eb}
+body:not([data-pref-theme="dark"]) .lost-button[aria-pressed="true"]{background:#eaf3ff;color:#1b64da;border-color:#a9cfff}
+body:not([data-pref-theme="dark"]) .lost-form button[type="submit"]{background:#3182f6;color:#fff;border-color:#3182f6}
+body:not([data-pref-theme="dark"]) .lost-card{border-color:#edf0f3;background:#fff}
+body:not([data-pref-theme="dark"]) .lost-badge{background:#f2f6fc;border:0;color:#526984}
+@media(max-width:350px){#view-all :is(.all-shortcuts,.life-section){padding-left:14px;padding-right:14px}#view-all .all-shortcut{gap:9px}#view-all .all-shortcut-caption{max-width:88px;font-size:10px}#view-all .all-settings-card{padding-left:14px;padding-right:14px}#view-all .all-settings-card .group-select-wrapper{width:90px}}
