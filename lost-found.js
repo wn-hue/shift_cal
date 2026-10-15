@@ -27,7 +27,7 @@ function syncChoices(){for(const {buttons,select}of choices.values())for(const b
 function setWriting(value){const inline=value&&!editing;dialog.classList.toggle('lost-writing',value&&!inline);dialog.classList.toggle('lost-inline-writing',inline);tabs.hidden=value&&!inline;quick.hidden=value&&!inline;extra.hidden=value&&!inline;compose.hidden=value;form.hidden=!value;for(const name of['place','itemType']){field(name).hidden=!inline;field(name).tabIndex=inline?0:-1;}if(!value)$('lost-intro').textContent='잃어버린 물건을 찾거나, 주운 물건을 알려주세요.';$('lost-search-label').hidden=value&&!inline;}
 
 function status(text){$('lost-status').textContent=text;if(!form.hidden){$('lost-form-error').textContent=text;$('lost-form-error').hidden=!text;}}
-function allowLeave(){return !dirty||confirm('작성 중인 내용을 버릴까요?');}
+function allowLeave(){return !dirty||confirm('작성을 취소하고 닫을까요? 입력한 내용은 저장되지 않아요.');}
 $('lost-close').onclick=()=>{if(allowLeave()){dirty=false;dialog.close();}};dialog.addEventListener('cancel',e=>{if(!allowLeave())e.preventDefault();else dirty=false;});dialog.addEventListener('close',()=>{setWriting(false);editing=null;dirty=false;entry.focus();});entry.onclick=()=>{dialog.showModal();load();renderLocal();};
 function itemFields(){const other=field('itemType').value==='기타';$('lost-detail-label').hidden=!other;field('detail').required=other;if(!other)field('detail').value='';}
 function kindCopy(){const found=field('type').value==='습득';form.dataset.kind=found?'found':'lost';$('lost-form-title').textContent=editing?'내 글 수정':found?'주운 물건 등록':'잃어버린 물건 찾기';$('lost-intro').textContent=found?'주운 물건과 실제 보관 위치를 알려주세요. 경비실 보관을 권장해요.':'잃어버린 물건과 마지막으로 본 장소를 알려주세요.';}
