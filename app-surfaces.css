@@ -338,3 +338,77 @@ body[data-pref-theme=dark] #lost-found-dialog .lost-kind-badge[data-kind=lost]{b
 #commute-dialog .bus-intro{display:none}
 #commute-dialog .bus-guidance{margin:8px 0;color:var(--ui-muted)}
 #commute-dialog .bus-guidance>summary{min-height:32px;line-height:32px;font-size:11px;cursor:pointer}
+/* Stable bus viewport: filtering never grows or collapses the dialog itself. */
+#commute-dialog[open]{display:flex;flex-direction:column;height:min(880px,calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));overflow:hidden;padding:20px}
+#commute-dialog>.life-header{position:static;flex:none;padding:4px 0 16px;margin:0}
+#commute-dialog>section{flex:1;min-height:0;min-width:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;overflow-anchor:none;scroll-padding:12px;padding:0 2px 20px}
+#commute-dialog .bus-route-heading strong{min-width:0;line-height:1.5;overflow-wrap:anywhere}
+#commute-dialog .bus-route-list,#commute-dialog .bus-route{min-width:0;max-width:100%;box-sizing:border-box}
+#commute-dialog .bus-details summary{min-height:44px;box-sizing:border-box;padding:10px 0}
+#commute-dialog .bus-details summary small::after{content:'  펼치기';color:var(--ui-blue)}
+#commute-dialog .bus-details[open] summary small::after{content:'  접기'}
+/* Quick registration stays in the board, with the existing full editor for updates. */
+#lost-found-dialog .lost-form .lost-choice-field select:not([hidden]){display:block;width:100%;min-width:0;font-size:16px!important}
+#lost-found-dialog.lost-inline-writing #lost-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:18px;border:1px solid var(--ui-line);box-shadow:0 4px 18px #182b4a06;margin:12px 0 24px;scroll-margin-top:80px}
+#lost-found-dialog.lost-inline-writing #lost-form>*{grid-column:1/-1;min-width:0}
+#lost-found-dialog.lost-inline-writing #lost-choice-place,#lost-found-dialog.lost-inline-writing #lost-choice-itemType{grid-column:auto;border:0;padding:0}
+#lost-found-dialog.lost-inline-writing :is(#lost-choice-place,#lost-choice-itemType)>.lost-choices{display:none}
+#lost-found-dialog.lost-inline-writing #lost-choice-type>.lost-choice-title{display:none}
+#lost-found-dialog.lost-inline-writing #lost-choice-type .lost-kind-button{min-height:44px;padding:10px 12px;align-items:center;border-radius:12px}
+#lost-found-dialog.lost-inline-writing #lost-choice-type .lost-kind-button small{display:none}
+#lost-found-dialog.lost-inline-writing .lost-kind-button strong{font-size:14px}
+#lost-found-dialog.lost-inline-writing .lost-choice-title{font-size:12px;font-weight:550}
+#lost-found-dialog.lost-inline-writing #lost-storage-label{display:flex;align-items:center;justify-content:space-between;border:0;padding:0;gap:8px}
+#lost-found-dialog.lost-inline-writing #lost-storage-label .lost-button{min-height:36px;padding:7px 12px;font-size:12px}
+#lost-found-dialog.lost-inline-writing #lost-storage-help{margin:0;font-size:10px}
+#lost-found-dialog.lost-inline-writing #lost-form-title{font-size:16px;margin:0;font-weight:650}
+#lost-found-dialog.lost-inline-writing #lost-form>.lost-form-note{margin:0;font-size:10px}
+#lost-found-dialog.lost-inline-writing #lost-form>.lost-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin:0}
+#lost-found-dialog.lost-inline-writing #lost-form [type=submit]{min-height:46px;border-radius:12px;background:var(--ui-blue);color:#fff;font-size:14px;font-weight:650}
+#lost-found-dialog.lost-inline-writing #lost-cancel{border-radius:12px;background:var(--ui-field);font-size:12px}
+/* A quieter identity for the full menu, rather than repeated oversized panels. */
+body:not([data-pref-theme=dark])[data-view=all]{background:#f7f9fb}
+#view-all{padding:18px 4px 32px}
+#view-all .all-topline{display:grid;grid-template-columns:minmax(0,1fr) auto 42px;gap:5px 8px;margin:0 4px 22px;align-items:center}
+#view-all .all-page-title{grid-column:1;grid-row:1;font-size:26px;letter-spacing:-1px;gap:10px}
+#view-all .menu-brand-icon{width:38px;height:38px;border-radius:12px}
+#view-all .menu-brand-subtitle{grid-column:1/-1;grid-row:2;font-size:11px;letter-spacing:-.2px;color:var(--menu-sub);margin:3px 0 0 1px;line-height:1.6}
+#view-all .account-sheet-open{grid-column:2;grid-row:1;background:transparent;border:1px solid var(--menu-line);font-size:11px;padding:8px 11px;min-height:40px}
+#view-all .menu-preferences{grid-column:3;grid-row:1;background:transparent;width:40px;height:40px}
+#view-all #menu-group-settings{position:relative;border:1px solid var(--menu-line);border-radius:20px;padding:18px;gap:13px;box-shadow:0 2px 4px #182b4a02}
+#view-all #menu-group-settings .drawer-section-label{font-size:13px;font-weight:600;gap:9px}
+#view-all #menu-group-settings .drawer-section-label svg{padding:0;width:20px;height:20px;background:transparent;border-radius:0;color:var(--menu-sub)}
+#view-all #menu-group-settings .all-company{display:block;position:absolute;right:18px;top:18px;margin:0;font-size:10px;color:var(--menu-sub)}
+#view-all .menu-group-choices{background:var(--menu-soft);border-radius:13px;padding:4px;gap:4px;box-sizing:border-box}
+#view-all .menu-group-choices button{border:0;background:transparent;min-height:43px;border-radius:10px;font-size:15px;font-weight:600}
+#view-all .menu-group-choices button[aria-pressed=true]{background:#202c40;border-color:transparent;color:#fff;box-shadow:0 2px 6px #14213b12}
+#view-all .all-settings-section{margin-bottom:24px}
+#view-all :is(.all-shortcuts,.life-section){border-radius:0;background:transparent;padding:0;margin:0 0 24px}
+#view-all :is(.all-shortcuts,.life-section)>h2{font-size:12px;font-weight:550;color:var(--menu-sub);margin:0 4px 10px;letter-spacing:-.15px}
+#view-all .all-shortcut-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#view-all .all-shortcut-grid>div{min-width:0}
+#view-all .all-shortcut{display:grid;grid-template-columns:1fr 30px;grid-template-rows:auto auto;min-height:105px;align-items:center;gap:10px 6px;padding:17px;background:var(--menu-card);border:1px solid var(--menu-line);border-radius:18px;text-align:left;width:100%;box-sizing:border-box}
+#view-all .all-shortcut-icon{grid-column:2;grid-row:1;width:30px;height:30px;border-radius:10px}
+#view-all .all-shortcut-icon svg{width:20px;height:20px}
+#view-all .all-shortcut strong{grid-column:1;grid-row:1;font-size:14px;font-weight:650;line-height:1.5}
+#view-all .all-shortcut-caption{grid-column:1/-1;grid-row:2;text-align:left;max-width:none;font-size:11px;line-height:1.6}
+#view-all .menu-services{background:var(--menu-card);border:1px solid var(--menu-line);border-radius:20px;padding:17px 18px 5px}
+#view-all .menu-services>h2{margin:0 0 4px;font-size:12px}
+#view-all .menu-services .life-entry{min-height:77px;border-radius:0;gap:13px;padding:14px 0}
+#view-all .menu-services .life-entry+.life-entry{border-top:1px solid var(--menu-line)}
+#view-all .menu-services .menu-service-icon{width:36px;height:36px;border-radius:12px;background:var(--menu-soft);color:var(--menu-ink)}
+#view-all .menu-services .menu-service-icon svg{width:22px;height:22px}
+#view-all .menu-service-copy strong{font-size:14px;font-weight:650}
+#view-all .menu-service-copy small{font-size:11px;line-height:1.6;letter-spacing:-.15px}
+#view-all .menu-service-chevron{width:14px;height:14px}
+#view-all .all-menu-content>.lab-entry{border:1px solid var(--menu-line);background:transparent;border-radius:17px;padding:14px 16px;margin-bottom:18px;min-height:72px}
+#view-all .all-menu-content>.lab-entry .menu-service-icon{width:32px;height:32px;border-radius:10px}
+#view-all .all-menu-content>.lab-entry .menu-service-copy strong{font-size:12px}
+#view-all .all-menu-content>.lab-entry .menu-service-copy small{font-size:10px}
+#view-all .all-account-card{border-radius:0;padding:0 4px;background:transparent;font-size:11px}
+body[data-pref-theme=dark] #view-all .menu-group-choices button{background:transparent;border:0;color:var(--menu-ink)}
+body[data-pref-theme=dark] #view-all .menu-group-choices button[aria-pressed=true]{background:#d6e7ff;color:#18253a;box-shadow:none}
+@media(max-width:350px){#view-all .all-shortcut{padding:14px;grid-template-columns:1fr 26px;gap:10px 3px}#view-all .all-shortcut strong{font-size:12px}#view-all .all-shortcut-icon{width:26px;height:26px}#view-all .menu-services{padding:15px 14px 4px}#commute-dialog[open]{padding:16px}}
+#lost-found-dialog .life-header{isolation:isolate}
+#lost-found-dialog .life-header::before{content:'';position:absolute;inset:-24px -24px 0;background:var(--ui-page);z-index:-1;pointer-events:none}
+#lost-found-dialog.lost-inline-writing>:is(#lost-intro,#lost-auth,.lost-toolbar){display:none!important}

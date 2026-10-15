@@ -8,4 +8,8 @@ const entries=[
 ];
 const icon=paths=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';
 for(const[selector,title,caption,color,bg,paths]of entries){const button=document.querySelector(selector);if(!button)continue;const badge=document.createElement('span');badge.className='menu-service-icon';badge.setAttribute('aria-hidden','true');badge.style.setProperty('--service-color',color);badge.style.setProperty('--service-bg',bg);badge.innerHTML=icon(paths);const copy=document.createElement('span');copy.className='menu-service-copy';const name=document.createElement('strong'),sub=document.createElement('small');name.textContent=title;sub.textContent=caption;copy.append(name,sub);const chevron=document.createElement('span');chevron.className='menu-service-chevron';chevron.setAttribute('aria-hidden','true');chevron.innerHTML=icon('<path d="m9 5 7 7-7 7"/>');button.replaceChildren(badge,copy,chevron);button.setAttribute('aria-label',title);}
+
+const blocks=[...document.querySelectorAll('#view-all .life-section')];
+if(blocks.length){const services=document.createElement('section');services.className='life-section menu-services';const heading=document.createElement('h2');heading.textContent='생활 · 출퇴근';services.append(heading);blocks[0].before(services);for(const id of['lost-found-open','commute-open','parking-open']){const button=document.getElementById(id);if(button)services.append(button);}for(const block of blocks)block.remove();}
+const brand=document.querySelector('#view-all .all-page-title');const subtitle=document.createElement('p');subtitle.className='menu-brand-subtitle';subtitle.textContent='교대근무의 하루를 한곳에서';brand.after(subtitle);
 })();
