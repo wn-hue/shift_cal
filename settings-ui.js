@@ -4,8 +4,14 @@
     function openMenu(section) {
         switchView('all');
         $('menu-' + section + '-settings').scrollIntoView({block:'nearest'});
-        (section === 'group' ? ($('menu-group-'+$('group-select').value)||$('menu-group-A')) : section === 'salary' ? $('payroll-sms-open') : $('menu-leave-settings').querySelector('button')).focus();
+        (section === 'group' ? $('menu-group-open') : section === 'salary' ? $('payroll-sms-open') : $('menu-leave-settings').querySelector('button')).focus();
     }
+    function openGroup() {
+        $('group-picker-dialog').showModal();
+        ($('menu-group-'+$('group-select').value)||$('menu-group-A')).focus();
+    }
+    function closeGroup() { $('group-picker-dialog').close(); }
+    $('group-picker-dialog').addEventListener('close', () => $('menu-group-open').focus());
     function openLeave() {
         updateLeaveStats();
         $('leave-settings-dialog').showModal();
@@ -13,6 +19,8 @@
     function syncGroup(group) {
         const selected = ['A','B','C'].includes(group) ? group : '';
         $('group-select').value = selected;
+        $('menu-group-current').textContent = selected ? selected+'조 · 3조 2교대' : '교대조 선택';
+        $('menu-group-open').setAttribute('data-needs-selection',String(!selected));
         for(const key of ['A','B','C'])$('menu-group-'+key).setAttribute('aria-pressed',String(key===selected));
         $('group-selection-status').textContent = selected ? selected + '조 근무표 적용됨 · 자동 저장' : '교대조를 선택해 주세요.';
         const alarmGuide = $('iphone-alarm-guide-link');
@@ -33,5 +41,5 @@
         buttons[0].hidden = true; buttons[1].hidden = !needsHire; buttons[2].hidden = !needsPay;
     }
     $('leave-settings-dialog').addEventListener('close', () => $('menu-leave-settings').querySelector('button').focus());
-    window.SettingsUI = {openMenu,openLeave,refresh,syncGroup};
+    window.SettingsUI = {openMenu,openGroup,closeGroup,openLeave,refresh,syncGroup};
 })();

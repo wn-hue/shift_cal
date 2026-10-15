@@ -931,7 +931,7 @@
 <link rel="stylesheet" href="./lost-found.css?v=1">
 <link rel="stylesheet" href="./bright-menu.css?v=1">
 <link rel="stylesheet" href="./app-surfaces.css?v=5">
-<link rel="stylesheet" href="./screen-refinement.css?v=1">
+<link rel="stylesheet" href="./screen-refinement.css?v=2">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1025,9 +1025,9 @@
 
             <div class="card wage-settings-card">
                 <div class="card-header">
-                    <span id="wage-settings-title">시급</span>
+                    <span id="wage-settings-title">시급</span><button type="button" class="sms-open-btn wage-edit-button" onclick="document.getElementById('payroll-sms-open').click()">시급 설정 <span aria-hidden="true">›</span></button>
                 </div>
-                <div class="two-cols">
+                <div class="two-cols wage-rates">
                     <div class="input-group">
                         <label for="input-base-hourly">기본시급</label>
                         <input type="text" id="input-base-hourly" value="0원" readonly aria-describedby="wage-sms-hint">
@@ -1047,64 +1047,64 @@
                         <input type="text" id="input-seniority-pay" value="0원" readonly aria-describedby="wage-sms-hint">
                     </div>
                 </div>
-                <p id="wage-sms-hint" class="account-hint">하단 전체 → 시급 설정에서 급여 문자를 붙여넣어 주세요. 적용한 금액이 여기에 표시됩니다.</p>
-                <button type="button" class="sms-open-btn" onclick="document.getElementById('payroll-sms-open').click()">시급 설정 ›</button>
+                <p id="wage-sms-hint" class="account-hint">시급·고정수당은 급여 문자로 확인하고, 근속수당은 정규직 전환일을 기준으로 계산해요.</p>
+
             </div>
             <div class="card payroll-input-card">
                 <div class="card-header">
                     <span>근무일수</span>
                     <div style="display:flex; gap:8px; align-items:center;">
 
-                        <button style="border:none; background:none; color:var(--primary); font-size:11.5px; font-weight:bold; cursor:pointer;" onclick="syncFromCalendar()">캘린더 반영</button>
+                        <button type="button" class="calendar-reflect-button" onclick="syncFromCalendar()">캘린더 반영</button>
                     </div>
                 </div>
-                <div class="two-cols">
+                <div class="two-cols regular-days">
                     <div class="input-group">
-                        <label>주간 근무일수</label>
-                        <input type="number" id="inp-day-days" value="0" min="0" step="0.5" oninput="calculatePayrollFromInputs()">
+                        <label for="inp-day-days">주간 근무일수</label>
+                        <input type="number" id="inp-day-days" value="0" min="0" step="0.5" oninput="calculatePayrollFromInputs()"><span class="work-input-unit" aria-hidden="true">일</span>
                     </div>
                     <div class="input-group">
-                        <label>야간 근무일수</label>
-                        <input type="number" id="inp-night-days" value="0" min="0" step="0.5" oninput="calculatePayrollFromInputs()">
-                    </div>
-                </div>
-                <div class="two-cols">
-                    <div class="input-group">
-                        <label>주간 특근일수</label>
-                        <input type="number" id="inp-daysp-days" value="0" min="0" oninput="calculatePayrollFromInputs()">
-                    </div>
-                    <div class="input-group">
-                        <label>야간 특근일수</label>
-                        <input type="number" id="inp-nightsp-days" value="0" min="0" oninput="calculatePayrollFromInputs()">
+                        <label for="inp-night-days">야간 근무일수</label>
+                        <input type="number" id="inp-night-days" value="0" min="0" step="0.5" oninput="calculatePayrollFromInputs()"><span class="work-input-unit" aria-hidden="true">일</span>
                     </div>
                 </div>
-                <div class="two-cols">
+                <div class="two-cols special-days">
                     <div class="input-group">
-                        <label>O.T 해제 일수 (2.5h 제외)</label>
-                        <input type="number" id="inp-no-ot-days" value="0" min="0" step="0.5" oninput="calculatePayrollFromInputs()">
+                        <label for="inp-daysp-days">주간 특근일수</label>
+                        <input type="number" id="inp-daysp-days" value="0" min="0" oninput="calculatePayrollFromInputs()"><span class="work-input-unit" aria-hidden="true">일</span>
                     </div>
                     <div class="input-group">
-                        <label>실제 적용 연장시간 (1.5배)</label>
+                        <label for="inp-nightsp-days">야간 특근일수</label>
+                        <input type="number" id="inp-nightsp-days" value="0" min="0" oninput="calculatePayrollFromInputs()"><span class="work-input-unit" aria-hidden="true">일</span>
+                    </div>
+                </div>
+                <div class="two-cols overtime-days">
+                    <div class="input-group">
+                        <label for="inp-no-ot-days">O.T 해제 일수 (2.5h 제외)</label>
+                        <input type="number" id="inp-no-ot-days" value="0" min="0" step="0.5" oninput="calculatePayrollFromInputs()"><span class="work-input-unit" aria-hidden="true">일</span>
+                    </div>
+                    <div class="input-group">
+                        <label for="disp-ot-hours">실제 적용 연장시간 (1.5배)</label>
                         <input type="text" id="disp-ot-hours" value="0.0h" readonly style="background:#f1f5f9; color:var(--primary); font-weight:800;">
                     </div>
                 </div>
 
-                <div class="two-cols">
+                <div class="two-cols holiday-allowance">
                     <div class="input-group">
-                        <label>명절근무수당 (원)</label>
+                        <label for="inp-holiday-bonus">명절근무수당 (원)</label>
                         <input type="number" id="inp-holiday-bonus" value="0" step="10000" min="0" oninput="calculatePayrollFromInputs()" placeholder="예: 50000">
                     </div>
                     <input type="hidden" id="inp-hire-date" aria-label="정규직 전환일 (연차, 지원금 판정)">
                 </div>
 
                 <!-- 무급 일수 및 차감 예상액 확인창 -->
-                <div class="two-cols">
+                <div class="two-cols unpaid-days">
                     <div class="input-group">
-                        <label>무급 일수 (캘린더 연동)</label>
+                        <label for="disp-unpaid-days">무급 일수 (캘린더 연동)</label>
                         <input type="text" id="disp-unpaid-days" value="0일" readonly style="background:#f1f5f9; color:#475569; font-weight:700;">
                     </div>
                     <div class="input-group">
-                        <label>무급 차감 예상액</label>
+                        <label for="disp-unpaid-deduction">무급 차감 예상액</label>
                         <input type="text" id="disp-unpaid-deduction" value="0원" readonly style="background:#fef2f2; color:#b91c1c; font-weight:800;">
                     </div>
                 </div>
@@ -1188,17 +1188,14 @@
         
 <section class="all-settings-section" aria-labelledby="all-settings-title"><h2 id="all-settings-title">내 근무 설정</h2>
         <div class="all-settings-card" id="menu-group-settings">
-            <div class="drawer-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M16 4a3 3 0 0 1 0 6M18 14a5 5 0 0 1 4 5v2"/></svg><span>내 교대근무</span></div>
-            <p class="all-company">3조 2교대</p>
+            <button type="button" id="menu-group-open" class="group-summary" aria-haspopup="dialog" aria-controls="group-picker-dialog" onclick="SettingsUI.openGroup()">
+                <span class="group-summary-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6m2 4a5 5 0 0 1 3 5"/></svg></span>
+                <span class="group-summary-label">내 교대근무</span><span id="menu-group-current">교대조 선택</span><svg class="group-summary-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </button>
             <div class="group-select-wrapper" hidden>
                 <select id="group-select" class="group-select" tabindex="-1" aria-label="근무조 선택" aria-describedby="group-selection-status" onchange="setGroup(this.value)">
                     <option value="" disabled selected>교대조 선택</option><option value="A">A조</option><option value="B">B조</option><option value="C">C조</option>
                 </select>
-            </div>
-            <div class="menu-group-choices" role="group" aria-label="내 교대조 선택">
-                <button type="button" id="menu-group-A" aria-pressed="false" onclick="setGroup('A')">A조</button>
-                <button type="button" id="menu-group-B" aria-pressed="false" onclick="setGroup('B')">B조</button>
-                <button type="button" id="menu-group-C" aria-pressed="false" onclick="setGroup('C')">C조</button>
             </div>
             <p id="group-selection-status" class="group-selection-status" role="status" aria-live="polite">교대조를 선택해 주세요.</p>
         </div>
@@ -1221,6 +1218,15 @@
       </div>
     </section>
     </div>
+
+<dialog id="group-picker-dialog" class="sms-dialog group-picker" aria-labelledby="group-picker-title">
+    <div class="sms-dialog-header"><div><h2 id="group-picker-title">내 교대근무</h2><p>선택한 조의 근무표와 예상 급여가 적용돼요.</p></div><button type="button" class="sms-close-btn" aria-label="교대조 선택 닫기" onclick="SettingsUI.closeGroup()">×</button></div>
+    <div class="group-picker-options" role="group" aria-label="내 교대조 선택">
+        <button type="button" id="menu-group-A" aria-pressed="false" onclick="setGroup('A');SettingsUI.closeGroup()"><span>A조</span><span class="group-picker-check" aria-hidden="true">✓</span></button>
+        <button type="button" id="menu-group-B" aria-pressed="false" onclick="setGroup('B');SettingsUI.closeGroup()"><span>B조</span><span class="group-picker-check" aria-hidden="true">✓</span></button>
+        <button type="button" id="menu-group-C" aria-pressed="false" onclick="setGroup('C');SettingsUI.closeGroup()"><span>C조</span><span class="group-picker-check" aria-hidden="true">✓</span></button>
+    </div><p class="group-picker-note">선택하면 자동으로 저장돼요.</p>
+</dialog>
 
 <dialog id="app-preferences-dialog" class="app-preferences"><div class="preferences-header"><h2>앱 환경</h2><button class="override-close" aria-label="앱 환경 닫기" onclick="document.getElementById('app-preferences-dialog').close()">✕</button></div><section class="preferences-card"><h3>테마</h3><label>달력 스타일<select id="pref-theme"><option value="current">1. 밤과 낮</option><option value="toss">2. 블루컬러</option><option value="gpt">3. 그레이</option><option value="dark">4. 다크모드</option></select></label></section><section class="preferences-card"><h3>화면 표시</h3><label>이전 · 다음 달 근무<input type="checkbox" id="pref-adjacent" checked></label><label>공휴일 이름<input type="checkbox" id="pref-holidays" checked></label><label>달력 메모<input type="checkbox" id="pref-memos" checked></label><label>근무 배지 모양<select id="pref-shape"><option value="square">둥근 네모</option><option value="circle">원</option></select></label></section><section class="external-calendars"><h2>내 캘린더</h2><p>개인 일정을 근무표와 함께 확인하세요.</p><a class="external-connect" href="/api/google-calendar?action=login&amp;storage=1&amp;external=1">Google 캘린더 연결</a><div id="external-calendar-list"></div><p id="external-calendar-status" role="status"></p></section>        <section class="all-info-section" aria-labelledby="all-info-title"><h2 id="all-info-title">앱 안내</h2><div class="all-info-list">
           <a id="iphone-alarm-guide-link" href="./iphone-alarms.html"><span>아이폰 근무 알람 · 단축어 설정</span><span aria-hidden="true">›</span></a>
@@ -1404,8 +1410,8 @@
 
     <div class="modal-overlay" id="modal-month-stats" onclick="closeMonthStatsModal(event)">
       <div class="modal-sheet stats-sheet" role="dialog" aria-modal="true" aria-labelledby="stat-modal-title" onclick="event.stopPropagation()">
-        <div class="stats-header"><div><h2 id="stat-modal-title"></h2><p id="stat-modal-group"></p></div><button class="override-close" aria-label="근무 통계 닫기" onclick="closeMonthStatsModalDirect()">✕</button></div>
-        <section class="stats-section"><h3>급여 기간 근무</h3><p id="stat-month-period"></p><div class="stats-shifts">
+        <div class="stats-header"><div><span class="report-eyebrow">나의 근무 리포트</span><h2 id="stat-modal-title"></h2><p id="stat-modal-group"></p></div><button class="override-close" aria-label="근무 통계 닫기" onclick="closeMonthStatsModalDirect()">✕</button></div>
+        <section class="stats-section"><h3>근무일수</h3><p id="stat-month-period"></p><div class="stats-shifts">
           <div><span class="stats-badge day">주</span><strong id="modal-pill-day"></strong></div>
           <div><span class="stats-badge night">야</span><strong id="modal-pill-night"></strong></div>
           <div><span class="stats-badge off">휴</span><strong id="modal-pill-off"></strong></div>
@@ -1479,7 +1485,7 @@
         </div>
     </div>
 
-<div class="modal-overlay" id="modal-schedule-share" onclick="closeScheduleShare(event)"><div class="modal-sheet share-sheet" role="dialog" aria-modal="true" aria-labelledby="share-title" onclick="event.stopPropagation()"><div class="override-header"><div><h2 id="share-title">근무표 보내기</h2><p id="share-month"></p></div><button type="button" class="override-close" aria-label="공유 닫기" onclick="closeScheduleShare()">✕</button></div><button class="share-row" onclick="shareScheduleImage()"><span>▧</span><strong>이미지로 보내기</strong><span>›</span></button><p id="share-status" role="status"></p></div></div>
+<div class="modal-overlay" id="modal-schedule-share" onclick="closeScheduleShare(event)"><div class="modal-sheet share-sheet" role="dialog" aria-modal="true" aria-labelledby="share-title" onclick="event.stopPropagation()"><div class="override-header"><div><h2 id="share-title">근무표 공유</h2><p id="share-month"></p></div><button type="button" class="override-close" aria-label="공유 닫기" onclick="closeScheduleShare()">✕</button></div><button class="share-row" onclick="shareScheduleImage()"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="2"/><path d="m3 17 5-5 4 4 4-6 5 7"/></svg></span><strong>이미지로 보내기<small>현재 달력을 이미지로 공유해요</small></strong><span aria-hidden="true">›</span></button><p id="share-status" role="status"></p></div></div>
     <!-- 모달: 근태 및 메모 변경 (반차 전/후 & 무급반차 전/후 포함) -->
     <div class="modal-overlay" id="modal-override" onclick="closeModal(event)">
         <div class="modal-sheet override-sheet" role="dialog" aria-modal="true" aria-labelledby="override-title" onclick="event.stopPropagation()">
@@ -2748,10 +2754,10 @@
 <dialog id="account-login-dialog" class="account-login-dialog" data-connected="false" aria-labelledby="login-sheet-title"><div class="login-sheet-handle" aria-hidden="true"></div><button type="button" class="login-sheet-close" aria-label="로그인 창 닫기">×</button><section class="identity-card" aria-label="로그인 및 동기화"><div class="identity-heading"><div><h2 id="login-sheet-title">로그인 또는 회원가입</h2><p id="account-email">로그인하면 근무표와 메모가 동기화됩니다.</p></div></div><div class="identity-buttons"><a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1" aria-label="Google로 로그인" aria-describedby="account-permission-notice"><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#4285f4" d="M43.6 24.5c0-1.4-.1-2.7-.4-4H24v7.7h11a9.4 9.4 0 0 1-4.1 6.2v5h6.7c3.9-3.6 6-8.8 6-14.9Z"/><path fill="#34a853" d="M24 44c5.4 0 10-1.8 13.6-5l-6.7-5c-1.8 1.2-4.1 1.9-6.9 1.9-5.2 0-9.7-3.5-11.3-8.2H5.8v5.2A20 20 0 0 0 24 44Z"/><path fill="#fbbc05" d="M12.7 27.7a12 12 0 0 1 0-7.4v-5.2H5.8a20 20 0 0 0 0 17.8l6.9-5.2Z"/><path fill="#ea4335" d="M24 12.1c3 0 5.6 1 7.7 3l5.8-5.8A19.3 19.3 0 0 0 24 4 20 20 0 0 0 5.8 15.1l6.9 5.2c1.6-4.7 6.1-8.2 11.3-8.2Z"/></svg><span>Google 계정으로 계속하기</span></a><a id="apple-login" aria-disabled="true" class="apple-signin" href="/api/apple-account?action=login" aria-label="Apple로 로그인"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M17.1 12.3c0-2 1.6-3 1.7-3.1-1-1.5-2.5-1.7-3.1-1.7-1.3-.2-2.5.8-3.2.8-.7 0-1.8-.8-2.9-.8-1.5 0-2.8.9-3.5 2.1-1.5 2.5-.4 6.3 1 8.3.7 1 1.5 2.1 2.6 2 1.1 0 1.5-.7 2.8-.7 1.3 0 1.7.7 2.9.7 1.2 0 1.9-1 2.6-2 .8-1.1 1.1-2.2 1.1-2.3-.1 0-2-.8-2-3.3M14.8 6.2c.6-.8 1.1-1.8 1-2.9-1 .1-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.8 1.1.1 2.1-.6 2.8-1.4"/></svg>Apple 계정으로 계속하기</a></div><p id="apple-login-status" class="identity-note" role="status"></p><div id="account-sync-status" class="sync-feedback" role="status" aria-live="polite" aria-atomic="true"></div><div class="identity-actions"><button id="account-sync-now" type="button" class="btn-save" hidden>지금 동기화</button><button id="account-logout" type="button" class="btn-reset-data" hidden>로그아웃</button><button id="account-delete" type="button" class="btn-reset-data" hidden>계정 데이터 삭제</button></div></section></dialog>
     <script src="./login-sheet.js?v=1"></script>
     <script src="./app-menu.js?v=5"></script>
-    <script src="./settings-ui.js?v=6"></script>
+    <script src="./settings-ui.js?v=7"></script>
     <script src="./account-sync.js?v=privacy-14"></script>
     <script src="./google-sync.js?v=12"></script>
-<script src="planner-core.js?v=7"></script><script src="shift-tools.js?v=rest-guard-1"></script>
+<script src="planner-core.js?v=7"></script><script src="shift-tools.js?v=rest-guard-2"></script>
 <script src="./external-calendars.js?v=3"></script>
 
     <dialog id="today-weather" class="weather-card sms-dialog" aria-labelledby="weather-dialog-title">

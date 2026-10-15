@@ -112,3 +112,89 @@ body[data-pref-theme=toss] #view-calendar .calendar-card{padding:5px;margin:0 0 
 #leave-settings-dialog .leave-money-summary{gap:4px;padding-bottom:0;margin:0}
 #leave-settings-dialog :is(.leave-money-unit,.leave-money-total){box-sizing:border-box;min-height:30px;padding:3px 0}
 #leave-settings-dialog .leave-balance{padding:13px 15px}
+/* A saved choice belongs in a single row; selection lives in a focused sheet. */
+#view-all #menu-group-settings{display:block;min-height:0;padding:0;overflow:hidden;border-radius:17px}
+#view-all .group-summary{display:flex;align-items:center;gap:10px;width:100%;min-height:66px;padding:15px 16px;border:0;background:var(--menu-card);color:var(--menu-ink);font:inherit;text-align:left;cursor:pointer}
+#view-all .group-summary-icon{display:grid;place-items:center;color:var(--menu-sub);width:23px;flex:none}
+#view-all .group-summary-icon svg{width:22px;height:22px}
+#view-all .group-summary-label{font-size:13px;font-weight:650;flex:1;white-space:nowrap}
+#view-all #menu-group-current{font-size:11px;color:var(--menu-sub);line-height:1.6;text-align:right}
+#view-all .group-summary-chevron{width:14px;height:14px;flex:none;color:#8995a4}
+#view-all .group-summary[data-needs-selection=true] #menu-group-current{color:var(--menu-blue);font-weight:650}
+#group-picker-dialog{position:fixed;inset:auto 12px calc(12px + env(safe-area-inset-bottom));width:calc(100vw - 24px);max-width:420px;max-height:calc(100dvh - 32px);margin:0 auto;padding:22px;border:0;border-radius:24px;overflow:auto;box-sizing:border-box}
+#group-picker-dialog .sms-dialog-header{align-items:flex-start;gap:10px;margin-bottom:20px}
+#group-picker-dialog h2{font-size:20px;margin:0 0 8px}
+#group-picker-dialog .sms-dialog-header p{font-size:11px;line-height:1.7;color:var(--ui-muted);margin:0}
+#group-picker-dialog .group-picker-options{display:grid;gap:8px}
+#group-picker-dialog .group-picker-options button{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:54px;padding:14px 17px;border:1px solid var(--ui-line);border-radius:13px;background:var(--ui-card);color:var(--ui-copy);font:inherit;font-size:16px;font-weight:600;cursor:pointer}
+#group-picker-dialog .group-picker-options button[aria-pressed=true]{background:var(--ui-blue-soft);border-color:var(--ui-blue);color:var(--ui-blue)}
+#group-picker-dialog .group-picker-check{visibility:hidden;font-size:19px}
+#group-picker-dialog [aria-pressed=true] .group-picker-check{visibility:visible}
+#group-picker-dialog .group-picker-note{font-size:10px;text-align:center;color:var(--ui-muted);margin:15px 0 0}
+#group-picker-dialog button:focus-visible{outline:2px solid var(--ui-blue);outline-offset:2px}
+/* Calendar reports and sharing use the same quiet panels and typography as the menu. */
+:is(#modal-month-stats,#modal-schedule-share) .modal-sheet{max-width:500px;max-height:calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));border-radius:25px 25px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));background:var(--ui-page)!important;border:0;overflow-y:auto;overflow-x:hidden;color:var(--ui-ink)}
+:is(#modal-month-stats,#modal-schedule-share) :is(.stats-header,.override-header){display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:0;background:none;min-height:0;margin-bottom:20px}
+:is(#modal-month-stats,#modal-schedule-share) :is(h2,#share-title){font-size:22px;letter-spacing:-.7px;line-height:1.4;margin:0;color:var(--ui-ink)}
+:is(#modal-month-stats,#modal-schedule-share) .override-close{width:38px;height:38px;min-width:38px;min-height:38px;flex:none;border:1px solid var(--ui-line);background:var(--ui-card);color:var(--ui-muted);font-size:17px;border-radius:50%}
+#modal-month-stats .report-eyebrow{display:block;font-size:10px;color:var(--ui-muted);margin:0 0 6px;letter-spacing:.2px}
+#modal-month-stats .stats-header p,#modal-schedule-share #share-month{font-size:12px;color:var(--ui-muted);margin:7px 0 0;line-height:1.6}
+#modal-month-stats .stats-section{background:var(--ui-card);border:1px solid var(--ui-line);border-radius:18px;padding:17px;margin:12px 0}
+#modal-month-stats .stats-section h3{font-size:13px;font-weight:650;margin:0;color:var(--ui-ink)}
+#modal-month-stats .stats-section>p{font-size:10px;margin:8px 0 15px;color:var(--ui-muted);line-height:1.6}
+#modal-month-stats .stats-shifts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin:14px 0}
+#modal-month-stats .stats-shifts>div{display:flex;flex-direction:column;align-items:center;gap:9px;min-width:0}
+#modal-month-stats .stats-badge{width:30px;height:30px;min-width:30px;border-radius:10px;display:grid;place-items:center;font-size:11px;font-weight:650;padding:0}
+#modal-month-stats .stats-shifts strong{font-size:13px;font-weight:650;color:var(--ui-copy)}
+#modal-month-stats .stats-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;font-size:12px;border-color:var(--ui-line);color:var(--ui-muted)}
+#modal-month-stats .stats-row strong{font-size:14px;font-weight:650;color:var(--ui-copy);white-space:nowrap}
+#modal-month-stats .stats-total{padding-top:15px;margin-top:5px;border-top:1px solid var(--ui-line);background:none!important}
+#modal-month-stats .stats-total strong{font-size:22px;color:var(--ui-ink);letter-spacing:-.6px}
+#modal-month-stats .stats-section-heading button{font-size:11px;min-height:32px;padding:5px 8px;color:var(--ui-blue);background:var(--ui-blue-soft);border-radius:9px}
+#modal-month-stats .stats-section:last-child{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#modal-month-stats .stats-section:last-child .stats-row{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:0;border:0;font-size:11px}
+#modal-month-stats .stats-section:last-child strong{font-size:20px}
+#modal-schedule-share .share-sheet{background:var(--ui-card)!important}
+#modal-schedule-share .share-row{display:flex;align-items:center;gap:13px;width:100%;min-height:82px;padding:17px;border:1px solid var(--ui-line);border-radius:17px;background:var(--ui-card);color:var(--ui-copy);text-align:left;margin:0}
+#modal-schedule-share .share-row>span:first-child{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;flex:none;background:var(--ui-blue-soft);color:var(--ui-blue)}
+#modal-schedule-share .share-row svg{width:22px;height:22px}
+#modal-schedule-share .share-row strong{display:grid;gap:5px;flex:1;font-size:14px;font-weight:650;line-height:1.5}
+#modal-schedule-share .share-row small{font-size:10px;font-weight:400;color:var(--ui-muted);line-height:1.6}
+#modal-schedule-share .share-row>span:last-child{font-size:22px;color:var(--ui-muted);background:none;width:auto;height:auto}
+#modal-schedule-share .live-share-tools{border:0;padding:0;margin:0 0 14px}
+#modal-schedule-share .live-share-tools>p{font-size:10px;line-height:1.8;color:var(--ui-muted);padding:0 4px;margin:10px 0}
+#modal-schedule-share #live-link-result{box-sizing:border-box;width:100%;font-size:16px;padding:12px;border:1px solid var(--ui-line);border-radius:12px;background:var(--ui-field);color:var(--ui-copy);margin:8px 0}
+#modal-schedule-share #stop-live-link{font-size:10px;min-height:34px;background:transparent;border:0;color:var(--ui-muted);padding:4px;margin:0;text-decoration:underline;text-underline-offset:3px}
+#modal-schedule-share #share-status{font-size:11px;line-height:1.7;color:var(--ui-muted)}
+/* Confirmed wage values and editable days have visibly different roles. */
+#view-payroll .wage-settings-card .card-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px}
+#view-payroll .wage-settings-card .wage-edit-button{margin:0;min-height:32px;padding:5px 9px;border-radius:9px;font-size:11px;background:var(--ui-field)!important;color:var(--ui-copy)!important}
+#view-payroll .wage-settings-card .wage-rates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:0 0 15px}
+#view-payroll .wage-settings-card .wage-rates .input-group{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:0;border:0;min-width:0}
+#view-payroll .wage-settings-card .wage-rates .input-group+.input-group{border-left:1px solid var(--ui-line);padding-left:16px}
+#view-payroll .wage-settings-card .wage-rates label{font-size:11px;color:var(--ui-muted);margin:0}
+#view-payroll .wage-settings-card .wage-rates input[readonly]{width:100%;height:auto;min-height:33px;font-size:19px!important;font-weight:650;padding:0!important;text-align:left;letter-spacing:-.5px;border-radius:0}
+#view-payroll #wage-allowance-settings{padding-top:4px;border-top:1px solid var(--ui-line);margin-bottom:0}
+#view-payroll #wage-allowance-settings .input-group{gap:12px;padding:9px 0;border:0;grid-template-columns:minmax(0,1fr) auto}
+#view-payroll #wage-allowance-settings label{font-size:11px;line-height:1.7;color:var(--ui-muted)}
+#view-payroll #wage-allowance-settings input[readonly]{font-size:16px!important;min-height:30px;height:auto;padding:0;width:106px;font-weight:600}
+#view-payroll #wage-sms-hint{font-size:10px;margin:12px 0 0;line-height:1.7}
+#view-payroll .calendar-reflect-button{border:1px solid var(--ui-line);background:var(--ui-card);border-radius:9px;min-height:32px;font-size:11px;padding:5px 9px;color:var(--ui-copy);cursor:pointer}
+#view-payroll .payroll-input-card .input-group{position:relative;min-width:0}
+#view-payroll .payroll-input-card .input-group input{font-weight:600}
+#view-payroll .payroll-input-card .work-input-unit{position:absolute;right:12px;bottom:15px;font-size:11px;color:var(--ui-muted);line-height:16px;pointer-events:none}
+#view-payroll .payroll-input-card .input-group:has(.work-input-unit) input{padding-right:30px}
+#view-payroll .payroll-input-card .special-days{padding-top:15px;border-top:1px solid var(--ui-line)}
+#view-payroll .payroll-input-card .overtime-days{padding-top:15px;border-top:1px solid var(--ui-line)}
+#view-payroll .payroll-input-card .unpaid-days{padding:13px;background:var(--ui-field);border-radius:13px;gap:10px}
+#view-payroll .payroll-input-card .unpaid-days input[readonly]{padding:0;background:transparent!important;border:0;min-height:32px;border-radius:0;font-size:16px;color:var(--ui-copy)!important}
+#view-payroll .payroll-input-card .unpaid-days label{font-size:10px;margin-bottom:5px}
+#view-payroll .payroll-input-card .holiday-allowance .input-group{width:100%;flex:1}
+#view-payroll .payroll-input-card .holiday-allowance{grid-template-columns:minmax(0,1fr)}
+#view-payroll .payroll-input-card .btn-action-group{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;margin-top:16px}
+#view-payroll .payroll-input-card .btn-reset-data{min-height:44px;padding:8px 15px;border-radius:12px;font-size:12px}
+@media(max-width:350px){#view-all .group-summary{gap:7px;padding:14px 12px}#view-all .group-summary-label{font-size:12px}#view-all #menu-group-current{font-size:10px}#view-payroll .wage-settings-card .wage-rates input[readonly]{font-size:17px!important}#modal-month-stats .stats-row strong{font-size:13px}#modal-month-stats .stats-total strong{font-size:20px}:is(#modal-month-stats,#modal-schedule-share) .modal-sheet{padding:19px 16px calc(19px + env(safe-area-inset-bottom))}}
+.header-calendar-actions .icon-button:not(.weather-trigger){width:38px;height:38px;min-width:38px;border:1px solid var(--theme-line,#e7ebf0);border-radius:12px;background:var(--surface,#fff);color:var(--theme-text,#333d4b);box-sizing:border-box}
+.header-calendar-actions .icon-button:not(.weather-trigger) svg{width:21px;height:21px}
+.header-calendar-actions .icon-button:not(.weather-trigger):active{background:var(--surface-soft,#f4f6f8)}
+@media(prefers-reduced-motion:reduce){:is(#modal-month-stats,#modal-schedule-share) .modal-sheet{transition:none!important;animation:none!important}}
