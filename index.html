@@ -931,7 +931,7 @@
 <link rel="stylesheet" href="./lost-found.css?v=1">
 <link rel="stylesheet" href="./bright-menu.css?v=1">
 <link rel="stylesheet" href="./app-surfaces.css?v=5">
-<link rel="stylesheet" href="./screen-refinement.css?v=2">
+<link rel="stylesheet" href="./screen-refinement.css?v=3">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1078,36 +1078,23 @@
                         <input type="number" id="inp-nightsp-days" value="0" min="0" oninput="calculatePayrollFromInputs()"><span class="work-input-unit" aria-hidden="true">일</span>
                     </div>
                 </div>
-                <div class="two-cols overtime-days">
+                <div class="workday-summary" aria-label="캘린더 계산 결과">
+                    <div><label for="disp-ot-hours">연장시간 · 1.5배</label><input type="text" id="disp-ot-hours" value="0.0h" readonly></div>
+                    <div><label for="disp-unpaid-days">무급 일수</label><input type="text" id="disp-unpaid-days" value="0일" readonly></div>
+                    <div><label for="disp-unpaid-deduction">무급 차감 예상액</label><input type="text" id="disp-unpaid-deduction" value="0원" readonly></div>
+                </div>
+                <details class="workday-adjustments" id="workday-adjustments">
+                    <summary><span>추가 조정<small id="workday-adjustment-value">연장 제외 · 명절수당</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
                     <div class="input-group">
-                        <label for="inp-no-ot-days">O.T 해제 일수 (2.5h 제외)</label>
+                        <label for="inp-no-ot-days">연장근무 제외 일수 <small>하루 2.5시간 제외</small></label>
                         <input type="number" id="inp-no-ot-days" value="0" min="0" step="0.5" oninput="calculatePayrollFromInputs()"><span class="work-input-unit" aria-hidden="true">일</span>
                     </div>
                     <div class="input-group">
-                        <label for="disp-ot-hours">실제 적용 연장시간 (1.5배)</label>
-                        <input type="text" id="disp-ot-hours" value="0.0h" readonly style="background:#f1f5f9; color:var(--primary); font-weight:800;">
-                    </div>
-                </div>
-
-                <div class="two-cols holiday-allowance">
-                    <div class="input-group">
-                        <label for="inp-holiday-bonus">명절근무수당 (원)</label>
+                        <label for="inp-holiday-bonus">명절근무수당 <small>원</small></label>
                         <input type="number" id="inp-holiday-bonus" value="0" step="10000" min="0" oninput="calculatePayrollFromInputs()" placeholder="예: 50000">
                     </div>
-                    <input type="hidden" id="inp-hire-date" aria-label="정규직 전환일 (연차, 지원금 판정)">
-                </div>
-
-                <!-- 무급 일수 및 차감 예상액 확인창 -->
-                <div class="two-cols unpaid-days">
-                    <div class="input-group">
-                        <label for="disp-unpaid-days">무급 일수 (캘린더 연동)</label>
-                        <input type="text" id="disp-unpaid-days" value="0일" readonly style="background:#f1f5f9; color:#475569; font-weight:700;">
-                    </div>
-                    <div class="input-group">
-                        <label for="disp-unpaid-deduction">무급 차감 예상액</label>
-                        <input type="text" id="disp-unpaid-deduction" value="0원" readonly style="background:#fef2f2; color:#b91c1c; font-weight:800;">
-                    </div>
-                </div>
+                </details>
+                <input type="hidden" id="inp-hire-date" aria-label="정규직 전환일 (연차, 지원금 판정)">
 
                 <div class="toggle-box" onclick="toggleBonusCheck(event)">
                     <label id="lbl-bonus-check">상여금 포함</label>
@@ -2378,6 +2365,13 @@
             const noOtDays = parseFloat(document.getElementById('inp-no-ot-days').value) || 0;
             const holidayBonus = parseFloat(document.getElementById('inp-holiday-bonus').value) || 0;
             const hasBonusCheck = document.getElementById('inp-bonus-check').checked;
+            const adjustmentSummary = document.getElementById('workday-adjustment-value');
+            if (adjustmentSummary) {
+                const adjustments = [];
+                if (noOtDays > 0) adjustments.push(`연장 제외 ${noOtDays}일`);
+                if (holidayBonus > 0) adjustments.push(`명절 ${holidayBonus.toLocaleString('ko-KR')}원`);
+                adjustmentSummary.textContent = adjustments.join(' · ') || '연장 제외 · 명절수당';
+            }
 
             const B7 = config.baseHourly;
             const B8 = config.ordinaryHourly;
