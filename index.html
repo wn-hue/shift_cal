@@ -931,7 +931,7 @@
 <link rel="stylesheet" href="./lost-found.css?v=1">
 <link rel="stylesheet" href="./bright-menu.css?v=1">
 <link rel="stylesheet" href="./app-surfaces.css?v=5">
-<link rel="stylesheet" href="./screen-refinement.css?v=4">
+<link rel="stylesheet" href="./screen-refinement.css?v=5">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1293,7 +1293,7 @@
 
     <dialog id="leave-settings-dialog" class="sms-dialog settings-dialog" aria-labelledby="leave-dialog-title">
         <div class="sms-dialog-header"><h2 id="leave-dialog-title">연차 설정</h2><button type="button" class="sms-close-btn" aria-label="연차 설정 닫기" onclick="document.getElementById('leave-settings-dialog').close()">×</button></div>
-        <p class="account-hint">정규직 전환일을 기준으로 계산해요. 변경한 내용은 자동 저장돼요.</p><details class="leave-policy"><summary>연차·상여금 계산 기준</summary><p>입사 날짜는 정규직 전환일을 입력해 주세요. 급여 기간 마지막 날(15일) 기준 정규직 1년 미만은 지원금, 1년부터는 상여금이 적용됩니다. 연차 계산에도 같은 날짜를 사용하며 변경 내용은 자동 저장됩니다.</p></details>
+        <p class="account-hint">정규직 전환일을 기준으로 계산해요. 변경한 내용은 자동 저장돼요.</p><details class="leave-policy"><summary>연차·상여금 계산 기준</summary><p>입사 날짜는 정규직 전환일을 입력해 주세요. 급여 기간 마지막 날(15일) 기준 정규직 1년 미만은 지원금, 1년부터는 상여금이 적용됩니다. 연차도 정규직 전환일부터 계산합니다. 1년 미만은 매월 개근 시 1일씩 최대 11일, 다음 해 1월 1일에는 전년도 재직기간에 비례한 연차를 별도로 추정합니다. 월별 발생분의 미사용분은 첫 1년 종료 시 소멸하며 사용 내역은 월별 발생분부터 차감합니다. 개근과 회계연도 부여를 가정한 추정값이므로 회사에서 확인한 총 연차로 조정할 수 있습니다.</p></details>
         <div class="card leave-overview">
                 <div class="card-header">
                     <span>내 연차</span>
@@ -1313,6 +1313,7 @@
                     <div class="leave-stat-box"><div class="stat-label">사용 연차</div><div class="stat-value" id="stat-used-leave">0일</div></div>
                 </div>
 
+                <p id="leave-accrual-basis" class="leave-accrual-basis" role="status"></p>
                 <div class="leave-money-summary">
                     <div class="leave-money-unit">
                         <span>1일 연차수당</span>
@@ -1341,6 +1342,7 @@
                             </div>
                         </div>
                     </div>
+                    <button type="button" id="leave-restore-auto" class="leave-restore-auto" onclick="restoreAutomaticLeave()" hidden>자동 계산으로 돌아가기</button>
                 </div>
         <button type="button" class="btn-save" onclick="document.getElementById('leave-settings-dialog').close()">완료</button>
     </dialog>
@@ -1986,44 +1988,79 @@
             if(window.GoogleSync)GoogleSync.groupChanged();
         }
 
-        function calculateFiscalYearLeave(hireDateStr, targetYear) {
-            if (!targetYear) targetYear = currentCalDate.getFullYear();
-            if (!hireDateStr) return { leave: 0, desc: "정규직 전환일을 입력하시면 회계일 기준 연차가 자동 계산됩니다." };
-
-            const parts = hireDateStr.split('-');
-            const hy = parseInt(parts[0], 10);
-            const hm = parseInt(parts[1], 10);
-            const hd = parseInt(parts[2], 10);
-
-            const hireDate = new Date(hy, hm - 1, hd);
-            const jan1Target = new Date(targetYear, 0, 1);
-
-            if (hireDate > jan1Target) {
-                return { leave: 0, desc: `입사일(${hireDateStr})이 ${targetYear}년 1월 1일 이후입니다.` };
+        function calculateFiscalYearLeave(hireDateStr, targetYear, asOfStr) {
+            targetYear = targetYear || currentCalDate.getFullYear();
+            const parse = key => {
+                if (!/^\d{4}-\d{2}-\d{2}$/.test(key || '')) return null;
+                const [y,m,d] = key.split('-').map(Number), value = new Date(Date.UTC(y,m-1,d));
+                return value.toISOString().slice(0,10) === key ? value : null;
+            };
+            const today = parse(asOfStr || new Date(Date.now()+9*3600000).toISOString().slice(0,10));
+            const hire = parse(hireDateStr), jan1 = new Date(Date.UTC(targetYear,0,1));
+            const end = new Date(Date.UTC(targetYear,11,31));
+            const cutoff = today && today < end ? today : end;
+            const empty = desc => ({leave:0, regular:0, monthly:0, monthlyGenerated:0, desc});
+            if (!hire || !today) return empty('정규직 전환일을 입력하면 회계연도 기준으로 자동 계산해요.');
+            if (hire > cutoff || cutoff < jan1) return empty('아직 연차 발생 전이에요.');
+            const hy = hire.getUTCFullYear(), hm = hire.getUTCMonth(), hd = hire.getUTCDate();
+            // A nonexistent anniversary date falls on the first day of the next month.
+            const due = months => {
+                const first = new Date(Date.UTC(hy,hm+months,1));
+                const last = new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth()+1,0)).getUTCDate();
+                return new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth(),hd>last?last+1:hd));
+            };
+            const anniversary = due(12), grants = [];
+            for (let i=1;i<=11;i++) if (due(i)<=cutoff) grants.push(due(i));
+            let regular = 0;
+            const tenureYears = targetYear-hy;
+            if (tenureYears === 1) {
+                // First fiscal grant: calendar-day proration, rounded to one decimal (estimate).
+                const yearDays = (new Date(Date.UTC(hy+1,0,1))-new Date(Date.UTC(hy,0,1)))/86400000;
+                const worked = (jan1-hire)/86400000;
+                regular = Math.round(15*worked/yearDays*10)/10;
+            } else if (tenureYears > 1) {
+                regular = Math.min(25,15+Math.max(0,Math.floor((tenureYears-2)/2)));
             }
-
-            const tenureYears = targetYear - hy;
-            let leaveDays = 0;
-            let desc = "";
-
-            if (tenureYears <= 1) {
-                const monthsWorked = 12 - hm + (hd === 1 ? 1 : 0);
-                leaveDays = parseFloat((15 * (monthsWorked / 12)).toFixed(1));
-                desc = `회계연도 기준 1년차 정산: 전년도 ${monthsWorked}개월 근무 비례연차 ${leaveDays}일`;
-            } else {
-                let added = Math.max(0, Math.floor((tenureYears - 2) / 2));
-                leaveDays = Math.min(25, 15 + added);
-                desc = `회계연도 기준 근속 ${tenureYears}년차 정기부여: 기본 15일 + 근속가산 ${added}일 = ${leaveDays}일`;
+            const units = type => type==='LEAVE'?1:['HALF_PRE','HALF_POST','HALF_LEAVE'].includes(type)?0.5:0;
+            let priorUsed = 0, usedBeforeExpiry = 0;
+            for (const [key,type] of Object.entries(overrides)) {
+                const day = parse(key);
+                if (!day || day<hire || day>=anniversary) continue;
+                if (day<jan1) priorUsed += units(type);
+                else if (day<=cutoff) usedBeforeExpiry += units(type);
             }
-
-            return { leave: leaveDays, desc: desc };
+            const priorGrants = grants.filter(d=>d<jan1).length;
+            const carry = Math.max(0,priorGrants-priorUsed);
+            const earnedThisYear = grants.filter(d=>d>=jan1).length;
+            const monthlyPool = carry+earnedThisYear;
+            // Expired unused monthly leave must not reappear in the fiscal balance.
+            const expired = cutoff>=anniversary;
+            const monthly = expired?Math.min(monthlyPool,usedBeforeExpiry):monthlyPool;
+            const leave = Math.round((regular+monthly)*10)/10;
+            const stamp = cutoff.toISOString().slice(0,10).replaceAll('-','.');
+            let desc = `${stamp} 기준 · 개근 가정`;
+            if (regular>0) desc += tenureYears===1?` · 회계연도 비례 ${regular}일(재직일수 추정)`:` · 회계연도 부여 ${regular}일`;
+            if (cutoff<anniversary) desc += ` · 월별 발생 누적 ${grants.length}일${priorGrants?`(전년도 사용 ${Math.min(priorUsed,priorGrants)}일 반영)`:''}`;
+            else if (tenureYears<=1) desc += ' · 1년 미만 미사용분은 첫 1년 종료 시 소멸';
+            return {leave, regular, monthly, monthlyGenerated:tenureYears<=1?grants.length:0, desc};
         }
 
         function getGrantedLeave(year) {
+            const automatic = calculateFiscalYearLeave(config.hireDate, year);
             if (Object.prototype.hasOwnProperty.call(config.leaveByYear, year)) {
-                return config.leaveByYear[year];
+                // Old payroll saves also pinned an automatically calculated zero.
+                const legacyZero = config.leaveByYear[year] === 0 && !config.leaveManualYears?.[year] && automatic.monthlyGenerated > 0;
+                if (!legacyZero) return config.leaveByYear[year];
             }
-            return calculateFiscalYearLeave(config.hireDate, year).leave;
+            return automatic.leave;
+        }
+
+        function restoreAutomaticLeave() {
+            const year = currentCalDate.getFullYear();
+            delete config.leaveByYear[year];
+            if (config.leaveManualYears) delete config.leaveManualYears[year];
+            saveConfig();
+            updateLeaveStats();
         }
 
         function onHireDateChange() {
@@ -2031,6 +2068,7 @@
             if (hireVal !== config.hireDate) {
                 // 이전 입사일을 기준으로 입력한 연도별 수동 부여량은 재사용하지 않는다.
                 config.leaveByYear = {};
+                config.leaveManualYears = {};
             }
             config.hireDate = hireVal;
             document.getElementById('inp-hire-date').value = hireVal;
@@ -2066,6 +2104,13 @@
             });
 
             const total = getGrantedLeave(year);
+            const automatic = calculateFiscalYearLeave(config.hireDate, year);
+            const manuallySet = Object.prototype.hasOwnProperty.call(config.leaveByYear, year) &&
+                !(config.leaveByYear[year]===0 && !config.leaveManualYears?.[year] && automatic.monthlyGenerated>0);
+            const basis = document.getElementById('leave-accrual-basis');
+            if (basis) basis.textContent = manuallySet ? '직접 입력한 총 연차를 적용 중이에요. 자동 계산으로 돌아갈 수 있어요.' : automatic.desc;
+            const restore = document.getElementById('leave-restore-auto');
+            if (restore) restore.hidden = !manuallySet;
             const remain = Math.max(0, total - used);
             const dailyRate = config.ordinaryHourly * 8;
             const totalLeavePay = remain * dailyRate;
@@ -2092,7 +2137,14 @@
                 updateLeaveStats();
                 return;
             }
-            config.leaveByYear[year] = value;
+            const automatic = calculateFiscalYearLeave(config.hireDate, year).leave;
+            if (value === automatic) {
+                delete config.leaveByYear[year];
+                if (config.leaveManualYears) delete config.leaveManualYears[year];
+            } else {
+                config.leaveByYear[year] = value;
+                config.leaveManualYears = {...config.leaveManualYears, [year]:true};
+            }
             saveConfig();
             updateLeaveStats();
         }
@@ -2105,7 +2157,6 @@
         }
 
         function manualSaveData() {
-            saveLeaveConfig();
             saveWageConfig();
             alert(window.AccountSync ? "입력값을 기기에 저장했습니다. 구글 계정 연결 시 자동으로 동기화합니다." : "입력값을 기기에 저장했습니다.");
         }
@@ -2724,7 +2775,7 @@
     <script src="./calendar-integration.js?v=5"></script>
     <script src="./schedule-share.js?v=muted-1"></script>
     <script src="./google-sync-core.js?v=6"></script>
-    <script src="./account-data-core.js?v=special-noot-7"></script>
+    <script src="./account-data-core.js?v=leave-1-special-noot-7"></script>
     <script src="./calendar-ui.js?v=45"></script>
     <script src="./today-menu.js?v=4"></script>
 <dialog id="account-login-dialog" class="account-login-dialog" data-connected="false" aria-labelledby="login-sheet-title"><div class="login-sheet-handle" aria-hidden="true"></div><button type="button" class="login-sheet-close" aria-label="로그인 창 닫기">×</button><section class="identity-card" aria-label="로그인 및 동기화"><div class="identity-heading"><div><h2 id="login-sheet-title">로그인 또는 회원가입</h2><p id="account-email">로그인하면 근무표와 메모가 동기화됩니다.</p></div></div><div class="identity-buttons"><a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1" aria-label="Google로 로그인" aria-describedby="account-permission-notice"><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#4285f4" d="M43.6 24.5c0-1.4-.1-2.7-.4-4H24v7.7h11a9.4 9.4 0 0 1-4.1 6.2v5h6.7c3.9-3.6 6-8.8 6-14.9Z"/><path fill="#34a853" d="M24 44c5.4 0 10-1.8 13.6-5l-6.7-5c-1.8 1.2-4.1 1.9-6.9 1.9-5.2 0-9.7-3.5-11.3-8.2H5.8v5.2A20 20 0 0 0 24 44Z"/><path fill="#fbbc05" d="M12.7 27.7a12 12 0 0 1 0-7.4v-5.2H5.8a20 20 0 0 0 0 17.8l6.9-5.2Z"/><path fill="#ea4335" d="M24 12.1c3 0 5.6 1 7.7 3l5.8-5.8A19.3 19.3 0 0 0 24 4 20 20 0 0 0 5.8 15.1l6.9 5.2c1.6-4.7 6.1-8.2 11.3-8.2Z"/></svg><span>Google 계정으로 계속하기</span></a><a id="apple-login" aria-disabled="true" class="apple-signin" href="/api/apple-account?action=login" aria-label="Apple로 로그인"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M17.1 12.3c0-2 1.6-3 1.7-3.1-1-1.5-2.5-1.7-3.1-1.7-1.3-.2-2.5.8-3.2.8-.7 0-1.8-.8-2.9-.8-1.5 0-2.8.9-3.5 2.1-1.5 2.5-.4 6.3 1 8.3.7 1 1.5 2.1 2.6 2 1.1 0 1.5-.7 2.8-.7 1.3 0 1.7.7 2.9.7 1.2 0 1.9-1 2.6-2 .8-1.1 1.1-2.2 1.1-2.3-.1 0-2-.8-2-3.3M14.8 6.2c.6-.8 1.1-1.8 1-2.9-1 .1-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.8 1.1.1 2.1-.6 2.8-1.4"/></svg>Apple 계정으로 계속하기</a></div><p id="apple-login-status" class="identity-note" role="status"></p><div id="account-sync-status" class="sync-feedback" role="status" aria-live="polite" aria-atomic="true"></div><div class="identity-actions"><button id="account-sync-now" type="button" class="btn-save" hidden>지금 동기화</button><button id="account-logout" type="button" class="btn-reset-data" hidden>로그아웃</button><button id="account-delete" type="button" class="btn-reset-data" hidden>계정 데이터 삭제</button></div></section></dialog>

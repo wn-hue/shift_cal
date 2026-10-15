@@ -217,3 +217,7 @@ body[data-pref-theme=toss] #view-calendar .calendar-card{padding:5px;margin:0 0 
 body[data-view="calendar"] .reference-header{box-sizing:border-box;min-height:76px;padding:12px 0 8px;align-items:center}
 body[data-view="calendar"] .reference-header .month-title-btn{transform:none}
 body[data-view="calendar"] .header-calendar-actions{align-items:center;align-self:center;gap:3px}
+
+#leave-settings-dialog .leave-accrual-basis{font-size:10px;line-height:1.7;color:var(--ui-muted);margin:10px 0}
+#leave-settings-dialog .leave-restore-auto{font:inherit;font-size:11px;min-height:36px;border:0;border-radius:9px;background:var(--ui-blue-soft);color:var(--ui-blue);padding:7px 10px;margin-top:12px;cursor:pointer}
+#leave-settings-dialog .leave-restore-auto[hidden]{display:none}

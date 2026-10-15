@@ -111,3 +111,7 @@ run().catch(e=>{console.error(e);process.exit(1);});
 
 assert.deepEqual(C.normalize({shift_bonus_sms_reference_v1:{gross:1000000,total:50000}}).shift_bonus_sms_reference_v1,{rate:0.05});
 assert.throws(()=>C.normalize({shift_bonus_sms_reference_v1:{gross:100,total:101}}));
+
+const manualLeave={shift_salary_config_master:{hireDate:'2026-06-16',leaveByYear:{2026:0},leaveManualYears:{2026:true}}};
+assert.deepEqual(C.normalize(manualLeave).shift_salary_config_master,manualLeave.shift_salary_config_master);
+for(const leaveManualYears of [{2026:false},{2026:1},{invalid:true}])assert.throws(()=>C.normalize({shift_salary_config_master:{leaveManualYears}}));

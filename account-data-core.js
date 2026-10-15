@@ -17,12 +17,15 @@
             if (!object(value)) throw Error('저장할 설정 형식을 확인하세요.');
             const safe = {};
             if (key === 'shift_salary_config_master') {
-                const allowed = ['hireDate','employmentMonth','totalLeave','leaveByYear','baseHourly','ordinaryHourly','baseHours','dutyPay','seniorityPay','applyRetroPay','holidayBonus'];
+                const allowed = ['hireDate','employmentMonth','totalLeave','leaveByYear','leaveManualYears','baseHourly','ordinaryHourly','baseHours','dutyPay','seniorityPay','applyRetroPay','holidayBonus'];
                 if (Object.keys(value).some(k => !allowed.includes(k))) throw Error('알 수 없는 급여 설정입니다.');
                 for (const [k,v] of Object.entries(value)) {
                     if (k === 'employmentMonth') continue;
                     else if (k === 'hireDate') { if (v !== '' && !dateOK(v)) throw Error('입사일을 확인하세요.'); }
                     else if (k === 'applyRetroPay') { if (typeof v !== 'boolean') throw Error('수당 설정을 확인하세요.'); }
+                    else if (k === 'leaveManualYears') {
+                        if (!object(v) || Object.keys(v).length > 100 || Object.entries(v).some(([year,manual]) => !/^\d{4}$/.test(year) || manual !== true)) throw Error('연차 수동 설정을 확인하세요.');
+                    }
                     else if (k === 'leaveByYear') {
                         if (!object(v) || Object.keys(v).length > 100 || Object.entries(v).some(([year,n]) => !/^\d{4}$/.test(year) || !Number.isFinite(n) || n < 0 || n > 366)) throw Error('연차 설정을 확인하세요.');
                     } else if (!Number.isFinite(v) || v < 0 || v > 1000000000) throw Error('급여 설정을 확인하세요.');
