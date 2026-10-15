@@ -931,7 +931,7 @@
 <link rel="stylesheet" href="./lost-found.css?v=1">
 <link rel="stylesheet" href="./bright-menu.css?v=1">
 <link rel="stylesheet" href="./app-surfaces.css?v=5">
-<link rel="stylesheet" href="./screen-refinement.css?v=3">
+<link rel="stylesheet" href="./screen-refinement.css?v=4">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1055,27 +1055,28 @@
                     <span>근무일수</span>
                     <div style="display:flex; gap:8px; align-items:center;">
 
-                        <button type="button" class="calendar-reflect-button" onclick="syncFromCalendar()">캘린더 반영</button>
+                        <button type="button" class="calendar-reflect-button" onclick="switchView('calendar')">달력에서 변경</button>
                     </div>
                 </div>
+                <p id="calendar-days-hint" class="calendar-days-hint">달력의 근무가 자동으로 반영돼요.</p>
                 <div class="two-cols regular-days">
                     <div class="input-group">
                         <label for="inp-day-days">주간 근무일수</label>
-                        <input type="number" id="inp-day-days" value="0" min="0" step="0.5" oninput="calculatePayrollFromInputs()"><span class="work-input-unit" aria-hidden="true">일</span>
+                        <input type="text" id="inp-day-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
                     </div>
                     <div class="input-group">
                         <label for="inp-night-days">야간 근무일수</label>
-                        <input type="number" id="inp-night-days" value="0" min="0" step="0.5" oninput="calculatePayrollFromInputs()"><span class="work-input-unit" aria-hidden="true">일</span>
+                        <input type="text" id="inp-night-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
                     </div>
                 </div>
                 <div class="two-cols special-days">
                     <div class="input-group">
                         <label for="inp-daysp-days">주간 특근일수</label>
-                        <input type="number" id="inp-daysp-days" value="0" min="0" oninput="calculatePayrollFromInputs()"><span class="work-input-unit" aria-hidden="true">일</span>
+                        <input type="text" id="inp-daysp-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
                     </div>
                     <div class="input-group">
                         <label for="inp-nightsp-days">야간 특근일수</label>
-                        <input type="number" id="inp-nightsp-days" value="0" min="0" oninput="calculatePayrollFromInputs()"><span class="work-input-unit" aria-hidden="true">일</span>
+                        <input type="text" id="inp-nightsp-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
                     </div>
                 </div>
                 <div class="workday-summary" aria-label="캘린더 계산 결과">
@@ -1085,14 +1086,17 @@
                 </div>
                 <details class="workday-adjustments" id="workday-adjustments">
                     <summary><span>추가 조정<small id="workday-adjustment-value">연장 제외 · 명절수당</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+                    <div class="workday-adjustment-fields">
                     <div class="input-group">
-                        <label for="inp-no-ot-days">연장근무 제외 일수 <small>하루 2.5시간 제외</small></label>
-                        <input type="number" id="inp-no-ot-days" value="0" min="0" step="0.5" oninput="calculatePayrollFromInputs()"><span class="work-input-unit" aria-hidden="true">일</span>
+                        <label for="inp-no-ot-days">연장 제외 일수</label>
+                        <input type="text" id="inp-no-ot-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
                     </div>
                     <div class="input-group">
-                        <label for="inp-holiday-bonus">명절근무수당 <small>원</small></label>
+                        <label for="inp-holiday-bonus">명절근무수당 (원)</label>
                         <input type="number" id="inp-holiday-bonus" value="0" step="10000" min="0" oninput="calculatePayrollFromInputs()" placeholder="예: 50000">
                     </div>
+                    </div>
+                    <p class="adjustment-hint">연장 제외는 달력 연동 · 하루 2.5시간 제외</p>
                 </details>
                 <input type="hidden" id="inp-hire-date" aria-label="정규직 전환일 (연차, 지원금 판정)">
 
@@ -1405,12 +1409,7 @@
           <div><span class="stats-badge day-sp">주특</span><strong id="stat-daysp"></strong></div>
           <div><span class="stats-badge night-sp">야특</span><strong id="stat-nightsp"></strong></div>
         </div><div class="stats-row"><span>총 출근</span><strong id="modal-pill-total-work"></strong></div><span id="modal-pill-special" hidden></span></section>
-        <section class="stats-section"><div class="stats-section-heading"><h3>예상 급여</h3><button onclick="closeMonthStatsModalDirect();switchView('payroll')">자세히 ›</button></div><p id="stat-modal-period"></p>
-          
-          <div class="stats-row"><span>월 급여</span><strong id="stat-salary"></strong></div>
-          <div class="stats-row"><span id="stat-bonus-label">상여금</span><strong id="stat-bonus"></strong></div>
-          <div class="stats-row stats-total"><span id="stat-total-label">세전 합계</span><strong id="stat-total"></strong></div>
-        </section><section class="stats-section"><div class="stats-row"><span>급여 기간 사용 연차</span><strong id="modal-pill-leave"></strong></div><div class="stats-row"><span>잔여 연차</span><strong id="stat-remaining"></strong></div></section>
+        <section class="stats-section stats-leave"><h3>연차 사용</h3><div class="stats-row"><span>해당 기간 사용 연차</span><strong id="modal-pill-leave"></strong></div></section>
       </div>
     </div>
 
@@ -1886,11 +1885,6 @@
             const endStr = toDateKey(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
 
             document.getElementById('stat-modal-title').innerText = `${year}.${String(payMonthNum).padStart(2,"0")}`;
-            const periodEl = document.getElementById('stat-modal-period');
-            if (periodEl) {
-                periodEl.innerText = `급여 기준 · ${year}.${month===0 ? "전년 12" : String(month).padStart(2,"0")}.16 – ${String(payMonthNum).padStart(2,"0")}.15`;
-            }
-
             let counts = { day: 0, night: 0, special: 0, specialDay:0, specialNight:0, off: 0, leave: 0, totalWork: 0 };
             let curr = new Date(startDate.getTime());
             while (curr <= endDate) {
@@ -1934,18 +1928,6 @@
             document.getElementById('stat-month-period').textContent=`${startStr} – ${endStr}`;
             document.getElementById('stat-daysp').textContent=counts.specialDay+'일';
             document.getElementById('stat-nightsp').textContent=counts.specialNight+'일';
-            const configured=Number(config.ordinaryHourly)>0;
-            const parts=ShiftPlannerCore.payments(ShiftPlannerCore.counts(ShiftPlannerCore.range(startStr,endStr).map(k=>getActualShift(ShiftPlannerCore.date(k),currentGroup))),config,endStr);
-            const estimated=document.getElementById('payroll-estimate-toggle').checked;
-            const result=window.PayrollEstimate?.forParts(parts);
-            const salary=estimated&&result?result.regular.net:parts.regular;
-            const bonus=estimated&&result?result.bonus.net+result.support.net:parts.bonus+parts.support;
-            document.getElementById('stat-salary').textContent=configured?fmt(salary)+'원':'설정 필요';
-            document.getElementById('stat-bonus').textContent=configured?fmt(bonus)+'원':'설정 필요';
-            document.getElementById('stat-total').textContent=configured?fmt(salary+bonus)+'원':'설정 필요';
-            document.getElementById('stat-total-label').textContent=estimated?'세후 추정 합계':'세전 합계';
-            document.getElementById('stat-bonus-label').textContent=ShiftPlannerCore.isUnderOneYear(config.hireDate,endStr)?'지원금':'상여금';
-            document.getElementById('stat-remaining').textContent=config.hireDate ? document.getElementById('stat-remain-leave').innerText : '정규직 전환일 설정 필요';
             document.getElementById('modal-month-stats').classList.add('active');
         }
 

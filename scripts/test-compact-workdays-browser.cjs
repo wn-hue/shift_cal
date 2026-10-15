@@ -16,19 +16,35 @@ const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE);
     assert((await card.boundingBox()).height<570,'Default card must fit comfortably on a phone');
     assert.equal(await page.locator('#inp-holiday-bonus').isVisible(),false);
     await extra.locator('summary').click();
-    await page.locator('#inp-no-ot-days').fill('1.5');
-    const days=await page.evaluate(()=>Number(document.getElementById('inp-day-days').value)+Number(document.getElementById('inp-night-days').value));
-    assert.match(await page.locator('#disp-ot-hours').inputValue(),new RegExp('^'+((days-1.5)*2.5).toFixed(1).replace('.','\\.')));
+    for(const id of ['inp-day-days','inp-night-days','inp-daysp-days','inp-nightsp-days','inp-no-ot-days']){
+     const field=page.locator('#'+id);assert.equal(await field.isEditable(),false);
+     const original=await field.inputValue();await field.focus();await page.keyboard.press('ArrowUp');await page.keyboard.type('9');assert.equal(await field.inputValue(),original);
+    }
+    const beforeHours=parseFloat(await page.locator('#disp-ot-hours').inputValue());
+    const key=await page.evaluate(()=>{
+     const d=new Date(currentPayDate.getFullYear(),currentPayDate.getMonth()-1,16),end=new Date(currentPayDate.getFullYear(),currentPayDate.getMonth(),15);
+     while(d<=end){if(getActualShift(d,currentGroup).type==='DAY'){const key=toDateKey(d.getFullYear(),d.getMonth(),d.getDate());selectedDateStr=key;setDayOverride('NO_OT');document.getElementById('apply-preview').click();return key;}d.setDate(d.getDate()+1);}
+    });
+    assert(key);assert.equal(parseFloat(await page.locator('#disp-ot-hours').inputValue()),beforeHours-2.5);
+    assert.equal(await page.locator('#inp-no-ot-days').inputValue(),'1');
+    const {left,right}=await page.evaluate(()=>({left:document.getElementById('inp-no-ot-days').getBoundingClientRect().toJSON(),right:document.getElementById('inp-holiday-bonus').getBoundingClientRect().toJSON()}));
+    assert(Math.abs(left.y-right.y)<2&&left.x+left.width<=right.x&&Math.abs(left.width-right.width)<2,'Additional fields must share one row equally '+JSON.stringify({left,right,width,theme,engine:engine.name()}));
     await page.locator('#inp-holiday-bonus').fill('0');
     const gross=await page.locator('#hero-gross-pay').textContent();
     await page.locator('#inp-holiday-bonus').fill('150000');
     const amount=x=>Number(x.replace(/[^0-9]/g,''));
     assert.equal(amount(await page.locator('#hero-gross-pay').textContent())-amount(gross),150000);
+    if(width===390&&theme==='current')await extra.screenshot({path:'/tmp/half-width-adjustments-'+engine.name()+'.png'});
     await extra.locator('summary').click();
-    assert.match(await extra.locator('summary').textContent(),/1.5일.*150,000원/);
+    assert.match(await extra.locator('summary').textContent(),/1일.*150,000원/);
     await page.getByRole('button',{name:'입력값 저장',exact:true}).click();
     assert.equal(await page.evaluate(()=>config.holidayBonus),150000);
-    await page.evaluate(()=>{switchView('calendar');scrollTo(0,0)});
+    await page.evaluate(k=>{selectedDateStr=k;setDayOverride(null);document.getElementById('apply-preview').click();switchView('calendar');scrollTo(0,0)},key);
+    await page.getByRole('button',{name:'월 근무 통계',exact:true}).click();
+    assert.equal(await page.locator('#modal-month-stats .stats-section').count(),2);
+    assert.equal(await page.locator('#stat-total,#stat-remaining').count(),0);
+    assert.match(await page.locator('#modal-month-stats').textContent(),/연차 사용/);
+    await page.getByRole('button',{name:'근무 통계 닫기',exact:true}).click();
     for(const inset of [0,47]){
      await page.evaluate(n=>{document.body.style.paddingTop=n+'px';scrollTo(0,0)},inset);
      const header=await page.locator('.reference-header').boundingBox();
