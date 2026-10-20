@@ -104,7 +104,7 @@
     api.update = (gross, breakdown) => { parts=breakdown || {regular:gross,bonus:0,support:0}; render(); };
     api.reloadReference = () => {profile=loadProfile(storageKey);bonusProfile=loadProfile(bonusKey);render();};
     toggle.checked = false; toggle.addEventListener('change', render);
-    function clearDraft() { text.placeholder='기본시급: 10,000원\n통상시급: 12,000원\n자격: 0원\n직무: 0원\n가족: 0원\n직책: 0원'; text.value='';bonusText.value='';apply.disabled=true;preview.textContent='';status.textContent='';manualBase.value='';manualOrdinary.value='';manualStatus.textContent='';for(const input of [manualBase,manualOrdinary])input.setAttribute('aria-invalid','false'); }
+    function clearDraft() { text.placeholder='기본시급: 10,320원\n통상시급: 11,000원\n자격: 0원\n직무: 0원\n가족: 0원\n직책: 0원'; text.value='';bonusText.value='';apply.disabled=true;preview.textContent='';status.textContent='';manualBase.value='';manualOrdinary.value='';manualStatus.textContent='';for(const input of [manualBase,manualOrdinary])input.setAttribute('aria-invalid','false'); }
     api.clearDraft = () => { clearDraft(); if(dialog.open)dialog.close(); };
     api.clearReference = () => {
         localStorage.removeItem(storageKey);localStorage.removeItem(bonusKey);profile=null;bonusProfile=null;api.clearDraft();render();
