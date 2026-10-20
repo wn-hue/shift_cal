@@ -221,3 +221,25 @@ body[data-view="calendar"] .header-calendar-actions{align-items:center;align-sel
 #leave-settings-dialog .leave-accrual-basis{font-size:10px;line-height:1.7;color:var(--ui-muted);margin:10px 0}
 #leave-settings-dialog .leave-restore-auto{font:inherit;font-size:11px;min-height:36px;border:0;border-radius:9px;background:var(--ui-blue-soft);color:var(--ui-blue);padding:7px 10px;margin-top:12px;cursor:pointer}
 #leave-settings-dialog .leave-restore-auto[hidden]{display:none}
+
+/* Wage setup: shared layout for SMS import and manual entry. */
+#payroll-sms-dialog .wage-method-tabs {display:flex;gap:4px;padding:4px;background:#edf0f4;border-radius:14px;margin:18px 0 22px}
+#payroll-sms-dialog .wage-method-tabs button {flex:1;min-width:0;min-height:44px;border:0;border-radius:11px;background:transparent;color:#6b7684;font:inherit;font-weight:600;cursor:pointer}
+#payroll-sms-dialog .wage-method-tabs button[aria-selected="true"] {background:#fff;color:#191f28;box-shadow:0 1px 4px #191f2810}
+#payroll-sms-dialog [role="tabpanel"][hidden] {display:none!important}
+#payroll-sms-dialog .wage-method-description {color:#4e5968;font-size:15px;line-height:1.6;margin:0 0 22px}
+#payroll-sms-dialog .wage-manual-fields {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:20px}
+#payroll-sms-dialog .wage-manual-fields label {min-width:0;color:#6b7684;font-size:13px;font-weight:500}
+#payroll-sms-dialog .wage-manual-fields label>span {display:flex;align-items:center;gap:6px;background:#f2f4f6;border:1px solid transparent;border-radius:14px;padding:14px 10px;margin-top:9px}
+#payroll-sms-dialog .wage-manual-fields label>span:focus-within {border-color:#3182f6}
+#payroll-sms-dialog .wage-manual-fields input {min-width:0;width:100%;padding:0;border:0;outline:0;background:transparent;color:#191f28;font-family:inherit;font-size:18px;font-weight:600;box-shadow:none;text-align:right}
+#payroll-sms-dialog .wage-manual-fields input[aria-invalid="true"] {color:#d14343}
+#payroll-sms-dialog #wage-manual-apply {width:100%;min-height:52px;margin-top:12px}
+#payroll-sms-dialog .wage-method-tabs button:focus-visible {outline:2px solid #3182f6;outline-offset:2px}
+body[data-pref-theme] #payroll-sms-dialog .wage-method-tabs {background:var(--ui-field,#f2f4f6)}
+body[data-pref-theme] #payroll-sms-dialog .wage-method-tabs button {color:var(--ui-muted,#6b7684)}
+body[data-pref-theme] #payroll-sms-dialog .wage-method-tabs button[aria-selected="true"] {background:var(--ui-card,#fff);color:var(--ui-ink,#191f28)}
+body[data-pref-theme] #payroll-sms-dialog :is(.wage-method-description,.wage-manual-fields label) {color:var(--ui-copy,#333d4b)}
+body[data-pref-theme] #payroll-sms-dialog .wage-manual-fields label>span {background:var(--ui-field,#f2f4f6);color:var(--ui-muted,#6b7684)}
+body[data-pref-theme] #payroll-sms-dialog .wage-manual-fields input {background:transparent!important;color:var(--ui-ink,#191f28)!important;border:0!important;border-radius:0;min-height:24px;padding:0!important}
+body[data-pref-theme] #payroll-sms-dialog .wage-manual-fields input[aria-invalid="true"] {color:#e85a5a!important}

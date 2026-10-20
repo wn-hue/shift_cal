@@ -29,6 +29,25 @@
     const text = document.getElementById('payroll-sms-text'), bonusText = document.getElementById('payroll-bonus-sms-text');
     const status = document.getElementById('payroll-sms-status'), preview = document.getElementById('payroll-sms-preview');
     const apply = document.getElementById('payroll-sms-apply'), dialog = document.getElementById('payroll-sms-dialog');
+    const manualBase=document.getElementById('wage-manual-base'), manualOrdinary=document.getElementById('wage-manual-ordinary');
+    const manualStatus=document.getElementById('wage-manual-status');
+    const methods=['sms','manual'];
+    function selectMethod(method,focus=false) {
+        for(const name of methods){
+            const tab=document.getElementById('wage-'+name+'-tab'),selected=name===method;
+            tab.setAttribute('aria-selected',String(selected));tab.setAttribute('tabindex',selected?'0':'-1');
+            document.getElementById('wage-'+name+'-panel').hidden=!selected;
+            if(selected&&focus)tab.focus();
+        }
+    }
+    for(const [index,name] of methods.entries()){
+        const tab=document.getElementById('wage-'+name+'-tab');
+        tab.addEventListener('click',()=>selectMethod(name));
+        tab.addEventListener('keydown',event=>{
+            if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+            event.preventDefault();selectMethod(methods[event.key==='Home'?0:event.key==='End'?1:1-index],true);
+        });
+    }
     const smsIntro=document.querySelector('#payroll-sms-title + p'), smsLabel=document.querySelector('label[for="payroll-sms-text"]');
     const defaultIntro=smsIntro?.textContent, defaultLabel=smsLabel?.textContent;
     api.open = options => {
@@ -36,6 +55,11 @@
         dialog.setAttribute('data-onboarding',String(onboarding));
         if(smsIntro)smsIntro.textContent=onboarding?'기본시급과 통상시급을 확인해 주세요. 상여금 문자는 나중에 추가할 수 있어요.':defaultIntro;
         if(smsLabel)smsLabel.textContent=onboarding?'급여 문자 붙여넣기':defaultLabel;
+        clearDraft();selectMethod('sms');
+        for(const [input,id] of [[manualBase,'input-base-hourly'],[manualOrdinary,'input-ordinary-hourly']]){
+            const value=Number(document.getElementById(id).value.replace(/[^0-9]/g,''));
+            input.value=value>0?value.toLocaleString('ko-KR'):'';
+        }
         dialog.showModal();
     };
     document.getElementById('payroll-sms-open').addEventListener('click', api.open);
@@ -80,7 +104,7 @@
     api.update = (gross, breakdown) => { parts=breakdown || {regular:gross,bonus:0,support:0}; render(); };
     api.reloadReference = () => {profile=loadProfile(storageKey);bonusProfile=loadProfile(bonusKey);render();};
     toggle.checked = false; toggle.addEventListener('change', render);
-    function clearDraft() { text.placeholder='기본시급: 10,000원\n통상시급: 12,000원\n자격: 0원\n직무: 0원\n가족: 0원\n직책: 0원'; text.value='';bonusText.value='';apply.disabled=true;preview.textContent='';status.textContent=''; }
+    function clearDraft() { text.placeholder='기본시급: 10,000원\n통상시급: 12,000원\n자격: 0원\n직무: 0원\n가족: 0원\n직책: 0원'; text.value='';bonusText.value='';apply.disabled=true;preview.textContent='';status.textContent='';manualBase.value='';manualOrdinary.value='';manualStatus.textContent='';for(const input of [manualBase,manualOrdinary])input.setAttribute('aria-invalid','false'); }
     api.clearDraft = () => { clearDraft(); if(dialog.open)dialog.close(); };
     api.clearReference = () => {
         localStorage.removeItem(storageKey);localStorage.removeItem(bonusKey);profile=null;bonusProfile=null;api.clearDraft();render();
@@ -128,6 +152,23 @@
         if(window.AccountSync)AccountSync.changed();
         document.getElementById('payroll-sms-applied').textContent='설정 적용됨';clearDraft();dialog.close();
         if(typeof window.CustomEvent==='function')window.dispatchEvent(new CustomEvent('shift-payroll-applied'));
+    });
+    for(const input of [manualBase,manualOrdinary])input.addEventListener('input',()=>{input.setAttribute('aria-invalid','false');manualStatus.textContent='';});
+    document.getElementById('wage-manual-apply').addEventListener('click',()=>{
+        const wages={};manualStatus.textContent='';let firstInvalid=null;
+        for(const [input,key] of [[manualBase,'baseHourly'],[manualOrdinary,'ordinaryHourly']]){
+            const raw=input.value.trim(),value=Number(raw.replace(/,/g,''));
+            const valid=/^(?:[0-9]+|[1-9][0-9]{0,2}(?:,[0-9]{3})+)$/.test(raw)&&Number.isSafeInteger(value)&&value>0&&value<=1000000000;
+            input.setAttribute('aria-invalid',String(!valid));
+            if(!valid){if(!firstInvalid){firstInvalid=input;manualStatus.textContent=labels[key]+'을 1원 이상 10억 원 이하의 정수로 입력해 주세요.';}}
+            else wages[key]=value;
+        }
+        if(firstInvalid){firstInvalid.focus();return;}
+        try{root.applyPayrollStatement(wages);}
+        catch(_){manualStatus.textContent='저장하지 못했습니다. 브라우저 저장공간 설정을 확인해주세요.';return;}
+        document.getElementById('payroll-sms-applied').textContent='설정 적용됨';
+        dialog.close();
+        if(typeof window.CustomEvent==='function')window.dispatchEvent(new CustomEvent('shift-payroll-applied',{detail:{method:'manual'}}));
     });
     document.getElementById('payroll-sms-clear').addEventListener('click',clearDraft);
     render();

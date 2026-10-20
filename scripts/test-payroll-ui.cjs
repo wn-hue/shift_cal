@@ -117,3 +117,27 @@ evaluate("config.hireDate='2017-12-20';currentPayDate=new Date(2018,10,1);calcul
 evaluate("currentPayDate=new Date(2018,11,1);calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'10,000');
 evaluate("currentPayDate=new Date(2026,9,1);calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'70,000');
 evaluate("config.hireDate='2018-01-20';calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'0');
+
+// Manual wage changes preserve allowances, employment date and SMS deduction references.
+evaluate("config.dutyPay=70000;loadConfig()");
+saved.set('shift_payroll_sms_reference_v1',JSON.stringify({rate:.15}));
+saved.set('shift_bonus_sms_reference_v1',JSON.stringify({rate:.05}));
+ctx.PayrollEstimate.reloadReference();ctx.PayrollEstimate.open();click('wage-manual-tab');
+assert.equal(elem('wage-manual-panel').hidden,false);assert.equal(elem('wage-sms-panel').hidden,true);
+const preserved=evaluate('JSON.stringify(config)');
+for(const value of ['', '0','-1','12.5','1,23','1000000001','1e4']){
+ elem('wage-manual-base').value=value;elem('wage-manual-ordinary').value='14,482';click('wage-manual-apply');
+ assert.equal(evaluate('JSON.stringify(config)'),preserved);assert.match(elem('wage-manual-status').textContent,/기본시급/);
+}
+elem('wage-manual-base').value='11,050';elem('wage-manual-ordinary').value='';click('wage-manual-apply');
+assert.equal(evaluate('JSON.stringify(config)'),preserved);assert.match(elem('wage-manual-status').textContent,/통상시급/);
+elem('wage-manual-ordinary').value='14482';click('wage-manual-apply');
+assert.equal(evaluate('config.baseHourly'),11050);assert.equal(evaluate('config.ordinaryHourly'),14482);
+const manualExpected=JSON.parse(preserved);manualExpected.baseHourly=11050;manualExpected.ordinaryHourly=14482;
+assert.deepEqual(JSON.parse(evaluate('JSON.stringify(config)')),manualExpected);
+assert.equal(saved.get('shift_payroll_sms_reference_v1'),JSON.stringify({rate:.15}));assert.equal(saved.get('shift_bonus_sms_reference_v1'),JSON.stringify({rate:.05}));
+assert.equal(elem('payroll-sms-dialog').open,false);assert.equal(elem('wage-manual-base').value,'');
+ctx.PayrollEstimate.open();assert.equal(elem('wage-manual-base').value,'11,050');click('wage-manual-tab');
+elem('wage-manual-base').value='22000';elem('payroll-sms-dialog').close();
+assert.equal(evaluate('config.baseHourly'),11050);assert.equal(elem('wage-manual-base').value,'');
+console.log('PASS manual wage modes, integer validation, preserved allowances/date/deductions, cancellation and private draft clearing');

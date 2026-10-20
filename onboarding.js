@@ -41,7 +41,7 @@
   for(const [i,bar] of [...dialog.querySelectorAll('.onboarding-progress span')].entries())bar.dataset.filled=String(i<=step);
   for(const [i,panel] of [...dialog.querySelectorAll('.onboarding-panel')].entries())panel.hidden=i!==step;
   const titles=['입사일을\n알려주세요','어느 조에서\n근무하시나요?','시급을 설정하면\n준비가 끝나요'];
-  const copies=['내 연차와 예상 급여를 계산하는 기준이에요.','선택한 조에 맞춰 내 근무표를 만들어요.','급여 문자를 붙여넣으면 필요한 금액만 읽어와요.'];
+  const copies=['내 연차와 예상 급여를 계산하는 기준이에요.','선택한 조에 맞춰 내 근무표를 만들어요.','문자로 가져오거나 시급을 직접 입력할 수 있어요.'];
   $('onboarding-title').textContent=titles[step];$('onboarding-description').textContent=copies[step];
   $('onboarding-date').max=today();$('onboarding-date').value=config.hireDate||'';
   selected=['A','B','C'].includes(text('shift_active_group'))?text('shift_active_group'):'';
@@ -51,7 +51,7 @@
   $('onboarding-base-wage').textContent=Number(config.baseHourly||0).toLocaleString('ko-KR')+'원';
   $('onboarding-ordinary-wage').textContent=Number(config.ordinaryHourly||0).toLocaleString('ko-KR')+'원';
   $('onboarding-import-again').hidden=!wagesReady;
-  $('onboarding-next').textContent=step===2?(wagesReady?'캘린더 시작하기':'급여 문자로 시급 설정하기'):'다음';
+  $('onboarding-next').textContent=step===2?(wagesReady?'캘린더 시작하기':'시급 설정하기'):'다음';
   $('onboarding-next').disabled=step===1&&!selected;
   $('onboarding-heading').focus();dialog.querySelector('.onboarding-main').scrollTop=0;
  }
@@ -90,8 +90,8 @@
  $('onboarding-import-again').addEventListener('click',()=>PayrollEstimate.open({onboarding:true}));
  $('onboarding-login').addEventListener('click',()=>$('account-sheet-open').click());
  $('onboarding-reopen').addEventListener('click',()=>open(true));
- $('payroll-sms-dialog').addEventListener('close',()=>{if(active)requestAnimationFrame(()=>{if(active){paint();if(step===2&&(config.baseHourly>0||config.ordinaryHourly>0)&&!(config.baseHourly>0&&config.ordinaryHourly>0))$('onboarding-error').textContent='기본시급과 통상시급이 함께 있는 급여 문자를 확인해 주세요.';$('onboarding-next').focus()}})});
- window.addEventListener('shift-payroll-applied',()=>{if(active&&step===2){if(!finish()){$('onboarding-error').textContent='기본시급과 통상시급이 함께 있는 급여 문자를 확인해 주세요.';}}});
+ $('payroll-sms-dialog').addEventListener('close',()=>{if(active)requestAnimationFrame(()=>{if(active){paint();if(step===2&&(config.baseHourly>0||config.ordinaryHourly>0)&&!(config.baseHourly>0&&config.ordinaryHourly>0))$('onboarding-error').textContent='기본시급과 통상시급을 모두 설정해 주세요.';$('onboarding-next').focus()}})});
+ window.addEventListener('shift-payroll-applied',()=>{if(active&&step===2){if(!finish()){$('onboarding-error').textContent='기본시급과 통상시급을 모두 설정해 주세요.';}}});
  window.ShiftOnboarding={open:()=>open(true),needsSetup:()=>state.status==='in_progress',refresh(){if(active&&!saving&&!manual&&ready())finish();}};
  window.addEventListener('load',()=>{if(state.status==='in_progress'){if(ready())remember({status:'complete',step:2});else open();}});
 })();
