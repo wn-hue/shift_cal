@@ -1,0 +1,56 @@
+/* A quiet, bright setup flow, independent of the selected calendar theme. */
+#onboarding-dialog{--onboarding-blue:#3182f6;box-sizing:border-box;position:fixed;inset:0;width:100%;max-width:none;height:var(--visible-height,100dvh);max-height:100dvh;margin:0;padding:0;border:0;border-radius:0;background:#fff!important;color:#191f28!important;box-shadow:none;overflow:hidden;color-scheme:light}
+#onboarding-dialog:not([open]){display:none}
+#onboarding-dialog[open]{display:flex;flex-direction:column;align-items:center}
+#onboarding-dialog::backdrop{background:#fff}
+#onboarding-dialog *,#onboarding-dialog *::before,#onboarding-dialog *::after{box-sizing:border-box}
+#onboarding-dialog [hidden]{display:none!important}
+#onboarding-dialog .onboarding-top{width:100%;max-width:480px;padding:calc(16px + env(safe-area-inset-top)) 24px 0;flex:none}
+#onboarding-dialog .onboarding-brand{display:flex;align-items:center;gap:9px;height:38px;font-size:14px;font-weight:650;color:#333d4b}
+#onboarding-dialog .onboarding-brand img{width:30px;height:30px;border-radius:9px}
+#onboarding-dialog .onboarding-brand>span{flex:1}
+#onboarding-dialog .onboarding-brand button{min-width:38px;min-height:38px;padding:5px;border:0;background:transparent;color:#6b7684;font:inherit;font-size:13px;cursor:pointer}
+#onboarding-dialog .onboarding-progress{display:flex;gap:6px;margin:20px 0 0}
+#onboarding-dialog .onboarding-progress span{flex:1;height:4px;background:#f0f2f5;border-radius:3px}
+#onboarding-dialog .onboarding-progress span[data-filled=true]{background:#3182f6}
+#onboarding-dialog .onboarding-main{width:100%;max-width:480px;flex:1;min-height:0;overflow-y:auto;padding:26px 24px 12px;overscroll-behavior:contain}
+#onboarding-dialog #onboarding-step-label{font-size:12px;color:#8b95a1;margin:0 0 12px}
+#onboarding-dialog #onboarding-heading{outline:0}
+#onboarding-dialog h1{font:inherit;font-size:30px;line-height:1.35;letter-spacing:-1.1px;font-weight:750;margin:0;white-space:pre-line;color:#191f28}
+#onboarding-dialog #onboarding-description{font-size:14px;line-height:1.7;color:#6b7684;margin:14px 0 28px}
+#onboarding-dialog .onboarding-art{display:grid;place-items:center;width:72px;height:72px;background:#eaf3ff;border-radius:24px;margin-bottom:24px;color:#3182f6}
+#onboarding-dialog .onboarding-art svg{width:36px;height:36px}
+#onboarding-dialog .onboarding-panel label{display:block;font-size:13px;color:#6b7684;margin-bottom:9px}
+#onboarding-dialog #onboarding-date{width:100%;min-width:0;min-height:58px;border:1px solid #e5e8eb;border-radius:15px;background:#f7f8fa!important;color:#191f28!important;font:inherit;font-size:18px!important;padding:16px;box-shadow:none}
+#onboarding-dialog .onboarding-tip{display:flex;gap:9px;margin:18px 0;padding:15px;background:#f7f8fa;border-radius:14px;font-size:12px;line-height:1.7;color:#6b7684}
+#onboarding-dialog .onboarding-tip svg{flex:none;width:17px;height:17px;margin-top:2px;color:#8b95a1}
+#onboarding-dialog .onboarding-group-list{display:grid;gap:12px}
+#onboarding-dialog [data-onboarding-group]{display:flex;align-items:center;gap:14px;min-height:76px;width:100%;padding:16px 18px;border:1px solid #e5e8eb;border-radius:17px;background:#fff;color:#333d4b;text-align:left;font:inherit;cursor:pointer}
+#onboarding-dialog .onboarding-group-letter{display:grid;place-items:center;width:40px;height:40px;background:#f2f4f6;border-radius:13px;font-size:20px;font-weight:700}
+#onboarding-dialog [data-onboarding-group]>strong{flex:1;font-size:17px;font-weight:600}
+#onboarding-dialog .onboarding-check{display:grid;place-items:center;width:23px;height:23px;border-radius:50%;border:1.5px solid #d1d6db;color:transparent;font-size:15px}
+#onboarding-dialog [aria-pressed=true]{border-color:#3182f6;background:#f4f8ff}
+#onboarding-dialog [aria-pressed=true] .onboarding-group-letter{background:#e5efff;color:#2272df}
+#onboarding-dialog [aria-pressed=true] .onboarding-check{background:#3182f6;border-color:#3182f6;color:#fff}
+#onboarding-dialog .onboarding-import-card{padding:22px;border:1px solid #edf0f3;border-radius:20px}
+#onboarding-dialog .onboarding-import-card strong{font-size:16px;display:block;line-height:1.5;margin-bottom:8px}
+#onboarding-dialog .onboarding-import-card p{font-size:13px;color:#6b7684;line-height:1.7;margin:0}
+#onboarding-dialog .onboarding-import-card ol{padding-left:18px;margin:18px 0 0;font-size:13px;line-height:2;color:#333d4b}
+#onboarding-dialog .onboarding-private-note{display:flex;gap:7px;align-items:center;font-size:11px;color:#8b95a1;margin:17px 0;line-height:1.6}
+#onboarding-dialog .onboarding-private-note svg{width:15px;height:15px;flex:none}
+#onboarding-dialog #onboarding-wage-summary{display:grid;grid-template-columns:1fr 1fr;gap:14px;background:#eaf3ff;border-radius:16px;padding:18px;margin-top:16px}
+#onboarding-dialog #onboarding-wage-summary span{font-size:12px;display:block;color:#6b7684;margin-bottom:6px}
+#onboarding-dialog #onboarding-wage-summary strong{font-size:19px;color:#191f28}
+#onboarding-dialog .onboarding-footer{width:100%;max-width:480px;padding:8px 24px calc(20px + env(safe-area-inset-bottom));flex:none;background:#fff}
+#onboarding-dialog #onboarding-error{font-size:12px;line-height:1.6;color:#d14343;margin:0 0 10px;min-height:0}
+#onboarding-dialog #onboarding-error:empty{display:none}
+#onboarding-dialog #onboarding-next{display:block;width:100%;min-height:54px;padding:14px 10px;border:0;border-radius:16px;background:#3182f6;color:#fff;font:inherit;font-size:16px;font-weight:600;cursor:pointer}
+#onboarding-dialog #onboarding-next:disabled{background:#eaf3ff;color:#8db7ef;cursor:default}
+#onboarding-dialog :is(#onboarding-login,#onboarding-import-again){display:block;border:0;background:transparent;color:#6b7684;font:inherit;font-size:12px;min-height:40px;padding:10px 0;cursor:pointer;text-align:center;width:100%}
+#onboarding-dialog #onboarding-login{margin-top:8px}
+#onboarding-dialog :is(button,input):focus-visible{outline:2px solid #3182f6;outline-offset:3px}
+#view-all #onboarding-reopen{display:block;margin:6px auto 18px;border:0;background:transparent;color:var(--menu-sub,#6b7684);font:inherit;font-size:12px;min-height:40px;padding:8px 14px;cursor:pointer}
+@media(max-width:350px){#onboarding-dialog :is(.onboarding-top,.onboarding-main,.onboarding-footer){padding-left:20px;padding-right:20px}#onboarding-dialog h1{font-size:27px}#onboarding-dialog .onboarding-main{padding-top:22px}}
+@media(max-height:650px){#onboarding-dialog .onboarding-art{width:52px;height:52px;border-radius:17px;margin-bottom:16px}#onboarding-dialog .onboarding-main{padding-top:18px}#onboarding-dialog #onboarding-description{margin-bottom:20px}}
+
+#payroll-sms-dialog[data-onboarding=true] :is(label[for="payroll-bonus-sms-text"],label[for="payroll-bonus-sms-text"]+p,#payroll-bonus-sms-text){display:none}

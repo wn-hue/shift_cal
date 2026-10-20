@@ -29,7 +29,15 @@
     const text = document.getElementById('payroll-sms-text'), bonusText = document.getElementById('payroll-bonus-sms-text');
     const status = document.getElementById('payroll-sms-status'), preview = document.getElementById('payroll-sms-preview');
     const apply = document.getElementById('payroll-sms-apply'), dialog = document.getElementById('payroll-sms-dialog');
-    api.open = () => { dialog.showModal(); };
+    const smsIntro=document.querySelector('#payroll-sms-title + p'), smsLabel=document.querySelector('label[for="payroll-sms-text"]');
+    const defaultIntro=smsIntro?.textContent, defaultLabel=smsLabel?.textContent;
+    api.open = options => {
+        const onboarding=options?.onboarding===true;
+        dialog.setAttribute('data-onboarding',String(onboarding));
+        if(smsIntro)smsIntro.textContent=onboarding?'기본시급과 통상시급을 확인해 주세요. 상여금 문자는 나중에 추가할 수 있어요.':defaultIntro;
+        if(smsLabel)smsLabel.textContent=onboarding?'급여 문자 붙여넣기':defaultLabel;
+        dialog.showModal();
+    };
     document.getElementById('payroll-sms-open').addEventListener('click', api.open);
     document.getElementById('payroll-sms-close').addEventListener('click', () => dialog.close());
     dialog.addEventListener('close', () => { clearDraft();document.getElementById('payroll-sms-open')?.focus(); });
@@ -118,7 +126,8 @@
         }
         api.reloadReference();root.calculatePayrollFromInputs();
         if(window.AccountSync)AccountSync.changed();
-        document.getElementById('payroll-sms-applied').textContent='설정 적용됨';dialog.close();
+        document.getElementById('payroll-sms-applied').textContent='설정 적용됨';clearDraft();dialog.close();
+        if(typeof window.CustomEvent==='function')window.dispatchEvent(new CustomEvent('shift-payroll-applied'));
     });
     document.getElementById('payroll-sms-clear').addEventListener('click',clearDraft);
     render();

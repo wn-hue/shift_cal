@@ -39,6 +39,7 @@
             : '내 근무표와 연차·예상 급여를 확인할 수 있어요.';
         const buttons = $('first-use-guide').querySelectorAll('button');
         buttons[0].hidden = true; buttons[1].hidden = !needsHire; buttons[2].hidden = !needsPay;
+        if (window.ShiftOnboarding) window.ShiftOnboarding.refresh();
     }
     $('leave-settings-dialog').addEventListener('close', () => $('menu-leave-settings').querySelector('button').focus());
     window.SettingsUI = {openMenu,openGroup,closeGroup,openLeave,refresh,syncGroup};

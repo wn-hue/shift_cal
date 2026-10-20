@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const html=fs.readFileSync(require.resolve('../index.html'),'utf8'),elements=new Map(),saved=new Map();
 function elem(id){
-    if(!elements.has(id))elements.set(id,{value:'',checked:false,hidden:false,open:false,style:{},handlers:{},_text:'',
+    if(!elements.has(id))elements.set(id,{value:'',checked:false,hidden:false,open:false,style:{},handlers:{},attributes:{},setAttribute(k,v){this.attributes[k]=String(v)},_text:'',
         get innerText(){return this._text},set innerText(v){this._text=String(v)},get textContent(){return this._text},set textContent(v){this._text=String(v)},
         classList:{add(){},remove(){},toggle(){}},addEventListener(k,f){(this.handlers[k]||=[]).push(f)},focus(){},showModal(){this.open=true},close(){this.open=false;for(const f of this.handlers.close||[])f()}});
     return elements.get(id);
