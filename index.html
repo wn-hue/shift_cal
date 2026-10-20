@@ -933,7 +933,6 @@
 <link rel="stylesheet" href="./app-surfaces.css?v=5">
 <link rel="stylesheet" href="./screen-refinement.css?v=6">
 <link rel="stylesheet" href="./onboarding.css?v=1">
-<link rel="stylesheet" href="./adaptive-layout.css?v=3">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1748,7 +1747,7 @@
             const rows = Math.ceil((firstDayIndex + lastDate) / 7);
             const grid = document.getElementById('calendar-grid');
             grid.innerHTML = '';
-            grid.style.gridTemplateRows = `repeat(${rows}, minmax(var(--calendar-cell-min, 88px), 1fr))`;
+            grid.style.gridTemplateRows = `repeat(${rows}, minmax(88px, 1fr))`;
             const today = new Date();
             const todayStr = toDateKey(today.getFullYear(), today.getMonth(), today.getDate());
             const labels = { DAY:'주', NIGHT:'야', OFF:'휴', LEAVE:'연차', HALF_PRE:'반전', HALF_POST:'반후', UNPAID_OFF:'무휴', UNPAID_HALF_PRE:'무전', UNPAID_HALF_POST:'무후', SPECIAL_DAY:'주특', SPECIAL_NIGHT:'야특', SPECIAL_DAY_NO_OT:'주특', SPECIAL_NIGHT_NO_OT:'야특' };
@@ -2822,7 +2821,6 @@
 <script src="./lost-found.js?v=5"></script>
 <script src="./bright-menu.js?v=2"></script>
 <script src="./dialog-viewport.js?v=1"></script>
-<script src="./adaptive-layout.js?v=3"></script>
 
 <dialog id="onboarding-dialog" aria-labelledby="onboarding-title" aria-describedby="onboarding-description">
  <header class="onboarding-top">

@@ -10,7 +10,7 @@ for(const m of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))if(m[1].tri
 vm.runInContext(fs.readFileSync(require.resolve('../calendar-ui.js'),'utf8'),ctx);
 const run=s=>vm.runInContext(s,ctx),grid=elements.get('calendar-grid');
 run("updateLeaveStats=()=>{};currentGroup='C';currentCalDate=new Date(2026,9,1);dayMemos={'2026-10-01':'<img src=x onerror=alert(1)>'};renderCalendar()");
-assert.equal(grid.children.length,35);assert.equal(grid.style.gridTemplateRows,'repeat(5, minmax(var(--calendar-cell-min, 88px), 1fr))');
+assert.equal(grid.children.length,35);assert.equal(grid.style.gridTemplateRows,'repeat(5, minmax(88px, 1fr))');
 assert.equal(elements.get('cal-month-title-text').innerText,'2026. 10');
 assert.equal(elements.has('calendar-group-label'),false);
 const days=grid.children.filter(e=>e.attributes.role==='button');assert.equal(days.length,31);
