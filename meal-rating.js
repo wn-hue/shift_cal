@@ -4,11 +4,19 @@ const root=document.getElementById('today-menu-cards');if(!root)return;
 const names=['조식','중식','석식','야식'];
 const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(Date.now()-3*3600000));
 const node=(tag,cls,text)=>{const el=document.createElement(tag);el.className=cls;if(text!==undefined)el.textContent=text;return el;};
+// Presentation only: use the same outlined icon on every platform.
+function voteGlyph(){
+ const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
+ for(const [key,value] of Object.entries({viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':'1.7','stroke-linecap':'round','stroke-linejoin':'round','aria-hidden':'true'}))svg.setAttribute(key,value);
+ const path=document.createElementNS(ns,'path');
+ path.setAttribute('d','M7 10v11H3V10h4Zm0 0 5-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2l-1 8a2 2 0 0 1-2 2H7');
+ svg.append(path);return svg;
+}
 let state={date:today(),totals:null,mine:{},busy:false,error:''},lastRead=0;
 function cards(){return [...root.querySelectorAll('.meal-card')].map(card=>({card,meal:card.querySelector('h2')?.textContent.trim()})).filter(x=>names.includes(x.meal));}
 function paint(){for(const{card,meal}of cards()){
  let block=card.querySelector('.meal-rating');if(!block){block=node('section','meal-rating');block.setAttribute('aria-label',meal+' 식단 평가');const actions=node('div','meal-rating-actions');for(const[v,label]of[['up','👍 좋아요'],['down','👎 싫어요']]){const b=node('button','meal-rating-button');b.type='button';b.dataset.vote=v;b.onclick=()=>vote(meal,state.mine[meal]===v?null:v);actions.append(b);}block.append(actions,node('span','meal-rating-count'),node('p','meal-rating-status'));const retry=node('button','meal-rating-retry','집계 다시 불러오기');retry.type='button';retry.onclick=()=>request();block.append(retry);card.append(block);}
- const totals=state.totals?.[meal];for(const b of block.querySelectorAll('[data-vote]')){const v=b.dataset.vote,label=v==='up'?'👍 좋아요':'👎 싫어요';b.textContent=label+' '+(totals?totals[v]:'—');b.setAttribute('aria-label',meal+' '+(v==='up'?'좋아요':'싫어요')+(totals?' '+totals[v]+'표':''));b.setAttribute('aria-pressed',String(state.mine[meal]===v));b.disabled=state.busy||!totals;}
+ const totals=state.totals?.[meal];for(const b of block.querySelectorAll('[data-vote]')){const v=b.dataset.vote,label=v==='up'?'👍 좋아요':'👎 싫어요';b.replaceChildren(voteGlyph(),node('span','meal-rating-label',(v==='up'?'좋아요':'싫어요')+' '+(totals?totals[v]:'—')));b.setAttribute('aria-label',meal+' '+(v==='up'?'좋아요':'싫어요')+(totals?' '+totals[v]+'표':''));b.setAttribute('aria-pressed',String(state.mine[meal]===v));b.disabled=state.busy||!totals;}
  block.querySelector('.meal-rating-count').textContent=totals?'총 '+(totals.up+totals.down)+'표':'';
  const status=block.querySelector('.meal-rating-status');status.setAttribute('role','status');status.textContent=state.error||(state.busy?'집계 연결 중…':state.mine[meal]?'내 평가가 반영됐어요. 다시 누르면 취소돼요.':'식사 후 평가해 주세요.');block.querySelector('.meal-rating-retry').hidden=!state.error;
 }}

@@ -1,0 +1,253 @@
+/* Mobile surface system. Deliberately excludes the calendar and shared navigation.
+   Page tokens stay on the secondary views/dialogs so calendar themes cannot inherit them. */
+:is(#view-payroll,#view-menu,#view-all,#payroll-sms-dialog,#leave-settings-dialog,#group-picker-dialog,#app-preferences-dialog,#commute-dialog,#lost-found-dialog,#parking-dialog,#community-lab) {
+  --ui-page:#f2f4f6; --ui-card:#fff; --ui-ink:#191f28; --ui-copy:#333d4b;
+  --ui-muted:#6b7684; --ui-line:#eef0f3; --ui-field:#f7f8fa;
+  --ui-blue:#1b64da; --ui-blue-soft:#e8f3ff;
+  --menu-card:var(--ui-card); --menu-ink:var(--ui-ink); --menu-sub:var(--ui-muted);
+  --menu-line:var(--ui-line); --menu-blue:var(--ui-blue); --menu-soft:var(--ui-field);
+  color:var(--ui-copy); letter-spacing:-.025em; -webkit-tap-highlight-color:transparent;
+}
+body[data-pref-theme="dark"] :is(#view-payroll,#view-menu,#view-all,#payroll-sms-dialog,#leave-settings-dialog,#group-picker-dialog,#app-preferences-dialog,#commute-dialog,#lost-found-dialog,#parking-dialog,#community-lab) {
+  --ui-page:#17191d; --ui-card:#24272c; --ui-ink:#f3f4f5; --ui-copy:#e1e4e8;
+  --ui-muted:#a5adb8; --ui-line:#35393f; --ui-field:#2d3138;
+  --ui-blue:#8bb8ff; --ui-blue-soft:#263b57;
+}
+body:not([data-pref-theme="dark"]):is([data-view="payroll"],[data-view="menu"],[data-view="all"]) { background:#f2f4f6; }
+body[data-pref-theme="dark"]:is([data-view="payroll"],[data-view="menu"],[data-view="all"]) { background:#17191d; }
+body:is([data-view="payroll"],[data-view="menu"]) .reference-header { padding:14px 4px 10px; margin-bottom:12px; background:transparent!important; }
+body:is([data-view="payroll"],[data-view="menu"]) .header-view-title { font-size:25px; font-weight:750; letter-spacing:-1px; }
+#view-payroll,#view-menu { padding:0 4px 28px; }
+:is(#view-payroll,#view-menu,#view-all) button { font-family:inherit; }
+:is(#view-payroll,#view-menu,#view-all) button:not(:disabled) { cursor:pointer; }
+:is(#view-payroll,#view-menu,#view-all) button:disabled { cursor:default; }
+
+/* Salary: one primary amount, quiet supporting numbers, and readable calculation rows. */
+#view-payroll :is(.card,.salary-hero) { border:0!important; border-radius:24px!important; padding:24px; margin-bottom:16px; background:var(--ui-card)!important; box-shadow:none; }
+#view-payroll .gcal-topbar { margin:0 0 18px; gap:8px; }
+#view-payroll .month-title-nav { border:0; background:transparent!important; gap:2px; padding:0; }
+#view-payroll .month-title-btn { font-size:17px; font-weight:650; padding:8px 4px; }
+#view-payroll .nav-arrow-btn { border:0; background:transparent; width:32px; min-width:32px; min-height:44px; color:var(--ui-muted); font-size:11px; }
+#view-payroll .gcal-chip-btn { border:0; background:var(--ui-card); color:var(--ui-copy); border-radius:12px; min-height:40px; padding:8px 12px; font-size:12px; font-weight:600; }
+#view-payroll .salary-month-viewport { border-radius:24px; margin-bottom:16px; }
+#view-payroll .salary-hero { padding:26px 24px 24px; }
+#view-payroll .period-tag { font-size:11px; font-weight:450; color:var(--ui-muted)!important; padding:0; line-height:1.7; }
+#view-payroll .salary-hero>.hero-label { margin:22px 0 4px; font-size:16px; font-weight:550; color:var(--ui-copy)!important; }
+body[data-pref-theme] #view-payroll #hero-gross-pay { font-size:clamp(29px,8.7vw,38px); line-height:1.4; letter-spacing:-1.3px; font-weight:750; }
+#view-payroll .hero-subgrid { gap:20px; margin-top:24px; padding-top:20px; }
+#view-payroll .hero-subgrid .hero-label { font-size:12px; margin-bottom:6px; }
+body[data-pref-theme] #view-payroll :is(#hero-regular-pay,#hero-bonus-pay) { font-size:18px; line-height:1.5; font-weight:650; letter-spacing:-.4px; }
+#view-payroll .card-header { font-size:18px; min-height:32px; margin-bottom:20px; font-weight:700; }
+#view-payroll .estimate-toggle { min-height:44px; align-items:center; }
+#view-payroll .estimate-title { font-size:16px; font-weight:600; }
+#view-payroll .estimate-caption { font-size:12px; margin-top:5px; }
+#view-payroll #payroll-estimate-toggle:checked { background:var(--ui-blue)!important; }
+#view-payroll .estimate-row { font-size:13px; line-height:1.6; padding:12px 0; gap:12px; }
+#view-payroll .estimate-row strong { font-size:14px; white-space:nowrap; }
+#view-payroll .estimate-net { padding:16px; border:0; margin-top:12px; border-radius:16px; }
+#view-payroll #estimate-net { font-size:22px; }
+#view-payroll :is(.estimate-note,.estimate-disclaimer,.estimate-applied) { font-size:12px; line-height:1.7; }
+#view-payroll .wage-settings-card .wage-edit-button { background:var(--ui-field)!important; color:var(--ui-copy)!important; border:0; border-radius:10px; padding:8px 11px; min-height:38px; font-size:12px; }
+#view-payroll .wage-settings-card .wage-rates { gap:20px; margin-bottom:18px; }
+#view-payroll .wage-settings-card .wage-rates .input-group+.input-group { padding-left:20px; }
+#view-payroll .wage-settings-card .wage-rates label { font-size:13px; }
+#view-payroll .wage-settings-card .wage-rates input[readonly] { font-size:22px!important; font-weight:700; min-height:36px; }
+#view-payroll #wage-allowance-settings { padding-top:8px; }
+#view-payroll #wage-allowance-settings label { font-size:12px; }
+#view-payroll #wage-allowance-settings input[readonly] { font-size:16px!important; }
+#view-payroll .wage-help { border-top:1px solid var(--ui-line); margin-top:10px; padding-top:12px; }
+#view-payroll .wage-help summary { cursor:pointer; font-size:12px; color:var(--ui-muted); min-height:32px; line-height:32px; }
+#view-payroll #wage-sms-hint { font-size:12px; line-height:1.75; margin:8px 0 0; }
+#view-payroll .calendar-reflect-button { border:0; min-height:38px; padding:8px 11px; border-radius:10px; background:var(--ui-blue-soft); color:var(--ui-blue); font-size:12px; font-weight:550; }
+#view-payroll .payroll-input-card .card-header { margin-bottom:6px; }
+#view-payroll .calendar-days-hint { font-size:12px; margin-bottom:20px; }
+#view-payroll .payroll-input-card :is(.regular-days,.special-days) { gap:12px; margin-bottom:10px; }
+#view-payroll .payroll-input-card :is(.regular-days,.special-days) .input-group { display:grid; grid-template-columns:minmax(0,1fr) 30px auto; align-items:center; gap:4px; padding:12px; min-height:56px; box-sizing:border-box; border:0; border-radius:14px; background:var(--ui-field); }
+#view-payroll .payroll-input-card :is(.regular-days,.special-days) label { grid-column:1; grid-row:1; font-size:11px; margin:0; line-height:1.5; }
+#view-payroll .payroll-input-card :is(.regular-days,.special-days) input[readonly] { grid-column:2; grid-row:1; min-height:28px; height:28px; border:0; padding:0; background:transparent!important; border-radius:0; font-size:21px; text-align:right; font-weight:650; line-height:28px; }
+#view-payroll .payroll-input-card :is(.regular-days,.special-days) .work-input-unit { position:static; grid-column:3; grid-row:1; font-size:12px; line-height:28px; }
+#view-payroll .workday-summary { margin:12px 0 0; padding:8px 0; }
+#view-payroll .workday-summary>div { min-height:30px; grid-template-columns:minmax(0,1fr) minmax(0,1.4fr); }
+#view-payroll .workday-summary label { font-size:12px; }
+#view-payroll .workday-summary input[readonly] { font-size:13px; }
+#view-payroll .workday-adjustments>summary { min-height:46px; font-size:14px; }
+#view-payroll .workday-adjustments small { font-size:11px; margin-left:6px; }
+#view-payroll .workday-adjustment-fields { gap:12px; }
+#view-payroll .workday-adjustment-fields label { font-size:12px; }
+#view-payroll .adjustment-hint { font-size:11px; margin-top:10px; }
+#view-payroll .payroll-input-card .toggle-box { font-size:14px; min-height:44px; margin:6px 0 10px; background:transparent!important; }
+#view-payroll .payroll-input-card :is(.btn-save,.btn-reset-data) { min-height:48px; border-radius:13px; font-size:14px; }
+#view-payroll .payroll-input-card .btn-reset-data { padding:10px 16px; }
+#view-payroll #payroll-payment-details { padding:22px 24px; }
+#view-payroll #payroll-payment-details>summary { font-size:17px; min-height:40px; }
+#view-payroll .payroll-disclosure-state { font-size:12px; }
+#view-payroll .pay-table td { font-size:14px; padding:13px 0; }
+#view-payroll .pay-table td.num { font-size:15px; }
+#view-payroll .payroll-detail-meta { font-size:12px; }
+
+/* Meals: the food and the vote are distinct, without a box around every line. */
+#view-menu .meal-date-card { padding:4px 4px 22px; }
+#view-menu .meal-eyebrow { font-size:12px; margin-bottom:12px; }
+#view-menu .meal-date-row { gap:8px; }
+#view-menu .meal-date-row h1 { font-size:22px; font-weight:700; letter-spacing:-.8px; }
+#view-menu .meal-refresh { font-size:12px; min-height:40px; padding:8px 12px; border:0; border-radius:12px; }
+#view-menu .meal-status { font-size:12px; margin-top:12px; }
+#view-menu .meal-date-card>.meal-note { font-size:11px; margin-top:6px; }
+#view-menu :is(.meal-card,.meal-weekly) { border:0!important; border-radius:24px; padding:24px; background:var(--ui-card)!important; box-shadow:none; }
+#view-menu .meal-grid { gap:16px; }
+#view-menu .meal-card-heading { margin-bottom:22px; }
+#view-menu .meal-card h2 { font-size:19px; gap:10px; font-weight:700; }
+#view-menu .meal-card h2::before { width:32px; height:32px; flex-basis:32px; background-size:32px; border-radius:11px; }
+#view-menu .meal-category { font-size:11px; background:var(--ui-field); padding:6px 9px; }
+#view-menu .meal-items { font-size:15px; line-height:1.9; color:var(--ui-copy); }
+#view-menu .meal-items li:first-child { font-size:19px; font-weight:650; line-height:1.6; margin-bottom:8px; }
+#view-menu .meal-extras { margin-top:18px; padding-top:14px; }
+#view-menu .meal-extras summary { font-size:13px; min-height:32px; }
+#view-menu .meal-rating { margin-top:22px; padding-top:18px; display:grid; grid-template-columns:auto 1fr; gap:10px 8px; }
+#view-menu .meal-rating-actions { grid-column:1/-1; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+#view-menu .meal-rating-button { display:flex; align-items:center; justify-content:center; gap:7px; min-height:46px; border:0; border-radius:13px; font-size:13px; font-weight:550; color:var(--ui-copy); background:var(--ui-field); padding:10px 6px; }
+#view-menu .meal-rating-button svg { width:18px; height:18px; flex:none; }
+#view-menu .meal-rating-button[data-vote="down"] svg { transform:rotate(180deg); }
+#view-menu .meal-rating-button[aria-pressed="true"] { background:var(--ui-blue-soft); color:var(--ui-blue); box-shadow:inset 0 0 0 1.5px var(--ui-blue); font-weight:650; }
+#view-menu .meal-rating-button:disabled { opacity:.55; }
+#view-menu .meal-rating-count { font-size:11px; line-height:1.7; color:var(--ui-muted); margin:0; }
+#view-menu .meal-rating-status { font-size:11px; line-height:1.7; margin:0; text-align:right; color:var(--ui-muted); }
+#view-menu .meal-rating-retry { grid-column:1/-1; min-height:40px; font-size:13px; color:var(--ui-blue); }
+#view-menu .meal-weekly>summary { font-size:15px; font-weight:600; }
+#view-menu .meal-weekly-rank h3 { font-size:14px; }
+#view-menu :is(.meal-rating-note,.meal-note,.meal-footer) { font-size:12px; line-height:1.75; }
+#view-menu>.meal-rating-note { padding:0 8px; }
+
+/* All services: familiar list navigation and colored, restrained icon accents. */
+#view-all { padding:18px 4px 28px; }
+#view-all .all-topline { margin:0 4px 26px; gap:8px; }
+#view-all .all-page-title { font-size:26px; font-weight:750; gap:10px; }
+#view-all .menu-brand-subtitle { font-size:13px; margin-top:2px; }
+#view-all .account-sheet-open { border:0; background:var(--ui-card); font-size:12px; padding:10px 12px; border-radius:20px; min-height:40px; }
+#view-all .menu-preferences { color:var(--ui-muted); }
+#view-all .all-settings-section { margin-bottom:16px; }
+#view-all #menu-group-settings { padding:0; border:0; border-radius:24px; background:var(--ui-card); box-shadow:none; }
+#view-all .group-summary { display:grid; grid-template-columns:42px minmax(0,1fr) 16px; grid-template-rows:auto auto; gap:3px 14px; padding:22px; min-height:94px; }
+#view-all .group-summary-icon { grid-column:1; grid-row:1/3; width:42px; height:42px; border-radius:15px; background:var(--ui-blue-soft); color:var(--ui-blue); }
+#view-all .group-summary-icon svg { width:25px; height:25px; }
+#view-all .group-summary-label { grid-column:2; grid-row:1; font-size:13px; font-weight:500; color:var(--ui-muted); }
+#view-all #menu-group-current { grid-column:2; grid-row:2; font-size:17px; font-weight:650; color:var(--ui-ink); text-align:left; }
+#view-all .group-summary-chevron { grid-column:3; grid-row:1/3; }
+#view-all :is(.all-shortcuts,.life-section) { background:var(--ui-card); border:0; border-radius:24px; padding:22px 22px 10px; margin-bottom:16px; }
+#view-all :is(.all-shortcuts,.life-section)>h2 { font-size:15px; font-weight:650; color:var(--ui-copy); margin:0 0 8px; }
+#view-all .all-shortcut-grid { display:block; }
+#view-all .all-shortcut { display:grid; grid-template-columns:40px minmax(0,1fr) auto; grid-template-rows:auto; align-items:center; min-height:72px; gap:12px; padding:12px 0; border:0; border-radius:12px; background:transparent; box-shadow:none; }
+#view-all .all-shortcut-icon { position:static; grid-column:1; grid-row:1; width:40px; height:40px; border-radius:14px; }
+#view-all .all-shortcut strong { grid-column:2; grid-row:1; font-size:16px; font-weight:550; }
+#view-all .all-shortcut-caption { grid-column:3; grid-row:1; font-size:12px; line-height:1.6; max-width:96px; text-align:right; }
+#view-all :is(.life-entry,.lab-entry) { min-height:78px; gap:14px; padding:14px 0; border:0; }
+#view-all .menu-services .life-entry+.life-entry { border:0; }
+#view-all :is(.menu-services,.all-menu-content) .menu-service-icon { width:40px; height:40px; border-radius:14px; background:var(--service-bg); color:var(--service-color); }
+#view-all :is(.menu-services,.all-menu-content) .menu-service-icon svg { width:25px; height:25px; }
+#view-all .menu-service-copy { gap:4px; }
+#view-all :is(.menu-services,.all-menu-content) .menu-service-copy strong { font-size:16px; font-weight:550; }
+#view-all :is(.menu-services,.all-menu-content) .menu-service-copy small { font-size:12px; line-height:1.6; }
+#view-all .all-menu-content>.lab-entry { border:0; border-radius:24px; background:var(--ui-card); margin:0 0 20px; padding:20px 22px; }
+#view-all .all-account-card { background:transparent; border:0; padding:0 8px; margin-bottom:8px; }
+#view-all .all-account-card summary { font-size:12px; min-height:44px; display:flex; align-items:center; }
+#view-all .all-account-card .account-hint { font-size:12px; line-height:1.75; }
+#view-all #onboarding-reopen { color:var(--ui-muted); font-size:12px; min-height:44px; padding:8px; }
+#view-all :is(.all-shortcut,.life-entry,.lab-entry,.group-summary):active { background:var(--ui-field); }
+body[data-pref-theme="dark"] #view-all :is(.menu-services,.all-menu-content) :is(.menu-service-icon,.all-shortcut-icon) { background:var(--ui-field); color:var(--ui-blue); }
+
+/* Settings and community tools use the same surface language, keeping viewport behavior. */
+:is(#payroll-sms-dialog,#leave-settings-dialog,#group-picker-dialog,#app-preferences-dialog,#commute-dialog,#lost-found-dialog,#parking-dialog,#community-lab) { border:0; border-radius:26px; }
+:is(#payroll-sms-dialog,#leave-settings-dialog,#group-picker-dialog,#app-preferences-dialog,#commute-dialog,#lost-found-dialog,#parking-dialog,#community-lab)::backdrop { background:rgba(25,31,40,.38); }
+:is(#payroll-sms-dialog,#leave-settings-dialog,#group-picker-dialog,#app-preferences-dialog,#commute-dialog,#lost-found-dialog,#parking-dialog,#community-lab) :is(.sms-dialog-header,.life-header,.preferences-header,.lab-header) h2 { font-size:23px; font-weight:700; letter-spacing:-.8px; }
+:is(#payroll-sms-dialog,#leave-settings-dialog,#group-picker-dialog,#app-preferences-dialog,#commute-dialog,#lost-found-dialog,#parking-dialog,#community-lab) :is(.sms-close-btn,.override-close,.life-header>button,.lab-header>button) { border:0; background:var(--ui-field); color:var(--ui-muted); min-height:40px; min-width:40px; }
+:is(#app-preferences-dialog,#commute-dialog,#lost-found-dialog,#parking-dialog,#community-lab) { background:var(--ui-page)!important; }
+#payroll-sms-dialog { background:var(--ui-card)!important; }
+#payroll-sms-dialog .sms-primary-btn { border-radius:14px!important; }
+#payroll-sms-dialog .sms-caption { font-size:13px; color:var(--ui-muted); line-height:1.7; }
+#payroll-sms-dialog .wage-method-tabs { padding:4px; border-radius:14px; }
+#payroll-sms-dialog .wage-method-tabs button { font-size:14px; min-height:44px; }
+#payroll-sms-dialog .wage-method-description { font-size:15px; }
+#payroll-sms-dialog :is(.sms-help,.sms-privacy) { font-size:12px; color:var(--ui-muted); line-height:1.7; }
+#leave-settings-dialog { padding:20px; background:var(--ui-page)!important; }
+#leave-settings-dialog :is(.leave-overview,.leave-edit-settings) { padding:18px!important; border-radius:20px!important; }
+#leave-settings-dialog .card-header { font-size:15px; margin-bottom:12px; }
+#leave-settings-dialog .leave-balance { margin:8px 0 12px; padding:14px 16px; border-radius:16px; background:var(--ui-blue-soft); }
+#leave-settings-dialog .leave-balance .stat-label { font-size:12px; }
+#leave-settings-dialog #stat-remain-leave { font-size:34px!important; }
+#leave-settings-dialog .leave-stat-grid .stat-label { font-size:12px; }
+#leave-settings-dialog :is(.leave-money-unit,.leave-money-total) { min-height:36px; font-size:12px; }
+#leave-settings-dialog .leave-edit-settings h3 { font-size:14px; }
+#leave-settings-dialog .input-group label { font-size:12px; }
+#leave-settings-dialog>.btn-save { min-height:48px; font-size:15px; border-radius:14px; }
+#group-picker-dialog .sms-dialog-header p { font-size:13px; line-height:1.7; }
+#group-picker-dialog .group-picker-options { gap:10px; }
+#group-picker-dialog .group-picker-options button { min-height:60px; border:0; border-radius:16px; background:var(--ui-field); padding:16px 20px; font-size:17px; }
+#group-picker-dialog .group-picker-options button[aria-pressed=true] { background:var(--ui-blue-soft); color:var(--ui-blue); box-shadow:inset 0 0 0 1.5px var(--ui-blue); }
+#group-picker-dialog .group-picker-note { font-size:12px; }
+#app-preferences-dialog :is(.preferences-card,.external-calendars,.all-info-section) { border-radius:22px!important; padding:22px; }
+#app-preferences-dialog :is(h3,.external-calendars h2,.all-info-section h2) { font-size:16px; font-weight:650; }
+#app-preferences-dialog .preferences-card label { min-height:56px; font-size:15px; border:0; padding:12px 0; }
+#app-preferences-dialog .preferences-card select { width:auto; min-width:100px; max-width:54%; border:0; font-size:14px!important; }
+#app-preferences-dialog .preferences-card select { appearance:none; -webkit-appearance:none; min-height:44px!important; padding:10px 28px 10px 12px; border:0!important; border-radius:12px; background:var(--ui-field) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%238b95a1' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E") right 8px center/14px no-repeat!important; color:var(--ui-copy)!important; }
+#app-preferences-dialog .preferences-card input[type="checkbox"] { appearance:none; -webkit-appearance:none; display:block; position:relative; width:44px; min-width:44px; height:26px; border:0; padding:0; border-radius:20px; background:#d1d6db; cursor:pointer; }
+#app-preferences-dialog .preferences-card input[type="checkbox"]::before { content:""; position:absolute; width:20px; height:20px; left:3px; top:3px; border-radius:50%; background:#fff; box-shadow:0 1px 3px #191f281a; }
+#app-preferences-dialog .preferences-card input[type="checkbox"]:checked { background:var(--ui-blue); }
+#app-preferences-dialog .preferences-card input[type="checkbox"]:checked::before { transform:translateX(18px); }
+body[data-pref-theme="dark"] #app-preferences-dialog .preferences-card input[type="checkbox"]:not(:checked) { background:#535d6a; }
+body[data-pref-theme="dark"] #view-payroll .btn-save { color:#17191d!important; }
+#app-preferences-dialog .all-info-list a { font-size:14px; min-height:58px; border:0; }
+#commute-dialog .bus-shift-banner { background:var(--ui-blue-soft); color:var(--ui-ink); box-shadow:none; border:0; border-radius:20px; padding:20px 16px; }
+#commute-dialog .bus-shift-banner strong { font-size:17px; color:var(--ui-ink); }
+#commute-dialog .bus-shift-banner small { color:var(--ui-muted); font-size:11px; }
+#commute-dialog .bus-shift-banner .bus-auto-button { background:var(--ui-card); color:var(--ui-blue); border:0; min-height:38px; border-radius:11px; font-size:11px; }
+#commute-dialog .bus-chip { border:0; min-height:44px; font-size:13px; border-radius:13px; }
+#commute-dialog .bus-chip[aria-pressed=true] { background:var(--ui-blue-soft); color:var(--ui-blue); box-shadow:inset 0 0 0 1.5px var(--ui-blue); }
+#commute-dialog .bus-search-label { font-size:14px; margin-top:24px; }
+#commute-dialog .bus-route { border-radius:20px; padding:18px; box-shadow:none; margin:12px 0; }
+#commute-dialog .bus-route-heading strong { font-size:17px; }
+#commute-dialog .bus-details summary { font-size:13px; }
+#commute-dialog .bus-departure { font-size:11px; }
+#commute-dialog .bus-route-note { font-size:12px; line-height:1.7; }
+#lost-found-dialog .lost-segments { border-radius:14px; padding:4px; background:var(--ui-line); }
+#lost-found-dialog .lost-segments button { font-size:13px; font-weight:550; border-radius:11px; }
+#lost-found-dialog .lost-segments button[aria-pressed=true] { background:var(--ui-card); color:var(--ui-ink); box-shadow:0 2px 6px #191f2810; font-weight:650; }
+#lost-found-dialog .lost-quick-filters .lost-button { font-size:12px; border-radius:12px; }
+#lost-found-dialog .lost-card { border-radius:20px; box-shadow:none; padding:18px; }
+#lost-found-dialog .lost-card h3 { font-size:17px; line-height:1.5; }
+#lost-found-dialog .lost-note { font-size:12px; line-height:1.8; }
+#lost-found-dialog #lost-new { min-height:52px; border-radius:15px; font-size:16px; box-shadow:none; }
+#lost-found-dialog.lost-inline-writing #lost-form { border:0; border-radius:20px; box-shadow:none; }
+#lost-found-dialog.lost-inline-writing .lost-choice-title { font-size:13px; }
+#lost-found-dialog.lost-inline-writing #lost-storage-help { font-size:11px; line-height:1.7; }
+#parking-dialog #parking-state { background:var(--ui-card); padding:24px; border-radius:22px; font-size:25px; font-weight:700; line-height:1.5; }
+#parking-dialog .parking-signals button { border-radius:18px; min-height:84px; font-size:16px; box-shadow:none; }
+#parking-dialog :is(.parking-note,.parking-counts) { font-size:13px; line-height:1.8; }
+#parking-dialog .parking-action { min-height:44px; font-size:14px; border-radius:12px; }
+#community-lab .lab-card { border-radius:22px; box-shadow:none; }
+#community-lab .lab-tabs button { font-size:13px; }
+#community-lab .lab-note { font-size:12px; }
+
+/* Keep both financial columns and secondary actions usable on smaller phones. */
+@media(max-width:360px) {
+  #view-payroll :is(.card,.salary-hero),#view-menu :is(.meal-card,.meal-weekly) { padding:20px; }
+  #view-payroll .month-title-btn { font-size:15px; }
+  #view-payroll .gcal-chip-btn { padding:8px 10px; }
+  #view-payroll .nav-arrow-btn { width:28px; min-width:28px; }
+  #view-payroll .wage-settings-card .wage-rates input[readonly] { font-size:20px!important; }
+  #view-payroll .wage-settings-card .wage-rates { gap:14px; }
+  #view-payroll .wage-settings-card .wage-rates .input-group+.input-group { padding-left:14px; }
+  #view-payroll .workday-adjustments small { font-size:10px; }
+  #view-payroll .workday-summary input[readonly] { font-size:12px; }
+  #view-menu .meal-date-row h1 { font-size:20px; }
+  #view-menu .meal-rating-button { font-size:12px; gap:5px; }
+  #view-all :is(.all-shortcuts,.life-section) { padding:20px 18px 8px; }
+  #view-all .all-shortcut { gap:10px; grid-template-columns:34px minmax(0,1fr) auto; }
+  #view-all .all-shortcut-icon { width:34px; height:36px; }
+  #view-all .all-shortcut strong { font-size:15px; }
+  #view-all .all-shortcut-caption { font-size:11px; max-width:84px; }
+  #view-all .group-summary { padding:20px 18px; gap:3px 10px; }
+  #view-all .menu-brand-subtitle { font-size:12px; }
+  #leave-settings-dialog { padding:16px; }
+  #commute-dialog .bus-route { padding:15px; }
+  #commute-dialog .bus-departure { font-size:10px; }
+}
