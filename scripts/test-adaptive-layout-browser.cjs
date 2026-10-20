@@ -13,9 +13,10 @@ const url=process.env.CHECK_URL||'http://127.0.0.1:8769/';
     for(const month of[9,4]){
      await page.evaluate(m=>{currentCalDate=new Date(2026,m,1);renderCalendar()},month);
      await page.waitForTimeout(80);
-     const result=await page.evaluate(()=>{const grid=document.getElementById('calendar-grid'),nav=document.querySelector('.bottom-nav'),header=document.querySelector('.reference-header'),rect=grid.getBoundingClientRect(),nr=nav.getBoundingClientRect();return {overflow:document.documentElement.scrollWidth-innerWidth,gridWidth:rect.width,navTop:nr.top,navBottom:nr.bottom,bottom:rect.bottom,top:rect.top,height:rect.height,rows:grid.children.length/7,min:parseFloat(getComputedStyle(grid).getPropertyValue('--calendar-cell-min')),header:header.getBoundingClientRect().bottom,day:Math.min(...[...grid.children].map(e=>e.getBoundingClientRect().height)),reserve:parseFloat(getComputedStyle(document.body).paddingBottom),navHeight:nr.height,desired:innerHeight-nr.height-(rect.top+scrollY)-16};});
+     const result=await page.evaluate(()=>{const grid=document.getElementById('calendar-grid'),nav=document.querySelector('.bottom-nav'),header=document.querySelector('.reference-header'),rect=grid.getBoundingClientRect(),nr=nav.getBoundingClientRect();return {overflow:document.documentElement.scrollWidth-innerWidth,gridWidth:rect.width,navTop:nr.top,navBottom:nr.bottom,bottom:rect.bottom,top:rect.top,height:rect.height,rows:grid.children.length/7,preferred:parseFloat(getComputedStyle(grid).getPropertyValue('--calendar-row-preferred')),min:parseFloat(getComputedStyle(grid).getPropertyValue('--calendar-cell-min')),header:header.getBoundingClientRect().bottom,day:Math.min(...[...grid.children].map(e=>e.getBoundingClientRect().height)),reserve:parseFloat(getComputedStyle(document.body).paddingBottom),navHeight:nr.height,desired:innerHeight-nr.height-(rect.top+scrollY)-16};});
      assert(result.overflow<=1,JSON.stringify({width,height,incomplete,theme,result}));assert(result.day>=result.min-1);assert(result.navBottom<=height+1);assert(result.top>=result.header);assert(result.reserve>=result.navHeight);
-     if(result.desired>=result.rows*result.min){assert(result.bottom<=result.navTop-8,JSON.stringify(result));assert(result.navTop-result.bottom<=16,JSON.stringify({width,height,incomplete,theme,result}));}
+     assert(result.height<=result.rows*result.preferred+1,'Date rows must not stretch: '+JSON.stringify(result));
+     if(result.desired>=result.rows*result.min)assert(result.bottom<=result.navTop-8,JSON.stringify(result));
     }
    }
    // iOS standalone: safe areas plus a visual viewport shorter than the fixed layout.
@@ -24,7 +25,12 @@ const url=process.env.CHECK_URL||'http://127.0.0.1:8769/';
     await page.evaluate(()=>{currentCalDate=new Date(2026,9,1);renderCalendar();Object.defineProperty(visualViewport,'height',{configurable:true,get:()=>innerHeight-80});window.dispatchEvent(new Event('resize'));});
     await page.waitForTimeout(100);
     const gap=await page.evaluate(()=>document.querySelector('.bottom-nav').getBoundingClientRect().top-document.getElementById('calendar-grid').getBoundingClientRect().bottom);
-    assert(gap>=10&&gap<=16,'Standalone safe-area gap: '+gap);
+    assert(gap>=12,'Standalone month must fit above navigation: '+gap);
+    assert(await page.locator('#calendar-grid').evaluate(e=>e.getBoundingClientRect().height<=e.children.length/7*92+1),'iPhone date rows remain compact');
+    // Simulate stale fixed-position coordinates during an installed-app resize.
+    await page.evaluate(()=>{const nav=document.querySelector('.bottom-nav'),measure=nav.getBoundingClientRect.bind(nav);nav.getBoundingClientRect=()=>{const rect=measure();return {height:rect.height,top:rect.top+180};};dispatchEvent(new Event('resize'));});
+    await page.waitForTimeout(100);
+    assert(await page.locator('#calendar-grid').evaluate(e=>{const rect=e.getBoundingClientRect(),nav=document.querySelector('.bottom-nav'),bottom=innerHeight-nav.offsetHeight;return rect.bottom<=bottom-12;}),'Stale nav coordinates must not grow the calendar beneath the menu');
     await page.screenshot({path:'/tmp/calendar-iphone-safe-'+engine.name()+'.png'});
     await page.evaluate(()=>{delete visualViewport.height;});
    }
