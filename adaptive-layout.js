@@ -14,9 +14,10 @@
   if(document.body.dataset.view!=='calendar'||!grid.children.length)return;
   const rows=Math.ceil(grid.children.length/7),minimum=parseFloat(getComputedStyle(grid).getPropertyValue('--calendar-cell-min'))||64;
   const gridTop=grid.getBoundingClientRect().top+window.scrollY;
-  const height=window.visualViewport?.height||window.innerHeight;
-  const available=Math.floor(height-navHeight-gridTop-16);
-  set(grid,'--calendar-height',Math.max(rows*minimum,Math.min(660,available))+'px');
+  // The fixed navigation is the actual lower boundary. On iOS, visualViewport
+  // and the layout viewport may report different heights around the safe area.
+  const available=Math.floor(nav.getBoundingClientRect().top-gridTop-12);
+  set(grid,'--calendar-height',Math.max(rows*minimum,available)+'px');
  }
  function schedule(){if(!frame)frame=requestAnimationFrame(fit);}
  const resize=typeof ResizeObserver==='function'?new ResizeObserver(schedule):null;
