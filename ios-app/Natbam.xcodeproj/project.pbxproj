@@ -1,0 +1,546 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0121FA70D719F8E3FAE10FBE /* NatbamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CDACF3D515C57981DD5B8A7 /* NatbamApp.swift */; };
+		033E75FA8DAEF477D2F8D4F5 /* AlarmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56A4E5E215A702F4D77E46CA /* AlarmService.swift */; };
+		137D0BD22C7714D574514A60 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6C1ED32DBD25CF29B5EAD4E3 /* Assets.xcassets */; };
+		4928EA0A1C42C1039FD40BCF /* AlarmModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E8349373DA1BDC2BB93CFB7 /* AlarmModel.swift */; };
+		8C0EFF3198A534C911B1DA98 /* ShiftPlannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8CDDAA4E8E1A5765B0AD21 /* ShiftPlannerTests.swift */; };
+		A4EF7F05F293AD513C1260A1 /* Bridge.js in Resources */ = {isa = PBXBuildFile; fileRef = C4DDB7F4BABFADE3103827F8 /* Bridge.js */; };
+		B03703F8D6BD75C00458E0B2 /* NatbamUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE5BAC3DA602375167AC856 /* NatbamUITests.swift */; };
+		C15029FC3A1DC8C3EB533874 /* WebApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD537F1785438AF81955D7F /* WebApp.swift */; };
+		C1B75863AE5E2D666CD650A6 /* AlarmServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C91420D322B228D1D0B4FA /* AlarmServiceTests.swift */; };
+		C52E02889C4482AC85D2DCF1 /* ShiftPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADD2D9662651F485065333D /* ShiftPlanner.swift */; };
+		E756B5D6A6D86F54DACFB6B5 /* AccountLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BBDB4FEE4AE9283E5DBFD66 /* AccountLogin.swift */; };
+		EDA6060AEAB75C0C3851B3FD /* AlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C4F470614905348678145F1 /* AlarmView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		07DA15406A27D2D2E79AA1EA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DF95C2C0BF8E8E446967294A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CB7C2CB359B1BE34E714110A;
+			remoteInfo = Natbam;
+		};
+		D1E086790CD72C83534FF486 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DF95C2C0BF8E8E446967294A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CB7C2CB359B1BE34E714110A;
+			remoteInfo = Natbam;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0CDACF3D515C57981DD5B8A7 /* NatbamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NatbamApp.swift; sourceTree = "<group>"; };
+		0E8349373DA1BDC2BB93CFB7 /* AlarmModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmModel.swift; sourceTree = "<group>"; };
+		1103B8FE714109EEBDB7D4B6 /* NatbamUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NatbamUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3C4F470614905348678145F1 /* AlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmView.swift; sourceTree = "<group>"; };
+		56A4E5E215A702F4D77E46CA /* AlarmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmService.swift; sourceTree = "<group>"; };
+		6BBDB4FEE4AE9283E5DBFD66 /* AccountLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountLogin.swift; sourceTree = "<group>"; };
+		6C1ED32DBD25CF29B5EAD4E3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8F331218484BCCAF01188B5C /* Natbam.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Natbam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D8CDDAA4E8E1A5765B0AD21 /* ShiftPlannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShiftPlannerTests.swift; sourceTree = "<group>"; };
+		BBD537F1785438AF81955D7F /* WebApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebApp.swift; sourceTree = "<group>"; };
+		C4DDB7F4BABFADE3103827F8 /* Bridge.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Bridge.js; sourceTree = "<group>"; };
+		C79BB21F98417AEB9072B06C /* NatbamTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NatbamTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4C91420D322B228D1D0B4FA /* AlarmServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmServiceTests.swift; sourceTree = "<group>"; };
+		FADD2D9662651F485065333D /* ShiftPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShiftPlanner.swift; sourceTree = "<group>"; };
+		FBE5BAC3DA602375167AC856 /* NatbamUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NatbamUITests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		13170BDDF463E32C1AEF7F99 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8F331218484BCCAF01188B5C /* Natbam.app */,
+				C79BB21F98417AEB9072B06C /* NatbamTests.xctest */,
+				1103B8FE714109EEBDB7D4B6 /* NatbamUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		18D363BBB9322F3B5E3F13E1 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				E4C91420D322B228D1D0B4FA /* AlarmServiceTests.swift */,
+				9D8CDDAA4E8E1A5765B0AD21 /* ShiftPlannerTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		8197FC6810E12A98356ADC17 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				FBE5BAC3DA602375167AC856 /* NatbamUITests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
+		ABABDA6C15DCEAA557499EDD = {
+			isa = PBXGroup;
+			children = (
+				F61D9F78AA7A89E7DDCB3F69 /* Sources */,
+				18D363BBB9322F3B5E3F13E1 /* Tests */,
+				8197FC6810E12A98356ADC17 /* UITests */,
+				13170BDDF463E32C1AEF7F99 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F61D9F78AA7A89E7DDCB3F69 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				6BBDB4FEE4AE9283E5DBFD66 /* AccountLogin.swift */,
+				0E8349373DA1BDC2BB93CFB7 /* AlarmModel.swift */,
+				56A4E5E215A702F4D77E46CA /* AlarmService.swift */,
+				3C4F470614905348678145F1 /* AlarmView.swift */,
+				6C1ED32DBD25CF29B5EAD4E3 /* Assets.xcassets */,
+				C4DDB7F4BABFADE3103827F8 /* Bridge.js */,
+				0CDACF3D515C57981DD5B8A7 /* NatbamApp.swift */,
+				FADD2D9662651F485065333D /* ShiftPlanner.swift */,
+				BBD537F1785438AF81955D7F /* WebApp.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		523DA09AB27B0A925279A459 /* NatbamUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9C60DA235716CBB753753414 /* Build configuration list for PBXNativeTarget "NatbamUITests" */;
+			buildPhases = (
+				E2D1C40835FAF275E6869AF1 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5A3DA4D2F5EEAE1C935B1590 /* PBXTargetDependency */,
+			);
+			name = NatbamUITests;
+			packageProductDependencies = (
+			);
+			productName = NatbamUITests;
+			productReference = 1103B8FE714109EEBDB7D4B6 /* NatbamUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		CB7C2CB359B1BE34E714110A /* Natbam */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1E09E2F42A6A96E9431CEF35 /* Build configuration list for PBXNativeTarget "Natbam" */;
+			buildPhases = (
+				4DB1BEB65E543A997AAD1599 /* Sources */,
+				1F9A931AE759C43F653A8819 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Natbam;
+			packageProductDependencies = (
+			);
+			productName = Natbam;
+			productReference = 8F331218484BCCAF01188B5C /* Natbam.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F2EEF55A3B2FA0AB0CD8A09B /* NatbamTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FE0AF7C50A21E9358CDA527D /* Build configuration list for PBXNativeTarget "NatbamTests" */;
+			buildPhases = (
+				FE908C97FA59AA89D4D9169B /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F0280A20A21392B2470EBFF7 /* PBXTargetDependency */,
+			);
+			name = NatbamTests;
+			packageProductDependencies = (
+			);
+			productName = NatbamTests;
+			productReference = C79BB21F98417AEB9072B06C /* NatbamTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DF95C2C0BF8E8E446967294A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					523DA09AB27B0A925279A459 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+						TestTargetID = CB7C2CB359B1BE34E714110A;
+					};
+					CB7C2CB359B1BE34E714110A = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					F2EEF55A3B2FA0AB0CD8A09B = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = DFF7D75E6B003966796F71A8 /* Build configuration list for PBXProject "Natbam" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = ABABDA6C15DCEAA557499EDD;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 13170BDDF463E32C1AEF7F99 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CB7C2CB359B1BE34E714110A /* Natbam */,
+				F2EEF55A3B2FA0AB0CD8A09B /* NatbamTests */,
+				523DA09AB27B0A925279A459 /* NatbamUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1F9A931AE759C43F653A8819 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				137D0BD22C7714D574514A60 /* Assets.xcassets in Resources */,
+				A4EF7F05F293AD513C1260A1 /* Bridge.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4DB1BEB65E543A997AAD1599 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E756B5D6A6D86F54DACFB6B5 /* AccountLogin.swift in Sources */,
+				4928EA0A1C42C1039FD40BCF /* AlarmModel.swift in Sources */,
+				033E75FA8DAEF477D2F8D4F5 /* AlarmService.swift in Sources */,
+				EDA6060AEAB75C0C3851B3FD /* AlarmView.swift in Sources */,
+				0121FA70D719F8E3FAE10FBE /* NatbamApp.swift in Sources */,
+				C52E02889C4482AC85D2DCF1 /* ShiftPlanner.swift in Sources */,
+				C15029FC3A1DC8C3EB533874 /* WebApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E2D1C40835FAF275E6869AF1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B03703F8D6BD75C00458E0B2 /* NatbamUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FE908C97FA59AA89D4D9169B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C1B75863AE5E2D666CD650A6 /* AlarmServiceTests.swift in Sources */,
+				8C0EFF3198A534C911B1DA98 /* ShiftPlannerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5A3DA4D2F5EEAE1C935B1590 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CB7C2CB359B1BE34E714110A /* Natbam */;
+			targetProxy = D1E086790CD72C83534FF486 /* PBXContainerItemProxy */;
+		};
+		F0280A20A21392B2470EBFF7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CB7C2CB359B1BE34E714110A /* Natbam */;
+			targetProxy = 07DA15406A27D2D2E79AA1EA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		393AEA33AE158BC963D2F554 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Generated/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wnhue.natbam.test;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		55C04419EC1AB1D3137FAC5D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wnhue.natbam.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Natbam.app/Natbam";
+			};
+			name = Release;
+		};
+		70B2D15A37D1B60AADD4077E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wnhue.natbam.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Natbam;
+			};
+			name = Release;
+		};
+		B8501F27D87DCA2E90779D8F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D48F31C9C37457D6560CF8EF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Generated/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wnhue.natbam.test;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		D51F5FBFA2B1CFFBA7106291 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wnhue.natbam.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Natbam;
+			};
+			name = Debug;
+		};
+		E438EE6BC89AF27C467B39EE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wnhue.natbam.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Natbam.app/Natbam";
+			};
+			name = Debug;
+		};
+		FB83EFE11659E1D24AE86241 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1E09E2F42A6A96E9431CEF35 /* Build configuration list for PBXNativeTarget "Natbam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				393AEA33AE158BC963D2F554 /* Debug */,
+				D48F31C9C37457D6560CF8EF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9C60DA235716CBB753753414 /* Build configuration list for PBXNativeTarget "NatbamUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D51F5FBFA2B1CFFBA7106291 /* Debug */,
+				70B2D15A37D1B60AADD4077E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DFF7D75E6B003966796F71A8 /* Build configuration list for PBXProject "Natbam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB83EFE11659E1D24AE86241 /* Debug */,
+				B8501F27D87DCA2E90779D8F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FE0AF7C50A21E9358CDA527D /* Build configuration list for PBXNativeTarget "NatbamTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E438EE6BC89AF27C467B39EE /* Debug */,
+				55C04419EC1AB1D3137FAC5D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DF95C2C0BF8E8E446967294A /* Project object */;
+}

@@ -1,0 +1,60 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {webkit}=require(process.env.PLAYWRIGHT_MODULE);
+const root=path.resolve(__dirname,'..');
+(async()=>{
+ const browser=await webkit.launch();
+ try {
+  const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,timezoneId:'America/Los_Angeles'});
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',async dialog=>{errors.push(dialog.message());await dialog.dismiss()});
+  await page.route('**/*',async route=>{
+   const url=new URL(route.request().url());
+   if(['blob:','data:'].includes(url.protocol))return route.continue();
+   if(url.hostname!=='h-lyart-ten.vercel.app')return route.abort();
+   if(url.pathname.startsWith('/api/'))return route.fulfill({json:{configured:false}});
+   const file=path.resolve(root,'.'+(url.pathname==='/'?'/index.html':decodeURIComponent(url.pathname)));
+   if(!file.startsWith(root+path.sep)||!fs.existsSync(file))return route.fulfill({status:404,body:''});
+   await route.fulfill({path:file,contentType:({'.js':'text/javascript','.css':'text/css','.html':'text/html','.png':'image/png','.svg':'image/svg+xml','.json':'application/json'})[path.extname(file)]||'application/octet-stream'});
+  });
+  await page.addInitScript(()=>{
+   window.nativeMessages=[];
+   window.webkit={messageHandlers:{natbam:{postMessage:value=>window.nativeMessages.push(value)}}};
+   localStorage.setItem('shift_active_group','C');
+   localStorage.setItem('shift_salary_config_master',JSON.stringify({baseHourly:10320,ordinaryHourly:11000,hireDate:'2015-06-16'}));
+  });
+  await page.goto('https://h-lyart-ten.vercel.app/');
+  await page.addScriptTag({path:path.join(root,'ios-app/Sources/Bridge.js')});
+  const latest=()=>page.evaluate(()=>window.nativeMessages.filter(x=>x.action==='snapshot').at(-1).value);
+  let snapshot=await latest();assert.equal(snapshot.days.length,30);assert.equal(snapshot.group,'C');
+  const koreaDate=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'}).format(new Date());
+  assert.equal(snapshot.days[0].date,koreaDate,'snapshot uses Korea date even while travelling');
+  const key=snapshot.days[1].date;
+  await page.evaluate(key=>{overrides[key]='LEAVE';localStorage.setItem('shift_overrides_C',JSON.stringify(overrides));renderCalendar()},key);
+  await page.waitForFunction(key=>window.nativeMessages.filter(x=>x.action==='snapshot').at(-1).value.days.find(d=>d.date===key).type==='LEAVE',key);
+  await page.evaluate(()=>setGroup('A'));
+  await page.waitForFunction(()=>window.nativeMessages.filter(x=>x.action==='snapshot').at(-1).value.group==='A');
+  await page.evaluate(()=>switchView('all'));
+  assert.equal(await page.locator('#native-alarm-open').count(),1);
+  await page.locator('#native-alarm-open').click();
+  assert.equal(await page.evaluate(()=>window.nativeMessages.at(-1).action),'alarms');
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'native menu must not overflow');
+  await page.evaluate(()=>{window.shareFinished=false;navigator.share({text:'근무표'}).then(()=>window.shareFinished=true)});
+  const share=await page.evaluate(()=>window.nativeMessages.at(-1));assert.equal(share.action,'share');assert.equal(share.value.text,'근무표');
+  await page.evaluate(id=>window.natbamShareResult(id,true),share.value.id);
+  assert.equal(await page.evaluate(()=>window.shareFinished),true);
+  await page.evaluate(()=>{const a=document.createElement('a');a.download='test.json';a.href=URL.createObjectURL(new Blob(['{}'],{type:'application/json'}));a.click();});
+  await page.waitForFunction(()=>window.nativeMessages.at(-1).action==='share'&&window.nativeMessages.at(-1).value.files.length===1,null,{timeout:5000}).catch(async error=>{console.error(errors,await page.evaluate(()=>window.nativeMessages.slice(-2)));throw error});
+  const exported=await page.evaluate(()=>window.nativeMessages.at(-1));assert.equal(exported.value.files[0].name,'test.json');
+  assert.equal(Buffer.from(exported.value.files[0].data,'base64').toString(),'{}');
+  await page.evaluate(id=>window.natbamShareResult(id,true),exported.value.id);
+  await page.locator('#parking-open').click();
+  await page.locator('#parking-alert-toggle').click();
+  assert.match(await page.locator('#parking-alert-status').textContent(),/근무 알람/);
+  const count=await page.evaluate(()=>window.nativeMessages.filter(x=>x.action==='snapshot').length);
+  await page.evaluate(()=>document.body.append(document.createElement('span')));
+  await page.waitForTimeout(400);
+  assert.equal(await page.evaluate(()=>window.nativeMessages.filter(x=>x.action==='snapshot').length),count,'unchanged DOM must not repeatedly sync');
+  assert.deepEqual(errors,[]);
+  console.log('PASS native bridge: real calendar + leave edit + group change + Korea dates + dedup + menu + native share');
+ } finally {await browser.close()}
+})().catch(error=>{console.error(error);process.exitCode=1});

@@ -1,0 +1,62 @@
+name: Natbam
+options:
+  deploymentTarget:
+    iOS: '26.0'
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: ''
+targets:
+  Natbam:
+    type: application
+    platform: iOS
+    sources: [Sources]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.wnhue.natbam.test
+        MARKETING_VERSION: '0.1'
+        CURRENT_PROJECT_VERSION: '1'
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: '1'
+        GENERATE_INFOPLIST_FILE: YES
+    info:
+      path: Generated/Info.plist
+      properties:
+        CFBundleDisplayName: 낮밤 테스트
+        NSAlarmKitUsageDescription: 달력에 표시된 주간·야간 근무에 맞춰 설정한 시간에 알람을 울립니다.
+        NSLocationWhenInUseUsageDescription: 내 위치에서 가까운 통근버스 정류장을 찾습니다.
+        NSCameraUsageDescription: 분실물 사진을 촬영해 게시물에 첨부합니다.
+        NSPhotoLibraryUsageDescription: 분실물 사진을 선택해 게시물에 첨부합니다.
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        CFBundleURLTypes:
+          - CFBundleURLName: com.wnhue.natbam.auth
+            CFBundleURLSchemes: [shiftcal]
+  NatbamTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [Tests]
+    dependencies:
+      - target: Natbam
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.wnhue.natbam.tests
+  NatbamUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    dependencies:
+      - target: Natbam
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.wnhue.natbam.uitests
+schemes:
+  Natbam:
+    build:
+      targets:
+        Natbam: all
+    test:
+      targets: [NatbamTests, NatbamUITests]

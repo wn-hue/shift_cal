@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>낮밤 테스트</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.wnhue.natbam.auth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>shiftcal</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>NSAlarmKitUsageDescription</key>
+	<string>달력에 표시된 주간·야간 근무에 맞춰 설정한 시간에 알람을 울립니다.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>분실물 사진을 촬영해 게시물에 첨부합니다.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>내 위치에서 가까운 통근버스 정류장을 찾습니다.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>분실물 사진을 선택해 게시물에 첨부합니다.</string>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+</dict>
+</plist>
