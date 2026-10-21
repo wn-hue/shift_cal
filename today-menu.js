@@ -59,6 +59,7 @@
         cards.replaceChildren();
         for (const meal of data.meals) {
             const card = node('article','meal-card');
+            card.setAttribute('data-meal',meal.name);
             const heading = node('div','meal-card-heading');
             heading.appendChild(node('h2','',meal.name));
             heading.appendChild(node('span','meal-category',meal.groups[0].title));

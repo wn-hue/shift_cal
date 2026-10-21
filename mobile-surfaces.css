@@ -349,3 +349,8 @@ body[data-pref-theme=dark] #view-all :is(.all-shortcut-icon,.menu-service-icon,.
 body[data-pref-theme=dark] #view-menu .meal-card h2::before{background-color:#30343b}
 #view-menu .meal-icon-credit{color:var(--ui-muted,#6b7684);font-size:11px;text-underline-offset:3px}
 #view-menu .meal-footer{justify-content:space-between;flex-wrap:wrap}
+
+#view-menu .meal-card[data-meal="조식"] h2::before{background-image:url('./assets/icons/meal-breakfast.png?v=1')}
+#view-menu .meal-card[data-meal="중식"] h2::before{background-image:url('./assets/icons/meal-rice-bowl.png?v=1')}
+#view-menu .meal-card[data-meal="석식"] h2::before{background-image:url('./assets/icons/meal-dinner.png?v=1')}
+#view-menu .meal-card[data-meal="야식"] h2::before{background-image:url('./assets/icons/meal-late-night.png?v=1')}
