@@ -1,56 +1,56 @@
-/* Optional theme. No viewport-driven row stretching; every other calendar stays unchanged. */
+/* Routine Light: an Apple Calendar inspired, optional month view. */
 .routine-calendar-toolbar,.routine-calendar-guide{display:none}
-body[data-pref-theme=routine]{--accent:#3182f6;--accent-soft:#edf4ff;--primary:#3182f6;--primary-dark:#2467cc;--page-bg:#f3f4f6;--surface:#fff;--surface-soft:#f5f6f8;--theme-text:#252c36;--text-main:#252c36;--text-sub:#818995;--theme-line:#e9ecf0;--shift-day:#ffedb5;--shift-night:#dce9ff;--shift-special-day:#d4eee6;--shift-special-night:#e5e0f6;--shift-off:#e9ecf0;--choice-bg:#edf3fc;--choice-ink:#3b6299;--attendance:#bd6a72;--work-ink:#325c98}
-body[data-view=calendar][data-pref-theme=routine]{background:#f3f4f6}
-body[data-pref-theme=routine] .reference-header{background:transparent;border:0;padding:10px 2px 4px;align-items:center;min-height:76px;box-shadow:none}
-body[data-pref-theme=routine] .reference-header .month-title-btn{display:flex;flex-direction:column;align-items:flex-start;color:#252c36;font-size:29px;letter-spacing:-1.1px;line-height:1.2;text-align:left;padding:4px 0}
-body[data-pref-theme=routine] .reference-header .month-title-btn::before{content:'교대 루틴';display:block;color:#818995;font-size:11px;letter-spacing:-.2px;font-weight:550;line-height:1.5;margin-bottom:5px}
-body[data-pref-theme=routine] .header-calendar-actions{gap:5px;align-items:center}
-body[data-pref-theme=routine] .header-calendar-actions>.icon-button{background:#fff;border:1px solid #e9ecf0;border-radius:14px;width:39px;height:40px;color:#4b5563;box-shadow:none}
-body[data-pref-theme=routine] .header-calendar-actions>.weather-trigger{width:auto;min-width:51px;background:transparent;border:0;padding:0 3px}
-body[data-pref-theme=routine] .header-calendar-actions>.icon-button svg{width:21px;height:21px}
-body[data-view=calendar][data-pref-theme=routine] #view-calendar .calendar-card{margin:16px 0 0;padding:12px 10px 10px;border:1px solid #eceef2;border-radius:25px;background:#fff;box-shadow:0 3px 14px #23345103;overflow:hidden}
-body[data-pref-theme=routine] .routine-calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 4px 12px;border-bottom:1px solid #f1f2f5}
-body[data-pref-theme=routine] .routine-group{display:flex;align-items:center;gap:7px;min-width:0;color:#4b5563;font-size:13px}
-body[data-pref-theme=routine] .routine-group strong{font-weight:600;white-space:nowrap}
-body[data-pref-theme=routine] .routine-group-dot{height:7px;width:7px;border-radius:50%;background:#3182f6;box-shadow:0 0 0 4px #edf4ff;margin:0 4px}
-body[data-pref-theme=routine] .routine-month-navigation{display:flex;align-items:center;gap:1px}
-body[data-pref-theme=routine] .routine-month-navigation button{display:grid;place-items:center;width:36px;min-height:44px;padding:0;border:0;border-radius:12px;background:transparent;color:#5a6574;font:inherit;cursor:pointer}
-body[data-pref-theme=routine] .routine-month-navigation button svg{width:17px;height:17px}
-body[data-pref-theme=routine] .routine-month-navigation .routine-today{width:43px;min-height:32px;background:#f3f4f6;color:#5a6574;font-size:12px;font-weight:600}
-body[data-pref-theme=routine] .routine-month-navigation button:focus-visible{outline:2px solid #3182f6;outline-offset:-2px}
-body[data-pref-theme=routine] .cal-weekdays{padding:14px 0 10px;border:0;background:transparent;color:#8b95a1;font-size:11px;font-weight:550;gap:4px}
-body[data-pref-theme=routine] .cal-weekdays>:first-child{color:#c37a82}
-body[data-pref-theme=routine] .cal-weekdays>:last-child{color:#7996ba}
-body[data-pref-theme=routine] #calendar-grid{height:auto;min-height:0;max-height:none;grid-template-rows:none!important;grid-auto-rows:minmax(88px,auto);gap:4px;background:transparent;border:0;border-radius:0;overflow:visible}
-body[data-pref-theme=routine] .cal-day{min-height:88px;padding:6px 3px 5px;gap:0;border:0;border-radius:12px;background:#f7f8fa;box-shadow:none;align-items:center}
-body[data-pref-theme=routine] .cal-day.other-month{background:#fafbfc;opacity:.35}
-body[data-pref-theme=routine] .cal-day.today{background:#edf4ff;box-shadow:inset 0 0 0 1.5px #91b9f5;z-index:0}
-body[data-pref-theme=routine] .cal-day:focus-visible{outline:2px solid #3182f6;outline-offset:-2px}
-body[data-pref-theme=routine] .day-meta{min-height:24px;align-items:center;position:relative;gap:0}
-body[data-pref-theme=routine] .day-num{width:22px;min-width:22px;height:22px;margin:0;color:#4b5563;font-size:12px;font-weight:600;justify-content:center;border-radius:8px}
-body[data-pref-theme=routine] .cal-day.sunday .day-num,body[data-pref-theme=routine] .cal-day.holiday .day-num{color:#ba737b}
-body[data-pref-theme=routine] .cal-day.saturday:not(.holiday) .day-num{color:#6d8fb9}
-body[data-pref-theme=routine] .cal-day.today .day-num{background:#3182f6!important;color:#fff!important;justify-content:center;border-radius:8px}
-body[data-pref-theme=routine] .holiday-bar{align-self:center;text-align:right;color:#b37b82;font-size:8px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-body[data-pref-theme=routine] .cal-day .shift-badge{height:30px;min-height:30px;width:32px;min-width:32px;padding:0;margin:5px 0 3px;flex:0 0 30px;border:0;border-radius:10px;font-size:14px;line-height:1;font-weight:650;letter-spacing:-.4px;box-shadow:none}
-body[data-pref-theme=routine][data-pref-shape=circle] .cal-day .shift-badge{width:30px;min-width:30px;border-radius:50%}
-body[data-pref-theme=routine] .cal-day .shift-badge.day{background:#ffedb5;color:#966b19}
-body[data-pref-theme=routine] .cal-day .shift-badge.night{background:#dce9ff;color:#3d66a0}
-body[data-pref-theme=routine] .cal-day .shift-badge.off{background:#eceef2;color:#8b95a1!important;font-weight:550}
-body[data-pref-theme=routine] .cal-day .shift-badge.special-day{background:#d4eee6;color:#40806f;font-size:11px}
-body[data-pref-theme=routine] .cal-day .shift-badge.special-night{background:#e5e0f6;color:#7964a8;font-size:11px}
-body[data-pref-theme=routine] .cal-day .shift-badge.special-no-ot{outline:1px dashed currentColor;outline-offset:-3px;filter:none}
-body[data-pref-theme=routine] .cal-day .sub-tag{font-size:8px;color:#8b95a1;line-height:1.3;max-width:100%;overflow-wrap:anywhere}
-body[data-pref-theme=routine] .cal-day .attendance-pill{font-size:8px;line-height:1.4;min-height:0;padding:2px 3px;border-radius:5px;background:#f4e5e7;color:#a65e68;white-space:normal;max-width:100%;text-align:center;box-sizing:border-box}
-body[data-pref-theme=routine] .cal-day .memo-tag{font-size:9px;line-height:1.4;color:#788394;padding:1px 2px;-webkit-line-clamp:2}
-body[data-pref-theme=routine] .routine-calendar-guide{display:block;padding:17px 6px 0;text-align:center}
-body[data-pref-theme=routine] .routine-legend{display:flex;justify-content:center;gap:16px;color:#707c8c;font-size:11px}
+body[data-pref-theme=routine]{--accent:#3182f6;--accent-soft:#edf4ff;--primary:#ff3b30;--primary-dark:#d93028;--page-bg:#fff;--surface:#fff;--surface-soft:#f5f5f7;--theme-text:#1c1c1e;--text-main:#1c1c1e;--text-sub:#8e8e93;--theme-line:#e5e5ea;--shift-day:#e6f1ff;--shift-night:#eee8fa;--shift-special-day:#e3f3e9;--shift-special-night:#e1f2f2;--shift-off:#f2f2f7;--choice-bg:#f2f2f7;--choice-ink:#636366;--attendance:#c76d79;--work-ink:#426d9c}
+body[data-view=calendar][data-pref-theme=routine]{background:#fff}
+body[data-pref-theme=routine] .reference-header{background:#fff;border:0;padding:12px 0 4px;align-items:center;min-height:66px;box-shadow:none}
+body[data-pref-theme=routine] .reference-header .month-title-btn{display:block;color:#1c1c1e;font-size:30px;font-weight:700;letter-spacing:-1px;line-height:1.25;text-align:left;padding:4px 0}
+body[data-pref-theme=routine] .reference-header .month-title-btn::before{content:none}
+body[data-pref-theme=routine] .header-calendar-actions{gap:4px;align-items:center}
+body[data-pref-theme=routine] .header-calendar-actions>.icon-button{background:transparent;border:0;border-radius:50%;width:38px;height:44px;color:#ff3b30;box-shadow:none}
+body[data-pref-theme=routine] .header-calendar-actions>.weather-trigger{width:auto;min-width:48px;padding:0 3px;color:#3a3a3c}
+body[data-pref-theme=routine] .header-calendar-actions>.icon-button svg{width:23px;height:23px}
+body[data-view=calendar][data-pref-theme=routine] #view-calendar .calendar-card{margin:12px 0 0;padding:0;border:0;border-radius:0;background:#fff;box-shadow:none;overflow:visible}
+body[data-pref-theme=routine] .routine-calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 1px 7px;border:0}
+body[data-pref-theme=routine] .routine-group{display:flex;align-items:center;min-width:0;color:#8e8e93;font-size:13px}
+body[data-pref-theme=routine] .routine-group strong{font-weight:500;white-space:nowrap}
+body[data-pref-theme=routine] .routine-group-dot{display:none}
+body[data-pref-theme=routine] .routine-month-navigation{display:flex;align-items:center;gap:0}
+body[data-pref-theme=routine] .routine-month-navigation button{display:grid;place-items:center;width:40px;min-height:44px;padding:0;border:0;border-radius:10px;background:transparent;color:#ff3b30;font:inherit;cursor:pointer}
+body[data-pref-theme=routine] .routine-month-navigation button svg{width:19px;height:19px}
+body[data-pref-theme=routine] .routine-month-navigation .routine-today{width:44px;min-height:44px;font-size:14px;font-weight:500}
+body[data-pref-theme=routine] .routine-month-navigation button:focus-visible{outline:2px solid #ff3b30;outline-offset:-2px}
+body[data-pref-theme=routine] .cal-weekdays{padding:9px 0;border:0;border-bottom:1px solid #d1d1d6;background:#fff;color:#3a3a3c;font-size:11px;font-weight:500;gap:0}
+body[data-pref-theme=routine] .cal-weekdays>:first-child,body[data-pref-theme=routine] .cal-weekdays>:last-child{color:#8e8e93}
+body[data-pref-theme=routine] #calendar-grid{height:auto;min-height:0;max-height:none;grid-template-rows:none!important;grid-auto-rows:minmax(88px,auto);gap:0;background:#fff;border:0;border-radius:0;overflow:visible}
+body[data-pref-theme=routine] .cal-day{min-height:88px;padding:5px 2px 6px;gap:0;border:0;border-bottom:1px solid #e5e5ea;border-radius:0;background:#fff;box-shadow:none;align-items:center}
+body[data-pref-theme=routine] .cal-day.sunday,body[data-pref-theme=routine] .cal-day.saturday{background:#fafafa}
+body[data-pref-theme=routine] .cal-day.other-month{opacity:.3}
+body[data-pref-theme=routine] .cal-day.today{box-shadow:none;z-index:0}
+body[data-pref-theme=routine] .cal-day:focus-visible{outline:2px solid #ff3b30;outline-offset:-2px}
+body[data-pref-theme=routine] .day-meta{height:36px;min-height:36px;align-items:flex-start;justify-content:center;position:relative;gap:0}
+body[data-pref-theme=routine] .day-num{display:flex;width:28px;min-width:28px;height:28px;margin:0;background:transparent!important;color:#1c1c1e;font-size:17px;font-weight:400;justify-content:center;align-items:center;border-radius:50%;letter-spacing:-.4px}
+body[data-pref-theme=routine] .cal-day.sunday .day-num,body[data-pref-theme=routine] .cal-day.saturday .day-num{color:#8e8e93}
+body[data-pref-theme=routine] .cal-day.holiday .day-num{color:#c56d73}
+body[data-pref-theme=routine] .cal-day.today .day-num{background:#ff3b30!important;color:#fff!important;justify-content:center;border-radius:50%;font-weight:500}
+body[data-pref-theme=routine] .holiday-bar{position:absolute;top:28px;left:0;width:100%;margin:0;padding:0;text-align:center;color:#b5777c;font-size:8px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-pref-theme=routine] .cal-day .shift-badge{--event-color:#8e8e93;display:flex;align-items:center;justify-content:flex-start;height:20px;min-height:20px;width:calc(100% - 2px);min-width:0;padding:0 3px;margin:5px 0 3px;flex:0 0 20px;border:0;border-left:3px solid var(--event-color);border-radius:3px;font-size:11px;line-height:1;font-weight:550;letter-spacing:-.3px;box-shadow:none;box-sizing:border-box}
+body[data-pref-theme=routine] .cal-day .shift-badge.day{--event-color:#4e96e4;background:#e6f1ff;color:#3479bd}
+body[data-pref-theme=routine] .cal-day .shift-badge.night{--event-color:#a486d0;background:#eee8fa;color:#8064ac}
+body[data-pref-theme=routine] .cal-day .shift-badge.off{--event-color:#b5b5bd;background:#f2f2f7;color:#8e8e93!important;font-weight:500}
+body[data-pref-theme=routine] .cal-day .shift-badge.special-day{--event-color:#72ad87;background:#e3f3e9;color:#4f8d65;font-size:10px}
+body[data-pref-theme=routine] .cal-day .shift-badge.special-night{--event-color:#6aabad;background:#e1f2f2;color:#468a8c;font-size:10px}
+body[data-pref-theme=routine] .cal-day .shift-badge.special-no-ot{border-left-style:dashed;outline:0;filter:none}
+body[data-pref-theme=routine][data-pref-shape=circle] .cal-day .shift-badge{width:28px;min-width:28px;height:28px;min-height:28px;flex-basis:28px;border-left:0;border-radius:50%;justify-content:center;padding:0}
+body[data-pref-theme=routine] .cal-day .sub-tag{font-size:8px;color:#8e8e93;line-height:1.3;max-width:100%;overflow-wrap:anywhere}
+body[data-pref-theme=routine] .cal-day .attendance-pill{font-size:8px;line-height:1.4;min-height:0;padding:2px 3px;border-radius:3px;background:#f8e9ec;color:#b26370;white-space:normal;max-width:100%;text-align:center;box-sizing:border-box}
+body[data-pref-theme=routine] .cal-day .memo-tag{font-size:9px;line-height:1.4;color:#8e8e93;padding:1px 2px;-webkit-line-clamp:2}
+body[data-pref-theme=routine] .routine-calendar-guide{display:block;padding:18px 2px 0;text-align:center}
+body[data-pref-theme=routine] .routine-legend{display:flex;justify-content:center;gap:18px;color:#8e8e93;font-size:11px}
 body[data-pref-theme=routine] .routine-legend>span{display:flex;align-items:center;gap:5px;white-space:nowrap}
-body[data-pref-theme=routine] .routine-legend i{display:block;width:7px;height:7px;border-radius:3px}
-.routine-legend-day{background:#efd58e}.routine-legend-night{background:#94b4e5}.routine-legend-off{background:#b9c0c9}.routine-legend-special{background:#8ac3ae}
-body[data-pref-theme=routine] .routine-calendar-guide p{font-size:11px;color:#9aa2ae;margin:12px 0 0;line-height:1.5}
-@media(max-width:350px){body[data-pref-theme=routine] .reference-header .month-title-btn{font-size:25px}body[data-pref-theme=routine] .header-calendar-actions{gap:3px}body[data-pref-theme=routine] .header-calendar-actions>.icon-button{width:34px}body[data-pref-theme=routine] .header-calendar-actions>.weather-trigger{min-width:43px}body[data-pref-theme=routine] #view-calendar .calendar-card{padding-left:7px;padding-right:7px;border-radius:22px}body[data-pref-theme=routine] .cal-day{padding-left:1px;padding-right:1px}body[data-pref-theme=routine] .holiday-bar{font-size:7px}}
-/* Six-week months stay compact while notes can still expand their own row. */
+body[data-pref-theme=routine] .routine-legend i{display:block;width:6px;height:6px;border-radius:50%}
+.routine-legend-day{background:#4e96e4}.routine-legend-night{background:#a486d0}.routine-legend-off{background:#b5b5bd}.routine-legend-special{background:#72ad87}
+body[data-pref-theme=routine] .routine-calendar-guide p{font-size:11px;color:#aeaeb2;margin:12px 0 0;line-height:1.5}
+@media(max-width:350px){body[data-pref-theme=routine] .reference-header .month-title-btn{font-size:27px}body[data-pref-theme=routine] .header-calendar-actions{gap:0}body[data-pref-theme=routine] .header-calendar-actions>.icon-button{width:34px}body[data-pref-theme=routine] .header-calendar-actions>.weather-trigger{min-width:43px}body[data-pref-theme=routine] .holiday-bar{font-size:7px}}
+/* Avoid stretching six-week months beyond the phone screen. Notes may expand their row. */
 body[data-pref-theme=routine] #calendar-grid:has(>.cal-day:nth-child(36)){grid-auto-rows:minmax(78px,auto)}
 body[data-pref-theme=routine] #calendar-grid:has(>.cal-day:nth-child(36))>.cal-day{min-height:78px}
