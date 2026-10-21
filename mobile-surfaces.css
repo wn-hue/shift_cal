@@ -321,3 +321,16 @@ body[data-pref-theme="dark"] #view-payroll .btn-save { color:#17191d!important; 
 #view-payroll .workday-calculations>summary::-webkit-details-marker{display:none}
 #view-payroll .workday-calculations[open]>summary>span{transform:rotate(180deg)}
 #view-payroll .workday-calculations .workday-summary{border-top:0;margin-top:0;padding-top:0}
+
+/* Consistent small vector artwork for navigation and all services. */
+body[data-pref-theme] .bottom-nav .app-tab-icon{width:27px;height:27px;overflow:visible;shape-rendering:geometricPrecision}
+.bottom-nav .app-tab-icon .nav-cutout{fill:var(--nav-selected,#f1f2f4)}
+#view-all svg.app-service-icon{width:27px;height:27px;overflow:visible;filter:drop-shadow(0 2px 1px #182b4a0b)}
+#view-all svg.app-service-icon :is(path,rect,circle){stroke:none!important;fill:inherit}
+#view-all [data-app-icon]{display:grid;place-items:center}
+#view-all .all-shortcut-icon[data-app-icon=calendar]{color:#20b487!important;background:#eaf8f2!important}
+#view-all .all-shortcut-icon[data-app-icon=wage]{color:#3182f6!important;background:#edf4ff!important}
+#view-all .group-summary-icon[data-app-icon]{color:#5b82cc;background:#edf3fc}
+body[data-pref-theme=dark] #view-all :is(.all-shortcut-icon,.group-summary-icon)[data-app-icon]{background:var(--ui-field)!important}
+body[data-pref-theme=dark] #view-all .all-shortcut-icon[data-app-icon=calendar]{color:#58d1aa!important}
+body[data-pref-theme=dark] #view-all .all-shortcut-icon[data-app-icon=wage]{color:#8bb8ff!important}
