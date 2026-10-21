@@ -75,7 +75,7 @@
             }
             cards.appendChild(card);
         }
-        $('today-menu-status').textContent = (selected()===today()?'오늘':'선택한 날짜의')+' 식단을 불러왔어요.';
+        $('today-menu-status').textContent = '';
         $('today-menu-empty').hidden = true;
         $('today-menu-note').hidden = false;
         $('today-menu-checked').textContent = '확인 ' + new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(data.checkedAt));
