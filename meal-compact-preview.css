@@ -1,0 +1,25 @@
+/* Isolated design experiment: no production stylesheet is changed. */
+body[data-meal-preview=compact] #view-menu .meal-date-card{padding-bottom:14px}
+body[data-meal-preview=compact] #view-menu .meal-date-card>.meal-status,
+body[data-meal-preview=compact] #view-menu .meal-date-card>.meal-note{display:none}
+body[data-meal-preview=compact] #view-menu .meal-weekly{padding:0 18px;margin:0 0 14px;border-radius:18px}
+body[data-meal-preview=compact] #view-menu .meal-weekly>summary{display:flex;align-items:center;gap:10px;min-height:58px;list-style:none;font-size:14px}
+body[data-meal-preview=compact] #view-menu .meal-weekly>summary::-webkit-details-marker{display:none}
+body[data-meal-preview=compact] #view-menu .meal-weekly>summary::before{content:'주간';font-size:11px;font-weight:600;padding:5px 7px;border-radius:8px;color:var(--ui-blue,#3182f6);background:var(--ui-blue-soft,#e8f3ff)}
+body[data-meal-preview=compact] #view-menu .meal-weekly>summary::after{content:'⌄';margin-left:auto;font-size:20px;color:var(--ui-muted,#8b95a1)}
+body[data-meal-preview=compact] #view-menu .meal-weekly[open]>summary::after{transform:rotate(180deg)}
+body[data-meal-preview=compact] #view-menu .meal-weekly-body{padding-bottom:16px}
+body[data-meal-preview=compact] #view-menu .meal-grid{gap:12px}
+body[data-meal-preview=compact] #view-menu .meal-card{padding:18px 20px;border-radius:20px}
+body[data-meal-preview=compact] #view-menu .meal-card-heading{margin-bottom:12px}
+body[data-meal-preview=compact] #view-menu .meal-extras{margin-top:12px;padding-top:10px}
+body[data-meal-preview=compact] #view-menu .meal-rating{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin-top:14px;padding-top:10px}
+body[data-meal-preview=compact] #view-menu .meal-rating-actions{display:flex;gap:8px;flex:1}
+body[data-meal-preview=compact] #view-menu .meal-rating-button{min-height:44px;min-width:88px;padding:8px 10px;border-radius:12px}
+body[data-meal-preview=compact] #view-menu .meal-rating-count{margin-left:auto;font-size:11px;white-space:nowrap}
+body[data-meal-preview=compact] #view-menu .meal-rating-status:empty{display:none}
+body[data-meal-preview=compact] #view-menu .meal-rating-status:not(:empty){flex-basis:100%;text-align:left}
+body[data-meal-preview=compact] #view-menu .meal-rating-retry{flex-basis:100%;text-align:left}
+body[data-meal-preview=compact] #view-menu>.meal-rating-note{font-size:11px;margin:10px 4px}
+
+body[data-meal-preview=compact] #view-menu .meal-rating-status[data-idle=true]{display:none}
