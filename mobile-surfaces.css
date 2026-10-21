@@ -343,3 +343,9 @@ body[data-pref-theme=dark] #view-all :is(.all-shortcut-icon,.menu-service-icon,.
 #view-all .menu-brand-name{white-space:nowrap;letter-spacing:-.8px;line-height:1.3}
 #view-all .menu-brand-icon{width:34px;height:34px;border-radius:11px}
 @media(max-width:350px){#view-all .menu-brand-icon{width:30px;height:30px;border-radius:10px}#view-all .all-topline{gap:6px}}
+
+/* Original Icons8 Color artwork; only the surrounding UI tile is styled here. */
+#view-menu .meal-card h2::before{background:#f3f4f6 url('./assets/icons/meal-rice-bowl.png?v=1') center/26px 26px no-repeat;border:0;box-shadow:none}
+body[data-pref-theme=dark] #view-menu .meal-card h2::before{background-color:#30343b}
+#view-menu .meal-icon-credit{color:var(--ui-muted,#6b7684);font-size:11px;text-underline-offset:3px}
+#view-menu .meal-footer{justify-content:space-between;flex-wrap:wrap}
