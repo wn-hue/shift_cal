@@ -12,6 +12,8 @@
         }
     }
     function rendered(group) {
+        const label=$('routine-calendar-group');
+        if(label)label.textContent=group+'조 근무표';
         $('cal-month-title-btn').setAttribute('aria-label',group+'조 달력 연도와 월 선택');
     }
     function tap(button) {
