@@ -55,14 +55,19 @@ async function handler(req, res) {
     res.setHeader('Cache-Control','no-store');
     res.setHeader('X-Content-Type-Options','nosniff');
     if (req.method !== 'GET') {res.setHeader('Allow','GET'); return res.status(405).json({status:'error', message:'GET 요청만 지원합니다.'});}
+    const date = req.query?.date;
+    if (date !== undefined && (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(Date.parse(date+'T12:00:00Z')) || new Date(date+'T12:00:00Z').toISOString().slice(0,10) !== date || Math.abs(Date.parse(date)-Date.parse(menuDate())) > 31*86400000)) {
+        return res.status(400).json({status:'error',message:'오늘 기준 한 달 이내의 날짜를 선택해 주세요.'});
+    }
     try {
         const result = await loadPdf();
-        const menu={...extractToday(result.data), checkedAt:new Date(result.time).toISOString()};
-        require('@vercel/functions').waitUntil(require('../lib/meal-weekly').saveMenu(menu).catch(()=>{}));
+        const menu={...extractToday(result.data,new Date(),date), checkedAt:new Date(result.time).toISOString()};
+        // Browsing tomorrow must not advance the shared vote record past today.
+        if (menu.date === menuDate()) require('@vercel/functions').waitUntil(require('../lib/meal-weekly').saveMenu(menu).catch(()=>{}));
         return res.status(200).json(menu);
     } catch (error) {
         const layout = error.message === 'MENU_LAYOUT';
-        return res.status(503).json({status:'error', date:menuDate(), sourceUrl:SOURCE_URL, meals:[],
+        return res.status(503).json({status:'error', date:date || menuDate(), sourceUrl:SOURCE_URL, meals:[],
             message:layout ? '식단표 형식이 변경되어 읽지 못했어요. 잠시 후 다시 시도해 주세요.' : '식단을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'});
     }
 }

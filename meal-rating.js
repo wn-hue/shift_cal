@@ -13,7 +13,7 @@ function voteGlyph(){
  svg.append(path);return svg;
 }
 let state={date:today(),totals:null,mine:{},busy:false,error:''},lastRead=0;
-function cards(){return [...root.querySelectorAll('.meal-card')].map(card=>({card,meal:card.querySelector('h2')?.textContent.trim()})).filter(x=>names.includes(x.meal));}
+function cards(){if(root.dataset.menuDate && root.dataset.menuDate!==today())return [];return [...root.querySelectorAll('.meal-card')].map(card=>({card,meal:card.querySelector('h2')?.textContent.trim()})).filter(x=>names.includes(x.meal));}
 function paint(){for(const{card,meal}of cards()){
  let block=card.querySelector('.meal-rating');if(!block){block=node('section','meal-rating');block.setAttribute('aria-label',meal+' 식단 평가');const actions=node('div','meal-rating-actions');for(const[v,label]of[['up','👍 좋아요'],['down','👎 싫어요']]){const b=node('button','meal-rating-button');b.type='button';b.dataset.vote=v;b.onclick=()=>vote(meal,state.mine[meal]===v?null:v);actions.append(b);}block.append(actions,node('span','meal-rating-count'),node('p','meal-rating-status'));const retry=node('button','meal-rating-retry','집계 다시 불러오기');retry.type='button';retry.onclick=()=>request();block.append(retry);card.append(block);}
  const totals=state.totals?.[meal];for(const b of block.querySelectorAll('[data-vote]')){const v=b.dataset.vote,label=v==='up'?'👍 좋아요':'👎 싫어요';b.replaceChildren(voteGlyph(),node('span','meal-rating-label',(v==='up'?'좋아요':'싫어요')+' '+(totals?totals[v]:'—')));b.setAttribute('aria-label',meal+' '+(v==='up'?'좋아요':'싫어요')+(totals?' '+totals[v]+'표':''));b.setAttribute('aria-pressed',String(state.mine[meal]===v));b.disabled=state.busy||!totals;}
