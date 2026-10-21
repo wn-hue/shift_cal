@@ -72,7 +72,7 @@
   async function share(data = {}) {
     const files = Array.from(data.files || []);
     if (files.length > 5 || files.reduce((total, f) => total + f.size, 0) > 10 * 1024 * 1024) throw new Error('공유 파일은 10MB까지 지원해요.');
-    const value = {id: String(++sequence), title: String(data.title || ''), text: String(data.text || ''), url: String(data.url || ''), files: await Promise.all(files.map(async f => ({name: f.name || '낮밤', data: await read(f)})))};
+    const value = {id: String(++sequence), title: String(data.title || ''), text: String(data.text || ''), url: String(data.url || ''), files: await Promise.all(files.map(async f => ({name: f.name || '교대 루틴', data: await read(f)})))};
     return new Promise((resolve, reject) => { pending.set(value.id, {resolve, reject}); send('share', value); });
   }
   Object.defineProperty(navigator, 'share', {value: share, configurable: true});
@@ -81,7 +81,7 @@
   function download(link) {
     if (!link || !link.hasAttribute('download') || !/^(blob:|data:)/.test(link.href)) return false;
     (async () => {
-      try { const blob = await (await fetch(link.href)).blob(); await share({files: [new File([blob], link.download || '낮밤')]}); }
+      try { const blob = await (await fetch(link.href)).blob(); await share({files: [new File([blob], link.download || '교대 루틴')]}); }
       catch (error) { if (error.name !== 'AbortError') alert(error.message); }
     })();
     return true;

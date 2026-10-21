@@ -22,7 +22,7 @@ targets:
     info:
       path: Generated/Info.plist
       properties:
-        CFBundleDisplayName: 낮밤 알람
+        CFBundleDisplayName: 교대 루틴 알람
         NSCalendarsFullAccessUsageDescription: 선택한 근무 캘린더를 읽어 주간·야간 근무별 알람을 예약합니다. 캘린더의 일정은 수정하지 않습니다.
         NSAlarmKitUsageDescription: 주간·주특 06시 30분, 야간·야특 18시 30분에 근무 알람을 울립니다.
         UILaunchScreen: {}

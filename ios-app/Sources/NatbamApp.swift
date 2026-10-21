@@ -11,7 +11,7 @@ struct NatbamApp: App {
                 WebApp(alarms: alarms, state: web)
                     .ignoresSafeArea(.container, edges: .bottom)
                 if web.loading {
-                    ProgressView("낮밤을 불러오고 있어요")
+                    ProgressView("교대 루틴을 불러오고 있어요")
                         .padding(24).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
                 }
                 if let error = web.error {

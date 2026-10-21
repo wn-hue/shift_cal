@@ -64,7 +64,7 @@ final class NatbamUITests: XCTestCase {
         XCTAssertTrue(app.buttons["테스트 알람 취소"].waitForExistence(timeout: 20), "Scheduled alarm must survive process restart")
         XCUIDevice.shared.press(.home)
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        let alarm = springboard.staticTexts["낮밤 테스트 알람"].firstMatch
+        let alarm = springboard.staticTexts["교대 루틴 테스트 알람"].firstMatch
         XCTAssertTrue(alarm.waitForExistence(timeout: 70), "AlarmKit must present the scheduled alarm while app is backgrounded")
         let attachment = XCTAttachment(screenshot: springboard.screenshot()); attachment.lifetime = .keepAlways
         add(attachment)

@@ -1,18 +1,7 @@
-# 낮밤
+# 교대 루틴
 
-낮과 밤을 오가는 교대근무의 하루를 함께하는 앱.
+해와 달이 담긴 교대근무 캘린더.
 
-내장 image_gen 편집 도구로 사용자 제공 해·달과 넘겨지는 페이지 이미지를 다듬었습니다.
+사용자가 제공한 2026-10-21 이미지를 기반으로 앱 아이콘을 편집합니다. 밝은 파란 달력 위로 흰 페이지가 올라가는 형태, 노란 해와 달을 유지하고 외부 여백을 없앤 정사각형 이미지입니다. 웹/PWA 및 iOS 아이콘에 같은 원본을 사용합니다.
 
-## 최종 프롬프트
-
-Edit the attached image into a production smartphone app icon for 낮밤, a day/night shift calendar app. Preserve its distinctive single white calendar page curling diagonally to reveal a vivid blue night page, warm yellow sun above the curl and yellow crescent moon below it. Refine it into a clean contemporary Korean fintech app visual: soft polished 3D material, calm lighting, simple compact silhouette, restrained depth. Reduce the steep perspective and excessive thick stacked layers; use a near-front-on composition with a gentle diagonal curl. Enlarge sun and moon enough to be clear at 32px, keep them clearly separated and fully visible. Center the compact symbol on a full-bleed very pale cool-white square background, symbol about 80% of canvas with balanced mask-safe padding for iOS rounded-square and Android circular masks. No outer rounded-square tile frame baked into background, no text, no numerals, no sparkle or watermark, no footprints. Keep white/blue/yellow palette and source identity. One final square icon, not a mockup or grid.
-
-## 적용 파일
-
-- app-icon-192.png: 메뉴 및 PWA 아이콘
-- app-icon-512.png: 고해상도 PWA 아이콘
-- apple-touch-icon.png: iOS 홈 화면 아이콘
-- ios-alarm/Sources/Assets.xcassets/AppIcon.appiconset/AppIcon.png: 1024px iOS 소스 아이콘
-
-앱 식별자와 사용자 데이터 저장 키는 기존 값을 유지합니다.
+앱 표시 이름은 교대 루틴이며, 기존 앱 식별자·인증 콜백·사용자 저장 키는 유지합니다. 이미 설치된 iOS 테스트 앱의 이름과 아이콘은 다음 빌드 설치 시 반영됩니다.

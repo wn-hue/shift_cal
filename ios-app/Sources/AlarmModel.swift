@@ -51,7 +51,7 @@ final class AlarmModel: ObservableObject {
         do {
             let state = try await AlarmManager.shared.requestAuthorization()
             guard state == .authorized else {
-                error = "아이폰 설정 → 앱 → 낮밤 테스트에서 알람을 허용해 주세요."
+                error = "아이폰 설정 → 앱 → 교대 루틴 테스트에서 알람을 허용해 주세요."
                 return false
             }
             return true
@@ -59,7 +59,7 @@ final class AlarmModel: ObservableObject {
     }
     func test() async {
         guard await authorize() else { return }
-        testPlan = PlannedAlarm(key: "test", title: "낮밤 테스트 알람", date: Date().addingTimeInterval(60))
+        testPlan = PlannedAlarm(key: "test", title: "교대 루틴 테스트 알람", date: Date().addingTimeInterval(60))
         refresh()
     }
     func stopTest() { testPlan = nil; refresh() }
@@ -93,5 +93,5 @@ final class AlarmModel: ObservableObject {
 }
 private enum AlarmFailure: LocalizedError {
     case permission
-    var errorDescription: String? { "설정에서 낮밤 테스트의 알람 권한을 확인해 주세요." }
+    var errorDescription: String? { "설정에서 교대 루틴 테스트의 알람 권한을 확인해 주세요." }
 }
