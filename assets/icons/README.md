@@ -13,4 +13,4 @@ Creator: https://icons8.com/
 Free-use attribution requirements: https://icons8.com/license
 Downloaded: 2026-10-21
 
-The meal page contains a visible clickable Icons8 attribution link. Neutral grey containers are CSS UI styling around each original image.
+The app settings (앱 환경 → 앱 안내) and about.html contain visible clickable Icons8 attribution links. Neutral grey containers are CSS UI styling around each original image.

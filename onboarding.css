@@ -18,7 +18,7 @@
 #onboarding-dialog #onboarding-heading{outline:0}
 #onboarding-dialog h1{font:inherit;font-size:30px;line-height:1.35;letter-spacing:-1.1px;font-weight:750;margin:0;white-space:pre-line;color:#191f28}
 #onboarding-dialog #onboarding-description{font-size:14px;line-height:1.7;color:#6b7684;margin:14px 0 28px}
-#onboarding-dialog .onboarding-art{display:grid;place-items:center;width:72px;height:72px;background:#eaf3ff;border-radius:24px;margin-bottom:24px;color:#3182f6}
+#onboarding-dialog .onboarding-art{display:grid;place-items:center;width:72px;height:72px;background:#f3f4f6;border-radius:24px;margin-bottom:24px;color:#3182f6}
 #onboarding-dialog .onboarding-art svg{width:36px;height:36px}
 #onboarding-dialog .onboarding-panel label{display:block;font-size:13px;color:#6b7684;margin-bottom:9px}
 #onboarding-dialog #onboarding-date{width:100%;min-width:0;min-height:58px;border:1px solid #e5e8eb;border-radius:15px;background:#f7f8fa!important;color:#191f28!important;font:inherit;font-size:18px!important;padding:16px;box-shadow:none}
@@ -54,3 +54,9 @@
 @media(max-height:650px){#onboarding-dialog .onboarding-art{width:52px;height:52px;border-radius:17px;margin-bottom:16px}#onboarding-dialog .onboarding-main{padding-top:18px}#onboarding-dialog #onboarding-description{margin-bottom:20px}}
 
 #payroll-sms-dialog[data-onboarding=true] :is(label[for="payroll-bonus-sms-text"],label[for="payroll-bonus-sms-text"]+p,#payroll-bonus-sms-text){display:none}
+
+/* Match the neutral service-icon tiles throughout the app. */
+#onboarding-dialog .onboarding-art[data-onboarding-icon="calendar"]{color:#20a580}
+#onboarding-dialog .onboarding-art[data-onboarding-icon="group"]{color:#6b7684}
+#onboarding-dialog .onboarding-art[data-onboarding-icon="wage"]{color:#3182f6}
+#onboarding-dialog .onboarding-brand img{background:#f3f4f6;object-fit:cover;border:0;box-shadow:none}

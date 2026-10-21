@@ -23,5 +23,7 @@ const nav={
 for(const[id,[outline,filled]]of Object.entries(nav)){const target=document.querySelector('#'+id+' .nav-visual>svg');if(target){target.setAttribute('class','app-tab-icon');target.setAttribute('focusable','false');target.innerHTML='<g class="nav-outline" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">'+outline+'</g><g class="nav-filled" fill="currentColor" stroke="none">'+filled+'</g>';}}
 const entries=[['#menu-group-open .group-summary-icon','group'],['#menu-leave-settings .all-shortcut-icon','calendar'],['#menu-salary-settings .all-shortcut-icon','wage'],['#commute-open .menu-service-icon','bus'],['#parking-open .menu-service-icon','parking'],['#lost-found-open .menu-service-icon','lost'],['#view-all .lab-entry .menu-service-icon','lab'],['#native-alarm-open .menu-service-icon','alarm']];
 function apply(){for(const[selector,name]of entries){const target=document.querySelector(selector);if(!target||target.dataset.appIcon===name)continue;target.dataset.appIcon=name;target.innerHTML=svg(icons[name]);}}
+function applyOnboarding(){for(const target of document.querySelectorAll('[data-onboarding-icon]')){const name=target.dataset.onboardingIcon;if(icons[name])target.innerHTML=svg(icons[name]);}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyOnboarding,{once:true});else applyOnboarding();
 apply();const menu=document.getElementById('view-all');if(menu)new MutationObserver(apply).observe(menu,{childList:true,subtree:true});
 })();
