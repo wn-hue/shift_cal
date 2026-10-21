@@ -1,6 +1,6 @@
 /* Routine Light: an Apple Calendar inspired, optional month view. */
 .routine-calendar-toolbar,.routine-calendar-guide{display:none}
-body:is([data-pref-theme=routine],[data-pref-theme=google]){--accent:#3182f6;--accent-soft:#edf4ff;--primary:#ff3b30;--primary-dark:#d93028;--page-bg:#fff;--surface:#fff;--surface-soft:#f5f5f7;--theme-text:#1c1c1e;--text-main:#1c1c1e;--text-sub:#8e8e93;--theme-line:#e5e5ea;--shift-day:#e6f1ff;--shift-night:#eee8fa;--shift-special-day:#e3f3e9;--shift-special-night:#e1f2f2;--shift-off:#f2f2f7;--choice-bg:#f2f2f7;--choice-ink:#636366;--attendance:#c76d79;--work-ink:#426d9c}
+body:is([data-pref-theme=routine],[data-pref-theme=google]){--accent:#3182f6;--accent-soft:#edf4ff;--primary:#ff3b30;--primary-dark:#d93028;--page-bg:#fff;--surface:#fff;--surface-soft:#f5f5f7;--theme-text:#1c1c1e;--text-main:#1c1c1e;--text-sub:#8e8e93;--theme-line:#e5e5ea;--shift-day:#e6f1ff;--shift-night:#eee8fa;--shift-special-day:#e3f3e9;--shift-special-night:#e1f2f2;--shift-off:#f2f2f7;--special-day-no-ot:#d2e5d9;--special-night-no-ot:#d0e6e8;--choice-bg:#f2f2f7;--choice-ink:#636366;--attendance:#c76d79;--work-ink:#426d9c}
 body[data-view=calendar]:is([data-pref-theme=routine],[data-pref-theme=google]){background:#fff}
 body:is([data-pref-theme=routine],[data-pref-theme=google]) .reference-header{background:#fff;border:0;padding:12px 0 4px;align-items:center;min-height:66px;box-shadow:none}
 body:is([data-pref-theme=routine],[data-pref-theme=google]) .reference-header .month-title-btn{display:block;color:#1c1c1e;font-size:30px;font-weight:700;letter-spacing:-1px;line-height:1.25;text-align:left;padding:4px 0}
@@ -63,7 +63,7 @@ body:is([data-pref-theme=routine],[data-pref-theme=google]) #calendar-grid>.cal-
 body:is([data-pref-theme=routine],[data-pref-theme=google]) #calendar-grid:has(>.cal-day:nth-child(36)){grid-auto-rows:auto}
 body:is([data-pref-theme=routine],[data-pref-theme=google]) #calendar-grid:has(>.cal-day:nth-child(36))>.cal-day{min-height:var(--calendar-row-height,78px)}
 /* Google Calendar theme: blue navigation, clear grid and solid event strips. */
-body[data-pref-theme=google]{--primary:#1a73e8;--primary-dark:#185abc;--accent:#1a73e8;--accent-soft:#e8f0fe;--page-bg:#fff;--surface:#fff;--surface-soft:#f1f3f4;--theme-text:#202124;--text-main:#202124;--text-sub:#70757a;--theme-line:#dadce0;--shift-day:#d2e3fc;--shift-night:#e4d8f6;--shift-special-day:#ceead6;--shift-special-night:#ccebed;--choice-bg:#f1f3f4;--choice-ink:#3c4043;--work-ink:#3c4043}
+body[data-pref-theme=google]{--primary:#1a73e8;--primary-dark:#185abc;--accent:#1a73e8;--accent-soft:#e8f0fe;--page-bg:#fff;--surface:#fff;--surface-soft:#f1f3f4;--theme-text:#202124;--text-main:#202124;--text-sub:#70757a;--theme-line:#dadce0;--shift-day:#d2e3fc;--shift-night:#e4d8f6;--shift-special-day:#ceead6;--shift-special-night:#ccebed;--special-day-no-ot:#aad4b8;--special-night-no-ot:#a9d4d5;--choice-bg:#f1f3f4;--choice-ink:#3c4043;--work-ink:#3c4043}
 body[data-pref-theme=google] .reference-header .month-title-btn{font-size:28px;font-weight:550;color:#202124;letter-spacing:-.7px}
 body[data-pref-theme=google] .header-calendar-actions>.icon-button{color:#5f6368}
 body[data-pref-theme=google] .routine-month-navigation button{color:#5f6368}
