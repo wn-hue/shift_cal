@@ -334,3 +334,7 @@ body[data-pref-theme] .bottom-nav .app-tab-icon{width:27px;height:27px;overflow:
 body[data-pref-theme=dark] #view-all :is(.all-shortcut-icon,.group-summary-icon)[data-app-icon]{background:var(--ui-field)!important}
 body[data-pref-theme=dark] #view-all .all-shortcut-icon[data-app-icon=calendar]{color:#58d1aa!important}
 body[data-pref-theme=dark] #view-all .all-shortcut-icon[data-app-icon=wage]{color:#8bb8ff!important}
+
+/* Neutral icon containers: color belongs to the artwork, not its surrounding tile. */
+body[data-pref-theme] #view-all :is(.all-shortcut-icon,.menu-service-icon,.group-summary-icon)[data-app-icon]{background:#f3f4f6!important;border:0!important;box-shadow:none!important}
+body[data-pref-theme=dark] #view-all :is(.all-shortcut-icon,.menu-service-icon,.group-summary-icon)[data-app-icon]{background:#30343b!important}
