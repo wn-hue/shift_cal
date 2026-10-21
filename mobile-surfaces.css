@@ -276,3 +276,48 @@ body[data-pref-theme="dark"] #view-payroll .btn-save { color:#17191d!important; 
 #view-menu>.meal-rating-note{font-size:11px;margin:10px 4px}
 
 #view-menu .meal-status:empty{display:none}
+
+/* Compact payroll: scan totals first, keep detailed calculation available on demand. */
+#view-payroll :is(.card,.salary-hero){padding:18px 20px;margin-bottom:12px;border-radius:20px!important}
+#view-payroll .gcal-topbar{margin-bottom:10px}
+#view-payroll .salary-month-viewport{margin-bottom:12px;border-radius:20px}
+#view-payroll .salary-hero{padding:20px;margin-bottom:0}
+#view-payroll .salary-hero>.hero-label{margin-top:12px;margin-bottom:2px}
+#view-payroll .hero-subgrid{margin-top:14px;padding-top:12px;gap:14px}
+#view-payroll .hero-subgrid .hero-label{margin-bottom:2px}
+#view-payroll .card-header{min-height:44px;margin-bottom:10px;font-size:17px}
+#view-payroll #payroll-estimate-card{padding:12px 20px}
+#view-payroll .estimate-caption{margin-top:2px}
+#view-payroll .estimate-footer:has(.estimate-applied:empty){display:none}
+#view-payroll .estimate-net{padding:10px 12px;margin:10px 0 0;border-radius:12px}
+#view-payroll .estimate-breakdown{margin-top:6px}
+#view-payroll .estimate-breakdown>summary{display:flex;align-items:center;justify-content:space-between;min-height:44px;list-style:none;font-size:12px;color:var(--ui-muted);cursor:pointer}
+#view-payroll .estimate-breakdown>summary::-webkit-details-marker{display:none}
+#view-payroll .estimate-breakdown[open]>summary>span{transform:rotate(180deg)}
+#view-payroll .estimate-breakdown .estimate-row{padding:7px 0}
+#view-payroll .estimate-disclaimer{margin:0 0 2px;font-size:11px}
+#view-payroll .wage-settings-card .wage-edit-button{min-height:44px;margin:0;padding:8px 10px}
+#view-payroll .wage-settings-card .wage-rates{margin-bottom:8px;gap:14px}
+#view-payroll .wage-help{margin-top:4px;padding-top:4px}
+#view-payroll .wage-help summary{min-height:44px;line-height:1.6;display:flex;align-items:center}
+#view-payroll .calendar-reflect-button{min-height:44px;padding:8px 10px}
+#view-payroll .calendar-days-hint{margin-bottom:12px}
+#view-payroll .payroll-input-card :is(.regular-days,.special-days){margin-bottom:8px;gap:8px}
+#view-payroll .payroll-input-card :is(.regular-days,.special-days) .input-group{padding:8px 10px;min-height:48px;border-radius:12px}
+#view-payroll .payroll-input-card :is(.regular-days,.special-days) label{font-size:12px}
+#view-payroll .workday-summary{margin-top:8px;padding:6px 0}
+#view-payroll .workday-adjustments>summary{min-height:44px}
+#view-payroll .payroll-input-card .toggle-box{margin:4px 0 8px;padding:0;min-height:44px}
+#view-payroll .payroll-input-card .btn-action-group{margin-top:0;gap:8px}
+#view-payroll .payroll-input-card :is(.btn-save,.btn-reset-data){min-height:44px;font-size:13px}
+#view-payroll #payroll-payment-details{padding:12px 20px}
+#view-payroll #payroll-payment-details>summary{min-height:44px;font-size:15px}
+#view-payroll .pay-table td{padding:10px 0}
+
+#view-payroll .salary-month-viewport{background:var(--ui-card);overflow:hidden}
+#view-payroll #payroll-estimate-card{border-top:1px solid var(--ui-line)!important;border-radius:0!important;margin-bottom:0;padding-top:10px;padding-bottom:10px}
+#view-payroll .workday-calculations{border-top:1px solid var(--ui-line);margin-top:4px}
+#view-payroll .workday-calculations>summary{display:flex;align-items:center;justify-content:space-between;min-height:44px;list-style:none;font-size:13px;color:var(--ui-muted);cursor:pointer}
+#view-payroll .workday-calculations>summary::-webkit-details-marker{display:none}
+#view-payroll .workday-calculations[open]>summary>span{transform:rotate(180deg)}
+#view-payroll .workday-calculations .workday-summary{border-top:0;margin-top:0;padding-top:0}

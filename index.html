@@ -933,7 +933,7 @@
 <link rel="stylesheet" href="./app-surfaces.css?v=5">
 <link rel="stylesheet" href="./screen-refinement.css?v=6">
 <link rel="stylesheet" href="./onboarding.css?v=1">
-<link rel="stylesheet" href="./mobile-surfaces.css?v=2">
+<link rel="stylesheet" href="./mobile-surfaces.css?v=3">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1004,7 +1004,6 @@
                 </div>
             </div>
 
-            </div>
             <div class="card payroll-summary" id="payroll-estimate-card">
                 <label class="estimate-toggle" for="payroll-estimate-toggle">
                     <span><span class="estimate-title">예상 실수령액</span><span class="estimate-caption">세금·보험 공제 적용</span></span>
@@ -1012,19 +1011,23 @@
                 </label>
                 <div id="payroll-estimate-panel" hidden>
                     <div class="estimate-amounts" aria-live="polite">
+                        <div class="estimate-row estimate-net"><span>예상 실수령액</span><span id="estimate-net">0 원</span></div>
+                    </div>
+                    <details class="estimate-breakdown">
+                        <summary>공제 내역과 계산 기준 <span aria-hidden="true">⌄</span></summary>
                         <div class="estimate-row"><span>급여·지원금 예상 공제</span><strong id="estimate-regular-deduction">0 원</strong></div>
                         <div class="estimate-row" id="estimate-bonus-row" hidden><span>상여금 예상 공제</span><strong id="estimate-bonus-deduction">0 원</strong></div>
                         <div class="estimate-row"><span>전체 예상 공제액</span><strong id="estimate-total">0 원</strong></div>
-                        <div class="estimate-row estimate-net"><span>예상 실수령액</span><span id="estimate-net">0 원</span></div>
-                    </div>
-                    <p class="estimate-note" id="payroll-estimate-basis"></p>
-                    <p class="estimate-disclaimer">추정값이며 실제 공제액·실수령액과 다를 수 있습니다.</p>
+                        <p class="estimate-note" id="payroll-estimate-basis"></p>
+                    </details>
+                    <p class="estimate-disclaimer">추정값이며 실제 실수령액과 다를 수 있어요.</p>
                 </div>
                 <div class="estimate-footer">
                     <span id="payroll-sms-applied" class="estimate-applied" role="status"></span>
                 </div>
             </div>
 
+            </div><!-- salary-month-viewport -->
             <div class="card wage-settings-card">
                 <div class="card-header">
                     <span id="wage-settings-title">시급</span><button type="button" class="sms-open-btn wage-edit-button" onclick="document.getElementById('payroll-sms-open').click()">시급 설정 <span aria-hidden="true">›</span></button>
@@ -1063,29 +1066,32 @@
                 <p id="calendar-days-hint" class="calendar-days-hint">달력의 근무가 자동으로 반영돼요.</p>
                 <div class="two-cols regular-days">
                     <div class="input-group">
-                        <label for="inp-day-days">주간 근무일수</label>
+                        <label for="inp-day-days">주간</label>
                         <input type="text" id="inp-day-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
                     </div>
                     <div class="input-group">
-                        <label for="inp-night-days">야간 근무일수</label>
+                        <label for="inp-night-days">야간</label>
                         <input type="text" id="inp-night-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
                     </div>
                 </div>
                 <div class="two-cols special-days">
                     <div class="input-group">
-                        <label for="inp-daysp-days">주간 특근일수</label>
+                        <label for="inp-daysp-days">주간 특근</label>
                         <input type="text" id="inp-daysp-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
                     </div>
                     <div class="input-group">
-                        <label for="inp-nightsp-days">야간 특근일수</label>
+                        <label for="inp-nightsp-days">야간 특근</label>
                         <input type="text" id="inp-nightsp-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
                     </div>
                 </div>
+                <details class="workday-calculations">
+                    <summary>연장·무급 계산 결과 <span aria-hidden="true">⌄</span></summary>
                 <div class="workday-summary" aria-label="캘린더 계산 결과">
                     <div><label for="disp-ot-hours">연장시간 · 1.5배</label><input type="text" id="disp-ot-hours" value="0.0h" readonly></div>
                     <div><label for="disp-unpaid-days">무급 일수</label><input type="text" id="disp-unpaid-days" value="0일" readonly></div>
                     <div><label for="disp-unpaid-deduction">무급 차감 예상액</label><input type="text" id="disp-unpaid-deduction" value="0원" readonly></div>
                 </div>
+                </details>
                 <details class="workday-adjustments" id="workday-adjustments">
                     <summary><span>추가 조정<small id="workday-adjustment-value">연장 제외 · 명절수당</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
                     <div class="workday-adjustment-fields">
