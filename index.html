@@ -919,7 +919,7 @@
 
     <link rel="stylesheet" href="./today-weather.css?v=4">
     <link rel="stylesheet" href="./night-day-theme.css?v=7">
-    <link rel="stylesheet" href="./work-choice-theme.css?v=2">
+    <link rel="stylesheet" href="./work-choice-theme.css?v=3">
 <link rel="stylesheet" href="./work-editor.css?v=3">
 <link rel="stylesheet" href="./wage-leave-layout.css?v=2">
 <link rel="stylesheet" href="./navigation-special.css?v=2">
@@ -934,7 +934,7 @@
 <link rel="stylesheet" href="./screen-refinement.css?v=6">
 <link rel="stylesheet" href="./onboarding.css?v=3">
 <link rel="stylesheet" href="./mobile-surfaces.css?v=9">
-<link rel="stylesheet" href="./routine-calendar.css?v=2">
+<link rel="stylesheet" href="./routine-calendar.css?v=3">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1247,7 +1247,7 @@
     </div><p class="group-picker-note">선택하면 자동으로 저장돼요.</p>
 </dialog>
 
-<dialog id="app-preferences-dialog" class="app-preferences"><div class="preferences-header"><h2>앱 환경</h2><button class="override-close" aria-label="앱 환경 닫기" onclick="document.getElementById('app-preferences-dialog').close()">✕</button></div><section class="preferences-card"><h3>테마</h3><label>달력 스타일<select id="pref-theme"><option value="current">1. 밤과 낮</option><option value="toss">2. 블루컬러</option><option value="gpt">3. 그레이</option><option value="dark">4. 다크모드</option><option value="routine">5. 루틴 · 라이트</option></select></label></section><section class="preferences-card"><h3>화면 표시</h3><label>이전 · 다음 달 근무<input type="checkbox" role="switch" id="pref-adjacent" checked></label><label>공휴일 이름<input type="checkbox" role="switch" id="pref-holidays" checked></label><label>달력 메모<input type="checkbox" role="switch" id="pref-memos" checked></label><label>근무 배지 모양<select id="pref-shape"><option value="square">둥근 네모</option><option value="circle">원</option></select></label></section><section class="external-calendars"><h2>내 캘린더</h2><p>개인 일정을 근무표와 함께 확인하세요.</p><a class="external-connect" href="/api/google-calendar?action=login&amp;storage=1&amp;external=1">Google 캘린더 연결</a><div id="external-calendar-list"></div><p id="external-calendar-status" role="status"></p></section>        <section class="all-info-section" aria-labelledby="all-info-title"><h2 id="all-info-title">앱 안내</h2><div class="all-info-list">
+<dialog id="app-preferences-dialog" class="app-preferences"><div class="preferences-header"><h2>앱 환경</h2><button class="override-close" aria-label="앱 환경 닫기" onclick="document.getElementById('app-preferences-dialog').close()">✕</button></div><section class="preferences-card"><h3>테마</h3><label>달력 스타일<select id="pref-theme"><option value="current">1. 밤과 낮</option><option value="toss">2. 블루컬러</option><option value="gpt">3. 그레이</option><option value="dark">4. 다크모드</option><option value="routine">5. 루틴 · 라이트</option><option value="google">6. 구글 캘린더</option></select></label></section><section class="preferences-card"><h3>화면 표시</h3><label>이전 · 다음 달 근무<input type="checkbox" role="switch" id="pref-adjacent" checked></label><label>공휴일 이름<input type="checkbox" role="switch" id="pref-holidays" checked></label><label>달력 메모<input type="checkbox" role="switch" id="pref-memos" checked></label><label>근무 배지 모양<select id="pref-shape"><option value="square">둥근 네모</option><option value="circle">원</option></select></label></section><section class="external-calendars"><h2>내 캘린더</h2><p>개인 일정을 근무표와 함께 확인하세요.</p><a class="external-connect" href="/api/google-calendar?action=login&amp;storage=1&amp;external=1">Google 캘린더 연결</a><div id="external-calendar-list"></div><p id="external-calendar-status" role="status"></p></section>        <section class="all-info-section" aria-labelledby="all-info-title"><h2 id="all-info-title">앱 안내</h2><div class="all-info-list">
           <a id="iphone-alarm-guide-link" href="./iphone-alarms.html"><span>아이폰 근무 알람 · 단축어 설정</span><span aria-hidden="true">›</span></a>
           <a href="./about.html"><span>앱 소개 · 문의</span><span aria-hidden="true">›</span></a>
           <a href="./privacy.html"><span>개인정보처리방침</span><span aria-hidden="true">›</span></a>
@@ -2825,7 +2825,7 @@
     <script src="./today-menu.js?v=7"></script>
 <dialog id="account-login-dialog" class="account-login-dialog" data-connected="false" aria-labelledby="login-sheet-title"><div class="login-sheet-handle" aria-hidden="true"></div><button type="button" class="login-sheet-close" aria-label="로그인 창 닫기">×</button><section class="identity-card" aria-label="로그인 및 동기화"><div class="identity-heading"><div><h2 id="login-sheet-title">로그인 또는 회원가입</h2><p id="account-email">로그인하면 근무표와 메모가 동기화됩니다.</p></div></div><div class="identity-buttons"><a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1" aria-label="Google로 로그인" aria-describedby="account-permission-notice"><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#4285f4" d="M43.6 24.5c0-1.4-.1-2.7-.4-4H24v7.7h11a9.4 9.4 0 0 1-4.1 6.2v5h6.7c3.9-3.6 6-8.8 6-14.9Z"/><path fill="#34a853" d="M24 44c5.4 0 10-1.8 13.6-5l-6.7-5c-1.8 1.2-4.1 1.9-6.9 1.9-5.2 0-9.7-3.5-11.3-8.2H5.8v5.2A20 20 0 0 0 24 44Z"/><path fill="#fbbc05" d="M12.7 27.7a12 12 0 0 1 0-7.4v-5.2H5.8a20 20 0 0 0 0 17.8l6.9-5.2Z"/><path fill="#ea4335" d="M24 12.1c3 0 5.6 1 7.7 3l5.8-5.8A19.3 19.3 0 0 0 24 4 20 20 0 0 0 5.8 15.1l6.9 5.2c1.6-4.7 6.1-8.2 11.3-8.2Z"/></svg><span>Google 계정으로 계속하기</span></a><a id="apple-login" aria-disabled="true" class="apple-signin" href="/api/apple-account?action=login" aria-label="Apple로 로그인"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M17.1 12.3c0-2 1.6-3 1.7-3.1-1-1.5-2.5-1.7-3.1-1.7-1.3-.2-2.5.8-3.2.8-.7 0-1.8-.8-2.9-.8-1.5 0-2.8.9-3.5 2.1-1.5 2.5-.4 6.3 1 8.3.7 1 1.5 2.1 2.6 2 1.1 0 1.5-.7 2.8-.7 1.3 0 1.7.7 2.9.7 1.2 0 1.9-1 2.6-2 .8-1.1 1.1-2.2 1.1-2.3-.1 0-2-.8-2-3.3M14.8 6.2c.6-.8 1.1-1.8 1-2.9-1 .1-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.8 1.1.1 2.1-.6 2.8-1.4"/></svg>Apple 계정으로 계속하기</a></div><p id="apple-login-status" class="identity-note" role="status"></p><div id="account-sync-status" class="sync-feedback" role="status" aria-live="polite" aria-atomic="true"></div><div class="identity-actions"><button id="account-sync-now" type="button" class="btn-save" hidden>지금 동기화</button><button id="account-logout" type="button" class="btn-reset-data" hidden>로그아웃</button><button id="account-delete" type="button" class="btn-reset-data" hidden>계정 데이터 삭제</button></div></section></dialog>
     <script src="./login-sheet.js?v=1"></script>
-    <script src="./app-menu.js?v=6"></script>
+    <script src="./app-menu.js?v=7"></script>
     <script src="./settings-ui.js?v=9"></script>
     <script src="./account-sync.js?v=privacy-14"></script>
     <script src="./google-sync.js?v=12"></script>
@@ -2848,6 +2848,7 @@
 <script src="./lost-found.js?v=5"></script>
 <script src="./bright-menu.js?v=2"></script>
 <script src="./app-icons.js?v=3"></script>
+<script src="./calendar-themes.js?v=1"></script>
 <script src="./dialog-viewport.js?v=1"></script>
 
 <dialog id="onboarding-dialog" aria-labelledby="onboarding-title" aria-describedby="onboarding-description">

@@ -20,3 +20,13 @@ body[data-pref-theme] #view-menu .meal-date-card :is(.meal-eyebrow,.meal-status)
 body[data-pref-theme] #view-menu .meal-date-card .meal-note { color:#999!important; }
 body[data-pref-theme] #view-menu .meal-date-card .meal-refresh { background:#fff!important;color:#444!important;border-color:#dedede!important; }
 body[data-pref-theme] #view-menu .meal-date-card .meal-refresh:disabled { color:#777!important; }
+
+/* Separate paid leave, half-days and unpaid attendance by hue. */
+body[data-pref-theme] #modal-override #work-panel .opt-btn.leave{background:#e4f5eb!important;color:#26724d!important}
+body[data-pref-theme] #modal-override #work-panel .opt-btn.half{background:#e5efff!important;color:#3569a6!important}
+body[data-pref-theme] #modal-override #work-panel .opt-btn.unpaid{background:#fae7eb!important;color:#a4435e!important}
+body[data-pref-theme] #modal-override #work-panel .opt-btn.unpaid-half{background:#fff0df!important;color:#a56728!important}
+body[data-pref-theme=dark] #modal-override #work-panel .opt-btn.leave{background:#274b3b!important;color:#b2e5c9!important}
+body[data-pref-theme=dark] #modal-override #work-panel .opt-btn.half{background:#2c425f!important;color:#c0d7fb!important}
+body[data-pref-theme=dark] #modal-override #work-panel .opt-btn.unpaid{background:#57323e!important;color:#f3bfcd!important}
+body[data-pref-theme=dark] #modal-override #work-panel .opt-btn.unpaid-half{background:#58442c!important;color:#f3d2a8!important}
