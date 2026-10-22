@@ -2596,22 +2596,46 @@
             if (window.PayrollEstimate) window.PayrollEstimate.update(grandGross, {regular:regularGross,bonus:bonusPay,support:entryBonus});
         }
 
+        let payslipAlertContext = null;
+
         function checkPayslipPopup() {
+            if (document.visibilityState === 'hidden' || window.ShiftOnboarding?.needsSetup()) return;
+            const popup = document.getElementById('modal-payslip-alert');
+            if (popup.classList.contains('active')) return;
+            // Wait until setup or another dialog has actually finished, rather than hiding the alert behind it.
+            if (document.querySelector('dialog[open], .modal-overlay.active')) return;
             const today = new Date();
             const curYear = today.getFullYear();
             const curMonth = today.getMonth();
             const todayKey = toDateKey(curYear, curMonth, today.getDate());
-
             const { payday, slipDate } = getPaydayAndSlipDate(curYear, curMonth);
             const slipKey = toDateKey(slipDate.getFullYear(), slipDate.getMonth(), slipDate.getDate());
+            if (todayKey !== slipKey) return;
+            const storageKey = `shift_payslip_ack_v2_${slipKey}`;
+            try { if (localStorage.getItem(storageKey)) return; } catch {}
 
-            if (todayKey === slipKey) {
-                const storageKey = `shift_payslip_alert_shown_${slipKey}`;
-                if (!localStorage.getItem(storageKey)) {
-                    openPayslipModal(curYear, curMonth, payday, slipDate);
-                    localStorage.setItem(storageKey, 'true');
-                }
+            // The alert is for this month's payday even when the user is browsing another month.
+            const previousPayDate = currentPayDate;
+            const differentMonth = previousPayDate.getFullYear() !== curYear || previousPayDate.getMonth() !== curMonth;
+            let preview;
+            try {
+                if (differentMonth) { currentPayDate = new Date(curYear, curMonth, 1); syncFromCalendar(); }
+                preview = readPayslipPreview();
+            } finally {
+                if (differentMonth) { currentPayDate = previousPayDate; syncFromCalendar(); }
             }
+            openPayslipModal(curYear, curMonth, payday, slipDate, preview);
+            payslipAlertContext = { year:curYear, month:curMonth, storageKey };
+        }
+
+        function readPayslipPreview() {
+            const read = id => document.getElementById(id).innerText;
+            return {
+                gross:read('hero-gross-pay'), label:read('hero-pay-label'),
+                regular:read('hero-regular-pay'), bonus:read('hero-bonus-pay'),
+                regularLabel:read('payslip-modal-regular-label'), bonusLabel:read('payslip-modal-bonus-label'),
+                period:read('pay-period-label').replace('산정기간: ', '')
+            };
         }
 
         function triggerPayslipPopupManual() {
@@ -2621,16 +2645,19 @@
             openPayslipModal(curYear, curMonth, payday, slipDate);
         }
 
-        function openPayslipModal(year, month, payday, slipDate) {
+        function openPayslipModal(year, month, payday, slipDate, preview = readPayslipPreview()) {
+            payslipAlertContext = {year, month, storageKey:null};
             const weekNames = ['일', '월', '화', '수', '목', '금', '토'];
             document.getElementById('payslip-modal-title').innerText = `${month + 1}월 급여명세서 발송일`;
 
-            document.getElementById('payslip-modal-gross').innerText = document.getElementById('hero-gross-pay').innerText;
-            document.getElementById('payslip-modal-pay-label').innerText = document.getElementById('hero-pay-label').innerText;
-            document.getElementById('payslip-modal-regular').innerText = document.getElementById('hero-regular-pay').innerText;
-            document.getElementById('payslip-modal-bonus').innerText = document.getElementById('hero-bonus-pay').innerText;
+            document.getElementById('payslip-modal-gross').innerText = preview.gross;
+            document.getElementById('payslip-modal-pay-label').innerText = preview.label;
+            document.getElementById('payslip-modal-regular').innerText = preview.regular;
+            document.getElementById('payslip-modal-regular-label').innerText = preview.regularLabel;
+            document.getElementById('payslip-modal-bonus').innerText = preview.bonus;
+            document.getElementById('payslip-modal-bonus-label').innerText = preview.bonusLabel;
 
-            const periodText = document.getElementById('pay-period-label').innerText.replace('산정기간: ', '');
+            const periodText = preview.period;
             document.getElementById('payslip-modal-period').innerText = periodText;
 
             document.getElementById('payslip-modal-payday').innerText = `${payday.getFullYear()}년 ${payday.getMonth() + 1}월 ${payday.getDate()}일 (${weekNames[payday.getDay()]})`;
@@ -2647,6 +2674,10 @@
         }
 
         function closePayslipModalDirect() {
+            if (payslipAlertContext?.storageKey) {
+                try { localStorage.setItem(payslipAlertContext.storageKey, 'true'); } catch {}
+            }
+            payslipAlertContext = null;
             document.getElementById('modal-payslip-alert').classList.remove('active');
         }
 
@@ -2655,6 +2686,7 @@
         }
 
         function goToPayrollFromPayslip() {
+            if (payslipAlertContext) currentCalDate = new Date(payslipAlertContext.year, payslipAlertContext.month, 1);
             closePayslipModalDirect();
             switchView('payroll');
         }
@@ -2882,6 +2914,7 @@
  <footer class="onboarding-footer"><p id="onboarding-error" role="status" aria-live="polite"></p><button type="button" id="onboarding-next">다음</button><button type="button" id="onboarding-login">이미 사용 중인가요? 로그인해서 불러오기</button></footer>
 </dialog>
 <script src="./onboarding.js?v=2"></script>
+<script src="./payslip-alert.js?v=1"></script>
 </body>
 </html>
 
