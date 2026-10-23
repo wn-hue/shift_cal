@@ -1,0 +1,30 @@
+/* The memo sheet follows the keyboard's visual viewport without resizing the work editor. */
+body.memo-editor-open{overflow:hidden;overscroll-behavior:none}
+#modal-override.active[data-editor-tab=memo]{inset:auto;top:var(--memo-viewport-top,0px);left:var(--memo-viewport-left,0px);width:var(--memo-viewport-width,100vw);height:var(--memo-viewport-height,100dvh);box-sizing:border-box;padding:12px;align-items:flex-end;justify-content:center;overflow:hidden;overscroll-behavior:contain}
+#modal-override[data-editor-tab=memo] .override-sheet{display:flex;flex-direction:column;box-sizing:border-box;width:100%;max-width:560px;height:min(560px,calc(var(--memo-viewport-height,100dvh) - 24px));max-height:100%;min-height:0;margin:0;padding:0;border-radius:24px;overflow:hidden}
+#modal-override[data-editor-tab=memo] .override-header{flex:none;min-height:0;box-sizing:border-box;padding:24px 20px 12px;margin:0}
+#modal-override[data-editor-tab=memo] .override-header h2{font-size:11px;margin:0 0 6px}
+#modal-override[data-editor-tab=memo] #modal-date-text{font-size:20px;margin:0;padding-right:40px;line-height:1.4}
+#modal-override[data-editor-tab=memo] .editor-current-shift,#modal-override[data-editor-tab=memo] .override-reset{display:none}
+#modal-override[data-editor-tab=memo] .override-header-actions{top:18px;right:14px}
+#modal-override[data-editor-tab=memo] .override-close{width:44px;height:44px;min-height:44px}
+#modal-override[data-editor-tab=memo] .editor-content{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;box-sizing:border-box;padding:10px 18px 16px;border-radius:0}
+body[data-pref-theme] #modal-override[data-editor-tab=memo] .editor-tabs{flex:none;min-height:44px;margin:0 0 10px;gap:20px}
+#modal-override[data-editor-tab=memo] #memo-panel{display:flex;flex-direction:column;flex:1;min-height:0;padding:0;margin:0;border:0}
+#modal-override[data-editor-tab=memo] #memo-panel[hidden]{display:none}
+#modal-override[data-editor-tab=memo] #memo-panel label{flex:none;font-size:12px;margin:0 0 8px}
+#modal-override[data-editor-tab=memo] #memo-panel #modal-memo-input{display:block;flex:1;box-sizing:border-box;width:100%;min-width:0;min-height:64px!important;height:auto!important;max-height:none!important;margin:0;padding:12px;border:1px solid var(--theme-line,#e5e7eb);border-radius:12px;background:var(--surface,#fff);color:var(--theme-text,#30343b);font:inherit;font-size:16px!important;line-height:1.6;resize:none;overflow-y:auto;overflow-wrap:anywhere;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+#modal-override[data-editor-tab=memo] #memo-panel .btn-save{display:block;flex:none;box-sizing:border-box;width:100%;min-height:44px;margin:12px 0 0;padding:10px;border-radius:12px;font-size:15px}
+/* Landscape phones and small keyboard viewports retain reachable controls. */
+#modal-override[data-editor-tab=memo][data-memo-compact=true]{padding:8px}
+#modal-override[data-editor-tab=memo][data-memo-compact=true] .override-sheet{height:calc(var(--memo-viewport-height,100dvh) - 16px);border-radius:18px}
+#modal-override[data-editor-tab=memo][data-memo-compact=true] .override-header{padding:14px 16px 6px}
+#modal-override[data-editor-tab=memo][data-memo-compact=true] .override-header h2{display:none}
+#modal-override[data-editor-tab=memo][data-memo-compact=true] #modal-date-text{font-size:17px;line-height:1.5}
+#modal-override[data-editor-tab=memo][data-memo-compact=true] .override-header-actions{top:6px;right:10px}
+#modal-override[data-editor-tab=memo][data-memo-compact=true] .editor-content{padding:0 14px 10px;overflow-y:auto}
+body[data-pref-theme] #modal-override[data-editor-tab=memo][data-memo-compact=true] .editor-tabs{margin-bottom:6px}
+#modal-override[data-editor-tab=memo][data-memo-compact=true] #memo-panel label{display:none}
+#modal-override[data-editor-tab=memo][data-memo-compact=true] #memo-panel #modal-memo-input{min-height:44px!important;padding:8px 10px}
+#modal-override[data-editor-tab=memo][data-memo-compact=true] #memo-panel .btn-save{margin-top:8px}
+body[data-pref-theme] #modal-override[data-editor-tab=memo] .override-reset{display:none}
