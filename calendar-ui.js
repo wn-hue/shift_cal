@@ -5,8 +5,9 @@
         document.body.dataset.view=view;
         $('cal-month-title-btn').hidden=view!=='calendar';
         $('header-view-title').hidden=view==='calendar';
-        $('header-view-title').textContent=view==='all'?'전체':view==='payroll'?'급여 계산기':view==='menu'?'오늘 식단':'시급 · 연차';
+        $('header-view-title').textContent=view==='all'?'전체':view==='payroll'?'급여 계산기':view==='menu'?'오늘 메뉴':'시급 · 연차';
         $('header-calendar-actions').hidden=view!=='calendar';
+        $('today-menu-refresh').hidden=view!=='menu';
         for (const [name,id] of [['calendar','bnav-cal'],['payroll','bnav-pay'],['menu','bnav-menu'],['all','account-menu-button']]) {
             $(id).setAttribute('aria-current',view===name?'page':'false');
         }

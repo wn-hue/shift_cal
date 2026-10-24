@@ -10,10 +10,10 @@
     function updateNavigation(date) {
         $('today-menu-date').textContent = dateLabel(date);
         const days = offset(date);
-        if ($('today-menu-relative')) $('today-menu-relative').textContent = days===0?'오늘 식단':days===1?'내일 식단':days===-1?'어제 식단':days>0?days+'일 뒤 식단':Math.abs(days)+'일 전 식단';
+        if ($('today-menu-relative')) $('today-menu-relative').textContent = days===0?'오늘':days===1?'내일':days===-1?'어제':days>0?days+'일 뒤':Math.abs(days)+'일 전';
         if ($('today-menu-prev')) $('today-menu-prev').disabled = days<=-31;
         if ($('today-menu-next')) $('today-menu-next').disabled = days>=31;
-        if ($('today-menu-today')) $('today-menu-today').disabled = days===0;
+        if ($('today-menu-today')) $('today-menu-today').hidden = days===0;
         if ($('today-menu-cards').dataset) $('today-menu-cards').dataset.menuDate = date;
     }
     const cacheKey = 'shift_today_menu_cache_v1';
@@ -62,18 +62,25 @@
             card.setAttribute('data-meal',meal.name);
             const heading = node('div','meal-card-heading');
             heading.appendChild(node('h2','',meal.name));
-            heading.appendChild(node('span','meal-category',meal.groups[0].title));
             card.appendChild(heading);
-            card.appendChild(list(meal.groups[0].items));
+            const body = node('div','meal-card-body'+(meal.groups.length > 1?' has-sides':''));
+            const main = node('section','meal-main');
+            main.setAttribute('aria-label',meal.name+' '+meal.groups[0].title);
+            main.appendChild(node('h3','meal-group-title',meal.groups[0].title));
+            main.appendChild(list(meal.groups[0].items));
+            body.appendChild(main);
             if (meal.groups.length > 1) {
-                const details = node('details','meal-extras');
-                details.appendChild(node('summary','',meal.groups.slice(1).map(g => g.title).join(' · ')));
+                const sides = node('aside','meal-sides');
+                sides.setAttribute('aria-label',meal.name+' 추가 메뉴');
                 for (const group of meal.groups.slice(1)) {
-                    details.appendChild(node('h3','',group.title));
-                    details.appendChild(list(group.items));
+                    const section = node('section','meal-side-group');
+                    section.appendChild(node('h3','meal-group-title',group.title));
+                    section.appendChild(list(group.items));
+                    sides.appendChild(section);
                 }
-                card.appendChild(details);
+                body.appendChild(sides);
             }
+            card.appendChild(body);
             cards.appendChild(card);
         }
         $('today-menu-status').textContent = '';
@@ -126,7 +133,7 @@
             if (date !== selected() || data.date !== date) throw new Error('날짜가 변경되었어요. 새로고침해 주세요.');
             if (validMenu(data,date)) {render(data); saveCache(data);}
             else if (data.status === 'not_published') empty(data.message);
-            else throw new Error('오늘 식단을 확인하지 못했어요. 잠시 후 다시 시도해 주세요.');
+            else throw new Error('메뉴를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.');
             shownDate = date;
             loadedAt = Date.now();
         } catch (error) {

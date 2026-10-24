@@ -1,0 +1,29 @@
+/* One menu heading, date-only navigation, and parallel menu columns. */
+#today-menu-refresh[hidden],#today-menu-today[hidden]{display:none!important}
+body[data-view=menu] .reference-header{align-items:center;margin-bottom:8px}
+body[data-view=menu] #today-menu-refresh{flex:none;min-width:78px;min-height:44px;padding:10px 12px;border:0;border-radius:14px;background:var(--ui-card,#fff);color:var(--ui-copy,#4e5968);font-size:12px}
+body[data-view=menu] #today-menu-refresh[aria-busy=true]{min-width:112px}
+#view-menu .meal-date-card{padding:4px 4px 16px!important}
+#view-menu .meal-date-row h1{font-size:21px;line-height:1.5}
+#view-menu .meal-navigation{justify-content:flex-start;gap:4px;margin-top:10px}
+#view-menu #today-menu-relative{flex:none;min-width:60px;text-align:center;font-size:14px;color:var(--ui-text,#333d4b)}
+#view-menu #today-menu-today{margin-left:auto;background:transparent;font-size:12px;color:var(--ui-blue,#3182f6)}
+#view-menu .meal-card-heading{margin-bottom:16px}
+#view-menu .meal-card-body{min-width:0}
+#view-menu .meal-card-body.has-sides{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px}
+#view-menu .meal-main,#view-menu .meal-sides,#view-menu .meal-side-group{min-width:0}
+#view-menu .meal-group-title{margin:0 0 8px;font-size:11px;font-weight:600;line-height:1.5;color:var(--ui-muted,#6b7684);overflow-wrap:anywhere}
+#view-menu .meal-main .meal-items{font-size:14px;line-height:1.85}
+#view-menu .meal-main .meal-items li:first-child{font-size:17px;line-height:1.5;margin-bottom:8px;color:var(--ui-text,#333d4b)}
+#view-menu .meal-sides{border-left:1px solid var(--ui-line,#e5e8eb);padding-left:16px}
+#view-menu .meal-side-group+.meal-side-group{margin-top:16px}
+#view-menu .meal-sides .meal-items{font-size:13px;line-height:1.75;color:var(--ui-copy,#4e5968)}
+#view-menu .meal-sides .meal-items li:first-child{font-size:13px;font-weight:400;line-height:1.75;margin-bottom:0;color:inherit}
+#view-menu .meal-sides .meal-group-title{color:var(--ui-copy,#4e5968)}
+@media(max-width:350px){
+ #view-menu .meal-card{padding:16px}
+ #view-menu .meal-card-body.has-sides{gap:12px}
+ #view-menu .meal-sides{padding-left:12px}
+ #view-menu .meal-main .meal-items li:first-child{font-size:16px}
+ #view-menu .meal-date-row h1{font-size:20px}
+}

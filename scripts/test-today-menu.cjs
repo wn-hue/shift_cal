@@ -106,7 +106,7 @@ async function main() {
     assert.equal(elements.get('today-menu-cards').children.length,4);
     reply=structuredClone(reply);reply.meals[0].groups[0].items[0]='<img src=x onerror=alert(1)>';
     await ctx.TodayMenu.load(true);assert.equal(requests,2,'Explicit refresh bypasses the saved cache');
-    assert.equal(elements.get('today-menu-cards').children[0].children[1].children[0].textContent,'<img src=x onerror=alert(1)>','PDF text must never become HTML');
+    assert.equal(elements.get('today-menu-cards').children[0].children[1].children[0].children[1].children[0].textContent,'<img src=x onerror=alert(1)>','PDF text must never become HTML');
     instant=new Date('2026-10-02T15:00:00Z');
     await ctx.TodayMenu.load();assert.equal(elements.get('today-menu-cards').children.length,4,'Midnight retains the previous meal day');
     instant=new Date('2026-10-02T17:40:00Z');
