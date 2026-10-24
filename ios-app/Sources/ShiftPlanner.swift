@@ -11,6 +11,14 @@ struct ShiftDay: Codable, Equatable {
     let date: String
     let type: String
     let origType: String?
+    let isHoliday: Bool?
+
+    init(date: String, type: String, origType: String?, isHoliday: Bool? = nil) {
+        self.date = date
+        self.type = type
+        self.origType = origType
+        self.isHoliday = isHoliday
+    }
 }
 struct ShiftSnapshot: Codable, Equatable {
     let group: String
@@ -34,6 +42,43 @@ struct AlarmPreferences: Codable {
     var dayMinutes = 6 * 60 + 30
     var nightMinutes = 18 * 60 + 30
     var includeHalf = false
+    var separateWeekendHolidays = false
+    var weekendDayMinutes: Int?
+    var weekendNightMinutes: Int?
+
+    init() {}
+
+    private enum CodingKeys: String, CodingKey {
+        case enabled, dayMinutes, nightMinutes, includeHalf
+        case separateWeekendHolidays, weekendDayMinutes, weekendNightMinutes
+    }
+
+    // Old installations have only the first four fields. Preserve their times and enabled state.
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        enabled = try values.decodeIfPresent(Bool.self, forKey: .enabled) ?? false
+        dayMinutes = try values.decodeIfPresent(Int.self, forKey: .dayMinutes) ?? 6 * 60 + 30
+        nightMinutes = try values.decodeIfPresent(Int.self, forKey: .nightMinutes) ?? 18 * 60 + 30
+        includeHalf = try values.decodeIfPresent(Bool.self, forKey: .includeHalf) ?? false
+        separateWeekendHolidays = try values.decodeIfPresent(Bool.self, forKey: .separateWeekendHolidays) ?? false
+        weekendDayMinutes = try values.decodeIfPresent(Int.self, forKey: .weekendDayMinutes)
+        weekendNightMinutes = try values.decodeIfPresent(Int.self, forKey: .weekendNightMinutes)
+    }
+
+    mutating func setSeparateWeekendHolidays(_ value: Bool) {
+        if value {
+            if weekendDayMinutes == nil { weekendDayMinutes = dayMinutes }
+            if weekendNightMinutes == nil { weekendNightMinutes = nightMinutes }
+        }
+        separateWeekendHolidays = value
+    }
+
+    func minutes(night: Bool, weekendOrHoliday: Bool) -> Int {
+        if separateWeekendHolidays && weekendOrHoliday {
+            return night ? (weekendNightMinutes ?? nightMinutes) : (weekendDayMinutes ?? dayMinutes)
+        }
+        return night ? nightMinutes : dayMinutes
+    }
 }
 
 enum ShiftPlanner {
@@ -69,13 +114,18 @@ enum ShiftPlanner {
     }
     static func plans(_ snapshot: ShiftSnapshot, preferences: AlarmPreferences, now: Date = Date()) -> [PlannedAlarm] {
         guard preferences.enabled, (0..<1440).contains(preferences.dayMinutes),
-              (0..<1440).contains(preferences.nightMinutes) else { return [] }
+              (0..<1440).contains(preferences.nightMinutes),
+              (0..<1440).contains(preferences.minutes(night: false, weekendOrHoliday: true)),
+              (0..<1440).contains(preferences.minutes(night: true, weekendOrHoliday: true)) else { return [] }
         let end = korea.date(byAdding: .day, value: 30, to: korea.startOfDay(for: now))!
         return snapshot.days.compactMap { day in
             guard let night = isNight(day, includeHalf: preferences.includeHalf), let start = date(day.date) else { return nil }
-            let minutes = night ? preferences.nightMinutes : preferences.dayMinutes
+            let weekday = korea.component(.weekday, from: start)
+            let weekendOrHoliday = weekday == 1 || weekday == 7 || day.isHoliday == true
+            let minutes = preferences.minutes(night: night, weekendOrHoliday: weekendOrHoliday)
             guard let fire = korea.date(byAdding: .minute, value: minutes, to: start), fire > now, fire < end else { return nil }
-            return PlannedAlarm(key: day.date, title: "\(snapshot.group)조 \(night ? "야간" : "주간") 근무 알람", date: fire)
+            let dayLabel = preferences.separateWeekendHolidays ? " · \(weekendOrHoliday ? "주말·공휴일" : "평일")" : ""
+            return PlannedAlarm(key: day.date, title: "\(snapshot.group)조 \(night ? "야간" : "주간") 근무 알람\(dayLabel)", date: fire)
         }.sorted { $0.date < $1.date }
     }
 }

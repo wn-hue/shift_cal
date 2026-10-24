@@ -25,6 +25,32 @@ final class AlarmServiceTests: XCTestCase {
     }
 
     @MainActor
+    func testWeekendTimeChangeReplacesOnlyItsAlarmsAndPersists() async throws {
+        let backend = FakeBackend()
+        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let service = AlarmService(defaults: defaults, backend: backend)
+        let start = ShiftPlanner.date("2026-10-23")!
+        let snapshot = ShiftSnapshot(group: "C", days: [
+            ShiftDay(date: "2026-10-23", type: "DAY", origType: nil),
+            ShiftDay(date: "2026-10-24", type: "DAY", origType: nil)])
+        var preferences = AlarmPreferences()
+        preferences.enabled = true
+        preferences.setSeparateWeekendHolidays(true)
+        try await service.reconcile(ShiftPlanner.plans(snapshot, preferences: preferences, now: start))
+        let weekdayID = service.records["2026-10-23"]!.id
+        let weekendID = service.records["2026-10-24"]!.id
+        preferences.weekendDayMinutes = 420
+        let wanted = ShiftPlanner.plans(snapshot, preferences: preferences, now: start)
+        try await service.reconcile(wanted)
+        XCTAssertEqual(backend.cancelled, [weekendID])
+        XCTAssertEqual(service.records["2026-10-23"]?.id, weekdayID)
+        XCTAssertEqual(backend.ids.count, 2)
+        try await AlarmService(defaults: defaults, backend: backend).reconcile(wanted)
+        XCTAssertEqual(backend.scheduledIDs.count, 3, "Restart does not add another alarm")
+        XCTAssertEqual(try service.scheduled(), wanted)
+    }
+
+    @MainActor
     func testRepeatAndProcessRestartDoNotDuplicate() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let backend = FakeBackend()

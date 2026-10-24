@@ -47,4 +47,69 @@ final class ShiftPlannerTests: XCTestCase {
         XCTAssertFalse(ShiftSnapshot(group: "A", days: invalid).validated(now: now))
         XCTAssertNil(ShiftPlanner.date("2026-02-30"))
     }
+
+    func testWeekendAndSubstituteHolidayTimesFollowWorkDate() {
+        let start = ShiftPlanner.date("2026-02-27")!
+        let snapshot = ShiftSnapshot(group: "A", days: [
+            ShiftDay(date: "2026-02-27", type: "DAY", origType: nil, isHoliday: false),
+            ShiftDay(date: "2026-02-28", type: "DAY", origType: nil, isHoliday: false),
+            ShiftDay(date: "2026-03-01", type: "NIGHT", origType: nil, isHoliday: true),
+            ShiftDay(date: "2026-03-02", type: "DAY", origType: nil, isHoliday: true),
+            // Special work on an ordinary Tuesday still uses the weekday clock.
+            ShiftDay(date: "2026-03-03", type: "SPECIAL_NIGHT", origType: nil, isHoliday: false),
+            ShiftDay(date: "2026-03-04", type: "NO_OT", origType: "DAY", isHoliday: true),
+            ShiftDay(date: "2026-03-05", type: "HALF_POST", origType: "NIGHT", isHoliday: true),
+            ShiftDay(date: "2026-03-06", type: "OFF", origType: nil, isHoliday: true),
+            ShiftDay(date: "2026-03-07", type: "LEAVE", origType: "DAY", isHoliday: false),
+            ShiftDay(date: "2026-03-08", type: "UNPAID_OFF", origType: "NIGHT", isHoliday: false)])
+        var preferences = AlarmPreferences()
+        preferences.enabled = true
+        preferences.dayMinutes = 330
+        preferences.nightMinutes = 1050
+        preferences.setSeparateWeekendHolidays(true)
+        preferences.weekendDayMinutes = 420
+        preferences.weekendNightMinutes = 1140
+        var plans = ShiftPlanner.plans(snapshot, preferences: preferences, now: start)
+        XCTAssertEqual(plans.map(\.key), Array(snapshot.days.prefix(6)).map(\.date))
+        XCTAssertEqual(plans.map { ShiftPlanner.korea.component(.hour, from: $0.date) }, [5, 7, 19, 7, 17, 7])
+        XCTAssertEqual(plans[2].date, ShiftPlanner.date("2026-03-01")!.addingTimeInterval(1140 * 60))
+        XCTAssertTrue(plans[3].title.contains("주말·공휴일"))
+        XCTAssertTrue(plans[4].title.contains("평일"))
+        preferences.includeHalf = true
+        plans = ShiftPlanner.plans(snapshot, preferences: preferences, now: start)
+        XCTAssertEqual(plans.count, 7)
+        XCTAssertEqual(plans.last?.date, ShiftPlanner.date("2026-03-05")!.addingTimeInterval(1140 * 60))
+        preferences.setSeparateWeekendHolidays(false)
+        plans = ShiftPlanner.plans(snapshot, preferences: preferences, now: start)
+        XCTAssertEqual(plans.map { ShiftPlanner.korea.component(.hour, from: $0.date) }, [5, 5, 17, 5, 17, 5, 17])
+        XCTAssertFalse(plans[3].title.contains("주말·공휴일"))
+    }
+
+    func testLegacyPreferencesAndSnapshotsKeepExistingAlarms() throws {
+        let old = Data(#"{"enabled":true,"dayMinutes":310,"nightMinutes":1065,"includeHalf":true}"#.utf8)
+        var preferences = try JSONDecoder().decode(AlarmPreferences.self, from: old)
+        XCTAssertTrue(preferences.enabled)
+        XCTAssertTrue(preferences.includeHalf)
+        XCTAssertFalse(preferences.separateWeekendHolidays)
+        XCTAssertEqual(preferences.minutes(night: false, weekendOrHoliday: true), 310)
+        preferences.setSeparateWeekendHolidays(true)
+        XCTAssertEqual(preferences.weekendDayMinutes, 310)
+        XCTAssertEqual(preferences.weekendNightMinutes, 1065)
+        preferences.weekendDayMinutes = 440
+        preferences.weekendNightMinutes = 1160
+        let saved = try JSONEncoder().encode(preferences)
+        preferences = try JSONDecoder().decode(AlarmPreferences.self, from: saved)
+        XCTAssertTrue(preferences.separateWeekendHolidays)
+        XCTAssertEqual(preferences.minutes(night: false, weekendOrHoliday: true), 440)
+        XCTAssertEqual(preferences.minutes(night: true, weekendOrHoliday: true), 1160)
+        preferences.setSeparateWeekendHolidays(false)
+        preferences.dayMinutes = 300
+        preferences.setSeparateWeekendHolidays(true)
+        XCTAssertEqual(preferences.weekendDayMinutes, 440, "Toggling must retain a custom weekend time")
+        let oldSnapshot = Data(#"{"group":"C","days":[{"date":"2026-10-24","type":"DAY"}]}"#.utf8)
+        let snapshot = try JSONDecoder().decode(ShiftSnapshot.self, from: oldSnapshot)
+        XCTAssertNil(snapshot.days[0].isHoliday)
+        XCTAssertEqual(ShiftPlanner.plans(snapshot, preferences: preferences, now: now).first?.date,
+                       ShiftPlanner.date("2026-10-24")!.addingTimeInterval(440 * 60))
+    }
 }

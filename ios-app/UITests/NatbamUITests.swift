@@ -1,6 +1,33 @@
 import XCTest
 
 final class NatbamUITests: XCTestCase {
+    func testWeekendHolidaySettingsSurviveRelaunch() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["--alarm-settings"]
+        app.launch()
+        let toggle = app.switches["separateWeekendHolidaysToggle"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 20))
+        if toggle.value as? String == "1" { toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap() }
+        XCTAssertFalse(app.datePickers["weekendDayTime"].exists)
+        toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
+        XCTAssertEqual(toggle.value as? String, "1", app.debugDescription)
+        XCTAssertTrue(app.datePickers["weekdayDayTime"].exists)
+        XCTAssertTrue(app.datePickers["weekdayNightTime"].exists)
+        XCTAssertTrue(app.datePickers["weekendDayTime"].exists)
+        XCTAssertTrue(app.datePickers["weekendNightTime"].exists)
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.lifetime = .keepAlways
+        add(attachment)
+        app.terminate()
+        app.launch()
+        XCTAssertTrue(toggle.waitForExistence(timeout: 20))
+        XCTAssertEqual(toggle.value as? String, "1")
+        XCTAssertTrue(app.datePickers["weekendDayTime"].exists)
+        toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
+        XCTAssertFalse(app.datePickers["weekendDayTime"].exists)
+        app.buttons["완료"].tap()
+    }
+
     func testAlarmSettingsAndTestScheduling() throws {
         let app = XCUIApplication()
         app.launchArguments = ["--alarm-settings"]

@@ -6,6 +6,8 @@ const root=path.resolve(__dirname,'..');
  const browser=await webkit.launch();
  try {
   const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,timezoneId:'America/Los_Angeles'});
+  const instant=new Date('2026-10-02T12:00:00+09:00');
+  await page.clock.setFixedTime(instant);
   const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',async dialog=>{errors.push(dialog.message());await dialog.dismiss()});
   await page.route('**/*',async route=>{
    const url=new URL(route.request().url());
@@ -26,8 +28,16 @@ const root=path.resolve(__dirname,'..');
   await page.addScriptTag({path:path.join(root,'ios-app/Sources/Bridge.js')});
   const latest=()=>page.evaluate(()=>window.nativeMessages.filter(x=>x.action==='snapshot').at(-1).value);
   let snapshot=await latest();assert.equal(snapshot.days.length,30);assert.equal(snapshot.group,'C');
-  const koreaDate=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'}).format(new Date());
+  const koreaDate=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'}).format(instant);
   assert.equal(snapshot.days[0].date,koreaDate,'snapshot uses Korea date even while travelling');
+  assert.equal(snapshot.days.find(d=>d.date==='2026-10-03').isHoliday,true);
+  assert.equal(snapshot.days.find(d=>d.date==='2026-10-05').isHoliday,true,'Substitute holiday is sent even on a weekday');
+  assert.equal(snapshot.days.find(d=>d.date==='2026-10-02').isHoliday,false);
+  await page.evaluate(()=>{overrides['2026-10-05']='DAY';overrides['2026-10-02']='SPECIAL_DAY';localStorage.setItem('shift_overrides_C',JSON.stringify(overrides));renderCalendar()});
+  await page.waitForFunction(()=>window.nativeMessages.filter(x=>x.action==='snapshot').at(-1).value.days[0].type==='SPECIAL_DAY');
+  snapshot=await latest();
+  assert.equal(snapshot.days[0].isHoliday,false,'Special work alone does not make an ordinary weekday a holiday');
+  assert.equal(snapshot.days.find(d=>d.date==='2026-10-05').isHoliday,true,'A manual work edit keeps holiday metadata');
   const key=snapshot.days[1].date;
   await page.evaluate(key=>{overrides[key]='LEAVE';localStorage.setItem('shift_overrides_C',JSON.stringify(overrides));renderCalendar()},key);
   await page.waitForFunction(key=>window.nativeMessages.filter(x=>x.action==='snapshot').at(-1).value.days.find(d=>d.date===key).type==='LEAVE',key);

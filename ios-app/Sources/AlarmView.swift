@@ -3,14 +3,18 @@ import SwiftUI
 struct AlarmView: View {
     @ObservedObject var model: AlarmModel
     @Environment(\.dismiss) private var dismiss
-    private func time(_ night: Bool) -> Binding<Date> {
+    private func time(_ night: Bool, weekendOrHoliday: Bool = false) -> Binding<Date> {
         Binding(get: {
-            let minutes = night ? model.preferences.nightMinutes : model.preferences.dayMinutes
+            let minutes = model.preferences.minutes(night: night, weekendOrHoliday: weekendOrHoliday)
             return ShiftPlanner.korea.date(byAdding: .minute, value: minutes, to: ShiftPlanner.korea.startOfDay(for: Date()))!
         }, set: { value in
             let parts = ShiftPlanner.korea.dateComponents([.hour, .minute], from: value)
             let minutes = parts.hour! * 60 + parts.minute!
-            model.change { if night { $0.nightMinutes = minutes } else { $0.dayMinutes = minutes } }
+            model.change {
+                if weekendOrHoliday {
+                    if night { $0.weekendNightMinutes = minutes } else { $0.weekendDayMinutes = minutes }
+                } else if night { $0.nightMinutes = minutes } else { $0.dayMinutes = minutes }
+            }
         })
     }
     var body: some View {
@@ -21,11 +25,33 @@ struct AlarmView: View {
                         .font(.title3.bold()).padding(.vertical, 8)
                     Toggle("근무 알람", isOn: Binding(get: { model.preferences.enabled }, set: { value in Task { await model.enable(value) } }))
                         .accessibilityIdentifier("shiftAlarmToggle")
-                    DatePicker("주간 · 주특", selection: time(false), displayedComponents: .hourAndMinute)
-                    DatePicker("야간 · 야특", selection: time(true), displayedComponents: .hourAndMinute)
                     Toggle("반차일에도 알림", isOn: Binding(get: { model.preferences.includeHalf }, set: { value in model.change { $0.includeHalf = value } }))
                 } footer: {
-                    Text("한국 시간 기준이에요. 휴무·연차·무급휴무는 제외해요. 반차일 알림을 켜면 위의 주간·야간 시간에 그대로 울려요.")
+                    Text("한국 시간 기준이에요. 휴무·연차·무급휴무는 제외해요. 반차일 알림을 켜면 해당 날짜의 주간·야간 시간에 울려요.")
+                }
+                Section(model.preferences.separateWeekendHolidays ? "평일 출근" : "출근 시간") {
+                    DatePicker("주간 · 주특", selection: time(false), displayedComponents: .hourAndMinute)
+                        .accessibilityIdentifier("weekdayDayTime")
+                    DatePicker("야간 · 야특", selection: time(true), displayedComponents: .hourAndMinute)
+                        .accessibilityIdentifier("weekdayNightTime")
+                }
+                Section {
+                    Toggle("주말·공휴일 시간 따로 설정", isOn: Binding(get: { model.preferences.separateWeekendHolidays }, set: { value in
+                        model.change { $0.setSeparateWeekendHolidays(value) }
+                    }))
+                    .accessibilityIdentifier("separateWeekendHolidaysToggle")
+                    if model.preferences.separateWeekendHolidays {
+                        DatePicker("주간 · 주특", selection: time(false, weekendOrHoliday: true), displayedComponents: .hourAndMinute)
+                            .accessibilityIdentifier("weekendDayTime")
+                        DatePicker("야간 · 야특", selection: time(true, weekendOrHoliday: true), displayedComponents: .hourAndMinute)
+                            .accessibilityIdentifier("weekendNightTime")
+                    }
+                } header: {
+                    Text("주말·공휴일 출근")
+                } footer: {
+                    Text(model.preferences.separateWeekendHolidays
+                        ? "토·일요일과 달력에 표시된 공휴일·대체공휴일에 적용해요. 야간 근무도 출근하는 날짜를 기준으로 구분해요."
+                        : "지금은 모든 출근일에 같은 시간을 사용해요. 따로 설정하면 처음에는 기존 시간을 그대로 가져와요.")
                 }
                 Section("알람 확인") {
                     Button { Task { await model.test() } } label: {

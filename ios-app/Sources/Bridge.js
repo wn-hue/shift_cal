@@ -12,7 +12,7 @@
     const days = Array.from({length: 30}, (_, i) => {
       const date = new Date(part('year'), part('month') - 1, part('day') + i, 12);
       const shift = getActualShift(date, currentGroup);
-      return {date: `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`, type: shift.type, origType: shift.origType || null};
+      return {date: `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`, type: shift.type, origType: shift.origType || null, isHoliday: Boolean(shift.holidayName)};
     });
     const value = {group: currentGroup, days};
     const encoded = JSON.stringify(value);
