@@ -6,8 +6,9 @@
  let frame=0;
  function fit(){
   frame=0;
-  const active=overlay.classList.contains('active')&&overlay.dataset.editorTab==='memo';
-  document.body.classList.toggle('memo-editor-open',active);
+  const active=overlay.classList.contains('active');
+  document.body.classList.toggle('memo-editor-open',active&&overlay.dataset.editorTab==='memo');
+  document.body.classList.toggle('work-editor-open',active&&overlay.dataset.editorTab==='work');
   if(!active){delete overlay.dataset.memoCompact;return}
   // A 16px input prevents focus zoom; preserve user-initiated pinch zoom.
   if(viewport&&Math.abs(viewport.scale-1)>.01)return;
