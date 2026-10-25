@@ -7,11 +7,9 @@
         (section === 'group' ? $('menu-group-open') : section === 'salary' ? $('payroll-sms-open') : $('menu-leave-settings').querySelector('button')).focus();
     }
     function openGroup() {
-        $('group-picker-dialog').showModal();
-        ($('menu-group-'+$('group-select').value)||$('menu-group-A')).focus();
+        window.SettingsOptions.open('내 교대근무',['A','B','C'].map(value=>({value,label:value+'조'})),$('group-select').value,value=>setGroup(value));
     }
-    function closeGroup() { $('group-picker-dialog').close(); }
-    $('group-picker-dialog').addEventListener('close', () => $('menu-group-open').focus());
+    function closeGroup() { $('settings-options').close(); }
     function openLeave() {
         updateLeaveStats();
         $('leave-settings-dialog').showModal();
@@ -21,7 +19,6 @@
         $('group-select').value = selected;
         $('menu-group-current').textContent = selected ? selected+'조 · 3조 2교대' : '교대조 선택';
         $('menu-group-open').setAttribute('data-needs-selection',String(!selected));
-        for(const key of ['A','B','C'])$('menu-group-'+key).setAttribute('aria-pressed',String(key===selected));
         $('group-selection-status').textContent = selected ? selected + '조 근무표 적용됨 · 자동 저장' : '교대조를 선택해 주세요.';
         const alarmGuide = $('iphone-alarm-guide-link');
         if (alarmGuide) alarmGuide.setAttribute('href', './iphone-alarms.html' + (selected ? '?group=' + selected : ''));

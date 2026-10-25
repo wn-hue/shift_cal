@@ -120,9 +120,9 @@ async function main() {
     await ctx.TodayMenu.load(true);assert.equal(elements.get('today-menu-empty').textContent,'오늘 식단 미등록');
     ctx.fetch=async()=>{throw new Error('Failed to fetch');};
     await ctx.TodayMenu.load(true);assert.match(elements.get('today-menu-empty').textContent,/인터넷 연결/);assert.equal(elements.get('today-menu-panel').attributes['aria-busy'],'false');
-    assert.equal(stored.has('shift_today_menu_cache_v1'),false,'Expired meals are removed from persistent cache');
+    assert.ok(JSON.parse(stored.get('shift_today_menu_cache_v2'))['2026-10-02'],'Previous dates remain cached for revisits');
     instant=new Date('2026-10-02T13:00:00Z');reply={...result,checkedAt:instant.toISOString()};
-    stored.set('shift_today_menu_cache_v1','invalid JSON');
+    stored.set('shift_today_menu_cache_v2','invalid JSON');
     ctx.fetch=async()=>{requests++;return {ok:true,json:async()=>reply};};
     vm.runInContext(fs.readFileSync(require.resolve('../today-menu.js'),'utf8'),ctx);
     await ctx.TodayMenu.load();assert.equal(elements.get('today-menu-cards').children.length,4,'Invalid saved cache falls back to the API');

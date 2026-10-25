@@ -18,7 +18,7 @@
  function schedule(){if(!frame)frame=requestAnimationFrame(render);}
  async function fetchRates(){if(currency==='KRW'||pending)return;if(data&&Date.now()-loadedAt<600000){render();return;}failed=false;render();pending=(async()=>{try{const r=await fetch('/api/currency-rates');if(!r.ok)throw Error();const d=await r.json();if(d.base!=='KRW'||['USD','CNY','JPY'].some(c=>!Number.isFinite(d.rates?.[c]?.rate)||d.rates[c].rate<=0||!/^\d{4}-\d{2}-\d{2}$/.test(d.rates[c].date)))throw Error();data=d;loadedAt=Date.now();}catch{data=null;failed=true;}finally{pending=null;render();}})();await pending;}
  function set(next){if(!names.ko[next])return;try{localStorage.setItem(key,next);}catch{return;}currency=next;render();fetchRates();}
- function open(){window.SettingsOptions.open('통화',['USD','CNY','KRW','JPY'].map(value=>({value,label:names[lang()][value]+' ('+value+')'})),currency,set);}
+ function open(){window.SettingsOptions.open('통화',['KRW','USD','CNY','JPY'].map(value=>({value,label:names[lang()][value]+' ('+value+')'})),currency,set);}
  new MutationObserver(schedule).observe(gross,{subtree:true,childList:true,characterData:true});new MutationObserver(schedule).observe(net,{subtree:true,childList:true,characterData:true});
  new MutationObserver(()=>{if(lastLanguage!==lang()){lastLanguage=lang();schedule();}}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
  window.addEventListener('storage',e=>{if(e.key===key){currency=names.ko[e.newValue]?e.newValue:'KRW';render();fetchRates();}});

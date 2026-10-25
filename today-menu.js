@@ -3,7 +3,8 @@
     const $ = id => document.getElementById(id);
     // Match the API's 03:00 Asia/Seoul meal-day boundary, independent of device timezone.
     const today = () => new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(Date.now() - 3 * 60 * 60 * 1000));
-    let shownDate = '', loadedAt = 0, selectedDate = null, requestId = 0, controller = null;
+    let shownDate = '', selectedDate = null, requestId = 0;
+    const pending = new Map();
     const selected = () => selectedDate || today();
     const offset = date => Math.round((Date.parse(date)-Date.parse(today()))/86400000);
     const moveDate = (date, days) => new Date(Date.parse(date+'T12:00:00Z')+days*86400000).toISOString().slice(0,10);
@@ -16,8 +17,9 @@
         if ($('today-menu-today')) $('today-menu-today').hidden = days===0;
         if ($('today-menu-cards').dataset) $('today-menu-cards').dataset.menuDate = date;
     }
-    const cacheKey = 'shift_today_menu_cache_v1';
-    let cachedMenu = null;
+    const cacheKey = 'shift_today_menu_cache_v2';
+    const cachedMenus = new Map();
+    let cacheRead = false;
     function validMenu(data, date) {
         return data?.status === 'ok' && data.date === date && Number.isFinite(Date.parse(data.checkedAt)) &&
             Array.isArray(data.meals) && data.meals.length === 4 && data.meals.every(meal =>
@@ -26,18 +28,40 @@
                     group.items.length <= 50 && group.items.every(item => typeof item === 'string' && item.length <= 2000)));
     }
     function readCache(date) {
-        if (validMenu(cachedMenu,date)) return cachedMenu;
-        try {
-            const raw = localStorage.getItem(cacheKey);
-            const data = raw && raw.length <= 100000 ? JSON.parse(raw) : null;
-            if (validMenu(data,date)) return (cachedMenu = data);
-            localStorage.removeItem(cacheKey);
-        } catch (_) { /* Storage can be disabled; the in-memory cache still works. */ }
-        return null;
+        if (!cacheRead) {
+            cacheRead = true;
+            try {
+                const raw = localStorage.getItem(cacheKey);
+                const data = raw && raw.length <= 3000000 ? JSON.parse(raw) : {};
+                for (const [day,menu] of Object.entries(data || {}).slice(-93)) if (validMenu(menu,day)) cachedMenus.set(day,menu);
+                // Carry over the previously saved single day without another request.
+                const old = JSON.parse(localStorage.getItem('shift_today_menu_cache_v1') || 'null');
+                if (old && validMenu(old,old.date) && !cachedMenus.has(old.date)) cachedMenus.set(old.date,old);
+            } catch (_) { /* Storage can be disabled; memory caching still works. */ }
+        }
+        return cachedMenus.get(date) || null;
     }
     function saveCache(data) {
-        cachedMenu = data;
-        try {localStorage.setItem(cacheKey,JSON.stringify(data));} catch (_) {}
+        readCache(data.date);
+        cachedMenus.delete(data.date);
+        cachedMenus.set(data.date,data);
+        // Keep three months of successful menus without filling device storage.
+        while (cachedMenus.size > 93) cachedMenus.delete(cachedMenus.keys().next().value);
+        try {localStorage.setItem(cacheKey,JSON.stringify(Object.fromEntries(cachedMenus)));} catch (_) {}
+    }
+    function requestMenu(date) {
+        if (pending.has(date)) return pending.get(date);
+        const request = (async()=>{
+            const response = await fetch('/api/today-menu?date='+encodeURIComponent(date),{cache:'no-store',signal:AbortSignal.timeout(45000)});
+            const data = await response.json();
+            if (!response.ok || data.status === 'error') throw new Error(data.message || '식단을 불러오지 못했어요. 다시 시도해 주세요.');
+            if (data.date !== date) throw new Error('날짜가 변경되었어요. 새로고침해 주세요.');
+            if (validMenu(data,date)) saveCache(data);
+            else if (data.status !== 'not_published') throw new Error('메뉴를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.');
+            return data;
+        })().finally(()=>pending.delete(date));
+        pending.set(date,request);
+        return request;
     }
 
     function dateLabel(date) {
@@ -100,8 +124,6 @@
         const date = selected();
         updateNavigation(date);
         const id = ++requestId;
-        if (controller) controller.abort();
-        controller = null;
         $('today-menu-refresh').disabled = false;
         $('today-menu-refresh').textContent = '새로고침';
         $('today-menu-refresh').setAttribute('aria-busy','false');
@@ -111,13 +133,10 @@
             if (saved) {
                 render(saved);
                 shownDate = date;
-                loadedAt = Date.now();
                 return;
             }
-            if (shownDate === date && Date.now() - loadedAt < 120000) return;
         }
         if (shownDate !== date) $('today-menu-cards').replaceChildren();
-        controller = new AbortController();
         const button = $('today-menu-refresh');
         button.disabled = true;
         button.setAttribute('aria-busy','true');
@@ -126,23 +145,16 @@
         $('today-menu-panel').setAttribute('aria-busy','true');
         $('today-menu-empty').hidden = true;
         try {
-            const response = await fetch('/api/today-menu?date='+encodeURIComponent(date),{cache:'no-store',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(45000)])});
-            const data = await response.json();
-            if (id !== requestId) return;
-            if (!response.ok || data.status === 'error') throw new Error(data.message || '식단을 불러오지 못했어요. 다시 시도해 주세요.');
-            if (date !== selected() || data.date !== date) throw new Error('날짜가 변경되었어요. 새로고침해 주세요.');
-            if (validMenu(data,date)) {render(data); saveCache(data);}
-            else if (data.status === 'not_published') empty(data.message);
-            else throw new Error('메뉴를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.');
+            const data = await requestMenu(date);
+            if (id !== requestId || date !== selected()) return;
+            if (validMenu(data,date)) render(data);
+            else empty(data.message);
             shownDate = date;
-            loadedAt = Date.now();
         } catch (error) {
             if (id !== requestId) return;
             empty(error.name === 'TimeoutError' || error.name === 'AbortError' ? '응답이 늦어지고 있어요. 잠시 후 다시 시도해 주세요.' : error.message === 'Failed to fetch' ? '인터넷 연결을 확인한 뒤 다시 시도해 주세요.' : error.message);
-            loadedAt = 0;
         } finally {
             if (id !== requestId) return;
-            controller = null;
             button.disabled = false;
             button.setAttribute('aria-busy','false');
             button.textContent = '새로고침';

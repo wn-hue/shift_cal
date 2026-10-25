@@ -14,15 +14,8 @@
   begin();
   const button=document.getElementById('editor-sticker-preview');
   if (!button) return;
-  const id=saved[selectedDateStr];
-  button.replaceChildren();
-  if (labels[id]) {
-   const img=document.createElement('img');img.src='./assets/stickers/'+id+'.svg?v=2';img.alt='';img.width=img.height=48;button.append(img);
-   button.setAttribute('aria-label',labels[id]+' 스티커 변경');
-  } else {
-   button.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11v5l-5 5H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h6M15 21v-4a2 2 0 0 1 2-2h3M18 2v6m-3-3h6"/><path d="M8 13c1 2 4 2 5 0"/><path d="M8 9h.01M13 9h.01"/></svg><span>스티커</span>';
-   button.setAttribute('aria-label','날짜 스티커 선택');
-  }
+  button.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11v5l-5 5H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h6M15 21v-4a2 2 0 0 1 2-2h3M18 2v6m-3-3h6"/><path d="M8 13c1 2 4 2 5 0"/><path d="M8 9h.01M13 9h.01"/></svg><span>스티커</span>';
+  button.setAttribute('aria-label','날짜 스티커 선택');
  }
  function paint() {
   refreshSummary();

@@ -21,10 +21,10 @@
   try{move(direction);}finally{delete overlay.dataset.editorSwiping;}
   if(before!==selectedDateStr+':'+overlay.dataset.editorTab&&!reduced()){
    content.getAnimations().forEach(a=>a.cancel());
-   content.animate([{opacity:.65,transform:`translateX(${-direction*24}px)`},{opacity:1,transform:'translateX(0)'}],{duration:180,easing:'ease-out'});
+   content.animate([{opacity:.65,transform:`translateX(${direction*24}px)`},{opacity:1,transform:'translateX(0)'}],{duration:180,easing:'ease-out'});
   }
  }
- // Finger motion to the right ALWAYS advances work -> memo -> next day's work.
+ // Match calendar/payroll/menu: finger moves LEFT to advance work -> memo -> next day's work.
  let start=null,axis='',suppressUntil=0;
  const reset=()=>{start=null;axis='';content.style.transform='';};
  sheet.addEventListener('touchstart',e=>{
@@ -41,7 +41,7 @@
  sheet.addEventListener('touchend',e=>{
   if(!start)return;const t=e.changedTouches[0],dx=t.clientX-start.x,dy=t.clientY-start.y;
   const horizontal=axis!=='y'&&Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3;
-  reset();if(horizontal){if(e.cancelable)e.preventDefault();suppressUntil=performance.now()+500;advance(dx>0?1:-1);}
+  reset();if(horizontal){if(e.cancelable)e.preventDefault();suppressUntil=performance.now()+500;advance(dx<0?1:-1);}
  },{passive:false});
  sheet.addEventListener('touchcancel',reset,{passive:true});
  sheet.addEventListener('click',e=>{if(performance.now()<suppressUntil&&!e.target.closest('.sheet-original-close')){e.preventDefault();e.stopPropagation();}},true);
