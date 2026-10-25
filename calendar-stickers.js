@@ -10,8 +10,22 @@
   try { saved = AccountDataCore.normalize({[key]:JSON.parse(localStorage.getItem(key)||'null')})[key] || {}; }
   catch { saved = {}; }
  }
- function paint() {
+ function refreshSummary() {
   begin();
+  const button=document.getElementById('editor-sticker-preview');
+  if (!button) return;
+  const id=saved[selectedDateStr];
+  button.replaceChildren();
+  if (labels[id]) {
+   const img=document.createElement('img');img.src='./assets/stickers/'+id+'.svg';img.alt='';img.width=img.height=48;button.append(img);
+   button.setAttribute('aria-label',labels[id]+' 스티커 변경');
+  } else {
+   button.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11v5l-5 5H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h6M15 21v-4a2 2 0 0 1 2-2h3M18 2v6m-3-3h6"/><path d="M8 13c1 2 4 2 5 0"/><path d="M8 9h.01M13 9h.01"/></svg><span>스티커</span>';
+   button.setAttribute('aria-label','날짜 스티커 선택');
+  }
+ }
+ function paint() {
+  refreshSummary();
   for (const button of document.querySelectorAll('#calendar-sticker-options button')) button.setAttribute('aria-pressed', String(saved[selectedDateStr] === button.dataset.sticker));
   document.getElementById('calendar-sticker-clear').disabled = !saved[selectedDateStr];
   status().textContent = saved[selectedDateStr] ? labels[saved[selectedDateStr]]+' 스티커가 붙어 있어요.' : '스티커를 고르면 바로 저장돼요.';
@@ -53,5 +67,5 @@
   button.append(img,text);button.onclick = () => save(id);options.append(button);
  }
  document.getElementById('calendar-sticker-clear').onclick = () => save(null);
- window.CalendarStickers = {begin,paint,decorate};
+ window.CalendarStickers = {begin,paint,decorate,refreshSummary};
 })();
