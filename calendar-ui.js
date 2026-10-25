@@ -5,10 +5,10 @@
         document.body.dataset.view=view;
         $('cal-month-title-btn').hidden=view!=='calendar';
         $('header-view-title').hidden=view==='calendar';
-        $('header-view-title').textContent=view==='all'?'전체':view==='payroll'?'급여 계산기':view==='menu'?'오늘 메뉴':'시급 · 연차';
+        $('header-view-title').textContent=view==='all'?'전체':view==='payroll'?'급여 계산기':view==='menu'?'오늘 메뉴':view==='groups'?'조별 근무':'시급 · 연차';
         $('header-calendar-actions').hidden=view!=='calendar';
         $('today-menu-refresh').hidden=view!=='menu';
-        for (const [name,id] of [['calendar','bnav-cal'],['payroll','bnav-pay'],['menu','bnav-menu'],['all','account-menu-button']]) {
+        for (const [name,id] of [['calendar','bnav-cal'],['groups','bnav-groups'],['payroll','bnav-pay'],['menu','bnav-menu'],['all','account-menu-button']]) {
             $(id).setAttribute('aria-current',view===name?'page':'false');
         }
     }
@@ -16,6 +16,7 @@
         const label=$('routine-calendar-group');
         if(label)label.textContent=group+'조 근무표';
         $('cal-month-title-btn').setAttribute('aria-label',group+'조 달력 연도와 월 선택');
+        if(document.body.dataset.view==='groups')window.GroupSchedule?.render();
 
     }
     function tap(button) {
