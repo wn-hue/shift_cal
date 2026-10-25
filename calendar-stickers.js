@@ -67,5 +67,21 @@
   button.append(img,text);button.onclick = () => save(id);options.append(button);
  }
  document.getElementById('calendar-sticker-clear').onclick = () => save(null);
- window.CalendarStickers = {begin,paint,decorate,refreshSummary};
+ const dialog=document.getElementById('sticker-dialog');
+ function fitPopup(){
+  if(!dialog.open)return;const v=window.visualViewport;if(v&&Math.abs(v.scale-1)>.01)return;
+  const w=v?.width||innerWidth,h=v?.height||innerHeight;
+  for(const [name,value]of Object.entries({left:(v?.offsetLeft||0)+w/2,top:(v?.offsetTop||0)+h/2,width:Math.min(440,w-24),height:Math.max(120,Math.min(h-24,h*.85))}))dialog.style.setProperty('--sticker-'+name,value+'px');
+ }
+ window.visualViewport?.addEventListener('resize',fitPopup);window.visualViewport?.addEventListener('scroll',fitPopup);window.addEventListener('resize',fitPopup);
+ function open(){
+  if(!document.getElementById('modal-override').classList.contains('active'))return;
+  if(document.activeElement?.matches('input,textarea,select'))document.activeElement.blur();
+  paint();if(!dialog.open)dialog.showModal();fitPopup();dialog.scrollTop=0;options.scrollTop=0;document.getElementById('sticker-dialog-title').focus({preventScroll:true});
+ }
+ function close(){dialog.close();}
+ dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();}});
+ dialog.addEventListener('close',()=>{if(document.getElementById('modal-override').classList.contains('active'))document.getElementById('editor-sticker-preview').focus({preventScroll:true});});
+ new MutationObserver(()=>{if(!document.getElementById('modal-override').classList.contains('active')&&dialog.open)close();}).observe(document.getElementById('modal-override'),{attributes:true,attributeFilter:['class']});
+ window.CalendarStickers = {begin,paint,decorate,refreshSummary,open,close};
 })();

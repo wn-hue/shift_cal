@@ -1,0 +1,34 @@
+/* The header handle is a button as well as a downward drag target. */
+body[data-pref-theme] #modal-override .override-header::before{display:none}
+#modal-override #editor-dismiss{position:absolute;top:0;left:calc(50% - 44px);width:88px;height:44px;padding:0;border:0;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:none}
+#editor-dismiss>span{width:36px;height:4px;border-radius:4px;background:#bcc2c9}
+#editor-dismiss:focus-visible{outline:2px solid #3182f6;border-radius:12px}
+body[data-pref-theme] #modal-override[data-editor-tab] .editor-content{display:flex;flex-direction:column}
+#modal-override .editor-content>section{flex:0 0 auto}
+#editor-swipe-space{flex:1 0 96px;min-height:96px;touch-action:pan-y pinch-zoom;outline:none}
+#editor-swipe-space:focus-visible{box-shadow:inset 0 0 0 2px #3182f6;border-radius:12px}
+#modal-override .override-header{touch-action:pan-x pinch-zoom}
+/* A separate picker leaves the selected day and unfinished memo in place. */
+#sticker-dialog{box-sizing:border-box;width:calc(100% - 24px);max-width:440px;max-height:min(76dvh,650px);padding:20px;border:0;border-radius:24px;background:var(--surface,#fff);color:var(--theme-text,#191f28);overflow-y:auto;overscroll-behavior:contain}
+#sticker-dialog::backdrop{background:#0005}
+.sticker-dialog-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.sticker-dialog-heading h2{font-size:19px;margin:0;letter-spacing:-.4px}
+.sticker-dialog-heading button{min-width:44px;min-height:44px;background:var(--surface-soft,#f2f4f6);color:var(--text-sub,#6b7684);border:0;border-radius:12px;font:inherit;font-size:13px}
+#sticker-dialog #stickers-panel{margin:0;padding:0;border:0}
+#sticker-dialog .sticker-actions .btn-save{background:#3182f6;color:#fff}
+#sticker-dialog .sticker-options button{min-height:84px}
+#sticker-dialog .sticker-options img{width:44px;height:44px}
+@media(max-height:400px){#sticker-dialog{max-height:calc(100dvh - 24px);padding:14px}.sticker-dialog-heading{margin-bottom:10px}}
+
+body[data-pref-theme] #modal-override #editor-sticker-preview{position:absolute;right:18px;top:42px;width:44px;height:48px;gap:0}
+body[data-pref-theme] #modal-override #editor-sticker-preview img{width:40px;height:40px}
+body[data-pref-theme] #modal-override[data-editor-tab] #modal-date-text{padding-right:52px}
+body[data-pref-theme] #modal-override[data-memo-compact=true] #editor-sticker-preview{top:12px;right:14px;height:44px}
+#sticker-dialog{position:fixed;inset:auto;left:var(--sticker-left,50%);top:var(--sticker-top,50%);transform:translate(-50%,-50%);margin:0;width:var(--sticker-width,calc(100% - 24px));max-height:min(650px,var(--sticker-height,76dvh))}
+#sticker-dialog[open]{display:flex;flex-direction:column;overflow:hidden}
+#sticker-dialog .sticker-dialog-heading{flex:none}
+#sticker-dialog #stickers-panel{display:flex;flex-direction:column;min-height:0;flex:1}
+#sticker-dialog .sticker-options{min-height:0;overflow-y:auto;overscroll-behavior:contain;flex:1 1 auto;padding:2px}
+#sticker-dialog .sticker-options button{flex:none}
+#sticker-dialog .sticker-status,#sticker-dialog .sticker-actions{flex:none}
+#sticker-dialog-title:focus{outline:none}

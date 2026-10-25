@@ -82,5 +82,5 @@
  window.addEventListener('storage',e=>{if(e.key===C.key||e.key===null){renderCalendar();if(form.hidden)list();}});
  window.addEventListener('shift-account-changed',()=>{form.hidden=true;toast.hidden=true;announced.clear();if(loadedDate)open(selectedDateStr);});
  document.addEventListener('visibilitychange',tick);setInterval(tick,15000);
- window.DayScheduler={begin,open,decorate,tick};renderCalendar();tick();
+ window.DayScheduler={begin,open,decorate,tick,canLeave:discard};renderCalendar();tick();
 })();

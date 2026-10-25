@@ -38,11 +38,12 @@ const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   for(let cycle=0;cycle<3;cycle++){
    await page.locator('#modal-memo-input').focus();
    await page.evaluate(()=>{Object.assign(memoTestViewport,{height:300,offsetTop:160});memoTestViewport.dispatchEvent(new Event('resize'))});
-   await page.getByRole('tab',{name:'스티커',exact:true}).click();
+   await page.locator('#editor-sticker-preview').click();
    assert.notEqual(await page.evaluate(()=>document.activeElement.id),'modal-memo-input');
    await page.evaluate(()=>{Object.assign(memoTestViewport,{height:844,offsetTop:0});memoTestViewport.dispatchEvent(new Event('resize'))});
    await page.waitForFunction(()=>document.getElementById('modal-override').style.getPropertyValue('--memo-viewport-height')==='844px');
    await page.locator('#calendar-sticker-options button').last().scrollIntoViewIfNeeded();
+   await page.getByRole('button',{name:'스티커 닫기',exact:true}).click();
    assert.equal(await page.locator('#memo-tab').isVisible(),true);
    await page.getByRole('tab',{name:'메모',exact:true}).click();
    assert.equal(await page.locator('.editor-content').evaluate(e=>e.scrollTop),0);

@@ -21,7 +21,7 @@ const assert=require('node:assert/strict');
  }
  await page.evaluate(()=>{currentCalDate=new Date(2026,9,1);overrides['2026-10-03']='LEAVE';dayMemos['2026-10-03']='공휴일 메모 확인';renderCalendar()});
  const cell=page.locator('.cal-day[data-date="2026-10-03"]');const date=await cell.locator('.day-num').boundingBox(),hol=await cell.locator('.holiday-bar').boundingBox();assert(hol.y>=date.y+date.height-1);
- await cell.locator('.memo-tag').click();assert.equal(await page.locator('#memo-tab').getAttribute('aria-selected'),'true');assert.equal(await page.locator('#modal-memo-input').inputValue(),'공휴일 메모 확인');await page.getByRole('button',{name:'근무 변경 닫기',exact:true}).click();
+ await cell.locator('.memo-tag').click();assert.equal(await page.locator('#memo-tab').getAttribute('aria-selected'),'true');assert.equal(await page.locator('#modal-memo-input').inputValue(),'공휴일 메모 확인');await page.getByRole('button',{name:'근무 변경 내리기',exact:true}).click();
  if(width===390){await page.evaluate(()=>document.fonts.ready);await page.screenshot({path:`/tmp/calendar-shared-form-${engine.name()}.png`,animations:'disabled'});}
  assert.deepEqual(errors,[]);console.log(engine.name(),width,'PASS shared 4/5/6-week dimensions, borders, holiday order, memo, overflow');await page.close();
  }await browser.close();

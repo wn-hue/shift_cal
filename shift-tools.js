@@ -3,7 +3,7 @@
 const money=n=>(n>0?'+':n<0?'−':'')+Math.abs(n).toLocaleString('ko-KR')+'원';
 function shiftAt(k,changes={}){const original=overrides;try{overrides={...original,...changes};for(const[k,v]of Object.entries(changes))if(v===null)delete overrides[k];return getActualShift(C.date(k),currentGroup);}finally{overrides=original;}}
 function payChange(changes){const ends=[...new Set(Object.keys(changes).map(k=>C.period(k).end))];let difference=0;for(const end of ends){const p=C.period(end),dates=C.range(p.start,p.end);difference+=C.gross(C.counts(dates.map(k=>shiftAt(k,changes))),config,end)-C.gross(C.counts(dates.map(k=>shiftAt(k))),config,end);}return difference;}
-window.ShiftTools={payChange,shiftAt};
+window.ShiftTools={payChange,shiftAt,canLeave:()=>!pending||confirm('선택한 근무 변경을 적용하지 않고 이동할까요?')};
 const editor=$('work-panel');const preview=document.createElement('div');preview.id='change-preview';preview.className='planning-preview';preview.hidden=true;preview.innerHTML='<strong id="change-preview-title"></strong><p id="change-preview-copy"></p><button type="button" class="btn-save" id="apply-preview">이 변경 적용</button>';editor.append(preview);
 const options=[...document.querySelectorAll('#modal-override .opt-btn')];
 for(const button of options){const match=button.getAttribute('onclick').match(/setDayOverride\((?:'([^']+)'|(null))\)/);button.dataset.override=match?.[1]||'';button.setAttribute('aria-pressed','false');const check=document.createElement('span');check.className='selection-check';check.setAttribute('aria-hidden','true');check.innerHTML='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 8 3 3 5-6"/></svg>';button.append(check);}
