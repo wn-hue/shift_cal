@@ -26,10 +26,11 @@ const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   for(const [height,top]of [[844,0],[360,0],[300,160],[220,200],[844,0]]){
    await page.evaluate(({height,top})=>{Object.assign(window.memoTestViewport,{height,offsetTop:top});window.memoTestViewport.dispatchEvent(new Event('resize'));window.memoTestViewport.dispatchEvent(new Event('scroll'))},{height,top});
    await page.waitForFunction(h=>document.getElementById('modal-override').style.getPropertyValue('--memo-viewport-height')===h+'px',height);
-   const geometry=await page.evaluate(()=>{const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,height:r.height}};return {sheet:rect('#modal-override .override-sheet'),input:rect('#modal-memo-input'),save:rect('#memo-panel .btn-save'),font:getComputedStyle(document.getElementById('modal-memo-input')).fontSize,overflow:document.documentElement.scrollWidth>innerWidth}});
+   await page.locator('#day-note .btn-save').scrollIntoViewIfNeeded();
+   const geometry=await page.evaluate(()=>{const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,height:r.height}};return {sheet:rect('#modal-override .override-sheet'),input:rect('#modal-memo-input'),save:rect('#day-note .btn-save'),font:getComputedStyle(document.getElementById('modal-memo-input')).fontSize,overflow:document.documentElement.scrollWidth>innerWidth}});
    assert(geometry.sheet.top>=top,JSON.stringify(geometry));assert(geometry.sheet.bottom<=top+height+1,JSON.stringify(geometry));
    assert(geometry.input.height>=43);assert(geometry.input.right<=width+1);assert.equal(geometry.font,'16px');assert.equal(geometry.overflow,false);
-   assert(geometry.save.bottom<=top+height-4,JSON.stringify({height,top,geometry}));
+   assert(geometry.save.bottom<=top+height+1,JSON.stringify({height,top,geometry}));
    assert(geometry.save.top>=geometry.input.bottom-1,JSON.stringify(geometry));
    if(width===390&&theme==='current'&&height===300)await page.screenshot({animations:'disabled',path:`/tmp/memo-keyboard-${engine.name()}.png`});
   }

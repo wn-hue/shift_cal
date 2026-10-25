@@ -1,6 +1,6 @@
 (function (root) {
     'use strict';
-    const keys = ['shift_salary_config_master','shift_active_group','shift_day_memos','shift_day_stickers','shift_overrides_A','shift_overrides_B','shift_overrides_C','shift_payroll_sms_reference_v1','shift_bonus_sms_reference_v1'];
+    const keys = ['shift_salary_config_master','shift_active_group','shift_day_memos','shift_day_stickers','shift_day_events','shift_overrides_A','shift_overrides_B','shift_overrides_C','shift_payroll_sms_reference_v1','shift_bonus_sms_reference_v1'];
     const types = new Set(['DAY','NIGHT','OFF','SPECIAL_DAY','SPECIAL_NIGHT','SPECIAL_DAY_NO_OT','SPECIAL_NIGHT_NO_OT','LEAVE','NO_OT','HALF_PRE','HALF_POST','UNPAID_HALF_PRE','UNPAID_HALF_POST','UNPAID_OFF','FORCED_OFF']);
     const object = x => x !== null && typeof x === 'object' && !Array.isArray(x);
     function dateOK(x) { return typeof x === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(x) && Number.isFinite(Date.parse(x+'T00:00:00Z')) && new Date(x+'T00:00:00Z').toISOString().slice(0,10) === x; }
@@ -43,7 +43,18 @@
                 for (const [date,v] of Object.entries(value)) {
                     if (!dateOK(date)) throw Error('저장할 날짜를 확인하세요.');
                     if (key === 'shift_day_memos') { if (typeof v !== 'string' || v.length > 16000) throw Error('메모가 너무 깁니다.'); }
-                    else if (key === 'shift_day_stickers') { if (!['soju','beer','kimchi-stew','pork-belly','chicken','gukbap'].includes(v)) throw Error('스티커를 확인하세요.'); }
+                    else if (key === 'shift_day_stickers') { if (!['soju','beer','kimchi-stew','pork-belly','chicken','gukbap','baeksuk','doenjang-stew','tteokbokki','jajangmyeon','kimchi-rice','gimbap','jjamppong'].includes(v)) throw Error('스티커를 확인하세요.'); }
+                    else if (key === 'shift_day_events') {
+                        if (!object(v) || Object.keys(v).length > 50) throw Error('하루에 일정을 50개까지 저장할 수 있어요.');
+                        const events = {};
+                        for (const [id,e] of Object.entries(v)) {
+                            const fields=['title','start','end','allDay','location','notes','reminder'];
+                            const timeOK=t=>typeof t==='string' && /^\d{4}-\d{2}-\d{2}T([01]\d|2[0-3]):[0-5]\d$/.test(t) && dateOK(t.slice(0,10));
+                            if (!/^[a-z0-9-]{1,80}$/.test(id) || !object(e) || Object.keys(e).length!==fields.length || Object.keys(e).some(k=>!fields.includes(k)) || typeof e.title!=='string' || !e.title.trim() || e.title.length>120 || !timeOK(e.start) || !timeOK(e.end) || e.start.slice(0,10)!==date || typeof e.allDay!=='boolean' || (e.allDay ? e.end<e.start || !e.start.endsWith('T00:00') || !e.end.endsWith('T00:00') : e.end<=e.start) || typeof e.location!=='string' || e.location.length>300 || typeof e.notes!=='string' || e.notes.length>4000 || ![null,0,5,10,30,60,1440].includes(e.reminder)) throw Error('일정의 제목과 시작·종료 시간을 확인해 주세요.');
+                            events[id]={...e,title:e.title.trim()};
+                        }
+                        safe[date]=events; continue;
+                    }
                     else if (!types.has(v) && !['HALF_LEAVE','UNPAID_HALF'].includes(v)) throw Error('근무 변경을 확인하세요.');
                     safe[date] = key === 'shift_day_memos' ? v : v === 'HALF_LEAVE' ? 'HALF_POST' : v === 'UNPAID_HALF' ? 'UNPAID_HALF_POST' : v;
                 }

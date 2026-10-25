@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('node:assert/strict'),A=require('../account-data-core.js'),C=require('../day-scheduler-core.js');
+const event={title:'병원 예약',start:'2026-10-27T09:00',end:'2026-10-27T10:00',allDay:false,location:'서울',notes:'준비물\n신분증',reminder:10};
+const data=e=>({shift_day_events:{'2026-10-27':{'test-id':e}}});
+assert.deepEqual(A.normalize(data(event)).shift_day_events,data(event).shift_day_events);
+for(const edit of [{title:''},{end:event.start},{reminder:7},{start:'2026-02-30T09:00'},{start:'2026-10-28T09:00'},{allDay:'true'},{location:5},{notes:'x'.repeat(4001)},{title:'x'.repeat(121)},{extra:'x'}])assert.throws(()=>A.normalize(data({...event,...edit})),JSON.stringify(edit));
+const allDay={...event,allDay:true,start:'2026-10-27T00:00',end:'2026-10-28T00:00'};A.normalize(data(allDay));
+assert.equal(C.onDate(data(allDay).shift_day_events,'2026-10-28').length,1);assert.equal(C.onDate(data(allDay).shift_day_events,'2026-10-29').length,0);
+const overnight={...event,start:'2026-10-27T23:00',end:'2026-10-28T00:00'};assert.equal(C.onDate(data(overnight).shift_day_events,'2026-10-28').length,0);
+assert.equal(C.alarmTime(event),new Date('2026-10-27T08:50').getTime());assert.equal(C.alarmTime(allDay),new Date('2026-10-27T08:50').getTime());assert.equal(C.alarmTime({...event,reminder:null}),null);
+const exported=C.ics({id:'test-id',...event});assert(exported.includes('BEGIN:VALARM\r\nACTION:DISPLAY'));assert(exported.includes('TRIGGER:-PT10M'));assert(exported.includes('DESCRIPTION:준비물\\n신분증'));assert(exported.includes('UID:test-id@shift-routine.local'));
+const fullDay=C.ics({id:'test-id',...allDay});assert(fullDay.includes('DTSTART;VALUE=DATE:20261027'));assert(fullDay.includes('DTEND;VALUE=DATE:20261029'));assert(fullDay.includes('TRIGGER:PT530M'));
+assert(!C.ics({id:'test-id',...event,reminder:null}).includes('VALARM'));
+const injection=C.ics({id:'test-id',...event,title:'긴일정'.repeat(35),notes:'a\r\nEND:VEVENT\nBEGIN:VEVENT,;\\'});assert(injection.split('\r\n').every(x=>Buffer.byteLength(x)<=75));assert.equal(injection.split('\r\n').filter(x=>x==='BEGIN:VEVENT').length,1);
+const base=A.normalize(data(event)),local=A.normalize(data({...event,title:'수정'})),remote=A.normalize({shift_day_events:{'2026-10-27':{'test-id':event,other:{...event,title:'다른 일정'}}}});const merge=A.merge(base,local,remote);assert.equal(merge.conflicts.length,0);assert.equal(merge.data.shift_day_events['2026-10-27']['test-id'].title,'수정');assert(merge.data.shift_day_events['2026-10-27'].other);
+console.log('PASS schedule validation, multi-day boundaries, reminders, escaped/folded ICS with VALARM, account merge');

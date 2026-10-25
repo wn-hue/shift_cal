@@ -15,5 +15,17 @@
   }finally{cell.remove()}
   for(const row of document.querySelectorAll('#work-panel .shift-scroll'))row.scrollLeft=0;
  }
- window.WorkEditor={syncColors};
+ function filterOptions(date){
+  for(const button of document.querySelectorAll('#work-panel .opt-btn')){
+   const type=button.dataset.override||null;
+   const unavailable=!!validateDayOverride(date,type);
+   button.hidden=unavailable;button.disabled=unavailable;
+  }
+  for(const row of document.querySelectorAll('#work-panel .shift-scroll')){
+   const empty=![...row.querySelectorAll('button')].some(b=>!b.hidden);
+   row.hidden=empty;
+   if(row.previousElementSibling?.matches('h3'))row.previousElementSibling.hidden=empty;
+  }
+ }
+ window.WorkEditor={syncColors,filterOptions};
 })();

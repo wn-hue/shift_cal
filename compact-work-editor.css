@@ -1,41 +1,41 @@
 /* Compact work sheet: circular choices in a readable three-column grid. */
 body.work-editor-open{overflow:hidden;overscroll-behavior:none}
-#modal-override.active:is([data-editor-tab=work],[data-editor-tab=stickers]){inset:auto;top:var(--memo-viewport-top,0px);left:var(--memo-viewport-left,0px);width:var(--memo-viewport-width,100vw);height:var(--memo-viewport-height,100dvh);box-sizing:border-box;padding:12px;align-items:flex-end;justify-content:center;overflow:hidden;overscroll-behavior:contain}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .override-sheet{display:flex;flex-direction:column;width:100%;max-width:560px;box-sizing:border-box;height:auto;min-height:0;max-height:calc(var(--memo-viewport-height,100dvh) - 24px);padding:0;margin:0;border-radius:24px;overflow:hidden;box-shadow:0 12px 36px #00000012}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .override-header{flex:none;min-height:0;padding:22px 18px 12px;margin:0;box-sizing:border-box}
-body:not([data-pref-theme=dark]) #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .override-header{background:#f7f8fa!important}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .override-header::before{top:8px;width:32px;left:calc(50% - 16px);height:3px}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .override-header h2{font-size:11px;margin:0 0 5px;padding-right:92px}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #modal-date-text{font-size:20px;line-height:1.4;margin:0 0 8px;padding-right:88px}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .editor-current-shift{gap:8px;min-width:0}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .editor-current-shift .shift-badge{width:28px;height:28px;min-width:28px;min-height:28px;flex:0 0 28px;border-radius:50%;font-size:12px;margin:0}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .override-base{font-size:11px;line-height:1.5;overflow-wrap:anywhere}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .override-header-actions{top:16px;right:10px;gap:2px}
-body[data-pref-theme] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .override-reset{min-height:44px;height:44px;padding:5px 7px;font-size:11px}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .override-reset>svg{width:17px;height:17px;min-height:17px;flex-basis:17px}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .override-close{width:40px;height:44px;min-height:44px;font-size:20px}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .editor-content{min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:8px 18px 16px;border-radius:0;box-sizing:border-box}
-body[data-pref-theme] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .editor-tabs{position:sticky;top:-8px;z-index:2;gap:20px;min-height:44px;padding:0 0 3px;margin:0 0 10px;background:var(--surface,#fff)!important}
-body[data-pref-theme] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .editor-tabs button{font-size:16px;min-height:44px;padding:5px 3px}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #work-panel{margin:0;padding:0;border:0}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #work-panel .override-section-title{font-size:12px;font-weight:600;margin:0 0 6px;line-height:1.5}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #work-panel .shift-scroll{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;overflow:visible;padding:3px;margin:0 0 14px;white-space:normal}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #work-panel .shift-scroll:last-child{margin-bottom:0}
-body[data-pref-theme] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #work-panel .opt-btn:not(.reset){position:relative;width:56px;min-width:56px;height:56px;min-height:56px;justify-self:center;flex:none;padding:6px;box-sizing:border-box;border-radius:50%;font-size:11px;font-weight:550;line-height:1.35;white-space:normal;word-break:keep-all}
-body[data-pref-theme] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #work-panel .opt-btn[aria-pressed=true]{outline-width:2px;outline-offset:1px}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #work-panel .selection-check{top:3px;right:3px;width:13px;height:13px}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #work-panel .selection-check svg{width:13px;height:13px}
-@media(max-width:350px){#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #modal-date-text{font-size:18px}#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .override-header{padding-left:14px;padding-right:14px}#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .editor-content{padding-left:14px;padding-right:14px}body[data-pref-theme] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #work-panel .opt-btn:not(.reset){font-size:11px}}
-@media(prefers-reduced-motion:reduce){#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .override-sheet{animation:none}}
+#modal-override.active:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]){inset:auto;top:var(--memo-viewport-top,0px);left:var(--memo-viewport-left,0px);width:var(--memo-viewport-width,100vw);height:var(--memo-viewport-height,100dvh);box-sizing:border-box;padding:12px;align-items:flex-end;justify-content:center;overflow:hidden;overscroll-behavior:contain}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .override-sheet{display:flex;flex-direction:column;width:100%;max-width:560px;box-sizing:border-box;height:auto;min-height:0;max-height:calc(var(--memo-viewport-height,100dvh) - 24px);padding:0;margin:0;border-radius:24px;overflow:hidden;box-shadow:0 12px 36px #00000012}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .override-header{flex:none;min-height:0;padding:22px 18px 12px;margin:0;box-sizing:border-box}
+body:not([data-pref-theme=dark]) #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .override-header{background:#f7f8fa!important}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .override-header::before{top:8px;width:32px;left:calc(50% - 16px);height:3px}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .override-header h2{font-size:11px;margin:0 0 5px;padding-right:92px}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #modal-date-text{font-size:20px;line-height:1.4;margin:0 0 8px;padding-right:88px}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .editor-current-shift{gap:8px;min-width:0}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .editor-current-shift .shift-badge{width:28px;height:28px;min-width:28px;min-height:28px;flex:0 0 28px;border-radius:50%;font-size:12px;margin:0}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .override-base{font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .override-header-actions{top:16px;right:10px;gap:2px}
+body[data-pref-theme] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .override-reset{min-height:44px;height:44px;padding:5px 7px;font-size:11px}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .override-reset>svg{width:17px;height:17px;min-height:17px;flex-basis:17px}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .override-close{width:40px;height:44px;min-height:44px;font-size:20px}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .editor-content{min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:8px 18px 16px;border-radius:0;box-sizing:border-box}
+body[data-pref-theme] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .editor-tabs{position:sticky;top:-8px;z-index:2;gap:20px;min-height:44px;padding:0 0 3px;margin:0 0 10px;background:var(--surface,#fff)!important}
+body[data-pref-theme] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .editor-tabs button{font-size:16px;min-height:44px;padding:5px 3px}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #work-panel{margin:0;padding:0;border:0}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #work-panel .override-section-title{font-size:12px;font-weight:600;margin:0 0 6px;line-height:1.5}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #work-panel .shift-scroll{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;overflow:visible;padding:3px;margin:0 0 14px;white-space:normal}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #work-panel .shift-scroll:last-child{margin-bottom:0}
+body[data-pref-theme] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #work-panel .opt-btn:not(.reset){position:relative;width:56px;min-width:56px;height:56px;min-height:56px;justify-self:center;flex:none;padding:6px;box-sizing:border-box;border-radius:50%;font-size:11px;font-weight:550;line-height:1.35;white-space:normal;word-break:keep-all}
+body[data-pref-theme] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #work-panel .opt-btn[aria-pressed=true]{outline-width:2px;outline-offset:1px}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #work-panel .selection-check{top:3px;right:3px;width:13px;height:13px}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #work-panel .selection-check svg{width:13px;height:13px}
+@media(max-width:350px){#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #modal-date-text{font-size:18px}#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .override-header{padding-left:14px;padding-right:14px}#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .editor-content{padding-left:14px;padding-right:14px}body[data-pref-theme] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #work-panel .opt-btn:not(.reset){font-size:11px}}
+@media(prefers-reduced-motion:reduce){#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .override-sheet{animation:none}}
 
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #change-preview{margin:12px 3px 0;padding:12px;border-radius:12px}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #change-preview strong{display:block;font-size:13px;line-height:1.5}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #change-preview p{font-size:11px;line-height:1.5;margin:5px 0 10px}
-#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) #apply-preview{min-height:44px;margin:0;padding:9px 12px;border-radius:10px;font-size:13px}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #change-preview{margin:12px 3px 0;padding:12px;border-radius:12px}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #change-preview strong{display:block;font-size:13px;line-height:1.5}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #change-preview p{font-size:11px;line-height:1.5;margin:5px 0 10px}
+#modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #apply-preview{min-height:44px;margin:0;padding:9px 12px;border-radius:10px;font-size:13px}
 
 /* Test theme: text choices with a check mark, without circular tiles or rings. */
 body[data-pref-theme=test] #modal-override #work-panel .opt-btn:not(.reset){width:100%;min-width:0;height:48px;min-height:48px;padding:8px 16px 8px 4px;border:0!important;border-radius:0!important;background:transparent!important;color:#4e5968!important;box-shadow:none!important;outline:0!important;font-size:12px}
 body[data-pref-theme=test] #modal-override #work-panel .opt-btn[aria-pressed=true]{color:#1b64da!important;font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
 body[data-pref-theme=test] #modal-override #work-panel .selection-check{top:50%;right:1px;transform:translateY(-50%);background:transparent;color:#1b64da;border-radius:0}
 body[data-pref-theme=test] #modal-override #work-panel .opt-btn:focus-visible{outline:2px solid #3182f6!important;outline-offset:0;border-radius:4px!important}
-body[data-pref-theme=test] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers]) .editor-current-shift .shift-badge{width:auto;min-width:28px;background:transparent!important;color:#4e5968!important;border:0;border-radius:0;box-shadow:none}
+body[data-pref-theme=test] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .editor-current-shift .shift-badge{width:auto;min-width:28px;background:transparent!important;color:#4e5968!important;border:0;border-radius:0;box-shadow:none}
