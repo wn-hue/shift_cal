@@ -33,6 +33,7 @@
  function save(id) {
   if (!selectedDateStr || id !== null && !labels[id]) return;
   begin();
+  if (id === saved[selectedDateStr]) id = null;
   const next = {...saved};
   if (id === null) delete next[selectedDateStr]; else next[selectedDateStr] = id;
   try { localStorage.setItem(key, JSON.stringify(AccountDataCore.normalize({[key]:next})[key])); }
