@@ -23,6 +23,9 @@
     },
     "api/lost-found.js": {
       "maxDuration": 30
+    },
+    "api/bus-places.js": {
+      "maxDuration": 20
     }
   },
   "headers": [
