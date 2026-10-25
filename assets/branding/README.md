@@ -1,11 +1,11 @@
 # 교대 루틴 app icon
 
-Updated 2026-10-26 from the calendar, routine arrows and check mark supplied by the user. Edited with the built-in image_gen tool, then exported with macOS sips to the required PNG sizes.
+Updated 2026-10-26 to the user’s preference for restrained color, a symbol, and minimalism. Edited with the built-in image_gen tool; macOS sips exports the required PNG sizes.
 
-Design: blue calendar, two continuous clockwise semicircular arrows in blue and golden yellow, blue check, soft matte depth, full-bleed pale gray background. No inset tile or white outer frame. All PNGs are opaque squares; the OS supplies its own mask.
+Design: one muted-blue calendar contour, two binding tabs, and an arrow integrated into the lower-right perimeter. Open center, pale gray edge-to-edge background. The separate check, nested arrow ring, yellow, and dimensional effects are removed. No inset tile or white outer border. PNGs are opaque squares for OS masking.
 
-Master: `shift-routine-icon-1024.png`. Web: 512px / 192px, Apple touch: 180px. Both native Xcode icon catalogs use the 1024px master. Existing installed iOS apps need a new build to display the changed icon.
+Master: `shift-routine-icon-1024.png`. Web: 512px / 192px, Apple touch: 180px. Both native Xcode icon catalogs use the 1024px master. Installed iOS apps need a new build to display the changed icon.
 
-Prompt: Preserve the supplied calendar outline, two binding tabs, circular routine arrows and check; simplify for small sizes; replace rainbow purple with royal blue #3182F6 and golden yellow #FFCA45; subtle matte dimensional finish, straight-on square, pale gray full-bleed background, no text, no frame. Refinement: exactly two continuous clockwise semicircular arrows, blue ending rightward at 12 o’clock and gold ending leftward at 6 o’clock, with small gaps at those endpoints.
+Prompt: Redesign the previous calendar-loop icon as a minimal flat symbol for a shift-work app. Use one muted royal blue #376FCE on pale gray #F3F4F6; no yellow, gradients, shading, gloss, shadow, texture or text. Remove the central check and separate inner arrows. Integrate one arrowhead directly into a thick rounded-square calendar outline with two short binding tabs, generous negative space and balanced geometry. Center at approximately 68% canvas width and height, with no inset tile or border frame.
 
-The earlier folded sun/moon artwork remains recoverable in Git history before this change.
+Earlier artworks remain recoverable in Git history.
