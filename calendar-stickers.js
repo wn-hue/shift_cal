@@ -52,7 +52,7 @@
   image.width = image.height = 24;
   image.draggable = false;
   cell.classList.add('has-calendar-sticker');
-  cell.append(image);
+  cell.insertBefore(image,cell.querySelector('.memo-tag'));
   const label = cell.getAttribute('aria-label');
   if (label) cell.setAttribute('aria-label',label+', '+labels[id]+' 스티커');
  }

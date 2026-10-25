@@ -1,10 +1,6 @@
-/* Date decorations sit beside the date, leaving work and memo text untouched. */
-.cal-day .calendar-sticker{position:absolute;top:3px;right:2px;width:22px;height:22px;object-fit:contain;pointer-events:none;z-index:2}
-.cal-day.has-calendar-sticker .day-meta{padding-right:22px;box-sizing:border-box}
-.cal-day.has-calendar-sticker.holiday .day-meta{height:32px;min-height:32px;flex-direction:column;align-items:flex-start;gap:0;padding-right:0}
-.cal-day.has-calendar-sticker .holiday-bar{position:static;flex:none;width:100%;max-width:100%;height:12px;line-height:12px;text-align:left}
-body[data-pref-theme=test] .cal-day.has-calendar-sticker .day-meta{padding-right:0}
-body[data-pref-theme=test] .cal-day.has-calendar-sticker .holiday-bar{position:static;width:100%;max-width:100%}
+/* Stickers follow the work/attendance label, before the personal memo. */
+.cal-day .calendar-sticker{position:static;display:block;align-self:center;width:24px;height:24px;flex:0 0 24px;object-fit:contain;pointer-events:none;margin:2px 0}
+.cal-day.has-calendar-sticker{overflow:hidden}
 #modal-override #stickers-panel[hidden]{display:none}
 #modal-override #stickers-panel{padding:0;margin:0;border:0}
 .sticker-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
@@ -17,5 +13,3 @@ body[data-pref-theme=test] .cal-day.has-calendar-sticker .holiday-bar{position:s
 .sticker-actions button{min-height:44px;margin:0;border:0;border-radius:12px;padding:10px;font:inherit;font-size:14px;cursor:pointer}
 .sticker-actions #calendar-sticker-clear{background:var(--surface-soft,#f2f4f6);color:var(--theme-text,#333d4b)}
 .sticker-actions button:disabled{opacity:.4;cursor:default}
-
-@media(max-width:360px){.cal-day .calendar-sticker{width:16px;height:16px;top:5px}.cal-day.has-calendar-sticker .day-meta{padding-right:16px}}
