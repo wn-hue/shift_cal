@@ -12,14 +12,11 @@
             $(id).setAttribute('aria-current',view===name?'page':'false');
         }
     }
-    function rendered(group, summary) {
+    function rendered(group) {
         const label=$('routine-calendar-group');
         if(label)label.textContent=group+'조 근무표';
         $('cal-month-title-btn').setAttribute('aria-label',group+'조 달력 연도와 월 선택');
-        if(summary)for(const key of ['day','night','off','leave']){
-            const value=$('test-calendar-'+key);
-            if(value)value.textContent=summary[key]+'일';
-        }
+
     }
     function tap(button) {
         const visual=button.querySelector('.nav-visual');
