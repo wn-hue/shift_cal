@@ -20,3 +20,8 @@ body[data-pref-theme] .sheet-dismiss-handle{position:relative;display:flex;align
 .settings-confirm-copy{font-size:15px;line-height:1.8;color:var(--ui-muted,#6b7684)}
 .settings-confirm-action{width:100%;min-height:48px;border:0;border-radius:14px;background:#3182f6;color:white;font:inherit;font-weight:650;margin-top:16px}
 body[data-pref-theme] #sticker-dialog #sticker-dialog-title:focus{outline:none!important}
+
+/* Neutral handles stay neutral during taps, focus and dragging. */
+body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss),body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss):is(:hover,:active,:focus){background:transparent!important;color:#aeb5bf!important;box-shadow:none!important;-webkit-tap-highlight-color:transparent;outline:none!important}
+body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss)>span{background:#b8bec7!important}
+body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss):focus-visible{outline:2px solid #aeb5bf!important;outline-offset:-4px;border-radius:10px}

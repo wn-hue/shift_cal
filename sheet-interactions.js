@@ -1,6 +1,13 @@
 /* Bottom-sheet affordances preserve each feature's existing dismissal and draft guards. */
 (()=>{'use strict';
- const attached=new WeakSet();
+ const attached=new WeakSet(),backdrops=new WeakSet();
+ function backdrop(target,sheet,dismiss){
+  if(backdrops.has(target))return;backdrops.add(target);let pressedOutside=false;
+  const outside=e=>{if(e.target!==target)return false;if(target!==sheet)return true;const r=sheet.getBoundingClientRect();return e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom;};
+  target.addEventListener('pointerdown',e=>{pressedOutside=outside(e);},true);
+  target.addEventListener('click',e=>{if(!outside(e))return;const shouldDismiss=pressedOutside;pressedOutside=false;e.preventDefault();e.stopImmediatePropagation();if(shouldDismiss)dismiss();},true);
+ }
+
  function fit(){const vp=visualViewport,w=vp?.width||innerWidth,h=vp?.height||innerHeight,top=vp?.offsetTop||0,left=vp?.offsetLeft||0,gap=h<420?24:Math.max(56,h*.08);
   for(const d of document.querySelectorAll('dialog.app-bottom-sheet')){d.style.setProperty('--sheet-limit',Math.max(120,h-gap)+'px');d.style.setProperty('--sheet-width',Math.min(w,560)+'px');d.style.setProperty('--sheet-left',left+(w-Math.min(w,560))/2+'px');d.style.setProperty('--sheet-bottom',Math.max(0,innerHeight-top-h)+'px');}
  }
@@ -8,6 +15,7 @@
   const native=sheet.tagName==='DIALOG',original=sheet.querySelector('button[aria-label*="닫기"],.sms-close-btn,.login-sheet-close,#lost-close,.override-close,.picker-close');
   if(!native&&!original)return;
   const dismiss=()=>original?original.click():sheet.close();
+  backdrop(native?sheet:sheet.parentElement,sheet,dismiss);
   const handle=document.createElement('button');handle.type='button';handle.className='sheet-dismiss-handle';handle.setAttribute('aria-label',original?.getAttribute('aria-label')||'창 내리기');handle.innerHTML='<span aria-hidden="true"></span>';handle.onclick=dismiss;
   if(original){original.classList.add('sheet-original-close');original.tabIndex=-1;original.setAttribute('aria-hidden','true');}
   sheet.prepend(handle);sheet.classList.add(native?'app-bottom-sheet':'app-overlay-sheet');
@@ -22,6 +30,9 @@
   if(native){sheet.addEventListener('cancel',e=>{if(e.defaultPrevented||!sheet.open)return;e.preventDefault();dismiss();});new MutationObserver(fit).observe(sheet,{attributes:true,attributeFilter:['open']});}
   fit();
  }
- function scan(){document.querySelectorAll('dialog,.modal-overlay:not(#modal-override)>.modal-sheet').forEach(attach);}
+ function scan(){document.querySelectorAll('dialog,.modal-overlay:not(#modal-override)>.modal-sheet').forEach(attach);
+  const editor=document.getElementById('modal-override');backdrop(editor,editor.querySelector('.override-sheet'),()=>closeModalDirect());
+  const onboarding=document.getElementById('onboarding-dialog');if(onboarding)backdrop(onboarding,onboarding,()=>document.getElementById('onboarding-exit').click());
+ }
  window.AppSheets={attach,fit};scan();new MutationObserver(records=>{if(records.some(r=>[...r.addedNodes].some(n=>n.nodeType===1&&(n.matches?.('dialog')||n.querySelector?.('dialog')))))scan();}).observe(document.body,{childList:true,subtree:true});visualViewport?.addEventListener('resize',fit);visualViewport?.addEventListener('scroll',fit);window.addEventListener('resize',fit);
 })();
