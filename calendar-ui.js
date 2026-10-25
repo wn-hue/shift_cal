@@ -3,6 +3,7 @@
     const $=id=>document.getElementById(id);
     function showView(view) {
         document.body.dataset.view=view;
+        window.TestCalendar?.schedule();
         $('cal-month-title-btn').hidden=view!=='calendar';
         $('header-view-title').hidden=view==='calendar';
         $('header-view-title').textContent=view==='all'?'전체':view==='payroll'?'급여 계산기':view==='menu'?'오늘 메뉴':'시급 · 연차';
@@ -15,6 +16,7 @@
     function rendered(group) {
         const label=$('routine-calendar-group');
         if(label)label.textContent=group+'조 근무표';
+        window.TestCalendar?.schedule();
         $('cal-month-title-btn').setAttribute('aria-label',group+'조 달력 연도와 월 선택');
 
     }

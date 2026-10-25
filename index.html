@@ -934,10 +934,10 @@
 <link rel="stylesheet" href="./screen-refinement.css?v=6">
 <link rel="stylesheet" href="./onboarding.css?v=3">
 <link rel="stylesheet" href="./mobile-surfaces.css?v=9">
-<link rel="stylesheet" href="./test-calendar.css?v=2">
+<link rel="stylesheet" href="./test-calendar.css?v=3">
 <link rel="stylesheet" href="./month-picker.css?v=1">
 <link rel="stylesheet" href="./memo-editor.css?v=1">
-<link rel="stylesheet" href="./compact-work-editor.css?v=2">
+<link rel="stylesheet" href="./compact-work-editor.css?v=3">
 <link rel="stylesheet" href="./meal-layout.css?v=1">
 </head>
 <body data-view="calendar">
@@ -1821,13 +1821,30 @@
                 const label = shown.type === 'NO_OT' ? (shown.origType === 'NIGHT' ? '야' : '주') : labels[shown.type] || shift.name;
                 const visibleLabel = fullLabels ? ({주:'주간',야:'야간',휴:'휴무'}[label] || label) : label;
                 const holHtml = shift.holidayName ? `<span class="holiday-bar" title="${shift.holidayName}">${shift.holidayName}</span>` : '';
-                const subHtml = !attendance && shift.subName ? `<div class="sub-tag">${shift.subName}</div>` : '';
+                const subHtml = !attendance && shift.subName ? `<div class="sub-tag">${fullLabels ? label + ' ' + shift.subName.replace('O.T해제','잔업X') : shift.subName}</div>` : '';
                 cell.innerHTML = `<div class="day-meta"><span class="day-num">${dateObj.getDate()}</span>${holHtml}</div><div class="shift-badge ${badgeClass}" title="${shift.name}">${visibleLabel}</div>${attendance ? `<div class="attendance-pill ${shift.type==='LEAVE'?'leave':shift.type.startsWith('HALF')?'half':'unpaid'}">${{LEAVE:'연차 1',HALF_PRE:'반차 전',HALF_POST:'반차 후',UNPAID_OFF:'무급 1',UNPAID_HALF_PRE:'무반 전',UNPAID_HALF_POST:'무반 후'}[shift.type]}</div>` : ''}${subHtml}`;
                 if (!adjacent && dayMemos[dateStr]) {
-                    const memo = document.createElement('div');
+                    const memo = document.createElement(fullLabels ? 'button' : 'div');
                     memo.className = 'memo-tag';
                     memo.title = dayMemos[dateStr];
                     memo.textContent = dayMemos[dateStr];
+                    if (fullLabels) {
+                        memo.type = 'button';
+                        memo.setAttribute('aria-label', `${dateObj.getMonth()+1}월 ${dateObj.getDate()}일 메모: ${dayMemos[dateStr]}`);
+                        memo.onclick = event => { event.stopPropagation(); openOverrideModal(dateStr, dateObj, shift); switchEditorTab('memo'); };
+                        memo.onkeydown = event => event.stopPropagation();
+                        // Expose two sibling actions rather than nesting a note button in a date button.
+                        cell.setAttribute('role', 'group');
+                        cell.removeAttribute('tabindex');
+                        cell.onkeydown = null;
+                        const dateAction = cell.querySelector('.day-meta');
+                        dateAction.setAttribute('role', 'button');
+                        dateAction.tabIndex = 0;
+                        dateAction.setAttribute('aria-label', cell.getAttribute('aria-label') + ', 근무 변경');
+                        dateAction.setAttribute('aria-haspopup', 'dialog');
+                        dateAction.onclick = event => { event.stopPropagation(); openOverrideModal(dateStr, dateObj, shift); };
+                        dateAction.onkeydown = event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.stopPropagation(); openOverrideModal(dateStr, dateObj, shift); } };
+                    }
                     cell.appendChild(memo);
                 }
                 grid.appendChild(cell);
@@ -2859,7 +2876,8 @@
     <script src="./schedule-share.js?v=muted-1"></script>
     <script src="./google-sync-core.js?v=6"></script>
     <script src="./account-data-core.js?v=leave-1-special-noot-7"></script>
-    <script src="./calendar-ui.js?v=49"></script>
+    <script src="./calendar-ui.js?v=50"></script>
+    <script src="./test-calendar.js?v=1"></script>
     <script src="./today-menu.js?v=8"></script>
 <dialog id="account-login-dialog" class="account-login-dialog" data-connected="false" aria-labelledby="login-sheet-title"><div class="login-sheet-handle" aria-hidden="true"></div><button type="button" class="login-sheet-close" aria-label="로그인 창 닫기">×</button><section class="identity-card" aria-label="로그인 및 동기화"><div class="identity-heading"><div><h2 id="login-sheet-title">로그인 또는 회원가입</h2><p id="account-email">로그인하면 근무표와 메모가 동기화됩니다.</p></div></div><div class="identity-buttons"><a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1" aria-label="Google로 로그인" aria-describedby="account-permission-notice"><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#4285f4" d="M43.6 24.5c0-1.4-.1-2.7-.4-4H24v7.7h11a9.4 9.4 0 0 1-4.1 6.2v5h6.7c3.9-3.6 6-8.8 6-14.9Z"/><path fill="#34a853" d="M24 44c5.4 0 10-1.8 13.6-5l-6.7-5c-1.8 1.2-4.1 1.9-6.9 1.9-5.2 0-9.7-3.5-11.3-8.2H5.8v5.2A20 20 0 0 0 24 44Z"/><path fill="#fbbc05" d="M12.7 27.7a12 12 0 0 1 0-7.4v-5.2H5.8a20 20 0 0 0 0 17.8l6.9-5.2Z"/><path fill="#ea4335" d="M24 12.1c3 0 5.6 1 7.7 3l5.8-5.8A19.3 19.3 0 0 0 24 4 20 20 0 0 0 5.8 15.1l6.9 5.2c1.6-4.7 6.1-8.2 11.3-8.2Z"/></svg><span>Google 계정으로 계속하기</span></a><a id="apple-login" aria-disabled="true" class="apple-signin" href="/api/apple-account?action=login" aria-label="Apple로 로그인"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M17.1 12.3c0-2 1.6-3 1.7-3.1-1-1.5-2.5-1.7-3.1-1.7-1.3-.2-2.5.8-3.2.8-.7 0-1.8-.8-2.9-.8-1.5 0-2.8.9-3.5 2.1-1.5 2.5-.4 6.3 1 8.3.7 1 1.5 2.1 2.6 2 1.1 0 1.5-.7 2.8-.7 1.3 0 1.7.7 2.9.7 1.2 0 1.9-1 2.6-2 .8-1.1 1.1-2.2 1.1-2.3-.1 0-2-.8-2-3.3M14.8 6.2c.6-.8 1.1-1.8 1-2.9-1 .1-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.8 1.1.1 2.1-.6 2.8-1.4"/></svg>Apple 계정으로 계속하기</a></div><p id="apple-login-status" class="identity-note" role="status"></p><div id="account-sync-status" class="sync-feedback" role="status" aria-live="polite" aria-atomic="true"></div><div class="identity-actions"><button id="account-sync-now" type="button" class="btn-save" hidden>지금 동기화</button><button id="account-logout" type="button" class="btn-reset-data" hidden>로그아웃</button><button id="account-delete" type="button" class="btn-reset-data" hidden>계정 데이터 삭제</button></div></section></dialog>
     <script src="./login-sheet.js?v=1"></script>
