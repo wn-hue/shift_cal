@@ -10,11 +10,7 @@ body[data-pref-theme=dark][data-view=groups]{background:#17191d}
 body[data-pref-theme=dark] :is(#view-groups,#group-day-dialog){--group-surface:#24272c;--group-bg:#17191d;--group-ink:#f3f4f5;--group-muted:#a5adb8;--group-line:#35393f;--group-blue:#8bb8ff;--group-highlight:#263b57}
 .group-monthbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 14px}
 #group-month-title{border:0;background:transparent;color:var(--group-ink);font:inherit;font-size:22px;font-weight:700;padding:4px 0;min-height:44px;letter-spacing:-.5px}
-.group-month-actions{display:flex;align-items:center;gap:2px}
-.group-month-actions button{display:flex;align-items:center;justify-content:center;border:0;border-radius:12px;background:var(--group-surface);color:var(--group-ink);min-width:44px;height:44px;font:inherit;font-size:24px;padding:0 8px;cursor:pointer}
-.group-month-actions #group-today{font-size:13px;padding:0 12px}
 .group-view-caption{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 4px 12px;font-size:11px;color:var(--group-muted)}
-#group-mine-label{font-weight:650;color:var(--group-blue);white-space:nowrap}
 #group-weeks{display:flex;flex-direction:column;gap:12px}
 #view-groups .group-week{width:100%;table-layout:fixed;border-spacing:0;border-collapse:separate;background:var(--group-surface);border:1px solid var(--group-line);border-radius:18px;overflow:hidden;margin:0;padding:0;box-shadow:0 1px 3px #00000002}
 #view-groups .group-week :is(th,td){margin:0;padding:0;border:0;vertical-align:middle;text-align:center;font-weight:500;min-width:0}
@@ -24,7 +20,6 @@ body[data-pref-theme=dark] :is(#view-groups,#group-day-dialog){--group-surface:#
 #view-groups .group-week tbody tr:not(:last-child)>*{border-bottom:1px solid var(--group-line)}
 #view-groups .group-week .my-group>*{background:var(--group-highlight)}
 #view-groups .group-week .my-group .group-column{color:var(--group-blue);font-weight:700}
-.group-column small{display:block;font-size:8px;font-weight:500;margin-top:2px}
 .group-date,.group-cell{display:flex;align-items:center;justify-content:center;min-width:0;width:100%;box-sizing:border-box;border:0;background:transparent;color:var(--group-ink);padding:0;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .group-date{flex-direction:column;gap:1px;min-height:56px}
 .group-weekday{color:var(--group-muted);font-size:9px;line-height:12px}
@@ -66,7 +61,6 @@ body[data-pref-theme=dark] .group-weekday.sat{color:#8ab9ff}
 .group-detail-row.my-group{background:var(--group-highlight)}
 .group-detail-row .group-shift{width:36px;height:36px;font-size:13px}
 .group-detail-row strong{font-size:15px;white-space:nowrap}
-.group-detail-row strong small{margin-left:7px;font-size:10px;color:var(--group-blue);font-weight:500}
 .group-detail-shift{margin-left:auto;font-size:13px;color:var(--group-ink);text-align:right;line-height:1.5;overflow-wrap:anywhere}
 #group-open-calendar{width:100%;min-height:48px;margin-top:8px;border:0;border-radius:14px;background:#3182f6;color:white;font:inherit;font-size:14px;font-weight:650;cursor:pointer}
 #view-groups button:focus-visible,#group-day-dialog button:focus-visible{outline:2px solid #3182f6;outline-offset:-2px;border-radius:8px}
@@ -76,3 +70,6 @@ body[data-pref-theme=dark] .group-weekday.sat{color:#8ab9ff}
 body[data-pref-theme=dark][data-view=groups] .reference-header{background:transparent!important}
 body:has(#group-day-dialog[open]){overflow:hidden}
 #group-day-title:focus{outline:0}
+
+#group-weeks{touch-action:pan-y pinch-zoom;outline:none}
+#group-weeks:focus-visible{outline:2px solid #3182f6;outline-offset:3px;border-radius:18px}

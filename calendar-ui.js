@@ -94,7 +94,7 @@
         }
     }
 
-    function bindMonthSwipe(target,surface,change) {
+    function bindMonthSwipe(target,surface,change,options={}) {
         if (!target || !surface || target.dataset.monthSwipeBound) return;
         target.dataset.monthSwipeBound='true';
         target.classList.add('month-swipe-surface');
@@ -106,7 +106,7 @@
         };
         function cancel() { flush(); start=null; axis=''; if (!state.busy) reset(surface,state); }
         target.addEventListener('touchstart',event=>{
-            if (state.busy || event.touches.length!==1 || event.target.closest('input,textarea,select,button,a')) { cancel(); return; }
+            if (state.busy || event.touches.length!==1 || (event.target.closest('input,textarea,select,button,a') && !(options.allowButtons && event.target.closest(options.allowButtons)))) { cancel(); return; }
             start={x:event.touches[0].clientX,y:event.touches[0].clientY}; axis='';
         },{passive:true});
         target.addEventListener('touchmove',event=>{

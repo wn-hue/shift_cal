@@ -34,6 +34,21 @@ const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
    assert(geometry.save.top>=geometry.input.bottom-1,JSON.stringify(geometry));
    if(width===390&&theme==='current'&&height===300)await page.screenshot({animations:'disabled',path:`/tmp/memo-keyboard-${engine.name()}.png`});
   }
+  // Repeated keyboard-to-sticker switches preserve sheet width, reachable tabs and content.
+  for(let cycle=0;cycle<3;cycle++){
+   await page.locator('#modal-memo-input').focus();
+   await page.evaluate(()=>{Object.assign(memoTestViewport,{height:300,offsetTop:160});memoTestViewport.dispatchEvent(new Event('resize'))});
+   await page.getByRole('tab',{name:'스티커',exact:true}).click();
+   assert.notEqual(await page.evaluate(()=>document.activeElement.id),'modal-memo-input');
+   await page.evaluate(()=>{Object.assign(memoTestViewport,{height:844,offsetTop:0});memoTestViewport.dispatchEvent(new Event('resize'))});
+   await page.waitForFunction(()=>document.getElementById('modal-override').style.getPropertyValue('--memo-viewport-height')==='844px');
+   await page.locator('#calendar-sticker-options button').last().scrollIntoViewIfNeeded();
+   assert.equal(await page.locator('#memo-tab').isVisible(),true);
+   await page.getByRole('tab',{name:'메모',exact:true}).click();
+   assert.equal(await page.locator('.editor-content').evaluate(e=>e.scrollTop),0);
+   assert.equal(await page.locator('#modal-memo-input').inputValue(),text);
+   const box=await page.locator('.override-sheet').boundingBox();assert(box.width<=width&&box.y>=0&&box.y+box.height<=845,JSON.stringify(box));
+  }
   await page.getByRole('button',{name:'메모 저장',exact:true}).click();
   await page.waitForFunction(()=>!document.body.classList.contains('memo-editor-open'));
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_day_memos'))['2026-10-23']),text.trim());

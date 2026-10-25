@@ -4,9 +4,24 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
  const page=await browser.newPage({viewport:{width,height:844},timezoneId:'Asia/Seoul',reducedMotion:'reduce'}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.clock.setFixedTime(new Date('2026-10-26T12:00:00+09:00'));
  await page.addInitScript(()=>{if(localStorage.getItem('shift_active_group'))return;localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_onboarding_v1',JSON.stringify({status:'existing'}));localStorage.setItem('shift_salary_config_master',JSON.stringify({hireDate:'2015-06-16',baseHourly:10320,ordinaryHourly:11000}));for(const[g,type]of[['A','OFF'],['B','DAY'],['C','LEAVE']])localStorage.setItem('shift_overrides_'+g,JSON.stringify({'2026-10-18':type}));});
  await page.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await page.goto(process.env.TEST_URL||'http://localhost:8768/');
+ async function swipe(dx,dy=2,cancel=false){
+  await page.locator('#group-weeks tbody button').first().evaluate((el,{dx,dy,cancel})=>{
+   const fire=(name,x,y)=>{const e=new Event(name,{bubbles:true,cancelable:true});Object.defineProperties(e,{touches:{value:name==='touchend'?[]:[{clientX:x,clientY:y}]},changedTouches:{value:[{clientX:x,clientY:y}]}});el.dispatchEvent(e)};
+   fire('touchstart',160,200);fire('touchmove',160+dx,200+dy);fire(cancel?'touchcancel':'touchend',160+dx,200+dy);document.querySelector('#group-weeks tbody button').click();
+  },{dx,dy,cancel});
+  await page.waitForTimeout(450);
+  assert.equal(await page.locator('#group-day-dialog').evaluate(e=>e.open),false);
+ }
  const saved=await page.evaluate(()=>({group:currentGroup,overrides:JSON.stringify(overrides),storage:['A','B','C'].map(g=>localStorage.getItem('shift_overrides_'+g)),config:localStorage.getItem('shift_salary_config_master')}));
  assert.deepEqual(await page.locator('.nav-capsule>button').evaluateAll(els=>els.map(e=>e.id)),['bnav-cal','bnav-groups','bnav-pay','bnav-menu','account-menu-button']);
  await page.getByRole('button',{name:'조별 근무',exact:true}).click();assert.equal(await page.locator('#bnav-groups').getAttribute('aria-current'),'page');assert.equal(await page.locator('#header-view-title').textContent(),'조별 근무');assert.equal(await page.locator('#group-weeks table').count(),5);
+ assert.equal(await page.locator('#group-prev,#group-next,#group-today,#group-mine-label').count(),0);
+ assert(!((await page.locator('#view-groups').textContent()).includes('내 조')));
+ assert.equal(await page.locator('#group-weeks .selected-date[data-date="2026-10-26"]').count(),4);
+ assert.equal(await page.locator('thead [aria-current=date]').count(),1);
+ // Drag from a date's button, not only from gaps between dates.
+ await swipe(-100);assert.match(await page.locator('#group-month-title').textContent(),/2026\. 11/);
+ await swipe(100);assert.match(await page.locator('#group-month-title').textContent(),/2026\. 10/);
  for(const theme of ['current','toss','gpt','dark','test']){
   await page.evaluate(t=>{const s=document.getElementById('pref-theme');s.value=t;s.dispatchEvent(new Event('change'))},theme);
   assert.equal(await page.locator('#group-weeks table').count(),5);
@@ -21,7 +36,7 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
  for(const[g,type]of[['A','OFF'],['B','SPECIAL_DAY'],['C','SPECIAL_NIGHT']])assert.equal(await page.locator(`tr[data-group="${g}"] td[data-date="2026-10-03"]`).getAttribute('data-shift'),type);
  // Both the date heading and any group cell show the same three-group detail.
  await page.locator('tr[data-group="B"] td[data-date="2026-10-18"] button').click();assert.equal(await page.locator('#group-day-dialog').evaluate(e=>e.open),true);assert.equal(await page.locator('#group-day-rows>.group-detail-row').count(),3);
- assert.match(await page.locator('#group-day-rows>.group-detail-row').first().textContent(),/C조.*내 조.*연차/);assert.match(await page.locator('#group-day-title').textContent(),/10월 18일 일요일/);
+ assert.match(await page.locator('#group-day-rows>.group-detail-row').first().textContent(),/C조.*연차/);assert.match(await page.locator('#group-day-title').textContent(),/10월 18일 일요일/);
  if(width===390)await page.screenshot({path:`/tmp/group-day-${engine.name()}.png`,animations:'disabled'});
  await page.keyboard.press('Escape');assert.equal(await page.locator('#group-day-dialog').evaluate(e=>e.open),false);
  assert.equal(await page.evaluate(()=>document.activeElement.closest('td')?.dataset.date),'2026-10-18');
@@ -30,9 +45,9 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
  await page.locator('#group-month-title').click();await page.getByRole('button',{name:'2026년 2월',exact:true}).click();assert.equal(await page.locator('#group-weeks table').count(),4);assert.equal(await page.locator('body').getAttribute('data-view'),'groups');
  await page.evaluate(()=>{currentCalDate=new Date(2026,4,1);renderCalendar()});assert.equal(await page.locator('#group-weeks table').count(),6);
  await page.evaluate(()=>{currentCalDate=new Date(2024,1,1);renderCalendar()});assert.equal(await page.locator('thead th[data-date="2024-02-29"]').count(),1);
- await page.evaluate(()=>{currentCalDate=new Date(2026,11,1);renderCalendar()});await page.locator('#group-next').click();assert.match(await page.locator('#group-month-title').textContent(),/2027\. 01/);await page.locator('#group-prev').click();assert.match(await page.locator('#group-month-title').textContent(),/2026\. 12/);
+ await page.evaluate(()=>{currentCalDate=new Date(2026,11,1);renderCalendar()});await swipe(-100);assert.match(await page.locator('#group-month-title').textContent(),/2027\. 01/);await swipe(100);assert.match(await page.locator('#group-month-title').textContent(),/2026\. 12/);
  await page.locator('#group-month-title').click();await page.getByRole('button',{name:'이번 달로 이동',exact:true}).click();assert.equal(await page.locator('body').getAttribute('data-view'),'groups');
- await page.locator('#group-today').click();assert.match(await page.locator('#group-month-title').textContent(),/2026\. 10/);assert.equal(await page.locator('thead .today').getAttribute('data-date'),'2026-10-26');
+ assert.match(await page.locator('#group-month-title').textContent(),/2026\. 10/);assert.equal(await page.locator('thead .today').getAttribute('data-date'),'2026-10-26');
  // Reuse the same pure shift calculation for every displayed date, including holidays and saved changes.
  assert(await page.evaluate(()=>[...document.querySelectorAll('#group-weeks tbody td')].every(td=>{const g=td.parentElement.dataset.group,[y,m,d]=td.dataset.date.split('-').map(Number),changes=JSON.parse(localStorage.getItem('shift_overrides_'+g)||'{}');return td.dataset.shift===getActualShift(new Date(y,m-1,d),g,changes).type})));
  assert.deepEqual(await page.evaluate(()=>({group:currentGroup,overrides:JSON.stringify(overrides),storage:['A','B','C'].map(g=>localStorage.getItem('shift_overrides_'+g)),config:localStorage.getItem('shift_salary_config_master')})),saved);
