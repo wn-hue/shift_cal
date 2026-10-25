@@ -28,3 +28,24 @@ body[data-pref-theme] #app-preferences-dialog{position:fixed;inset:0;z-index:220
 #language-save-status{margin:12px 8px;color:var(--ui-muted,#6b7684);font-size:13px}
 
 body[data-pref-theme] #app-preferences-dialog:not([data-route=root]){background:var(--ui-card,#fff)!important}
+/* Grouped settings rows, centered title and a circular back affordance. */
+#app-preferences-dialog .settings-topbar{position:relative;justify-content:center;min-height:72px}
+#settings-back{position:absolute;left:max(16px,calc((100vw - 560px)/2 + 16px));border-radius:50%;background:var(--ui-card,#fff);border:1px solid var(--ui-field,#e5e8eb);width:44px;height:44px}
+#settings-title{max-width:calc(100% - 120px);text-align:center;font-size:21px}
+#app-preferences-dialog .settings-group-title{font-size:14px;font-weight:550;color:var(--ui-muted,#6b7684);margin:24px 12px 12px}
+#app-preferences-dialog .settings-list{padding:4px 20px;margin-bottom:20px}
+#app-preferences-dialog .settings-row{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:66px;padding:14px 0;box-sizing:border-box;font-size:16px;line-height:1.5}
+#app-preferences-dialog .settings-row>span:last-child{color:var(--ui-muted,#6b7684);text-align:right;font-size:15px}
+#app-preferences-dialog .settings-list>:is(button,a,.settings-row)+:is(button,a,.settings-row){border-top:1px solid var(--ui-field,#f2f4f6)}
+#app-preferences-dialog .settings-row[hidden]{display:none!important}
+#app-preferences-dialog .settings-list .settings-choice .settings-value{font-size:14px;color:var(--ui-muted,#6b7684);text-align:right}
+#app-preferences-dialog .settings-row input[type=checkbox]{appearance:none;position:relative;width:44px;height:26px;border-radius:20px;background:#d1d6db;border:0;margin:0;flex:none}
+#app-preferences-dialog .settings-row input[type=checkbox]::before{content:'';position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 2px #0001;transition:transform .15s}
+#app-preferences-dialog .settings-row input[type=checkbox]:checked{background:#3182f6}
+#app-preferences-dialog .settings-row input[type=checkbox]:checked::before{transform:translateX(18px)}
+#app-preferences-dialog .settings-list .settings-action{width:auto;min-height:38px;justify-content:center;padding:6px 22px;background:#3182f6;border-radius:22px;color:#fff;font-size:14px}
+#app-preferences-dialog .settings-note{font-size:12px;line-height:1.7;color:var(--ui-muted,#6b7684);margin:0 0 16px}
+#app-preferences-dialog .settings-reset{width:100%;min-height:62px;background:var(--ui-card,#fff);color:#e5484d;border:0;border-radius:20px;font:inherit;font-weight:600}
+#settings-licenses a{flex-direction:column;align-items:flex-start!important;gap:4px!important;overflow-wrap:anywhere}
+#settings-licenses small{font-size:12px;color:var(--ui-muted,#6b7684)}
+#app-preferences-dialog .settings-list>:is(button,a,.settings-row):not(:first-child),#settings-holiday-toggle{border-top:1px solid var(--ui-field,#f2f4f6)}

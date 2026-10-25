@@ -316,4 +316,24 @@ Apple 계정으로 계속하기|Continue with Apple|使用 Apple 继续|Appleで
 김치볶음밥|Kimchi fried rice|泡菜炒饭|キムチ炒飯
 김밥|Gimbap|紫菜包饭|キンパ
 짬뽕|Jjamppong|辣海鲜面|チャンポン
+화면 설정|Display|显示设置|画面設定
+언어 및 국가|Language & region|语言与地区|言語と地域
+지역|Region|地区|地域
+대한민국|South Korea|韩国|韓国
+통화|Currency|货币|通貨
+원 (KRW)|KRW|韩元 (KRW)|ウォン (KRW)
+공휴일 정보|Holiday data|节假日信息|祝日情報
+갱신|Refresh|更新|更新
+대한민국 공휴일 · 원화 기준으로 계산해요.|Uses Korean holidays and KRW.|按韩国节假日及韩元计算。|韓国の祝日・ウォンを基準に計算します。
+연결 및 알림|Connections & alerts|连接与提醒|連携と通知
+정보|About|信息|情報
+버전|Version|版本|バージョン
+오픈소스 라이선스|Open-source licenses|开源许可证|オープンソースライセンス
+앱 설정 초기화|Reset app preferences|重置应用设置|アプリ設定をリセット
+화면 테마·표시·언어를 기본값으로 되돌려요. 근무표, 급여 설정, 메모와 일정은 유지돼요.|Reset theme, display and language. Your shifts, pay settings, notes and events stay saved.|恢复主题、显示和语言的默认设置。班表、工资设置、备忘录和日程将保留。|テーマ・表示・言語を初期設定に戻します。勤務表・給与設定・メモ・予定は保持されます。
+공휴일 정보를 확인하고 있어요.|Checking holiday data…|正在检查节假日信息…|祝日情報を確認しています…
+앱에 배포된 최신 공휴일 정보를 적용했어요.|Applied the latest holiday data available in the app.|已应用此应用发布的最新节假日信息。|アプリで公開された最新の祝日情報を適用しました。
+갱신하지 못했어요. 기존 공휴일 정보를 유지해요.|Could not refresh. Existing holiday data is unchanged.|更新失败，保留原有节假日信息。|更新できませんでした。既存の祝日情報を保持します。
+앱에서 사용하는 오픈소스 및 이미지 정보예요.|Open-source software and images used in this app.|本应用使用的开源软件和图像信息。|アプリで使用するオープンソースと画像の情報です。
+창 내리기|Dismiss sheet|收起窗口|シートを閉じる
 `.trim().split('\n').map(line=>{const [ko,en,zh,ja]=line.split('|');return [ko,{en,zh,ja}]}));
