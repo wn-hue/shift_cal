@@ -89,7 +89,7 @@ async function main() {
     console.log('PASS: Korean date rollover, year/weekday checks, 14 date columns, spatial meal sections, merged/split cells, missing/stale/invalid PDFs, fixed upstream URL and payload limits.');
 
     const elements=new Map();
-    function el(){return {textContent:'',children:[],hidden:false,disabled:false,attributes:{},handlers:{},setAttribute(k,v){this.attributes[k]=v},appendChild(c){this.children.push(c)},replaceChildren(){this.children=[]},addEventListener(n,f){this.handlers[n]=f}};}
+    function el(){return {style:{},textContent:'',children:[],hidden:false,disabled:false,attributes:{},handlers:{},setAttribute(k,v){this.attributes[k]=v},appendChild(c){this.children.push(c)},replaceChildren(){this.children=[]},addEventListener(n,f){this.handlers[n]=f}};}
     for(const id of ['today-menu-date','today-menu-refresh','today-menu-status','today-menu-panel','today-menu-cards','today-menu-empty','today-menu-note','today-menu-checked'])elements.set(id,el());
     let instant=new Date('2026-10-02T13:00:00Z'), requests=0, reply={...result,checkedAt:instant.toISOString()};
     class Clock extends Date{constructor(...args){super(...(args.length?args:[instant]));}static now(){return instant.getTime();}}

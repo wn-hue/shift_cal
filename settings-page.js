@@ -12,18 +12,18 @@
 
  <div data-settings-panel="display" hidden></div><div data-settings-panel="licenses" hidden><p class="settings-description">앱에서 사용하는 오픈소스 및 이미지 정보예요.</p><div id="settings-licenses" class="settings-list"></div></div><div data-settings-panel="calendars" hidden></div><div data-settings-panel="about" hidden></div></div>`;
  const panel=name=>page.querySelector('[data-settings-panel="'+name+'"]');cards.forEach(c=>panel('display').append(c));panel('calendars').append(calendars);panel('about').append(about);
- const names={root:'설정',display:'화면 테마 · 표시',calendars:'내 캘린더',about:'앱 안내',licenses:'오픈소스 라이선스'},scrolls={};let active=false,route='root',returnScroll=0,locked=[];
+ const names={root:'설정',display:'화면 테마 · 표시',calendars:'내 캘린더',about:'앱 안내',licenses:'오픈소스 라이선스'},scrolls={};let active=false,showing=false,route='root',returnScroll=0,locked=[];
  function render(name){
-  const entering=!active;
+  const entering=!showing,back=name==='root';showing=true;
   if(!names[name]||['display','language'].includes(name))name='root';
   if(!active){returnScroll=scrollY;locked=[...document.querySelectorAll('body>.container,body>.bottom-nav')].map(el=>[el,el.inert]);locked.forEach(([el])=>el.inert=true);active=true;document.body.classList.add('settings-page-open');}
   else scrolls[route]=page.querySelector('.settings-body').scrollTop;
   route=name;page.hidden=false;for(const el of page.querySelectorAll('[data-settings-panel]'))el.hidden=el.dataset.settingsPanel!==name;
   $('settings-title').textContent=names[name];page.dataset.route=name;page.querySelector('.settings-body').scrollTop=scrolls[name]||0;
-  if(!matchMedia('(prefers-reduced-motion:reduce)').matches)(entering?page:panel(name)).animate([{transform:'translateX(100%)'},{transform:'translateX(0)'}],{duration:260,easing:'cubic-bezier(.2,.7,.2,1)'});
+  if(entering)AppMotion.page(page,true);else AppMotion.reveal(panel(name),back?-1:1);
   $('settings-title').focus({preventScroll:true});window.AppI18n?.refresh();
  }
- function close(){if(!active)return;page.hidden=true;active=false;document.body.classList.remove('settings-page-open');locked.forEach(([el,value])=>el.inert=value);window.scrollTo({top:returnScroll,behavior:'instant'});document.querySelector('.menu-preferences')?.focus({preventScroll:true});}
+ function close(){if(!active||!showing)return;showing=false;AppMotion.page(page,false,()=>{page.hidden=true;active=false;document.body.classList.remove('settings-page-open');locked.forEach(([el,value])=>el.inert=value);window.scrollTo({top:returnScroll,behavior:'instant'});document.querySelector('.menu-preferences')?.focus({preventScroll:true});});}
  function open(name='root'){if(!names[name])return;if(active&&route===name)return;history.pushState({...history.state,shiftSettings:name},'', '#settings-'+name);render(name);}
  $('settings-back').onclick=()=>history.back();$('settings-account').onclick=()=>$('account-sheet-open').click();
  page.querySelectorAll('[data-settings-link]').forEach(b=>b.onclick=()=>open(b.dataset.settingsLink));

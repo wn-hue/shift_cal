@@ -54,3 +54,8 @@ body[data-pref-theme="dark"] .meal-footer a{color:#a4cef0!important}
 #view-menu #today-menu-relative { flex:1; text-align:right; font-size:13px; font-weight:600; color:var(--ui-muted,#6b7684); }
 #view-menu #today-menu-panel { min-width:0; }
 #view-menu { overflow-x:clip; }
+/* Keep the four meal slots stable while another date is being fetched. */
+.meal-placeholder{box-sizing:border-box;border-radius:24px;background:var(--ui-card,#fff);padding:24px;margin-bottom:14px;overflow:hidden}
+.meal-placeholder span{display:block;height:12px;border-radius:6px;background:var(--ui-field,#f2f4f6);width:62%;margin:20px 0}
+.meal-placeholder span:first-child{height:20px;width:36%;margin:0 0 32px}
+.meal-placeholder span:last-child{width:42%}

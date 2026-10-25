@@ -38,8 +38,11 @@ body[data-pref-theme] :is(dialog,.modal-sheet).sheet-closing{
  width:var(--sheet-close-width)!important;height:var(--sheet-close-height)!important;max-height:none!important;min-height:0!important;margin:0!important;
  animation:none!important;transition:transform 240ms cubic-bezier(.32,0,.67,0)!important;transform:translate3d(0,var(--sheet-drag,0px),0)!important;will-change:transform;pointer-events:none;
 }
-body[data-pref-theme] :is(dialog,.modal-sheet).sheet-returning{transition:transform 180ms ease-out!important}
-@media(prefers-reduced-motion:reduce){body[data-pref-theme] :is(dialog,.modal-sheet).sheet-returning{transition:none!important}}
+body[data-pref-theme] :is(dialog,.modal-sheet).sheet-returning:not(.sheet-closing){transition:transform 180ms ease-out!important}
+@media(prefers-reduced-motion:reduce){body[data-pref-theme] :is(dialog,.modal-sheet).sheet-returning:not(.sheet-closing){transition:none!important}}
 dialog.sheet-closing::backdrop{animation:sheet-backdrop-out 240ms ease-out forwards}
 .modal-overlay[data-sheet-closing=true]{transition:background-color 240ms ease-out;background-color:transparent}
 @keyframes sheet-backdrop-out{to{background-color:transparent}}
+
+/* A single opening animation owns the sheet; legacy slideUp used a competing transform. */
+body[data-pref-theme] :is(dialog.app-bottom-sheet,.app-overlay-sheet,#modal-override .override-sheet){animation:none!important}
