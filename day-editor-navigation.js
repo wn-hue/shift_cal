@@ -52,6 +52,6 @@
   const next=e.key==='Home'?'work':e.key==='End'?'memo':overlay.dataset.editorTab==='work'?'memo':'work';
   switchEditorTab(next);$(next+'-tab').focus({preventScroll:true});
  });
- bind(content,'page');bind(header,'dismiss');
+ bind(content,'page'); // Downward dismissal is shared across the entire sheet by AppSheets.
  $('editor-swipe-space').addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();move(e.key==='ArrowRight'?1:-1)}});
 })();

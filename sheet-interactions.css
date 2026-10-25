@@ -9,9 +9,9 @@ body[data-pref-theme] .modal-overlay .app-overlay-sheet{max-height:calc(100dvh -
 .sheet-original-close{display:none!important}
 body[data-pref-theme] .sheet-dismiss-handle{position:relative;display:flex;align-items:center;justify-content:center;flex:0 0 auto;width:100%;height:32px;min-height:32px;padding:0;margin:0 0 8px;border:0;border-radius:0;background:transparent;box-shadow:none;touch-action:none;cursor:pointer;color:inherit}
 .sheet-dismiss-handle>span{display:block;width:36px;height:4px;border-radius:8px;background:#b8bec7}
-.sheet-dismiss-handle:focus-visible{outline:2px solid #3182f6;outline-offset:-2px;border-radius:10px}
+
 /* Replaced by the functional handle above. */
-.app-bottom-sheet::before,.app-bottom-sheet .login-sheet-handle{display:none!important}
+.app-bottom-sheet::before,.app-bottom-sheet .login-sheet-handle,.app-bottom-sheet .group-dialog-handle{display:none!important}
 #settings-options h2{font-size:18px;line-height:1.5;margin:4px 4px 12px;outline:none}
 .settings-radio-row{display:flex;align-items:center;gap:16px;min-height:60px;line-height:1.5;padding:8px 4px;box-sizing:border-box;font-size:17px;cursor:pointer}
 .settings-radio-row input{appearance:none;width:22px;height:22px;border:2px solid #aeb5bf;border-radius:50%;margin:0;flex:none;box-sizing:border-box;background:transparent}
@@ -24,4 +24,10 @@ body[data-pref-theme] #sticker-dialog #sticker-dialog-title:focus{outline:none!i
 /* Neutral handles stay neutral during taps, focus and dragging. */
 body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss),body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss):is(:hover,:active,:focus){background:transparent!important;color:#aeb5bf!important;box-shadow:none!important;-webkit-tap-highlight-color:transparent;outline:none!important}
 body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss)>span{background:#b8bec7!important}
-body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss):focus-visible{outline:2px solid #aeb5bf!important;outline-offset:-4px;border-radius:10px}
+body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss):focus-visible{outline:none!important;border:0!important}
+/* The bar itself indicates keyboard focus, never a box around the touch target. */
+html[data-input-method=keyboard] body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss):focus-visible>span{background:#6b7684!important}
+html[data-input-method=pointer] body[data-pref-theme] :focus{outline:none!important}
+html[data-input-method=pointer] #editor-swipe-space:focus{box-shadow:none!important}
+body[data-pref-theme] :is(.app-bottom-sheet,.app-overlay-sheet) [tabindex="-1"]:focus{outline:none!important}
+body[data-pref-theme] #modal-override[data-editor-tab]>.override-sheet{transform:translateY(var(--sheet-drag,0px))}

@@ -86,7 +86,7 @@ body:not([data-pref-theme="dark"]) :is(.sms-dialog,.app-preferences,.life-dialog
 :is(dialog,.modal-sheet) :is(p,.account-hint,.sms-privacy,.sms-help,.lost-note,.parking-note,.lab-note){line-height:1.8}
 :is(dialog,.modal-sheet) :is(input,select,textarea):not([type="checkbox"]):not([type="radio"]):not([type="hidden"]){font-size:16px!important;min-height:46px;box-sizing:border-box;max-width:100%}
 body:not([data-pref-theme="dark"]) :is(dialog,.modal-sheet) :is(input,select,textarea):not([type="checkbox"]):not([type="radio"]):not([type="hidden"]){background:var(--ui-field)!important;color:var(--ui-copy)!important;border:1px solid var(--ui-line);border-radius:12px;box-shadow:none}
-body:not([data-pref-theme="dark"]) :is(dialog,#view-payroll,#view-menu) :focus-visible{outline:2px solid #3182f6!important;outline-offset:3px}
+body:not([data-pref-theme="dark"]) :where(dialog,#view-payroll,#view-menu) :focus-visible{outline:2px solid #3182f6!important;outline-offset:3px}
 body[data-pref-theme] :is(dialog,.modal-sheet) :is(.btn-save,.sms-primary-btn,.payslip-dismiss){background:var(--ui-blue);color:var(--ui-card);border:0;border-radius:14px;min-height:48px;font-size:15px;padding:12px 18px;font-weight:600}
 body[data-pref-theme] :is(dialog,.modal-sheet) :is(.sms-clear-btn,.btn-reset-data){background:var(--ui-field);color:var(--ui-muted);border:0;border-radius:14px;min-height:44px}
 body[data-pref-theme] :is(dialog,.modal-sheet) :is(.btn-save,.sms-primary-btn):disabled{background:var(--ui-field);color:var(--ui-muted);opacity:.65}
