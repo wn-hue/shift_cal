@@ -8,6 +8,8 @@
   frame = 0;
   const grid = document.getElementById('calendar-grid');
   if (!grid) return;
+  const rows = Math.ceil(grid.children.length / 7);
+  if (rows) grid.style.setProperty('--test-calendar-weeks', rows);
   if (document.body.dataset.prefTheme !== 'test' || native) { grid.style.removeProperty('height'); return; }
   if (document.body.dataset.view !== 'calendar' || document.querySelector('#modal-override.active')) return;
   const viewport = window.visualViewport;
@@ -15,17 +17,18 @@
   if (viewport && Math.abs(viewport.scale - 1) > .01) return;
   const nav = document.querySelector('.bottom-nav');
   if (!nav) return;
-  const rows = Math.ceil(grid.children.length / 7);
   if (!rows) return;
   const top = grid.getBoundingClientRect().top + window.scrollY;
   const bottom = Math.min(nav.getBoundingClientRect().top, viewport?.height || innerHeight);
-  const height = Math.max(rows * 96, Math.min(rows * 140, bottom - top - 16));
+  const height = Math.max(rows * 96, bottom - top - 12);
   grid.style.height = Math.round(height) + 'px';
  }
  function schedule() { if (!frame) frame = requestAnimationFrame(fit); }
  window.TestCalendar = {schedule};
  window.addEventListener('resize', schedule);
  window.addEventListener('pageshow', schedule);
+ window.addEventListener('orientationchange', schedule);
+ document.addEventListener('visibilitychange', () => { if (!document.hidden) schedule(); });
  window.visualViewport?.addEventListener('resize', schedule);
  document.fonts?.ready.then(schedule);
  new MutationObserver(schedule).observe(document.body,{attributes:true,attributeFilter:['data-pref-theme','data-view']});

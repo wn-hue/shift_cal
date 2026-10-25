@@ -35,9 +35,11 @@ const assert=require('node:assert/strict');
     const size=await grid.boundingBox();
     assert(Math.abs(size.width-baseline.width)<3);
     const rowCount=month===9?5:6;
-    assert(size.height>=rowCount*96-1&&size.height<=rowCount*140+1,JSON.stringify({width,height,month,size}));
+    assert(size.height>=rowCount*96-1&&size.height<=Math.max(height,rowCount*96)+1,JSON.stringify({width,height,month,size}));
+    assert(Math.abs((await grid.locator('.cal-day').first().boundingBox()).height-96)<1,'Week spacing fills the web viewport without stretching day contents');
     if(native)assert(Math.abs(size.height-rowCount*96)<1,'Native keeps its row size');
     else if(width>=390)assert((await page.locator('.bottom-nav').boundingBox()).y-size.y-size.height<=17,'Web uses the space above navigation');
+    assert.notEqual(await grid.locator('.shift-badge.night').first().evaluate(e=>getComputedStyle(e).color),await grid.locator('.shift-badge.off').first().evaluate(e=>getComputedStyle(e).color),'Night and rest are visually distinct');
     assert.equal(await page.locator('.cal-day').count(),month===9?35:42);
     assert.equal(await page.locator('.shift-badge.day').first().textContent(),'주간');
     for(const shape of ['square','circle']){
