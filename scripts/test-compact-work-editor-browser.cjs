@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{for(const engine of [webkit,chromium]){
  const browser=await engine.launch();
- for(const width of [320,390])for(const theme of ['current','toss','gpt','dark','routine','google']){
+ for(const width of [320,390])for(const theme of ['current','toss','gpt','dark','test']){
   if(process.env.WORK_TEST_QUICK&&(width!==390||theme!=='current'))continue;
   const page=await browser.newPage({viewport:{width,height:844},timezoneId:'Asia/Seoul'});
   await page.clock.setFixedTime(new Date('2026-10-24T12:00:00+09:00'));

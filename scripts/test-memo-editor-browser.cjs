@@ -3,8 +3,8 @@ const assert=require('node:assert/strict');
 const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{for(const engine of [webkit,chromium]){
  const browser=await engine.launch();
- for(const width of [320,390])for(const theme of ['current','toss','gpt','dark','routine','google']){
-  if(process.env.MEMO_TEST_QUICK&&(engine.name()!=='chromium'||width!==390||theme!=='google'))continue;
+ for(const width of [320,390])for(const theme of ['current','toss','gpt','dark','test']){
+  if(process.env.MEMO_TEST_QUICK&&(engine.name()!=='chromium'||width!==390||theme!=='test'))continue;
   const page=await browser.newPage({viewport:{width,height:844},timezoneId:'Asia/Seoul'});
   await page.clock.setFixedTime(new Date('2026-10-23T12:00:00+09:00'));
   await page.addInitScript(({theme,width})=>{
@@ -22,6 +22,7 @@ const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   await page.waitForFunction(()=>document.body.classList.contains('memo-editor-open')).catch(async error=>{console.error(await page.evaluate(()=>({ready:document.readyState,editor:document.getElementById('modal-override').outerHTML.slice(0,700),body:document.body.className,tab:document.getElementById('memo-tab').getAttribute('aria-selected')})));throw error});
   const text='메모 테스트 · 줄바꿈\n'+('긴 메모 내용 '.repeat(400));
   await page.locator('#modal-memo-input').fill(text);
+  await page.locator('.override-sheet').evaluate(el=>Promise.all(el.getAnimations().map(a=>a.finished.catch(()=>{}))));
   for(const [height,top]of [[844,0],[360,0],[300,160],[220,200],[844,0]]){
    await page.evaluate(({height,top})=>{Object.assign(window.memoTestViewport,{height,offsetTop:top});window.memoTestViewport.dispatchEvent(new Event('resize'));window.memoTestViewport.dispatchEvent(new Event('scroll'))},{height,top});
    await page.waitForFunction(h=>document.getElementById('modal-override').style.getPropertyValue('--memo-viewport-height')===h+'px',height);

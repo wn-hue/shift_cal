@@ -32,7 +32,7 @@ const day = n => new Date(Date.parse(today+'T12:00:00Z')+n*86400000).toISOString
    assert.equal(await p.locator('.meal-extras').count(),0);
    const main=await p.locator('.meal-main').first().boundingBox(),side=await p.locator('.meal-sides').first().boundingBox();
    assert(side.x>=main.x+main.width&&Math.abs(main.y-side.y)<2,'Extra menus sit beside the main menu');
-   for(const theme of ['current','toss','gpt','dark','routine','google']){
+   for(const theme of ['current','toss','gpt','dark','test']){
     await p.evaluate(t=>{const pref=document.getElementById('pref-theme');pref.value=t;pref.dispatchEvent(new Event('change'));},theme);
     assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
     assert.equal(await p.locator('.meal-card').first().evaluate(e=>e.scrollWidth<=e.clientWidth),true);
