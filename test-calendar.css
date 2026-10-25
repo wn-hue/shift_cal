@@ -1,50 +1,31 @@
-/* Test: dates first, readable shift text, no dashboard or decorative cell boxes. */
+/* Test theme follows the shared calendar dimensions and cell structure. */
 .routine-calendar-toolbar{display:none}
 body[data-pref-theme=test]{--accent:#3182f6;--accent-soft:#eaf3ff;--primary:#3182f6;--primary-dark:#1b64da;--page-bg:#fff;--surface:#fff;--surface-soft:#f2f4f6;--theme-text:#333d4b;--text-main:#333d4b;--text-sub:#6b7684;--theme-line:#edf0f3;--shift-day:#eaf3ff;--shift-night:#edf0f4;--shift-special-day:#eaf3ff;--shift-special-night:#edf0f4;--shift-off:#8b95a1;--special-day-no-ot:#eaf3ff;--special-night-no-ot:#edf0f4;--choice-bg:#f4f6f8;--choice-ink:#6b7684;--attendance:#f07583;--work-ink:#4e5968}
 body[data-view=calendar][data-pref-theme=test]{background:#fff}
-body[data-view=calendar][data-pref-theme=test] .reference-header{min-height:64px;padding:10px 4px;margin-bottom:0;background:#fff;border:0;box-shadow:none}
-body[data-pref-theme=test] .reference-header .month-title-btn{color:#191f28;font-size:25px;font-weight:650;letter-spacing:-.8px}
-body[data-pref-theme=test] .header-calendar-actions{gap:0}
-body[data-pref-theme=test] .header-calendar-actions .icon-button:not(.weather-trigger){border:0;background:transparent;color:#6b7684;border-radius:50%;min-height:44px}
-body[data-pref-theme=test] .header-calendar-actions .icon-button:not(.weather-trigger) svg{width:22px;height:22px}
-body[data-view=calendar][data-pref-theme=test] #view-calendar .calendar-card{margin:8px 0 12px;padding:0;border:0;border-radius:0;background:#fff;box-shadow:none;overflow:visible}
-body[data-pref-theme=test] .routine-calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;margin-bottom:14px;padding:0 4px}
-body[data-pref-theme=test] .routine-group{font-size:13px;color:#6b7684;letter-spacing:-.2px}
-body[data-pref-theme=test] .routine-group strong{font-weight:500}
-body[data-pref-theme=test] .routine-month-navigation{display:flex;align-items:center;gap:2px}
-body[data-pref-theme=test] .routine-month-navigation button{display:grid;place-items:center;min-width:40px;min-height:44px;padding:0 10px;border:0;border-radius:12px;background:transparent;color:#6b7684;font:inherit;font-size:13px;cursor:pointer}
-body[data-pref-theme=test] .routine-month-navigation button svg{width:15px;height:15px}
-body[data-pref-theme=test] .routine-month-navigation .routine-today{color:#4e5968;font-weight:550;background:#f2f4f6;border-radius:12px}
-body[data-pref-theme=test] .cal-weekdays{padding:0 0 14px;border:0;background:#fff;font-size:12px;line-height:20px;font-weight:400;color:#8b95a1}
+body[data-view=calendar][data-pref-theme=test] #view-calendar .calendar-card{border:1px solid #e9edf1;border-radius:14px;box-shadow:none;background:#fff;overflow:hidden;margin-left:0;margin-right:0;padding:0}
+body[data-pref-theme=test] .cal-weekdays{padding:10px 0;border-bottom:1px solid #e9edf1;background:#fafbfc;color:#6b7684;font-size:12px;font-weight:500}
 body[data-pref-theme=test] .cal-weekdays>:first-child{color:#e5484d}
 body[data-pref-theme=test] .cal-weekdays>:last-child{color:#3182f6}
-body[data-pref-theme=test] #calendar-grid{gap:0;border:0;border-radius:0;min-height:0;grid-template-rows:repeat(var(--test-calendar-weeks,5),96px)!important;align-content:space-between;background:#fff;overflow:visible}
-body[data-pref-theme=test] .cal-day{position:relative;min-height:96px;padding:2px 2px;gap:0;border:0;border-radius:0;background:#fff;box-shadow:none;align-items:center;box-sizing:border-box}
-body[data-pref-theme=test] .cal-day.other-month{background:#fff;opacity:.32}
-/* Adjacent dates help orient the month; their work information is unnecessary here. */
-body[data-pref-theme=test] .cal-day.other-month>:not(.day-meta){visibility:hidden}
-body[data-pref-theme=test] .cal-day.other-month .holiday-bar{visibility:hidden}
-body[data-pref-theme=test] .cal-day.today{background:#fff;box-shadow:none}
-body[data-pref-theme=test] .day-meta{height:44px;min-height:44px;position:relative;flex-direction:column;justify-content:flex-start;align-items:center;gap:0}
-body[data-pref-theme=test] .cal-day .day-num{display:flex;align-items:center;justify-content:center;width:34px;min-width:34px;height:32px;margin:0;border-radius:12px;background:transparent!important;color:#191f28!important;font-size:22px;font-weight:400;letter-spacing:-.4px;font-variant-numeric:tabular-nums;box-shadow:none}
-body[data-pref-theme=test] .cal-day.today .day-num{background:#f2f4f6!important;color:#191f28!important;font-weight:600}
+body[data-pref-theme=test] #calendar-grid{border:0;border-radius:0;background:#fff;gap:0}
+body[data-pref-theme=test] .cal-day{min-height:88px;padding:3px;gap:0;border-right:1px solid #edf0f3;border-bottom:1px solid #edf0f3;background:#fff;align-items:center;box-sizing:border-box}
+body[data-pref-theme=test] .cal-day:nth-child(7n){border-right:0}
+body[data-pref-theme=test] .cal-day:nth-last-child(-n+7){border-bottom:0}
+body[data-pref-theme=test] .cal-day.other-month{background:#fafbfc;opacity:.32}
+body[data-pref-theme=test] .cal-day.today{background:#f8fbff;box-shadow:inset 0 0 0 1px #b9d4fa}
+body[data-pref-theme=test] .day-meta{height:32px;min-height:32px;position:relative;flex-direction:column;justify-content:flex-start;align-items:flex-start;gap:0}
+body[data-pref-theme=test] .cal-day .day-num{display:flex;align-items:center;justify-content:flex-start;width:auto;min-width:20px;height:20px;margin:0;border-radius:4px;background:transparent!important;color:#191f28!important;font-size:14px;font-weight:500;line-height:20px;box-shadow:none}
+body[data-pref-theme=test] .cal-day.today .day-num{font-weight:700}
 body[data-pref-theme=test] .cal-day.holiday .day-num{color:#e5484d!important}
-body[data-pref-theme=test] .holiday-bar{position:static;flex:none;width:100%;height:12px;padding:0;margin:0;text-align:center;background:transparent;color:#b16b76;font-size:9px;font-weight:400;line-height:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-body[data-pref-theme=test] #calendar-grid .cal-day .shift-badge{display:flex;align-items:center;justify-content:center;width:auto;min-width:0;height:20px;min-height:20px;flex:0 0 20px;margin:0;padding:0 2px;border:0;border-radius:0;background:transparent;color:#6b7684;font-size:13px;font-weight:500;line-height:20px;letter-spacing:-.3px;outline:0;filter:none;box-shadow:none}
+body[data-pref-theme=test] .holiday-bar{position:static;flex:none;width:100%;height:12px;padding:0;margin:0;text-align:left;background:transparent;color:#b16b76;font-size:9px;font-weight:400;line-height:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-pref-theme=test] #calendar-grid .cal-day .shift-badge{display:flex;align-items:center;justify-content:center;width:auto;min-width:0;height:20px;min-height:20px;flex:0 0 20px;margin:0;padding:0 2px;border:0;border-radius:0;background:transparent!important;color:#4e5968;font-size:13px;font-weight:500;line-height:20px;letter-spacing:-.3px;outline:0;filter:none;box-shadow:none}
 body[data-pref-theme=test] #calendar-grid .cal-day :is(.shift-badge.day,.shift-badge.special-day){color:#3182f6}
 body[data-pref-theme=test] #calendar-grid .cal-day :is(.shift-badge.night,.shift-badge.special-night){color:#4e5968}
 body[data-pref-theme=test] #calendar-grid .cal-day .shift-badge.off{color:#bc526c!important;font-weight:500}
-body[data-pref-theme=test] .cal-day .attendance-pill{min-height:0;flex-shrink:0;background:transparent;color:#d65f75;font-size:10px;line-height:16px;padding:0;margin-top:0;border-radius:0;max-width:100%;box-sizing:border-box;white-space:nowrap}
-body[data-pref-theme=test] .cal-day .sub-tag{font-size:10px;line-height:16px;color:#6b7684}
-/* Show effective attendance in the work line, leaving the note slot available. */
 body[data-pref-theme=test] #calendar-grid .cal-day:is(:has(.attendance-pill),:has(.sub-tag)) .shift-badge{display:none}
-body[data-pref-theme=test] .cal-day .attendance-pill{height:20px;line-height:20px;font-size:12px;margin:0}
-body[data-pref-theme=test] .cal-day .sub-tag{position:static;height:20px;min-height:20px;line-height:20px;background:transparent;font-size:10px;white-space:nowrap}
-body[data-pref-theme=test] .cal-day .memo-tag{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;width:100%;min-height:28px;max-height:28px;margin:0;padding:0 1px;border:0;border-radius:0;background:transparent;color:#4e5968;font-family:inherit;font-size:11px;font-weight:500;line-height:14px;text-align:center;white-space:pre-wrap;overflow-wrap:anywhere;overflow:hidden;cursor:pointer;box-sizing:border-box;flex-shrink:0}
+body[data-pref-theme=test] .cal-day .attendance-pill{height:20px;min-height:20px;flex-shrink:0;line-height:20px;font-size:12px;padding:0;margin:0;border:0;background:transparent;color:#d65f75;white-space:nowrap}
+body[data-pref-theme=test] .cal-day .sub-tag{position:static;height:20px;min-height:20px;line-height:20px;background:transparent;font-size:10px;white-space:nowrap;color:#6b7684}
+body[data-pref-theme=test] .cal-day .memo-tag{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;width:100%;min-height:28px;max-height:28px;margin:0;padding:0 1px;border:0;border-radius:0;background:transparent;color:#4e5968;font-family:inherit;font-size:11px;font-weight:500;line-height:14px;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;overflow:hidden;cursor:pointer;box-sizing:border-box;flex-shrink:0}
 body[data-pref-theme=test] .cal-day .memo-tag:active{color:#1b64da;background:#eaf3ff;border-radius:4px}
 body[data-pref-theme=test] .cal-day :is(.memo-tag,.day-meta):focus-visible{outline:2px solid #3182f6;outline-offset:-2px;border-radius:4px}
-body[data-pref-theme=test] .cal-day:focus-visible,body[data-pref-theme=test] .routine-month-navigation button:focus-visible{outline:2px solid #3182f6;outline-offset:-2px;border-radius:12px}
-body[data-pref-theme=test] .cal-day:not(.other-month):active .day-num{background:#eaf3ff!important}
-@media(hover:hover){body[data-pref-theme=test] .cal-day:not(.other-month):hover .day-num{background:#f2f4f6!important}}
-@media(max-width:350px){body[data-pref-theme=test] .reference-header .month-title-btn{font-size:23px}body[data-pref-theme=test] .cal-day .day-num{font-size:20px}body[data-pref-theme=test] #calendar-grid .cal-day .shift-badge{font-size:12px}body[data-pref-theme=test] .routine-calendar-toolbar{margin-bottom:10px}}
+body[data-pref-theme=test] .cal-day:focus-visible{outline:2px solid #3182f6;outline-offset:-2px}
 body[data-pref-theme=test][data-pref-memos=false] .cal-day .memo-tag{display:none}

@@ -115,3 +115,11 @@ assert.throws(()=>C.normalize({shift_bonus_sms_reference_v1:{gross:100,total:101
 const manualLeave={shift_salary_config_master:{hireDate:'2026-06-16',leaveByYear:{2026:0},leaveManualYears:{2026:true}}};
 assert.deepEqual(C.normalize(manualLeave).shift_salary_config_master,manualLeave.shift_salary_config_master);
 for(const leaveManualYears of [{2026:false},{2026:1},{invalid:true}])assert.throws(()=>C.normalize({shift_salary_config_master:{leaveManualYears}}));
+
+// Stickers participate in account snapshots and per-date three-way merging.
+const stickers=value=>C.normalize({shift_day_stickers:value});
+assert.equal(C.normalize({}).shift_day_stickers,null);
+for(const id of ['soju','beer','kimchi-stew','pork-belly','chicken','gukbap'])assert.equal(stickers({'2026-10-03':id}).shift_day_stickers['2026-10-03'],id);
+assert.throws(()=>stickers({'2026-02-30':'soju'}));assert.throws(()=>stickers({'2026-10-03':'<script>'}));assert.throws(()=>stickers({'2026-10-03':['beer']}));
+assert.deepEqual(C.merge(stickers({}),stickers({'2026-10-03':'soju'}),stickers({'2026-10-04':'beer'})).data.shift_day_stickers,{'2026-10-03':'soju','2026-10-04':'beer'});
+assert.deepEqual(C.merge(stickers({'2026-10-03':'soju'}),stickers({}),stickers({'2026-10-03':'soju','2026-10-04':'beer'})).data.shift_day_stickers,{'2026-10-04':'beer'});
