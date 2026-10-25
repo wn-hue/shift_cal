@@ -942,7 +942,7 @@
 <link rel="stylesheet" href="./calendar-stickers.css?v=3">
 <link rel="stylesheet" href="./editor-refinement.css?v=3">
 <link rel="stylesheet" href="./day-scheduler.css?v=1">
-<link rel="stylesheet" href="./day-editor-navigation.css?v=1">
+<link rel="stylesheet" href="./day-editor-navigation.css?v=2">
 <link rel="stylesheet" href="./group-schedule.css?v=2">
 <link rel="stylesheet" href="./settings-page.css?v=1">
 <link rel="stylesheet" href="./app-i18n.css?v=1">
@@ -1551,7 +1551,7 @@
                 <button type="button" id="editor-sticker-preview" aria-label="날짜 스티커 선택" onclick="CalendarStickers.open()"></button>
                 <button type="button" id="editor-dismiss" aria-label="근무 변경 내리기" onclick="closeModalDirect()"><span aria-hidden="true"></span></button>
             </div>
-            <div class="editor-content"><div class="editor-tabs" role="tablist"><button id="work-tab" role="tab" aria-selected="true" onclick="switchEditorTab('work')">근무</button><button id="memo-tab" role="tab" aria-selected="false" onclick="switchEditorTab('memo')">메모</button></div>
+            <div class="editor-content"><div class="editor-tabs" role="tablist"><button id="work-tab" role="tab" aria-controls="work-panel" tabindex="0" aria-selected="true" onclick="switchEditorTab('work')">근무</button><button id="memo-tab" role="tab" aria-controls="memo-panel" tabindex="-1" aria-selected="false" onclick="switchEditorTab('memo')">메모</button></div>
             <section id="work-panel" class="override-section" role="tabpanel" aria-labelledby="work-tab"><div class="work-section-heading"><h3 class="override-section-title">근무</h3><button type="button" class="opt-btn reset override-reset" aria-label="기본 근무로 복구" onclick="switchEditorTab('work');setDayOverride(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/></svg><span>기본근무 복구</span></button></div><div class="shift-scroll" role="group" aria-label="근무 선택"><button type="button" class="opt-btn day" onclick="setDayOverride('DAY')"><span>주</span></button><button type="button" class="opt-btn night" onclick="setDayOverride('NIGHT')"><span>야</span></button><button type="button" class="opt-btn off" onclick="setDayOverride('OFF')"><span>휴</span></button><button class="opt-btn day-sp" onclick="setDayOverride('SPECIAL_DAY')">
                     <span>주특</span>
                 </button><button class="opt-btn night-sp" onclick="setDayOverride('SPECIAL_NIGHT')">
@@ -2293,11 +2293,22 @@
             const overlay = document.getElementById('modal-override');
             const focused = document.activeElement;
             if (overlay.contains(focused) && focused.matches('input,textarea,select')) focused.blur();
+            const previous = overlay.dataset.editorTab;
             overlay.dataset.editorTab = tab;
+            document.getElementById('override-title').textContent = tab==='memo'?'메모':'근무 변경';
             overlay.querySelector('.editor-content').scrollTop = 0;
             for (const name of ['work','memo']) {
-                document.getElementById(name+'-panel').hidden=name!==tab;
+                const panel = document.getElementById(name+'-panel');
+                panel.getAnimations().forEach(animation => animation.cancel());
+                panel.hidden=name!==tab;
+                document.getElementById(name+'-tab').tabIndex=name===tab?0:-1;
                 document.getElementById(name+'-tab').setAttribute('aria-selected',name===tab?'true':'false');
+            }
+            if (previous && previous !== tab && overlay.classList.contains('active') && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
+                document.getElementById(tab+'-panel').animate([
+                    {opacity:.4,transform:`translateX(${tab==='memo'?10:-10}px)`},
+                    {opacity:1,transform:'translateX(0)'}
+                ],{duration:180,easing:'ease-out'});
             }
         }
         function closeModalDirect() {
@@ -2993,7 +3004,7 @@
 <script src="./onboarding.js?v=2"></script>
 <script src="./payslip-alert.js?v=2"></script>
 <script src="./memo-editor.js?v=5"></script>
-<script src="./day-editor-navigation.js?v=2"></script>
+<script src="./day-editor-navigation.js?v=3"></script>
 <script src="./day-scheduler-core.js?v=1"></script>
 <script src="./day-scheduler.js?v=2"></script>
 <script src="./app-i18n-data.js?v=1"></script>

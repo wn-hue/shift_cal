@@ -42,6 +42,14 @@
   target.addEventListener('touchcancel',reset,{passive:true});
   target.addEventListener('click',e=>{if(performance.now()<suppressUntil){e.preventDefault();e.stopPropagation();}},true);
  }
+ // The fixed segment control changes sections; blank content gestures change dates.
+ const tabs=sheet.querySelector('.editor-tabs');
+ tabs.addEventListener('keydown',e=>{
+  if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+  e.preventDefault();
+  const next=e.key==='Home'?'work':e.key==='End'?'memo':overlay.dataset.editorTab==='work'?'memo':'work';
+  switchEditorTab(next);$(next+'-tab').focus({preventScroll:true});
+ });
  bind(content,'page');bind(header,'dismiss');
  $('editor-swipe-space').addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();move(e.key==='ArrowRight'?1:-1)}});
 })();
