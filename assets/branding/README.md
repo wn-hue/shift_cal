@@ -13,3 +13,11 @@ Prompt: Keep the previous muted-blue minimal rounded calendar outline, two bindi
 Previous icon versions remain recoverable in Git history.
 
 Latest recolor: built-in image_gen precise edit, retaining the same Sunday 25 symbol. Prompt: Change ONLY the blue ink to solid near-black #191919, including outline, arrow, binding tabs and Korean text 일요일 and number 25. Preserve layout, shapes, proportions, text, size and pale neutral background edge to edge. No blue, added elements, shadows or border. Square opaque icon. Exports use macOS sips.
+
+## Typography refinement
+
+The Apple Calendar reference guides typography only: a lighter, upright sans-serif 25 and a smaller medium-weight Korean 일요일. The black calendar-arrow symbol and pale background remain. Lettering is raster artwork, not an embedded Apple font.
+
+Tool: built-in image_gen edit; macOS sips for size exports. Edit target was the previous black icon; the user’s Apple Calendar screenshot was a typography-only reference. Saved master: shift-routine-icon-1024.png. Web/iOS sizes remain as listed above.
+
+Prompt: Change ONLY lettering inside the black calendar-arrow icon. Retain exact 일요일 over 25. Use an elegant light-weight neo-grotesque sans serif for 25, upright, thin uniform strokes about one third of previous heavy strokes, open counters and similar numeral height. Set Korean 일요일 in a compact medium-weight sans serif, about 15 percent smaller, centered with breathing room. Preserve black outline, binding tabs, integrated lower-right arrow, proportions and pale edge-to-edge background. No new elements, color, gradients, inset tile, shadows or 3D. Opaque square icon.
