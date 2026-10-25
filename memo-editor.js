@@ -28,6 +28,7 @@
   document.body.classList.toggle('memo-editor-open',active&&overlay.dataset.editorTab==='memo');
   document.body.classList.toggle('work-editor-open',active&&['work','memo','stickers'].includes(overlay.dataset.editorTab));
   if(!active){delete overlay.dataset.memoCompact;return}
+  if(overlay.dataset.sheetClosing==='true')return;
   // A 16px input prevents focus zoom; preserve user-initiated pinch zoom.
   if(viewport&&Math.abs(viewport.scale-1)>.01)return;
   const values={height:viewport?.height||innerHeight,width:viewport?.width||innerWidth,top:viewport?.offsetTop||0,left:viewport?.offsetLeft||0};

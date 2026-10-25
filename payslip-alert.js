@@ -12,7 +12,7 @@
  // Covers an app left in the foreground while the statement date begins.
  setInterval(schedule,60000);
  // A closed setup/account/work sheet must not swallow today's alert.
- for(const dialog of document.querySelectorAll('dialog,.modal-overlay,.settings-page')){
+ for(const dialog of document.querySelectorAll('dialog,.modal-overlay,.settings-page,.commute-page')){
   new MutationObserver(schedule).observe(dialog,{attributes:true,attributeFilter:['open','class','hidden']});
  }
  schedule();

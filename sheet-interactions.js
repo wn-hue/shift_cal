@@ -1,6 +1,32 @@
 /* Bottom-sheet affordances preserve each feature's existing dismissal and draft guards. */
 (()=>{'use strict';
  const attached=new WeakSet(),backdrops=new WeakSet(),draggables=new WeakSet();
+ let closingCount=0,clickFenceUntil=0;
+ const reduced=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
+ const fence=()=>{clickFenceUntil=performance.now()+700;};
+ const stop=e=>{if(e.cancelable)e.preventDefault();e.stopImmediatePropagation();};
+ // A close gesture belongs to the sheet, including its delayed compatibility click.
+ window.addEventListener('pointerdown',e=>{if(closingCount){stop(e);return;}clickFenceUntil=0;},true);
+ window.addEventListener('touchstart',e=>{if(closingCount)stop(e);},{capture:true,passive:false});
+ window.addEventListener('click',e=>{if(!e.isTrusted&&e.target.closest?.('.sheet-original-close'))return;if(closingCount||performance.now()<clickFenceUntil)stop(e);},true);
+ function closeSheet(sheet,perform){
+  if(sheet.dataset.sheetClosing==='true')return;
+  const native=sheet.tagName==='DIALOG',container=native?sheet:sheet.parentElement;
+  if(native?!sheet.open:!container.classList.contains('active')){perform();return;}
+  fence();
+  if(reduced()){perform();sheet.style.removeProperty('--sheet-drag');return;}
+  const rect=sheet.getBoundingClientRect(),offset=parseFloat(sheet.style.getPropertyValue('--sheet-drag'))||0;
+  for(const [name,value] of Object.entries({top:rect.top-offset,left:rect.left,width:rect.width,height:rect.height}))sheet.style.setProperty('--sheet-close-'+name,value+'px');
+  sheet.dataset.sheetClosing='true';container.dataset.sheetClosing='true';sheet.classList.add('sheet-closing');closingCount++;
+  // Freeze the visible geometry while the keyboard/visual viewport is changing.
+  void sheet.offsetHeight;
+  requestAnimationFrame(()=>sheet.style.setProperty('--sheet-drag',Math.max(0,Math.max(innerHeight,(visualViewport?.offsetTop||0)+(visualViewport?.height||0))-(rect.top-offset)+24)+'px'));
+  setTimeout(()=>{
+   try{perform();}finally{sheet.classList.remove('sheet-closing');delete sheet.dataset.sheetClosing;delete container.dataset.sheetClosing;for(const name of ['drag','close-top','close-left','close-width','close-height'])sheet.style.removeProperty('--sheet-'+name);closingCount--;fence();}
+  },260);
+ }
+ function closeOverlay(id,after){const overlay=document.getElementById(id),sheet=overlay?.querySelector('.modal-sheet');if(!sheet)return;closeSheet(sheet,()=>{overlay.classList.remove('active');after?.();});}
+ function settle(sheet){if(sheet.dataset.sheetClosing==='true')return;if(!sheet.style.getPropertyValue('--sheet-drag'))return;sheet.classList.add('sheet-returning');sheet.style.setProperty('--sheet-drag','0px');setTimeout(()=>{sheet.classList.remove('sheet-returning');if(sheet.style.getPropertyValue('--sheet-drag')==='0px')sheet.style.removeProperty('--sheet-drag');},180);}
  // Programmatic focus restoration after a touch must not paint a keyboard ring.
  const pointerMode=()=>document.documentElement.dataset.inputMethod='pointer';
  document.addEventListener('pointerdown',pointerMode,true);
@@ -14,9 +40,9 @@
   // Handle actual touchend too: some iOS/WKWebView paths omit the synthetic click.
   target.addEventListener('touchstart',e=>{const t=e.touches[0];touch=e.touches.length===1&&outside({target:e.target,clientX:t.clientX,clientY:t.clientY})?{x:t.clientX,y:t.clientY}:null;},{capture:true,passive:true});
   target.addEventListener('touchend',e=>{const t=e.changedTouches[0],start=touch;touch=null;if(!start||!t||Math.hypot(t.clientX-start.x,t.clientY-start.y)>12||!outside({target:e.target,clientX:t.clientX,clientY:t.clientY}))return;
-   if(e.cancelable)e.preventDefault();e.stopImmediatePropagation();pressedOutside=null;suppressUntil=performance.now()+600;dismiss();},{capture:true,passive:false});
+   if(e.cancelable)e.preventDefault();e.stopImmediatePropagation();pressedOutside=null;suppressUntil=performance.now()+600;fence();dismiss();},{capture:true,passive:false});
   target.addEventListener('touchcancel',()=>{touch=null;pressedOutside=null;},{passive:true});
-  target.addEventListener('click',e=>{if(!outside(e))return;const shouldDismiss=pressedOutside!==false&&performance.now()>=suppressUntil;pressedOutside=null;e.preventDefault();e.stopImmediatePropagation();if(shouldDismiss)dismiss();},true);
+  target.addEventListener('click',e=>{if(!outside(e))return;const shouldDismiss=pressedOutside!==false&&performance.now()>=suppressUntil;pressedOutside=null;e.preventDefault();e.stopImmediatePropagation();if(shouldDismiss){fence();dismiss();}},true);
  }
  function bindDrag(sheet,dismiss){
   if(draggables.has(sheet))return;draggables.add(sheet);let start=null,delta=0,suppressUntil=0;
@@ -36,13 +62,13 @@
    if(delta>10&&delta>Math.abs(dx)*1.3){if(e.cancelable)e.preventDefault();if(!matchMedia('(prefers-reduced-motion:reduce)').matches)sheet.style.setProperty('--sheet-drag',Math.min(delta,220)+'px');}
   },{passive:false});
   sheet.addEventListener('touchend',e=>{const t=e.changedTouches[0],close=start&&t&&t.clientY-start.y>70&&t.clientY-start.y>Math.abs(t.clientX-start.x)*1.3;
-   if(close){suppressUntil=performance.now()+600;if(e.cancelable)e.preventDefault();}reset();if(close)dismiss();},{passive:false});
+   if(close){suppressUntil=performance.now()+600;if(e.cancelable)e.preventDefault();start=null;delta=0;fence();dismiss();settle(sheet);}else{start=null;delta=0;settle(sheet);}},{passive:false});
   sheet.addEventListener('touchcancel',reset,{passive:true});
   sheet.addEventListener('click',e=>{if(performance.now()<suppressUntil&&!e.target.closest('.sheet-original-close')){e.preventDefault();e.stopImmediatePropagation();}},true);
  }
 
  function fit(){const vp=visualViewport,w=vp?.width||innerWidth,h=vp?.height||innerHeight,top=vp?.offsetTop||0,left=vp?.offsetLeft||0,gap=h<420?24:Math.max(56,h*.08);
-  for(const d of document.querySelectorAll('dialog.app-bottom-sheet')){d.style.setProperty('--sheet-limit',Math.max(120,h-gap)+'px');d.style.setProperty('--sheet-width',Math.min(w,560)+'px');d.style.setProperty('--sheet-left',left+(w-Math.min(w,560))/2+'px');d.style.setProperty('--sheet-bottom',Math.max(0,innerHeight-top-h)+'px');}
+  for(const d of document.querySelectorAll('dialog.app-bottom-sheet')){if(d.dataset.sheetClosing==='true')continue;d.style.setProperty('--sheet-limit',Math.max(120,h-gap)+'px');d.style.setProperty('--sheet-width',Math.min(w,560)+'px');d.style.setProperty('--sheet-left',left+(w-Math.min(w,560))/2+'px');d.style.setProperty('--sheet-bottom',Math.max(0,innerHeight-top-h)+'px');}
  }
  function attach(sheet){if(attached.has(sheet)||sheet.id==='onboarding-dialog'||sheet.closest('#modal-override'))return;attached.add(sheet);
   const native=sheet.tagName==='DIALOG',original=sheet.querySelector('button[aria-label*="닫기"],.sms-close-btn,.login-sheet-close,#lost-close,.override-close,.picker-close');
@@ -53,12 +79,12 @@
   if(original){original.classList.add('sheet-original-close');original.tabIndex=-1;original.setAttribute('aria-hidden','true');}
   sheet.prepend(handle);sheet.classList.add(native?'app-bottom-sheet':'app-overlay-sheet');
   bindDrag(sheet,dismiss);
-  if(native){sheet.addEventListener('cancel',e=>{if(e.defaultPrevented||!sheet.open)return;e.preventDefault();dismiss();});new MutationObserver(fit).observe(sheet,{attributes:true,attributeFilter:['open']});}
+  if(native){const nativeClose=sheet.close.bind(sheet);sheet.close=(value)=>closeSheet(sheet,()=>nativeClose(value));sheet.addEventListener('cancel',e=>{if(e.defaultPrevented||!sheet.open)return;e.preventDefault();dismiss();});new MutationObserver(fit).observe(sheet,{attributes:true,attributeFilter:['open']});}
   fit();
  }
  function scan(){document.querySelectorAll('dialog,.modal-overlay:not(#modal-override)>.modal-sheet').forEach(attach);
   const editor=document.getElementById('modal-override');if(editor){const sheet=editor.querySelector('.override-sheet');backdrop(editor,sheet,()=>closeModalDirect());bindDrag(sheet,()=>closeModalDirect());}
   const onboarding=document.getElementById('onboarding-dialog');if(onboarding)backdrop(onboarding,onboarding,()=>document.getElementById('onboarding-exit').click());
  }
- window.AppSheets={attach,fit};scan();new MutationObserver(records=>{if(records.some(r=>[...r.addedNodes].some(n=>n.nodeType===1&&(n.matches?.('dialog,.modal-overlay')||n.querySelector?.('dialog,.modal-overlay')))))scan();}).observe(document.body,{childList:true,subtree:true});visualViewport?.addEventListener('resize',fit);visualViewport?.addEventListener('scroll',fit);window.addEventListener('resize',fit);
+ window.AppSheets={attach,fit,closeOverlay};scan();new MutationObserver(records=>{if(records.some(r=>[...r.addedNodes].some(n=>n.nodeType===1&&(n.matches?.('dialog,.modal-overlay')||n.querySelector?.('dialog,.modal-overlay')))))scan();}).observe(document.body,{childList:true,subtree:true});visualViewport?.addEventListener('resize',fit);visualViewport?.addEventListener('scroll',fit);window.addEventListener('resize',fit);
 })();

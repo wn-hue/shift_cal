@@ -68,7 +68,7 @@ function openCalendarIntegration() {
 }
 function closeCalendarIntegration(event) {
     if (!event || event.target.id === 'modal-calendar-link') {
-        document.getElementById('modal-calendar-link').classList.remove('active');
+        closeAppOverlay('modal-calendar-link');
     }
 }
 function validCalendarDate(key) {

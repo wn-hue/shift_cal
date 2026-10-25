@@ -78,7 +78,7 @@
   try{for(const [k,v]of Object.entries(seen))if(now-v>172800000)delete seen[k];localStorage.setItem('shift_event_reminders_seen',JSON.stringify(seen));}catch{}
   toast.querySelector('p').textContent=due.map(e=>e.title+' · '+(e.allDay?'종일':e.start.slice(11))).join('\n');toast.hidden=false;
  }
- const close=closeModalDirect;closeModalDirect=function(){if(!discard())return;form.hidden=true;if($('modal-override').contains(document.activeElement))document.activeElement.blur();close();};
+ const close=closeModalDirect;closeModalDirect=function(){if(!discard())return;close();};
  window.addEventListener('storage',e=>{if(e.key===C.key||e.key===null){renderCalendar();if(form.hidden)list();}});
  window.addEventListener('shift-account-changed',()=>{form.hidden=true;toast.hidden=true;announced.clear();if(loadedDate)open(selectedDateStr);});
  document.addEventListener('visibilitychange',tick);setInterval(tick,15000);

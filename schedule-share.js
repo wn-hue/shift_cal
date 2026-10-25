@@ -9,8 +9,7 @@ function openScheduleShare() {
 }
 function closeScheduleShare(event) {
     if(event && event.target.id!=='modal-schedule-share') return;
-    document.getElementById('modal-schedule-share').classList.remove('active');
-    scheduleShareFocus?.focus();
+    closeAppOverlay('modal-schedule-share',()=>scheduleShareFocus?.focus({preventScroll:true}));
 }
 document.addEventListener('keydown',event=>{
     const modal=document.getElementById('modal-schedule-share');

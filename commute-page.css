@@ -1,0 +1,10 @@
+body.commute-page-open{overflow:hidden}
+body[data-pref-theme] #commute-dialog.commute-page[hidden]{display:none!important}
+body[data-pref-theme] #commute-dialog.commute-page{position:fixed;inset:0;z-index:220;display:flex;flex-direction:column;width:100%;max-width:none;height:100dvh;max-height:none;margin:0;padding:env(safe-area-inset-top) 0 0!important;box-sizing:border-box;border:0;border-radius:0!important;background:var(--ui-page,#f2f4f6)!important;color:var(--ui-ink,#191f28);box-shadow:none;overflow:hidden}
+#commute-dialog .commute-topbar{display:flex;align-items:center;gap:12px;min-height:64px;flex:none;padding:0 max(16px,calc((100vw - 560px)/2));box-sizing:border-box}
+#commute-back{display:grid;place-items:center;width:44px;height:44px;flex:none;padding:10px;border:0;background:none;color:inherit}
+#commute-back svg{width:24px;height:24px}
+#commute-page-title{font-size:22px;font-weight:700;letter-spacing:-.5px;margin:0;outline:none}
+#commute-dialog .commute-page-body{width:100%;max-width:560px;min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box;padding:12px 20px max(28px,env(safe-area-inset-bottom));margin:0 auto}
+#commute-dialog .bus-search{font-size:16px!important}
+@media(max-width:360px){#commute-dialog .commute-page-body{padding-left:16px;padding-right:16px}}
