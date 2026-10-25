@@ -41,7 +41,8 @@ const waitOpen=page=>page.waitForFunction(()=>document.getElementById('modal-pay
   await resumed.clock.setFixedTime(new Date('2026-10-22T00:01:00+09:00'));
   await resumed.evaluate(()=>window.dispatchEvent(new Event('pageshow')));
   assert.equal(await active(resumed),false);
-  await resumed.evaluate(()=>document.getElementById('app-preferences-dialog').close());
+  await resumed.locator('#settings-back').click();
+  await resumed.waitForFunction(()=>document.getElementById('app-preferences-dialog').hidden);
   await waitOpen(resumed);
   await resumed.close();
   // When the user is browsing a different payroll month, show today's correct period and restore their view.

@@ -1,4 +1,4 @@
-function openAppPreferences(){document.getElementById('app-preferences-dialog').showModal();}
+function openAppPreferences(){window.SettingsPage.open();}
 (() => {
     for (const name of ['adjacent','holidays','memos','shape','theme']) {
         const input = document.getElementById('pref-'+name), key = 'shift_display_'+name;
@@ -36,5 +36,4 @@ function openAppPreferences(){document.getElementById('app-preferences-dialog').
             if (name === 'theme' && typeof renderCalendar === 'function') renderCalendar();
         });
     }
-    document.getElementById('app-preferences-dialog').addEventListener('close',() => document.querySelector('.menu-preferences').focus());
 })();

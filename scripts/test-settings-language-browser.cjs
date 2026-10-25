@@ -1,0 +1,27 @@
+'use strict';
+const assert=require('node:assert/strict'),{webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+(async()=>{for(const engine of [webkit,chromium]){const browser=await engine.launch();for(const width of [320,390]){
+ const p=await browser.newPage({viewport:{width,height:844},timezoneId:'Asia/Seoul',reducedMotion:'reduce'}),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.clock.setFixedTime(new Date('2026-10-26T12:00:00+09:00'));
+ await p.addInitScript(()=>{if(localStorage.getItem('shift_active_group'))return;localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_onboarding_v1','{"status":"existing"}');localStorage.setItem('shift_salary_config_master','{"hireDate":"2015-06-16","baseHourly":10320,"ordinaryHourly":11000}');localStorage.setItem('shift_day_memos','{"2026-10-26":"근무 메모 English 日本語 中文"}');localStorage.setItem('shift_day_events',JSON.stringify({'2026-10-26':{'test-id':{title:'근무',start:'2026-10-26T09:00',end:'2026-10-26T10:00',allDay:false,notes:'메모',location:'전체',reminder:null}}}));});
+ await p.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await p.goto(process.env.TEST_URL||'http://127.0.0.1:8770');
+ const saved=await p.evaluate(()=>Object.fromEntries(['shift_salary_config_master','shift_day_memos','shift_day_events'].map(k=>[k,localStorage.getItem(k)])));
+ await p.locator('#account-menu-button').click();await p.locator('.menu-preferences').click();
+ assert.equal(await p.locator('#app-preferences-dialog').evaluate(e=>e.tagName),'SECTION');assert.equal(await p.locator('#app-preferences-dialog').isVisible(),true);assert.equal(await p.locator('dialog[open]').count(),0);
+ if(width===390)await p.screenshot({path:`/tmp/settings-light-${engine.name()}.png`});
+ const b=await p.locator('#app-preferences-dialog').boundingBox();assert.equal(b.width,width);assert(Math.abs(b.height-844)<1);
+ await p.locator('[data-settings-link=display]').click();await p.locator('#pref-theme').selectOption('dark');await p.locator('#pref-adjacent').uncheck();await p.locator('#pref-shape').selectOption('circle');await p.locator('#settings-back').click();await p.waitForFunction(()=>document.getElementById('app-preferences-dialog').dataset.route==='root');
+ await p.locator('[data-settings-link=language]').click();
+ for(const[lang,html,name,work]of[['en','en','Language','Work'],['zh','zh-Hans','语言','班次'],['ja','ja','言語','勤務'],['ko','ko','언어','근무']]){
+  await p.locator(`[data-language=${lang}]`).click();await p.waitForFunction(lang=>document.documentElement.lang===lang,html);assert.equal(await p.locator('#settings-title').textContent(),name);assert.equal(await p.locator('#work-tab').textContent(),work);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+  assert.deepEqual(await p.evaluate(()=>Object.fromEntries(['shift_salary_config_master','shift_day_memos','shift_day_events'].map(k=>[k,localStorage.getItem(k)]))),saved);
+ }
+ await p.locator('[data-language=en]').click();await p.reload();await p.waitForFunction(()=>document.documentElement.lang==='en');assert.equal(await p.locator('[data-language=en]').getAttribute('aria-pressed'),'true');assert.equal(await p.locator('#app-preferences-dialog').isVisible(),true);
+ await p.locator('#settings-back').click();await p.waitForFunction(()=>document.getElementById('app-preferences-dialog').dataset.route==='root');await p.locator('#settings-account').click();assert.equal(await p.locator('#account-login-dialog').evaluate(e=>e.open),true);await p.locator('.login-sheet-close').click();
+ if(width===390)await p.screenshot({path:`/tmp/settings-root-${engine.name()}.png`});
+ await p.locator('#settings-back').click();await p.waitForFunction(()=>document.getElementById('app-preferences-dialog').hidden);
+ assert.equal(await p.locator('.container').evaluate(e=>e.inert),false);await p.locator('#bnav-cal').click();await p.locator('.cal-day[data-date="2026-10-26"]').click();await p.locator('#memo-tab').click();assert.equal(await p.locator('#modal-memo-input').inputValue(),'근무 메모 English 日本語 中文');assert.equal(await p.locator('.event-open strong').textContent(),'근무');assert.equal(await p.locator('#event-add').textContent(),'+ Add event');await p.locator('#editor-dismiss').click();
+ for(const id of ['bnav-groups','bnav-pay','bnav-menu','account-menu-button']){await p.locator('#'+id).click();await p.waitForTimeout(60);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,id)}
+ await p.locator('.menu-preferences').click();await p.locator('[data-settings-link=display]').click();assert.equal(await p.locator('#pref-theme').inputValue(),'dark');assert.equal(await p.locator('#pref-shape').inputValue(),'circle');assert.equal(await p.locator('#pref-adjacent').isChecked(),false);
+ await p.goBack();await p.waitForFunction(()=>document.getElementById('app-preferences-dialog').dataset.route==='root');await p.goBack();await p.waitForFunction(()=>document.getElementById('app-preferences-dialog').hidden);await p.goForward();await p.waitForFunction(()=>!document.getElementById('app-preferences-dialog').hidden);
+ assert.deepEqual(errors,[]);console.log(engine.name(),width,'PASS full-page navigation, native/browser back, 4 languages, reload, theme preferences, private text and amounts retained');await p.close();
+ }await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});
