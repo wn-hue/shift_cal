@@ -1,11 +1,13 @@
 # 교대 루틴 app icon
 
-Updated 2026-10-26 to the user’s preference for restrained color, a symbol, and minimalism. Edited with the built-in image_gen tool; macOS sips exports the required PNG sizes.
+Updated 2026-10-26 by combining the previous minimal blue calendar-arrow symbol with the hierarchy of the user’s Apple Calendar reference. The fixed brand artwork reads “일요일” over “25”; it is not a live date indicator.
 
-Design: one muted-blue calendar contour, two binding tabs, and an arrow integrated into the lower-right perimeter. Open center, pale gray edge-to-edge background. The separate check, nested arrow ring, yellow, and dimensional effects are removed. No inset tile or white outer border. PNGs are opaque squares for OS masking.
+Meaning supplied by the user: 25 represents payday, Sunday represents a more comfortable weekend, and the perimeter arrow represents the ongoing shift routine. This branding update does not change payroll date calculations.
 
-Master: `shift-routine-icon-1024.png`. Web: 512px / 192px, Apple touch: 180px. Both native Xcode icon catalogs use the 1024px master. Installed iOS apps need a new build to display the changed icon.
+Design: one muted blue, a pale gray full-bleed background, small centered Korean weekday above a large 25, two binding tabs and a lower-right arrow integrated into the calendar outline. No separate check, nested arrow ring, yellow or dimensional effects. All PNGs are opaque square assets for OS masking.
 
-Prompt: Redesign the previous calendar-loop icon as a minimal flat symbol for a shift-work app. Use one muted royal blue #376FCE on pale gray #F3F4F6; no yellow, gradients, shading, gloss, shadow, texture or text. Remove the central check and separate inner arrows. Integrate one arrowhead directly into a thick rounded-square calendar outline with two short binding tabs, generous negative space and balanced geometry. Center at approximately 68% canvas width and height, with no inset tile or border frame.
+Edited with the built-in image_gen tool; macOS sips exports the required sizes. Master: `shift-routine-icon-1024.png`; web: 512px / 192px; Apple touch: 180px. Both native Xcode icon catalogs use the 1024px master. Installed iOS apps need a new build to display the changed icon.
 
-Earlier artworks remain recoverable in Git history.
+Prompt: Keep the previous muted-blue minimal rounded calendar outline, two binding tabs and lower-right arrow. Use the Apple Calendar image only for typography hierarchy. Add exact Korean “일요일” centered above exact large “25” in the same blue. Clear sans-serif lettering, generous spacing and legible counters. Preserve a flat, restrained one-accent-color symbol with pale gray edge-to-edge background. No extra ornaments, text, money symbols, inset tile, frame, shadow, gradient or 3D effects.
+
+Previous icon versions remain recoverable in Git history.
