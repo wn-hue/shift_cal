@@ -13,8 +13,9 @@ const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   const weekendColors=await page.locator('.cal-weekdays').evaluate(el=>[getComputedStyle(el.firstElementChild).color,getComputedStyle(el.lastElementChild).color]);assert.deepEqual(weekendColors,theme==='dark'?['rgb(255, 139, 152)','rgb(138, 185, 255)']:['rgb(229, 72, 77)','rgb(49, 130, 246)']);
   const open=async day=>{await page.locator(`.cal-day[data-date="2026-10-${day}"] .day-num`).click();await page.waitForFunction(()=>{const r=document.querySelector('.override-sheet').getBoundingClientRect();return document.body.classList.contains('work-editor-open')&&r.y>=0&&r.bottom<=innerHeight+1})};
   await open('01');assert.equal(await page.locator('#work-panel .shift-scroll .opt-btn').count(),14);
-  const sheet=await page.locator('.override-sheet').boundingBox();assert(sheet.height>=820&&sheet.y>=0&&sheet.y+sheet.height<=845,JSON.stringify(sheet));
+  const sheet=await page.locator('.override-sheet').boundingBox();assert(sheet.height>=600&&sheet.height<=640&&sheet.y>=200&&sheet.y+sheet.height<=845,JSON.stringify(sheet));
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+  const sticker=await page.locator('#editor-sticker-preview').boundingBox(),reset=await page.locator('.override-header .override-reset').boundingBox();assert(reset.y>=sticker.y+sticker.height&&reset.x+reset.width<=width,JSON.stringify({sticker,reset}));
   const rails=page.locator('#work-panel .shift-scroll');assert.equal(await rails.count(),2);
   for(const rail of await rails.all()){
    const info=await rail.evaluate(el=>({scroll:el.scrollWidth,width:el.clientWidth,ys:[...el.children].filter(e=>!e.hidden).map(e=>Math.round(e.getBoundingClientRect().y))}));assert(info.scroll>info.width,JSON.stringify(info));assert.equal(new Set(info.ys).size,1);
@@ -31,7 +32,7 @@ const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   await open('01');await page.locator('#work-panel .opt-btn.off').click();await page.locator('#apply-preview').click();assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_overrides_C'))['2026-10-01']),'OFF');
   await open('04');assert.equal(await page.locator('#work-panel .opt-btn.leave').isDisabled(),true);await page.getByRole('button',{name:'근무 변경 내리기',exact:true}).click();
   await page.setViewportSize({width,height:360});await open('01');await page.locator('#work-panel .opt-btn.unpaid-half').last().scrollIntoViewIfNeeded();const last=await page.locator('#work-panel .opt-btn.unpaid-half').last().boundingBox();assert(last.y>=0&&last.y+last.height<=361);await page.getByRole('button',{name:'근무 변경 내리기',exact:true}).click();await page.waitForFunction(()=>!document.body.classList.contains('work-editor-open'));
-  console.log(engine.name(),width,theme,'PASS full-height card, horizontal rails, matching colors, all choices, shift/leave save, restore, off-day restriction, memo and short screen');await page.close();
+  console.log(engine.name(),width,theme,'PASS partial-height card, horizontal rails, matching colors, all choices, shift/leave save, restore, off-day restriction, memo and short screen');await page.close();
  }
  await browser.close();
 }})().catch(error=>{console.error(error);process.exit(1)});

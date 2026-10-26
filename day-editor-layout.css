@@ -1,0 +1,43 @@
+/* One day sheet height for work and memo, with a separate keyboard layout. */
+body[data-pref-theme] #modal-override.active[data-editor-tab]{padding:0!important;align-items:flex-end;overflow:hidden;overflow:clip}
+body[data-pref-theme] #modal-override[data-editor-tab]>.override-sheet{height:var(--editor-sheet-height,74dvh);max-height:100%;min-height:0;overflow:hidden;overflow:clip;border-radius:28px 28px 0 0}
+body[data-pref-theme] #modal-override[data-editor-tab] .override-header{position:relative;flex:0 0 auto;min-height:156px;padding:30px 24px 18px}
+body[data-pref-theme] #modal-override[data-editor-tab] #override-title{font-size:11px;line-height:16px;margin:0}
+body[data-pref-theme] #modal-override[data-editor-tab] #modal-date-text{font-size:22px;line-height:30px;margin:6px 0 12px;padding-right:58px}
+body[data-pref-theme] #modal-override[data-editor-tab] .editor-day-summary{min-height:40px;padding-right:118px;box-sizing:border-box}
+body[data-pref-theme] #modal-override[data-editor-tab] .editor-current-shift .shift-badge{width:36px;height:36px;min-width:36px;min-height:36px;flex-basis:36px;font-size:15px}
+body[data-pref-theme] #modal-override[data-editor-tab] #editor-sticker-preview{top:36px;right:18px;width:44px;height:48px}
+body[data-pref-theme] #modal-override[data-editor-tab] .override-header .override-reset{position:absolute;top:92px;right:18px;display:flex;align-items:center;justify-content:center;gap:5px;width:auto;min-width:0;height:44px;min-height:44px;padding:8px 10px;border:0!important;border-radius:18px;background:#eaf3ff!important;color:#1b64da!important;box-shadow:none!important;outline:0;font:inherit;font-size:11px;white-space:nowrap}
+#modal-override .override-header .override-reset>svg{width:15px;height:15px;flex:none}
+#modal-override .override-header .override-reset .selection-check{display:none}
+body[data-pref-theme] #modal-override[data-editor-tab] .editor-content{flex:1 1 0;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:8px 20px max(18px,env(safe-area-inset-bottom))}
+#modal-override #memo-panel .day-agenda{padding-bottom:16px;margin-bottom:16px}
+#modal-override #memo-panel .event-empty{margin:12px 0}
+body[data-pref-theme] #modal-override[data-editor-tab] #modal-memo-input{height:clamp(120px,18dvh,180px)!important;min-height:120px!important;margin:8px 0}
+/* The agenda returns as soon as memo typing ends; saved events stay untouched. */
+body[data-pref-theme] #modal-override[data-editor-keyboard=true] .override-header{min-height:72px;padding:26px 20px 10px}
+body[data-pref-theme] #modal-override[data-editor-keyboard=true] #modal-date-text{font-size:18px;line-height:26px;margin:0;padding-right:52px}
+body[data-pref-theme] #modal-override[data-editor-keyboard=true] #editor-sticker-preview{top:22px;right:14px;width:36px;height:36px}
+body[data-pref-theme] #modal-override[data-editor-keyboard=true] .override-header .override-reset{display:none}
+body[data-pref-theme] #modal-override[data-editor-keyboard=true] #editor-dismiss{height:24px;min-height:24px}
+body[data-pref-theme] #modal-override[data-editor-keyboard=true]>.override-sheet>.editor-tabs{min-height:52px;padding:6px 20px!important}
+body[data-pref-theme] #modal-override[data-editor-keyboard=true]>.override-sheet>.editor-tabs::before{inset:3px 16px}
+body[data-pref-theme] #modal-override[data-editor-keyboard=true]>.override-sheet>.editor-tabs::after{top:6px;bottom:6px;left:20px;width:calc((100% - 40px)/2)}
+body[data-pref-theme] #modal-override[data-editor-keyboard=true]>.override-sheet>.editor-tabs button{min-height:40px!important;padding:6px!important;font-size:14px!important}
+body[data-pref-theme] #modal-override[data-editor-focus=memo] .editor-content{display:flex;padding:6px 16px 10px}
+body[data-pref-theme] #modal-override[data-editor-focus=memo] #memo-panel{display:flex;flex:1 1 auto;min-height:0;flex-direction:column}
+body[data-pref-theme] #modal-override[data-editor-focus=memo] #memo-panel>.day-agenda,body[data-pref-theme] #modal-override[data-editor-focus=memo] #event-status,body[data-pref-theme] #modal-override[data-editor-focus=memo] #editor-swipe-space{display:none}
+body[data-pref-theme] #modal-override[data-editor-focus=memo] #day-note{display:flex;flex:1 1 auto;flex-direction:column;min-height:0}
+body[data-pref-theme] #modal-override[data-editor-focus=memo] #day-note>label{flex:none;font-size:12px;line-height:18px}
+body[data-pref-theme] #modal-override[data-editor-focus=memo] #modal-memo-input{flex:1 1 0;height:auto!important;min-height:60px!important;max-height:none!important;margin:6px 0;padding:10px 12px;overflow-y:auto}
+body[data-pref-theme] #modal-override[data-editor-focus=memo] #day-note .btn-save{flex:none;min-height:44px;height:44px;margin:4px 0 0;padding:10px;font-size:14px}
+body[data-pref-theme] #modal-override[data-editor-tiny=true][data-editor-keyboard=true] .override-header{min-height:56px;padding:24px 16px 8px}
+body[data-pref-theme] #modal-override[data-editor-tiny=true][data-editor-keyboard=true] #modal-date-text{font-size:16px;line-height:24px}
+body[data-pref-theme] #modal-override[data-editor-tiny=true][data-editor-keyboard=true] #editor-sticker-preview{top:20px;width:32px;height:32px}
+body[data-pref-theme] #modal-override[data-editor-tiny=true][data-editor-keyboard=true]>.override-sheet>.editor-tabs{min-height:44px;padding:2px 16px!important}
+body[data-pref-theme] #modal-override[data-editor-tiny=true][data-editor-keyboard=true]>.override-sheet>.editor-tabs::after{top:4px;bottom:4px;left:16px;width:calc((100% - 32px)/2)}
+body[data-pref-theme] #modal-override[data-editor-tiny=true][data-editor-focus=memo] .editor-content{padding:4px 12px 6px}
+body[data-pref-theme] #modal-override[data-editor-tiny=true][data-editor-focus=memo] #day-note>label{display:none}
+body[data-pref-theme] #modal-override[data-editor-tiny=true][data-editor-focus=memo] #modal-memo-input{min-height:44px!important;margin:0 0 4px}
+body[data-pref-theme] #modal-override[data-editor-tiny=true][data-editor-focus=memo] #day-note .btn-save{min-height:40px;height:40px;margin:2px 0 0;padding:8px}
+@media(max-height:539px){body[data-pref-theme] #modal-override[data-editor-keyboard=false] .override-header{min-height:132px;padding:28px 20px 12px}body[data-pref-theme] #modal-override[data-editor-keyboard=false] .override-header .override-reset{top:80px}}
