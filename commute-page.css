@@ -91,3 +91,10 @@ body[data-pref-theme] #bus-location-picker .bus-start-methods button[aria-presse
 #bus-location-picker .bus-location-selected{padding-bottom:12px}
 #bus-location-picker .bus-place-choice{cursor:pointer}
 @media(max-width:350px){#commute-dialog .bus-booking-card{padding:18px}#commute-dialog .bus-field-copy strong,#commute-dialog .bus-select-row select{font-size:16px!important}#commute-dialog .bus-booking-heading h2{font-size:21px}}
+
+#commute-dialog .bus-route-search{display:flex;align-items:flex-end;gap:8px;margin:0 0 20px;min-width:0}
+#commute-dialog .bus-route-search .bus-search-label{flex:1;min-width:0;margin:0;font-size:12px;color:var(--ui-muted,#6b7684)}
+#commute-dialog .bus-route-search .bus-search{border:0;border-radius:13px;background:var(--ui-card,#fff);color:var(--ui-ink,#191f28);min-height:48px;margin:0;padding:12px;font-size:16px!important}
+body[data-pref-theme] #commute-dialog .bus-route-search-submit{min-height:48px;flex:none;padding:0 15px;border:0!important;border-radius:13px!important;box-shadow:none!important;background:var(--ui-blue-soft,#e8f3ff)!important;color:var(--ui-blue,#3182f6)!important;font:inherit;font-size:14px;font-weight:650}
+#commute-dialog .bus-route-search-context{font-size:12px;line-height:1.6;color:var(--ui-muted,#6b7684);margin:8px 0 12px}
+#commute-dialog .bus-route-search-context[hidden]{display:none!important}
