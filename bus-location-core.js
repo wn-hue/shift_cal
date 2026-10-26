@@ -4,6 +4,7 @@
  const valid=p=>p&&Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&Math.abs(p.lat)<=90&&Math.abs(p.lon)<=180;
  function distance(a,b){if(!valid(a)||!valid(b))return Infinity;const r=Math.PI/180,x=(b.lat-a.lat)*r,y=(b.lon-a.lon)*r,h=Math.sin(x/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(y/2)**2;return 6371000*2*Math.atan2(Math.sqrt(Math.min(1,h)),Math.sqrt(Math.max(0,1-h)));}
  function lookup(catalog,name){return catalog.find(p=>p.aliases.includes(name)&&valid(p))||null;}
+ function factoryPlaces(catalog,label){const ids=[...String(label||'').matchAll(/(?:^|[^\d])([124])\s*공장|본사/g)].map(m=>m[1]||'1');return [...new Set(ids)].map(id=>catalog.find(p=>p.id===id)).filter(valid);}
  function rank(routes,period,point,radius,catalog){
   if(!valid(point)||!Number.isFinite(radius)||radius<=0)return [];
   return routes.filter(r=>r.period===period).flatMap(route=>{
@@ -35,8 +36,8 @@
   return {items:[],mode:'nearby',radius:tiers[tiers.length-1],automatic:tiers.length>1,exhausted:true};
  }
  function searchRoutes(routes,query,catalog=[]){
-  const raw=String(query||'').normalize('NFKC').toLowerCase().trim();if(!raw)return routes;
-  const norm=s=>String(s||'').normalize('NFKC').toLowerCase().replace(/[\s·().,\-]/g,'');
+  const raw=String(query||'').normalize('NFKC').toLowerCase().replace(/본사/g,'1공장').trim();if(!raw)return routes;
+  const norm=s=>String(s||'').normalize('NFKC').toLowerCase().replace(/본사/g,'1공장').replace(/[\s·().,\-]/g,'');
   const numbers=[];let words=raw.replace(/(\d+)\s*(?:호(?:\s*차)?|번(?:\s*(?:차|버스))?)/g,(_,n)=>{numbers.push(Number(n));return ' ';});
   if(/^\d+$/.test(raw)){numbers.push(Number(raw));words='';}
   words=words.replace(/(?:방면|방향)(?:으로|로)?|쪽(?:으로|로)?|(?:으로|로)?\s*가는(?:\s*(?:버스|차|노선))?/g,' ');
@@ -59,5 +60,5 @@
   const naver=android?'intent://route/walk?'+params+'#Intent;scheme=nmap;package=com.nhn.android.nmap;S.browser_fallback_url='+encodeURIComponent(kakao)+';end':'nmap://route/walk?'+params;
   return {naver,kakao};
  }
- return {valid,distance,lookup,rank,recommend,search,exactPlaces,searchRoutes,walkingLinks};
+ return {valid,distance,lookup,factoryPlaces,rank,recommend,search,exactPlaces,searchRoutes,walkingLinks};
 });
