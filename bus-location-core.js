@@ -11,5 +11,10 @@
    return stops.length?[{route,nearest:stops[0],stops}]:[];
   }).sort((a,b)=>a.nearest.distance-b.nearest.distance||a.route.id.localeCompare(b.route.id));
  }
- return {valid,distance,lookup,rank};
+ function search(catalog,query){
+  const norm=s=>String(s||'').normalize('NFKC').toLowerCase().replace(/[\s·().,\-]/g,''),raw=norm(query),q=norm(String(query).replace(/^(?:(?:경기도|경기|안산시?|시흥시?|배곧)\s*)+/u,''));
+  if(q.length<2)return [];
+  return catalog.filter(valid).map(p=>{const names=[p.name,...p.aliases,...(p.searchTerms||[])].map(norm),address=norm(p.address);const score=names.includes(raw)||names.includes(q)?0:names.some(n=>n.includes(raw)||n.includes(q))?1:address.includes(raw)||address.includes(q)?2:99;return {p,score};}).filter(v=>v.score<99).sort((a,b)=>a.score-b.score||a.p.name.localeCompare(b.p.name,'ko')).map(v=>v.p).filter((p,i,all)=>all.findIndex(x=>x.source===p.source)===i).slice(0,6);
+ }
+ return {valid,distance,lookup,rank,search};
 });

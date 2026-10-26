@@ -29,3 +29,8 @@ body[data-pref-theme] #commute-dialog.commute-page{position:fixed;inset:0;z-inde
 .bus-start-methods{display:flex;gap:8px;margin-bottom:12px}.bus-start-methods .bus-gps-button{flex:1;width:auto;margin:0}.bus-manual-button{flex:1;min-height:48px;border:0;border-radius:14px;background:var(--ui-field,#f2f4f6);color:var(--ui-muted,#6b7684);font:inherit;font-size:14px;font-weight:600}.bus-place-form[hidden]{display:none}
 
 .bus-pin-link{font-size:12px;line-height:1.6;color:var(--ui-blue,#3182f6);padding-top:4px;text-decoration:none}
+
+/* Finding methods have explicit selection state; generic button styles must not mask it. */
+body[data-pref-theme] #commute-dialog .bus-start-methods button{flex:1;width:auto;margin:0;border:0!important;box-shadow:none!important;min-height:48px;border-radius:14px;font-size:14px;font-weight:650;background:var(--ui-field,#f2f4f6)!important;color:var(--ui-muted,#6b7684)!important}
+body[data-pref-theme] #commute-dialog .bus-start-methods button[aria-pressed="true"]{background:#3182f6!important;color:#fff!important}
+body[data-pref-theme] #commute-dialog .bus-place-form[hidden]{display:none!important}
