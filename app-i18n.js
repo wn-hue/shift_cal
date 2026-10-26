@@ -15,7 +15,7 @@
   if(!value&&(m=s.match(/^(\d+)년 (\d+)월 급여$/)))value={en:`Pay · ${m[1]}.${m[2]}`,zh:`${m[1]}年${m[2]}月工资`,ja:`${m[1]}年${m[2]}月の給与`}[language];
   if(!value&&(m=s.match(/^(\d+)월 (\d+)일 ([일월화수목금토])요일$/))){const y=typeof currentCalDate==='undefined'?new Date().getFullYear():currentCalDate.getFullYear();value=new Intl.DateTimeFormat(languages[language][0],{month:'long',day:'numeric',weekday:'long'}).format(new Date(y,Number(m[1])-1,Number(m[2])));}
   if(!value&&(m=s.match(/^(\d+)년$/)))value={en:m[1],zh:m[1]+'年',ja:m[1]+'年'}[language];
-  if(!value&&(m=s.match(/^([\d,]+(?:\.\d+)?)\s*원$/)))value={en:'KRW '+m[1],zh:m[1]+'韩元',ja:m[1]+'ウォン'}[language];
+  if(!value&&(m=s.match(/^([+−-]?[\d,]+(?:\.\d+)?)\s*원$/)))value={en:'KRW '+m[1],zh:m[1]+'韩元',ja:m[1]+'ウォン'}[language];
   if(!value&&(m=s.match(/^(\d+(?:\.\d+)?)일$/)))value={en:m[1]+(m[1]==='1'?' day':' days'),zh:m[1]+'天',ja:m[1]+'日'}[language];
   if(!value&&(m=s.match(/^(좋아요|싫어요) (\d+)$/)))value=t(m[1])+' '+m[2];
   if(!value&&(m=s.match(/^(.+) 스티커( 변경|를 저장했어요\.|가 붙어 있어요\.)$/))&&dict[m[1]])value=t(m[1])+{en:{' 변경':' · Change sticker','를 저장했어요.':' sticker saved.','가 붙어 있어요.':' sticker selected.'},zh:{' 변경':' · 更换贴纸','를 저장했어요.':'贴纸已保存。','가 붙어 있어요.':'贴纸已选中。'},ja:{' 변경':'・ステッカーを変更','를 저장했어요.':'のステッカーを保存しました。','가 붙어 있어요.':'のステッカーを選択中です。'}}[language][m[2]];
@@ -24,10 +24,12 @@
   const copy=(en,zh,ja)=>({en,zh,ja}[language]);
   const date=(y,month,day)=>new Intl.DateTimeFormat(languages[language][0],{month:'long',day:'numeric',weekday:'short',...(y?{year:'numeric'}:{})}).format(new Date(Number(y)||2026,Number(month)-1,Number(day)));
   if(!value&&(m=s.match(/^(?:(\d{4})년 )?(\d+)월 (\d+)일 \([일월화수목금토]\)$/)))value=date(m[1],m[2],m[3]);
+  if(!value&&(m=s.match(/^예상 급여 변화 (.+)$/)))value=copy('Estimated pay change: ','预计工资变化：','予想給与の変化：')+t(m[1]);
+  if(!value&&(m=s.match(/^(.+) · 현재 근무와 비교한 세전 추정입니다\. 저장 전까지 근무는 바뀌지 않습니다\.$/)))value=m[1]+copy(' · Gross estimate compared with your current shift. No shift changes until saved.',' · 与当前班次相比的税前预估，保存前不会更改班次。','・現在の勤務と比較した税引前の推定です。保存するまで勤務は変わりません。');
   if(!value&&(m=s.match(/^산정기간: (.+)$/)))value=copy('Pay period: ','计算期间：','算定期間：')+m[1];
   if(!value&&(m=s.match(/^(\d+)월 급여명세서 발송일$/)))value=copy(`Month ${m[1]} payslip notice`,`${m[1]}月工资单发送日`,`${m[1]}月の給与明細送付日`);
   if(!value&&(m=s.match(/^([ABC])조 근무표 적용됨 · 자동 저장$/)))value=copy(`Team ${m[1]} schedule applied · Auto-saved`,`${m[1]}组班表已应用 · 自动保存`,`${m[1]}組の勤務表を適用・自動保存`);
-  if(!value&&(m=s.match(/^([ABC])조 (.+)$/)))value=t(m[1]+'조')+' '+t(m[2]);
+  if(!value&&(m=s.match(/^([ABC])조 (?!·)(.+)$/)))value=t(m[1]+'조')+' '+t(m[2]);
   if(!value&&(m=s.match(/^([ABC])조 · (.+)에 맞춰 자동 설정$/)))value=t(m[1]+'조')+' · '+copy('Automatically matched to ','自动匹配','自動設定：')+t(m[2]);
   if(!value&&(m=s.match(/^(\d{4})년 (\d+)월 (\d+)번째 주 조별 근무$/)))value=copy(`${m[1]}.${m[2]} · Week ${m[3]} teams`,`${m[1]}年${m[2]}月 · 第${m[3]}周各组班次`,`${m[1]}年${m[2]}月・第${m[3]}週のグループ勤務`);
   if(!value&&(m=s.match(/^(\d{4})년 (\d+)월 조별 근무 연도와 월 선택$/)))value=copy(`Choose teams schedule month · ${m[1]}.${m[2]}`,`选择各组班次年月 · ${m[1]}年${m[2]}月`,`グループ勤務の年月を選択・${m[1]}年${m[2]}月`);
