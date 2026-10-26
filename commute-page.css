@@ -120,7 +120,7 @@ body[data-pref-theme] #commute-dialog .bus-search-regions button{min-height:34px
 body[data-pref-theme] #commute-dialog .bus-search-regions button[aria-pressed=true]{background:var(--ui-ink,#333d4b)!important;color:var(--ui-card,#fff)!important;border-color:transparent!important}
 #commute-dialog .bus-unified-status{flex:none;line-height:1.6;font-size:12px;color:var(--ui-muted,#6b7684);padding:8px 20px;margin:0}
 #commute-dialog .bus-unified-status:empty{display:none}
-#commute-dialog .bus-unified-results{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 20px 20px}
+#commute-dialog .bus-unified-results{flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;padding:0 20px 20px}
 #commute-dialog .bus-unified-section{font-size:12px;font-weight:550;color:var(--ui-muted,#8b95a1);margin:18px 0 4px}
 #commute-dialog .bus-unified-place-row{display:flex;align-items:center;gap:8px;min-width:0;border-bottom:1px solid var(--ui-line,#f2f4f6)}
 body[data-pref-theme] #commute-dialog :is(.bus-unified-place,.bus-unified-route){display:flex;flex-direction:column;justify-content:center;gap:6px;min-width:0;min-height:76px;flex:1;width:100%;padding:14px 0;background:none!important;color:inherit!important;border:0!important;border-radius:0!important;box-shadow:none!important;text-align:left;font:inherit}

@@ -9,9 +9,28 @@
  const regions=el('div','bus-search-regions');regions.setAttribute('role','group');regions.setAttribute('aria-label','검색 지역');view.append(regions);
  const status=el('p','bus-unified-status');status.setAttribute('role','status');view.append(status);const results=el('div','bus-unified-results');view.append(results);const surface=el('div','bus-unified-surface');while(view.firstChild)surface.append(view.firstChild);view.append(surface);page.append(view);
  let configuration=null,showing=false,active=false,closing=false,region='all',composing=false,token=0,controller=null,remote=[],savedInert=[],opener=null,fitFrame=0;
- function fit(){if(!showing||closing)return;page.scrollTop=0;view.scrollTop=0;surface.scrollTop=0;const vp=visualViewport,r=page.getBoundingClientRect(),offset=Math.max(0,(vp?.offsetTop||0)-r.top);view.style.setProperty('--bus-search-top',offset+'px');view.style.setProperty('--bus-search-height',Math.max(0,Math.min(page.clientHeight-offset,(vp?.height||innerHeight)))+'px');}
+ function fit(){
+  if(!showing||closing)return;const vp=visualViewport,height=page.clientHeight;
+  // WKWebView can report a transient pan around a focused input even with no keyboard.
+  // Applying that pan to this fixed page creates the blank strip above the header.
+  const keyboard=height-(vp?.height||innerHeight)>120&&Math.abs((vp?.scale||1)-1)<.01;
+  const offset=keyboard?Math.max(0,Math.min(height,(vp?.offsetTop||0)-page.getBoundingClientRect().top)):0;
+  view.style.setProperty('--bus-search-top',offset+'px');view.style.setProperty('--bus-search-height',Math.max(0,Math.min(height-offset,(vp?.height||innerHeight)))+'px');
+ }
  function scheduleFit(){if(!fitFrame)fitFrame=requestAnimationFrame(()=>{fitFrame=0;fit();});}
  visualViewport?.addEventListener('resize',scheduleFit);visualViewport?.addEventListener('scroll',scheduleFit);window.addEventListener('resize',scheduleFit);
+ // Only the results own a vertical drag. Keep edge pulls from reaching the page behind
+ // them, and release the input's native focus pan when the user starts browsing.
+ let drag=null,enterFocus=false;
+ view.addEventListener('touchstart',e=>{enterFocus=false;drag=e.touches.length===1?{x:e.touches[0].clientX,y:e.touches[0].clientY,lastY:e.touches[0].clientY,list:results.contains(e.target)}:null;},{passive:true});
+ view.addEventListener('touchmove',e=>{
+  if(e.touches.length!==1){drag=null;return;}if(!drag)return;const dx=e.touches[0].clientX-drag.x,dy=e.touches[0].clientY-drag.y,step=e.touches[0].clientY-drag.lastY;drag.lastY=e.touches[0].clientY;if(Math.abs(dy)<8||Math.abs(dy)<=Math.abs(dx))return;
+  if(document.activeElement===input){input.blur();scheduleFit();}
+  const edge=!drag.list||(step>0?results.scrollTop<=0:step<0&&results.scrollTop+results.clientHeight>=results.scrollHeight-1);
+  if(edge&&e.cancelable)e.preventDefault();
+ },{passive:false});
+ view.addEventListener('touchend',()=>{drag=null;},{passive:true});view.addEventListener('touchcancel',()=>{drag=null;},{passive:true});
+ input.addEventListener('focus',scheduleFit);input.addEventListener('blur',scheduleFit);
  function abort(){++token;controller?.abort();controller=null;gps.disabled=false;submit.disabled=false;submit.setAttribute('aria-busy','false');}
  function context(){return configuration?.context()||{routes:[],periodLabel:'',factory:'1',direction:'in'};}
  function placeRegion(p){const address=p.address||'';if(address.includes('시흥'))return 'siheung';if(address.includes('안산'))return 'ansan';if(!p.aliases){if(/siheung/i.test(address))return 'siheung';if(/ansan/i.test(address))return 'ansan';return 'other';}return ['시화중학교','서해중학교','도일초등학교','시흥소방서'].includes(p.name)?'siheung':'ansan';}
@@ -38,7 +57,7 @@
  for(const[value,text]of[['all','전체'],['ansan','안산'],['siheung','시흥·배곧']]){const b=el('button','',text);b.type='button';b.dataset.region=value;b.onclick=()=>{region=value;render();results.scrollTop=0;};regions.append(b);}
  function show({initial='',focus=true,reset=true}={}){
   if(!configuration)return;if(!active){opener=document.activeElement;savedInert=[...new Set([body,topbar,...[...document.body.children].filter(n=>n!==page&&!['SCRIPT','STYLE','LINK'].includes(n.tagName))])].map(n=>[n,n.inert]);savedInert.forEach(([n])=>n.inert=true);active=true;}
-  showing=true;closing=false;view.hidden=false;if(reset){abort();remote=[];region='all';input.value=initial;status.textContent='';}render();fit();window.AppMotion.page(view,true);if(focus)requestAnimationFrame(()=>{if(showing)input.focus({preventScroll:true});});
+  showing=true;closing=false;enterFocus=focus;view.hidden=false;if(reset){abort();remote=[];region='all';input.value=initial;status.textContent='';}render();if(reset){results.scrollTop=0;page.scrollTop=0;view.scrollTop=0;surface.scrollTop=0;}fit();window.AppMotion.page(view,true,()=>{if(enterFocus&&showing)input.focus({preventScroll:true});});
  }
  function hide(){
   if(!active||!showing)return;showing=false;closing=true;abort();configuration?.cancel();input.blur();window.AppMotion.page(view,false,()=>{if(showing)return;active=false;closing=false;view.hidden=true;savedInert.forEach(([n,value])=>n.inert=value);view.style.removeProperty('--bus-search-height');view.style.removeProperty('--bus-search-top');if(opener?.isConnected)opener.focus({preventScroll:true});});
