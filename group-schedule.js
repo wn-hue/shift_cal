@@ -56,7 +56,7 @@
     const button=document.createElement('button');button.type='button';button.className='group-date';button.setAttribute('aria-label',`${d.getMonth()+1}월 ${d.getDate()}일 ${weekdays[i]}요일${h?' '+h.name:''} 조별 근무 보기`);
     const weekday=document.createElement('span');weekday.className='group-weekday '+(i===0?'sun':i===6?'sat':'');weekday.textContent=weekdays[i];
     const number=document.createElement('strong');number.className=h?'holiday-number':'';number.textContent=d.getDate();
-    const holiday=document.createElement('small');holiday.textContent=h?h.name:'';holiday.title=h?h.name:'';
+    const holiday=document.createElement('small');holiday.textContent=h?h.name:k===now?'오늘':'';holiday.title=h?h.name:'';if(k===now&&!h)holiday.className='group-today-label';
     if(k===now)button.setAttribute('aria-current','date');button.append(weekday,number,holiday);button.onclick=()=>openDay(k,button);th.append(button);hr.append(th);
    });head.append(hr);table.append(head);
    const body=document.createElement('tbody');

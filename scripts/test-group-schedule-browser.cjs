@@ -25,12 +25,15 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
  for(const theme of ['current','toss','gpt','dark','test']){
   await page.evaluate(t=>{const s=document.getElementById('pref-theme');s.value=t;s.dispatchEvent(new Event('change'))},theme);
   assert.equal(await page.locator('#group-weeks table').count(),5);
+  assert.equal(await page.locator('thead .today .group-today-label').textContent(),'오늘');
+  const marker=await page.locator('thead .today strong').evaluate(el=>({background:getComputedStyle(el).backgroundColor,color:getComputedStyle(el).color,radius:getComputedStyle(el).borderRadius}));
+  assert.equal(marker.background,theme==='dark'?'rgb(139, 184, 255)':'rgb(49, 130, 246)');assert.equal(marker.radius,'50%');assert.notEqual(marker.color,marker.background);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   assert(await page.locator('.nav-capsule>button').evaluateAll(els=>els.every(e=>{const r=e.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.right<=innerWidth})));
   for(const[g,type]of[['A','OFF'],['B','DAY'],['C','LEAVE']])assert.equal(await page.locator(`tr[data-group="${g}"] td[data-date="2026-10-18"]`).getAttribute('data-shift'),type);
   assert.equal(await page.locator('tbody tr.my-group').count(),5);
   assert.equal(await page.locator('tbody tr.my-group').first().getAttribute('data-group'),'C');
-  if(width===390&&['current','test','dark'].includes(theme))await page.screenshot({path:`/tmp/group-schedule-${theme}-${engine.name()}.png`,animations:'disabled'});
+  if(width===390&&['current','test','dark'].includes(theme)){await page.locator('thead .today').scrollIntoViewIfNeeded();await page.screenshot({path:`/tmp/group-schedule-${theme}-${engine.name()}.png`,animations:'disabled'});}
  }
  for(const[g,type]of[['A','DAY'],['B','OFF'],['C','NIGHT']])assert.equal(await page.locator(`tr[data-group="${g}"] td[data-date="2026-10-01"]`).getAttribute('data-shift'),type);
  for(const[g,type]of[['A','OFF'],['B','SPECIAL_DAY'],['C','SPECIAL_NIGHT']])assert.equal(await page.locator(`tr[data-group="${g}"] td[data-date="2026-10-03"]`).getAttribute('data-shift'),type);
@@ -39,8 +42,9 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
  assert.match(await page.locator('#group-day-rows>.group-detail-row').first().textContent(),/C조.*연차/);assert.match(await page.locator('#group-day-title').textContent(),/10월 18일 일요일/);
  if(width===390)await page.screenshot({path:`/tmp/group-day-${engine.name()}.png`,animations:'disabled'});
  await page.keyboard.press('Escape');assert.equal(await page.locator('#group-day-dialog').evaluate(e=>e.open),false);
+ assert.equal(await page.locator('#group-weeks .today[data-date="2026-10-26"]').count(),4,'today stays emphasized after selecting another date');
  assert.equal(await page.evaluate(()=>document.activeElement.closest('td')?.dataset.date),'2026-10-18');
- await page.locator('thead th[data-date="2026-10-03"] button').click();assert.match(await page.locator('#group-day-caption').textContent(),/개천절/);await page.locator('#group-day-close').click();
+ await page.locator('thead th[data-date="2026-10-03"] button').click();assert.match(await page.locator('#group-day-caption').textContent(),/개천절/);await page.locator('#group-day-dialog .sheet-dismiss-handle').click();
  // Month picker, 4/5/6 weeks, leap day and year rollover.
  await page.locator('#group-month-title').click();await page.getByRole('button',{name:'2026년 2월',exact:true}).click();assert.equal(await page.locator('#group-weeks table').count(),4);assert.equal(await page.locator('body').getAttribute('data-view'),'groups');
  await page.evaluate(()=>{currentCalDate=new Date(2026,4,1);renderCalendar()});assert.equal(await page.locator('#group-weeks table').count(),6);
@@ -56,6 +60,6 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
  await page.evaluate(()=>{localStorage.setItem('shift_overrides_C',JSON.stringify({'2026-10-18':'HALF_PRE'}));window.dispatchEvent(new StorageEvent('storage',{key:'shift_overrides_C'}))});assert.equal(await page.locator('tr[data-group="C"] td[data-date="2026-10-18"]').getAttribute('data-shift'),'HALF_PRE');
  await page.locator('thead th[data-date="2026-10-18"] button').click();await page.locator('#group-open-calendar').click();assert.equal(await page.locator('body').getAttribute('data-view'),'calendar');assert.equal(await page.evaluate(()=>currentGroup),'C');assert.equal(await page.evaluate(()=>getActualShift(new Date(2026,9,18),currentGroup).type),'HALF_PRE');
  await page.locator('#bnav-pay').click();assert.equal(await page.locator('#view-payroll').isVisible(),true);await page.locator('#bnav-menu').click();assert.equal(await page.locator('#view-menu').isVisible(),true);await page.locator('#account-menu-button').click();assert.equal(await page.locator('#view-all').isVisible(),true);
- await page.locator('#bnav-groups').click();await page.setViewportSize({width,height:360});await page.locator('thead th[data-date="2026-10-26"] button').click();await page.locator('#group-open-calendar').scrollIntoViewIfNeeded();const button=await page.locator('#group-open-calendar').boundingBox();assert(button.y>=0&&button.y+button.height<=361);await page.locator('#group-day-close').click();
+ await page.locator('#bnav-groups').click();await page.setViewportSize({width,height:360});await page.locator('thead th[data-date="2026-10-26"] button').click();await page.locator('#group-open-calendar').scrollIntoViewIfNeeded();const button=await page.locator('#group-open-calendar').boundingBox();assert(button.y>=0&&button.y+button.height<=361);await page.locator('#group-day-dialog .sheet-dismiss-handle').click();
  assert.deepEqual(errors,[]);console.log(engine.name(),width,'PASS 5-theme comparison, group isolation, date detail, month navigation, restore, 5-tab navigation, short screen');await page.close();
  }await browser.close()}})().catch(e=>{console.error(e);process.exit(1)});

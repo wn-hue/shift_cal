@@ -2,7 +2,7 @@
 (()=>{'use strict';
  const C=window.BusLocationCore,page=document.getElementById('commute-dialog'),body=page.querySelector('.commute-page-body'),topbar=page.querySelector('.commute-topbar');
  const el=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
- const view=el('section','bus-unified-search-page');view.id='bus-unified-search';view.hidden=true;view.setAttribute('aria-label','통근버스 통합 검색');
+ const view=el('section','bus-unified-search-page');view.id='bus-unified-search';view.hidden=true;view.tabIndex=-1;view.setAttribute('aria-label','통근버스 통합 검색');
  const header=el('div','bus-unified-topbar'),back=el('button','bus-unified-back');back.type='button';back.setAttribute('aria-label','검색에서 돌아가기');back.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>';header.append(back,el('h2','','통근버스 검색'));view.append(header);
  const form=el('form','bus-unified-form'),label=el('label','bus-unified-label','장소·주소·호차·방향 검색'),input=el('input','bus-unified-input'),submit=el('button','bus-unified-submit','검색');input.id='bus-unified-input';input.type='search';input.maxLength=100;input.autocomplete='off';input.placeholder='정류장, 주소, 5호차, 상록수 방면';input.enterKeyHint='search';label.append(input);submit.type='submit';form.append(label,submit);view.append(form);
  const actions=el('div','bus-unified-actions'),gps=el('button','bus-unified-gps','현재 위치로 찾기'),contextText=el('small','bus-unified-context');gps.type='button';actions.append(gps,contextText);view.append(actions);
@@ -10,10 +10,10 @@
  const status=el('p','bus-unified-status');status.setAttribute('role','status');view.append(status);const results=el('div','bus-unified-results');view.append(results);const surface=el('div','bus-unified-surface');while(view.firstChild)surface.append(view.firstChild);view.append(surface);page.append(view);
  let configuration=null,showing=false,active=false,closing=false,region='all',composing=false,token=0,controller=null,remote=[],savedInert=[],opener=null,fitFrame=0;
  function fit(){
-  if(!showing||closing)return;const vp=visualViewport,height=page.clientHeight;
+  if(!showing||closing)return;const vp=visualViewport;if(vp&&Math.abs(vp.scale-1)>.01)return;const height=page.clientHeight;
   // WKWebView can report a transient pan around a focused input even with no keyboard.
   // Applying that pan to this fixed page creates the blank strip above the header.
-  const keyboard=height-(vp?.height||innerHeight)>120&&Math.abs((vp?.scale||1)-1)<.01;
+  const keyboard=height-(vp?.height||innerHeight)>120;
   const offset=keyboard?Math.max(0,Math.min(height,(vp?.offsetTop||0)-page.getBoundingClientRect().top)):0;
   view.style.setProperty('--bus-search-top',offset+'px');view.style.setProperty('--bus-search-height',Math.max(0,Math.min(height-offset,(vp?.height||innerHeight)))+'px');
  }
@@ -57,7 +57,9 @@
  for(const[value,text]of[['all','전체'],['ansan','안산'],['siheung','시흥·배곧']]){const b=el('button','',text);b.type='button';b.dataset.region=value;b.onclick=()=>{region=value;render();results.scrollTop=0;};regions.append(b);}
  function show({initial='',focus=true,reset=true}={}){
   if(!configuration)return;if(!active){opener=document.activeElement;savedInert=[...new Set([body,topbar,...[...document.body.children].filter(n=>n!==page&&!['SCRIPT','STYLE','LINK'].includes(n.tagName))])].map(n=>[n,n.inert]);savedInert.forEach(([n])=>n.inert=true);active=true;}
-  showing=true;closing=false;enterFocus=focus;view.hidden=false;if(reset){abort();remote=[];region='all';input.value=initial;status.textContent='';}render();if(reset){results.scrollTop=0;page.scrollTop=0;view.scrollTop=0;surface.scrollTop=0;}fit();window.AppMotion.page(view,true,()=>{if(enterFocus&&showing)input.focus({preventScroll:true});});
+  showing=true;closing=false;enterFocus=focus;view.hidden=false;if(reset){abort();remote=[];region='all';input.value=initial;status.textContent='';}render();if(reset){results.scrollTop=0;page.scrollTop=0;view.scrollTop=0;surface.scrollTop=0;}fit();
+  // Touch browsers show a stable list first; tapping the input opens the keyboard.
+  window.AppMotion.page(view,true,()=>{if(enterFocus&&showing)(matchMedia('(hover:hover) and (pointer:fine)').matches?input:view).focus({preventScroll:true});});
  }
  function hide(){
   if(!active||!showing)return;showing=false;closing=true;abort();configuration?.cancel();input.blur();window.AppMotion.page(view,false,()=>{if(showing)return;active=false;closing=false;view.hidden=true;savedInert.forEach(([n,value])=>n.inert=value);view.style.removeProperty('--bus-search-height');view.style.removeProperty('--bus-search-top');if(opener?.isConnected)opener.focus({preventScroll:true});});
