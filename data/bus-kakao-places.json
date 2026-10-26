@@ -524,7 +524,9 @@
       "precision": "reference",
       "provider": "kakao",
       "directionConfirmed": false,
-      "note": "카카오맵 등록 장소 기준점. 실제 정차 위치·도로 방향은 미확인"
+      "note": "카카오맵 등록 장소 기준점. 실제 정차 위치·도로 방향은 미확인",
+      "mapSource": "https://map.kakao.com/link/map/%EC%A4%91%EC%95%99%EC%97%AD,37.31599451967913,126.83883035405907",
+      "mapSourceReason": "기존 장소 ID가 지하철 전용 SES1756 페이지로 전환되어 모바일 앱에서 빈 상세가 열릴 수 있어, 확인된 이름·좌표로 지도 연결"
     },
     {
       "id": "11187840",

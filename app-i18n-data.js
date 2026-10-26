@@ -49,6 +49,14 @@ window.AppTranslations=Object.fromEntries(`
 3. 그레이|3. Gray|3. 灰色|3. グレー
 4. 다크모드|4. Dark|4. 深色|4. ダーク
 5. 테스트|5. Test|5. 测试|5. テスト
+밤과 낮|Day & night|日夜|昼と夜
+블루컬러|Blue|蓝色|ブルー
+그레이|Gray|灰色|グレー
+다크모드|Dark|深色|ダーク
+테스트|Test|测试|テスト
+정류장 검색|Stop search|站点搜索|停留所検索
+주간 퇴근|Day shift return|白班下班|日勤の退勤
+야간 퇴근|Night shift return|夜班下班|夜勤の退勤
 화면 표시|Display|显示|表示
 이전 · 다음 달 근무|Adjacent months’ shifts|前后月份班次|前後の月の勤務
 공휴일 이름|Holiday names|节假日名称|祝日名

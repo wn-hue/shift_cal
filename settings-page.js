@@ -38,8 +38,9 @@
   if(input.tagName==='SELECT'){
    const title=label.firstChild.textContent.trim(),row=document.createElement('button');row.type='button';row.className='settings-choice';row.id='choose-'+name;row.setAttribute('aria-haspopup','dialog');row.setAttribute('aria-controls','settings-options');
    const text=document.createElement('span'),value=document.createElement('span');text.textContent=title;value.className='settings-value';row.append(text,value);label.before(row);label.hidden=true;
-   const update=()=>{value.textContent=input.selectedOptions[0].textContent.replace(/^\d+\. /,'');};input.addEventListener('change',update);update();
-   row.onclick=()=>window.SettingsOptions.open(title,[...input.options].map(o=>({value:o.value,label:o.textContent.replace(/^\d+\. /,'')})),input.value,v=>{input.value=v;input.dispatchEvent(new Event('change',{bubbles:true}));});
+   const sourceText=el=>window.AppI18n?.sourceText(el)??el.textContent;
+   const update=()=>{value.textContent=sourceText(input.selectedOptions[0]).replace(/^\d+\. /,'');};input.addEventListener('change',update);update();
+   row.onclick=()=>window.SettingsOptions.open(title,[...input.options].map(o=>({value:o.value,label:sourceText(o).replace(/^\d+\. /,'')})),input.value,v=>{input.value=v;input.dispatchEvent(new Event('change',{bubbles:true}));});
   }
  }
  $('choose-language').onclick=()=>window.SettingsOptions.open('언어',[
