@@ -16,5 +16,13 @@
   if(q.length<2)return [];
   return catalog.filter(valid).map(p=>{const names=[p.name,...p.aliases,...(p.searchTerms||[])].map(norm),address=norm(p.address);const score=names.includes(raw)||names.includes(q)?0:names.some(n=>n.includes(raw)||n.includes(q))?1:address.includes(raw)||address.includes(q)?2:99;return {p,score};}).filter(v=>v.score<99).sort((a,b)=>a.score-b.score||a.p.name.localeCompare(b.p.name,'ko')).map(v=>v.p).filter((p,i,all)=>all.findIndex(x=>x.source===p.source)===i).slice(0,6);
  }
- return {valid,distance,lookup,rank,search};
+ function walkingLinks(from,to,fromName,toName,appname,android=false){
+  if(!valid(from)||!valid(to))return null;
+  const part=(name,p)=>encodeURIComponent(name)+','+p.lat+','+p.lon;
+  const kakao='https://map.kakao.com/link/by/walk/'+part(fromName,from)+'/'+part(toName,to);
+  const params=new URLSearchParams({slat:from.lat,slng:from.lon,sname:fromName,dlat:to.lat,dlng:to.lon,dname:toName,appname});
+  const naver=android?'intent://route/walk?'+params+'#Intent;scheme=nmap;package=com.nhn.android.nmap;S.browser_fallback_url='+encodeURIComponent(kakao)+';end':'nmap://route/walk?'+params;
+  return {naver,kakao};
+ }
+ return {valid,distance,lookup,rank,search,walkingLinks};
 });

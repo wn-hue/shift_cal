@@ -7,7 +7,7 @@
   page.hidden=false;document.body.classList.add('commute-page-open');AppMotion.page(page,true);document.getElementById('commute-page-title').focus({preventScroll:true});window.AppI18n?.refresh();
  }
  function hide(){
-  if(!active||!showing)return;showing=false;
+  if(!active||!showing)return;window.ShiftBusBrowser?.dismiss();showing=false;
   AppMotion.page(page,false,()=>{active=false;page.hidden=true;document.body.classList.remove('commute-page-open');locked.forEach(([el,value])=>el.inert=value);window.scrollTo({top:returnScroll,behavior:'instant'});document.getElementById('commute-open').focus({preventScroll:true});});
  }
  function open(){if(active)return;history.pushState({...history.state,shiftCommute:true},'','#commute');show();}

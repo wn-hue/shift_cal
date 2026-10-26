@@ -34,3 +34,60 @@ body[data-pref-theme] #commute-dialog.commute-page{position:fixed;inset:0;z-inde
 body[data-pref-theme] #commute-dialog .bus-start-methods button{flex:1;width:auto;margin:0;border:0!important;box-shadow:none!important;min-height:48px;border-radius:14px;font-size:14px;font-weight:650;background:var(--ui-field,#f2f4f6)!important;color:var(--ui-muted,#6b7684)!important}
 body[data-pref-theme] #commute-dialog .bus-start-methods button[aria-pressed="true"]{background:#3182f6!important;color:#fff!important}
 body[data-pref-theme] #commute-dialog .bus-place-form[hidden]{display:none!important}
+/* Search-first booking: one compact card, results only after an explicit query. */
+#commute-dialog .bus-booking-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:8px 0 20px}
+#commute-dialog .bus-booking-heading h2{font-size:23px;letter-spacing:-.8px;margin:0;font-weight:700}
+#commute-dialog .bus-my-shift{border:0;background:none;color:var(--ui-muted,#6b7684);font:inherit;font-size:13px;padding:10px 0;min-height:44px}
+#commute-dialog .bus-direction-tabs{display:flex;gap:24px;margin:0 4px 20px}
+body[data-pref-theme] #commute-dialog .bus-direction-tabs button{position:relative;min-height:44px;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:4px 0 12px;color:var(--ui-muted,#8b95a1)!important;font:inherit;font-size:18px;font-weight:650}
+body[data-pref-theme] #commute-dialog .bus-direction-tabs button[aria-pressed=true]{color:var(--ui-ink,#191f28)!important}
+#commute-dialog .bus-direction-tabs button[aria-pressed=true]::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:2px;background:currentColor}
+#commute-dialog .bus-booking-card{margin:0;padding:22px;background:var(--ui-card,#fff);border:0;border-radius:24px;box-shadow:0 4px 18px #191f2803}
+#commute-dialog .bus-booking-card h3{margin:0 0 10px;font-size:20px;font-weight:700;letter-spacing:-.7px;line-height:1.5}
+#commute-dialog .bus-booking-row{min-width:0;display:flex;align-items:center;gap:14px;min-height:79px;border-bottom:1px solid var(--ui-line,#f2f4f6);margin:0;padding:0}
+#commute-dialog .bus-field-icon{display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;flex:none;color:var(--ui-muted,#6b7684)}
+#commute-dialog .bus-field-icon svg{width:23px;height:23px}
+#commute-dialog .bus-field-copy{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1}
+#commute-dialog .bus-field-copy small{font-size:12px;font-weight:500;color:var(--ui-muted,#8b95a1);line-height:1.4}
+#commute-dialog .bus-field-copy strong{font-size:17px;font-weight:650;letter-spacing:-.4px;text-align:left;overflow-wrap:anywhere;line-height:1.4}
+#commute-dialog .bus-field-copy .bus-field-placeholder{color:var(--ui-muted,#8b95a1);font-weight:550}
+body[data-pref-theme] #commute-dialog .bus-location-open{display:flex;align-items:center;gap:14px;flex:1;min-width:0;min-height:79px;text-align:left;padding:12px 0;background:transparent!important;color:inherit!important;border:0!important;box-shadow:none!important;border-radius:0!important;font:inherit}
+#commute-dialog .bus-location-open:disabled{opacity:1;cursor:default}
+body[data-pref-theme] #commute-dialog .bus-use-gps{display:flex;align-items:center;justify-content:center;flex:none;width:44px;height:44px;padding:10px;border:0!important;background:var(--ui-field,#f2f4f6)!important;color:var(--ui-muted,#6b7684)!important;box-shadow:none!important;border-radius:50%!important}
+#commute-dialog .bus-use-gps[hidden]{display:none!important}
+#commute-dialog .bus-select-row{position:relative;cursor:pointer}
+body[data-pref-theme] #commute-dialog .bus-select-row select{appearance:none;-webkit-appearance:none;display:block;border:0!important;box-shadow:none!important;background:transparent!important;color:var(--ui-ink,#191f28)!important;font:inherit;font-size:17px;font-weight:650;letter-spacing:-.4px;width:100%;height:27px;min-width:0;max-width:100%;padding:0 24px 0 0;margin:0;border-radius:0!important}
+#commute-dialog .bus-select-row select:focus{outline:none}
+#commute-dialog .bus-field-chevron{position:absolute;right:0;bottom:20px;pointer-events:none;color:var(--ui-muted,#8b95a1);font-size:20px}
+body[data-pref-theme] #commute-dialog .bus-query-button{display:block;width:100%;min-height:52px;border:0!important;box-shadow:none!important;border-radius:15px!important;background:#3182f6!important;color:#fff!important;font:inherit;font-weight:650;font-size:17px;margin:20px 0 0;padding:13px}
+#commute-dialog .bus-booking-status{font-size:13px;line-height:1.6;color:var(--ui-muted,#6b7684);margin:12px 0 0}
+#commute-dialog .bus-booking-status:empty{display:none}
+#commute-dialog .bus-shuttle-hint{font-size:12px;line-height:1.7;color:var(--ui-muted,#6b7684);margin:12px 0 0}
+#commute-dialog .bus-shuttle-hint[hidden]{display:none!important}
+body[data-pref-theme] #commute-dialog .bus-browse-all{display:block;margin:14px auto 8px;min-height:44px;padding:10px 16px;background:none!important;color:var(--ui-muted,#6b7684)!important;border:0!important;box-shadow:none!important;font:inherit;font-size:13px}
+#commute-dialog .bus-search-results[hidden],#commute-dialog .bus-search-label[hidden],#commute-dialog .bus-result-ranges[hidden],#commute-dialog .bus-result-distance-note[hidden]{display:none!important}
+#commute-dialog .bus-results-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px}
+#commute-dialog .bus-result-count{font-size:16px;font-weight:650;color:var(--ui-ink,#191f28);margin:0}
+#commute-dialog .bus-favorite-filter{color:var(--ui-muted,#6b7684);font-size:12px}
+#commute-dialog .bus-result-ranges{display:flex;gap:8px;margin-top:12px}
+body[data-pref-theme] #commute-dialog .bus-result-ranges button{flex:1;min-height:38px;border:0!important;background:var(--ui-card,#fff)!important;color:var(--ui-muted,#6b7684)!important;border-radius:12px;font:inherit;font-size:13px;padding:8px}
+body[data-pref-theme] #commute-dialog .bus-result-ranges button[aria-pressed=true]{background:var(--ui-blue-soft,#e8f3ff)!important;color:var(--ui-blue,#3182f6)!important;font-weight:650}
+#commute-dialog .bus-result-distance-note{font-size:11px;line-height:1.7;color:var(--ui-muted,#6b7684);margin:10px 0}
+#commute-dialog .bus-guidance{font-size:12px;color:var(--ui-muted,#6b7684);margin:14px 4px 0;line-height:1.8}
+#commute-dialog .bus-guidance summary{min-height:36px;cursor:pointer}
+#commute-dialog .bus-guidance a{color:var(--ui-blue,#3182f6)}
+#commute-dialog .bus-walk-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+#commute-dialog .bus-walk-link{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:4px 10px;box-sizing:border-box;border-radius:10px;background:var(--ui-card,#fff);color:var(--ui-blue,#3182f6);font-size:12px;font-weight:600;text-decoration:none;line-height:1.5}
+#commute-dialog .bus-nearby-result{padding:14px;margin-top:8px}
+#commute-dialog .bus-route-heading strong{font-size:16px}
+body[data-pref-theme] #bus-location-picker{width:100%;max-width:560px}
+#bus-location-picker .bus-discovery-picker{margin:0;padding:0;background:none;border-radius:0;box-shadow:none}
+#bus-location-picker .bus-discovery-picker h2{font-size:20px;margin:0 0 20px;line-height:1.5}
+#bus-location-picker .bus-distance-filters,#bus-location-picker .bus-distance-note,#bus-location-picker .bus-location-guide{display:none!important}
+#bus-location-picker .bus-start-methods{display:flex;gap:8px;margin-bottom:18px}
+body[data-pref-theme] #bus-location-picker .bus-start-methods button{flex:1;min-height:44px;width:auto;margin:0;border:0!important;border-radius:12px!important;box-shadow:none!important;font:inherit;font-size:13px;font-weight:650;background:var(--ui-field,#f2f4f6)!important;color:var(--ui-muted,#6b7684)!important}
+body[data-pref-theme] #bus-location-picker .bus-start-methods button[aria-pressed=true]{background:var(--ui-blue-soft,#e8f3ff)!important;color:var(--ui-blue,#3182f6)!important}
+#bus-location-picker .bus-place-form[hidden]{display:none!important}
+#bus-location-picker .bus-location-selected{padding-bottom:12px}
+#bus-location-picker .bus-place-choice{cursor:pointer}
+@media(max-width:350px){#commute-dialog .bus-booking-card{padding:18px}#commute-dialog .bus-field-copy strong,#commute-dialog .bus-select-row select{font-size:16px!important}#commute-dialog .bus-booking-heading h2{font-size:21px}}
