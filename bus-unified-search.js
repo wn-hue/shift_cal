@@ -25,9 +25,10 @@
  function render(){
   if(!configuration)return;const ctx=context(),q=input.value.trim();contextText.textContent=ctx.periodLabel+' · '+ctx.factory+'공장';gps.hidden=ctx.direction!=='in'||ctx.period==='shuttle';results.replaceChildren();
   for(const b of regions.children)b.setAttribute('aria-pressed',String(b.dataset.region===region));
-  const catalog=window.BusStopLocations.points,local=q?C.search(catalog,q,{limit:100,minLength:1}):catalog;
-  const places=[...local,...remote].filter(p=>ctx.period!=='shuttle'||p.aliases?.some(a=>a.startsWith('안산역'))).filter(acceptsPlace).filter((p,i,all)=>all.findIndex(v=>v.source===p.source&&v.lat===p.lat&&v.lon===p.lon)===i).sort((a,b)=>q?0:a.name.localeCompare(b.name,'ko'));
-  const routes=q?C.searchRoutes(ctx.routes,q,catalog).filter(acceptsRoute):[];
+  const catalog=window.BusStopLocations.points,local=q?C.search(catalog,q,{limit:100,minLength:1}):catalog,combined=[...local,...remote],exactPlaces=C.exactPlaces(combined,q);
+  const places=(exactPlaces.length?exactPlaces:combined).filter(p=>ctx.period!=='shuttle'||p.aliases?.some(a=>a.startsWith('안산역'))).filter(acceptsPlace).filter((p,i,all)=>all.findIndex(v=>v.source===p.source&&v.lat===p.lat&&v.lon===p.lon)===i).sort((a,b)=>q?0:a.name.localeCompare(b.name,'ko'));
+  const hasExactPlace=q&&C.exactPlaces(catalog,q).some(p=>acceptsPlace(p)&&(ctx.period!=='shuttle'||p.aliases?.some(a=>a.startsWith('안산역'))));
+  const routes=q&&(!hasExactPlace||routeOnly(q))?C.searchRoutes(ctx.routes,q,catalog).filter(acceptsRoute):[];
   const routeFirst=routeOnly(q);
   function appendRoutes(){if(!routes.length)return;results.append(el('h3','bus-unified-section','노선'));const all=el('button','bus-unified-query-all','노선 검색 결과 '+routes.length+'개 보기');all.type='button';all.onclick=()=>{configuration.onQuery(q);close();};results.append(all);for(const r of routes){const b=el('button','bus-unified-route');b.type='button';b.append(el('strong','',r.name),el('small','',ctx.periodLabel+' · '+r.stops.length+'곳 경유'));b.onclick=()=>{configuration.onQuery(r.name);close();};results.append(b);}}
   function appendPlaces(){if(!places.length)return;results.append(el('h3','bus-unified-section',q?'정류장·장소':'정류장·장소 목록'));for(const p of places)results.append(rowPlace(p));}

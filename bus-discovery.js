@@ -1,12 +1,12 @@
 /* Location selection and distance ranking share one controller; search UI lives in the unified screen. */
 (()=>{'use strict';
- const C=window.BusLocationCore,states={in:{point:null,label:'',radius:1000},out:{point:null,label:'',radius:1000}};
+ const C=window.BusLocationCore,states={in:{point:null,label:'',radius:500},out:{point:null,label:'',radius:500}};
  const el=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls;if(text!==undefined)n.textContent=text;return n;};
  const meters=n=>n<1000?Math.round(n/10)*10+'m':(n/1000).toFixed(1)+'km';
  function create({direction,period,changed,onStatus=()=>{}}){
-  const state=states[direction];let serial=0,pending=null,matches=new Map();
+  const state=states[direction];let serial=0,pending=null,matches=new Map(),selection=state.selection||null,manualRadius=null,recommendation=null;
   function cancel(){++serial;pending?.(false);pending=null;onStatus('',false);}
-  function setPlace(point,label){if(!C.valid(point))return;cancel();state.point={lat:point.lat,lon:point.lon};state.label=String(label||'선택한 장소').slice(0,150);changed('place');}
+  function setPlace(point,label){if(!C.valid(point))return;cancel();state.point={lat:point.lat,lon:point.lon};state.label=String(label||'선택한 장소').slice(0,150);selection=state.selection=point.source?{source:point.source}:null;manualRadius=null;changed('place');}
   function requestGPS(){
    cancel();if(!navigator.geolocation){onStatus('위치를 사용할 수 없어요. 검색창에서 장소나 주소를 선택해 주세요.',false);return Promise.resolve(false);}
    const current=++serial;onStatus('현재 위치를 확인하고 있어요.',true);
@@ -16,16 +16,16 @@
      if(current!==serial)return;const point={lat:p.coords.latitude,lon:p.coords.longitude};
      if(!C.valid(point)){fail('위치를 확인하지 못했어요. 장소나 주소로 검색해 주세요.');return;}
      if(p.coords.accuracy>1000){fail('위치 오차가 너무 커요. 장소나 주소로 검색해 주세요.');return;}
-     pending=null;state.point=point;state.label='현재 위치';onStatus(p.coords.accuracy>300?'위치 오차가 커요. 장소나 주소를 직접 선택할 수도 있어요.':'',false);changed('place');resolve(true);
+     pending=null;state.point=point;state.label='현재 위치';selection=state.selection=null;manualRadius=null;onStatus(p.coords.accuracy>300?'위치 오차가 커요. 장소나 주소를 직접 선택할 수도 있어요.':'',false);changed('place');resolve(true);
     },e=>fail(e.code===1?'위치 권한이 꺼져 있어요. 장소나 주소로 검색해 주세요.':'위치를 확인하지 못했어요. 다시 시도하거나 장소·주소로 검색해 주세요.'),{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
    });
   }
   return {
    cancel,requestGPS,setPlace,
-   clear(){cancel();state.point=null;state.label='';changed('clear');},
-   get active(){return !!state.point;},get label(){return state.label;},get radius(){return state.radius;},get point(){return state.point?{...state.point}:null;},
-   setRadius(radius){if([500,1000,2000].includes(radius)){state.radius=radius;changed('radius');}},
-   filter(routes){matches=new Map();if(!state.point)return routes;const ranked=C.rank(routes,period,state.point,state.radius,window.BusStopLocations.points);for(const item of ranked)matches.set(item.route.id,item);return ranked.map(item=>item.route);},
+   clear(){cancel();state.point=null;state.label='';selection=state.selection=null;manualRadius=null;changed('clear');},
+   get active(){return !!state.point;},get label(){return state.label;},get radius(){return recommendation?.radius||state.radius;},get recommendation(){return recommendation;},get point(){return state.point?{...state.point}:null;},
+   setRadius(radius){if([500,1000,2000].includes(radius)){manualRadius=radius;state.radius=radius;changed('radius');}},
+   filter(routes){matches=new Map();recommendation=null;if(!state.point)return routes;recommendation=C.recommend(routes,period,state.point,window.BusStopLocations.points,{selectedPlace:selection,radius:manualRadius});if(recommendation.radius)state.radius=recommendation.radius;for(const item of recommendation.items)matches.set(item.route.id,item);return recommendation.items.map(item=>item.route);},
    boardingTime(route){return matches.get(route.id)?.nearest.stop.time||null;},
    decorate(box,route){
     const item=matches.get(route.id);if(!item)return;const n=item.nearest,info=el('div','bus-nearby-result');
