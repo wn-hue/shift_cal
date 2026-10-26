@@ -49,7 +49,7 @@
   const hasExactPlace=q&&C.exactPlaces(catalog,q).some(p=>acceptsPlace(p)&&(ctx.period!=='shuttle'||p.aliases?.some(a=>a.startsWith('안산역'))));
   const routes=q&&(!hasExactPlace||routeOnly(q))?C.searchRoutes(ctx.routes,q,catalog).filter(acceptsRoute):[];
   const routeFirst=routeOnly(q);
-  function appendRoutes(){if(!routes.length)return;results.append(el('h3','bus-unified-section','노선'));const all=el('button','bus-unified-query-all','노선 검색 결과 '+routes.length+'개 보기');all.type='button';all.onclick=()=>{configuration.onQuery(q);close();};results.append(all);for(const r of routes){const b=el('button','bus-unified-route');b.type='button';b.append(el('strong','',r.name),el('small','',ctx.periodLabel+' · '+r.stops.length+'곳 경유'));b.onclick=()=>{configuration.onQuery(r.name);close();};results.append(b);}}
+  function appendRoutes(){if(!routes.length)return;results.append(el('h3','bus-unified-section','노선'));const all=el('button','bus-unified-query-all','노선 검색 결과 '+routes.length+'개 보기');all.type='button';all.onclick=()=>{configuration.onQuery(q);close({results:true});};results.append(all);for(const r of routes){const b=el('button','bus-unified-route');b.type='button';b.append(el('strong','',r.name),el('small','',ctx.periodLabel+' · '+r.stops.length+'곳 경유'));b.onclick=()=>{configuration.onQuery(r.name);close({results:true});};results.append(b);}}
   function appendPlaces(){if(!places.length)return;results.append(el('h3','bus-unified-section',q?'정류장·장소':'정류장·장소 목록'));for(const p of places)results.append(rowPlace(p));}
   if(routeFirst){appendRoutes();appendPlaces();}else{appendPlaces();appendRoutes();}
   if(!places.length&&!routes.length){results.append(el('p','bus-unified-empty',q?(routeOnly(q)?'선택한 공장·탑승 시간에 맞는 노선이 없어요. 검색어나 조회 조건을 확인해 주세요.':'일치하는 장소나 노선이 없어요. 주소·장소를 더 찾아보려면 검색을 눌러 주세요.'):'이 지역에 등록된 장소가 없어요.'));}
@@ -65,7 +65,7 @@
   if(!active||!showing)return;showing=false;closing=true;abort();configuration?.cancel();input.blur();window.AppMotion.page(view,false,()=>{if(showing)return;active=false;closing=false;view.hidden=true;savedInert.forEach(([n,value])=>n.inert=value);view.style.removeProperty('--bus-search-height');view.style.removeProperty('--bus-search-top');if(opener?.isConnected)opener.focus({preventScroll:true});});
  }
  function open(initial=''){configuration?.cancel();if(history.state?.shiftBusSearch){show({initial});return;}history.pushState({...history.state,shiftCommute:true,shiftBusSearch:true},'',location.href);show({initial});}
- function close(){hide();if(history.state?.shiftBusSearch)history.back();}
+ function close(options={}){hide();if(history.state?.shiftBusSearch){if(options.results&&!history.state.shiftBusResults){history.replaceState({...history.state,shiftBusSearch:false,shiftBusResults:true},'',location.href);window.ShiftBusBrowser.syncHistory();}else history.back();}}
  back.onclick=close;gps.onclick=async()=>{abort();status.textContent='현재 위치를 확인하고 있어요.';const current=++token;gps.disabled=true;const ok=await configuration?.onGPS();if(current!==token||!showing)return;gps.disabled=false;if(ok)close();};
  input.addEventListener('compositionstart',()=>{composing=true;abort();});input.addEventListener('compositionend',()=>{composing=false;update();});
  function update(){abort();remote=[];status.textContent='';if(!composing){render();results.scrollTop=0;}}

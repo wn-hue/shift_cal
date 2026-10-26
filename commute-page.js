@@ -10,9 +10,9 @@
   if(!active||!showing)return;window.ShiftBusBrowser?.dismiss();showing=false;
   AppMotion.page(page,false,()=>{active=false;page.hidden=true;document.body.classList.remove('commute-page-open');document.body.style.removeProperty('--commute-scroll-top');locked.forEach(([el,value])=>el.inert=value);window.scrollTo({top:returnScroll,behavior:'instant'});document.getElementById('commute-open').focus({preventScroll:true});});
  }
- function open(){if(active)return;history.pushState({...history.state,shiftCommute:true,shiftBusSearch:false},'','#commute');show();}
+ function open(){if(active)return;history.pushState({...history.state,shiftCommute:true,shiftBusSearch:false,shiftBusResults:false},'','#commute');show();}
  document.getElementById('commute-back').onclick=()=>{if(history.state?.shiftCommute)history.back();else{history.replaceState({...history.state,shiftCommute:false},'',location.pathname+location.search);hide();}};
- window.addEventListener('popstate',()=>{if(history.state?.shiftCommute)show();else hide();window.BusUnifiedSearch?.syncHistory();});
- if(location.hash==='#commute'){history.replaceState({...history.state,shiftCommute:true,shiftBusSearch:false},'');show();}
+ window.addEventListener('popstate',()=>{if(history.state?.shiftCommute)show();else hide();window.ShiftBusBrowser?.syncHistory();window.BusUnifiedSearch?.syncHistory();});
+ if(location.hash==='#commute'){history.replaceState({...history.state,shiftCommute:true,shiftBusSearch:false,shiftBusResults:false},'');show();}
  window.CommutePage={open};
 })();

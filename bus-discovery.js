@@ -26,6 +26,7 @@
    get active(){return !!state.point;},get label(){return state.label;},get radius(){return recommendation?.radius||state.radius;},get recommendation(){return recommendation;},get point(){return state.point?{...state.point}:null;},
    setRadius(radius){if([500,1000,2000].includes(radius)){manualRadius=radius;state.radius=radius;changed('radius');}},
    filter(routes){matches=new Map();recommendation=null;if(!state.point)return routes;recommendation=C.recommend(routes,period,state.point,window.BusStopLocations.points,{selectedPlace:selection,radius:manualRadius});if(recommendation.radius)state.radius=recommendation.radius;for(const item of recommendation.items)matches.set(item.route.id,item);return recommendation.items.map(item=>item.route);},
+   nearest(route){const n=matches.get(route.id)?.nearest;return n?{name:n.stop.name,distance:n.distance}:null;},
    boardingTime(route){return matches.get(route.id)?.nearest.stop.time||null;},
    decorate(box,route){
     const item=matches.get(route.id);if(!item)return;const n=item.nearest,info=el('div','bus-nearby-result');

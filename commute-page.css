@@ -150,3 +150,43 @@ body[data-pref-theme] #commute-dialog .bus-unified-search-page{inset:0;height:10
 
 /* The departure/destination row is the only search entry on the booking screen. */
 body[data-pref-theme] #commute-dialog .bus-location-row .bus-search-open{flex:1;width:auto;margin:0;padding:12px 0;min-height:79px;background:transparent!important;color:inherit!important;border:0!important;box-shadow:none!important;border-radius:0!important;text-align:left}
+
+/* Time-first result screen, sharing the route data and one search entry. */
+#commute-dialog .commute-page-body{overflow-x:hidden}
+#commute-dialog.bus-results-mode .commute-page-body>:not(.bus-search-results){display:none!important}
+#commute-dialog.bus-results-mode .commute-page-body{padding-top:0}
+#commute-dialog .bus-result-journey[hidden],#commute-dialog #commute-page-title[hidden]{display:none!important}
+body[data-pref-theme] #commute-dialog .bus-result-journey{display:flex;align-items:center;justify-content:center;gap:7px;flex:1;min-width:0;min-height:44px;margin-right:44px;padding:6px 0;background:none!important;color:var(--ui-ink,#191f28)!important;border:0!important;box-shadow:none!important;font:inherit;font-size:15px;font-weight:650;letter-spacing:-.4px}
+#commute-dialog .bus-result-journey span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#commute-dialog .bus-result-journey .bus-journey-arrow{flex:none;color:var(--ui-muted,#8b95a1)}
+#commute-dialog .bus-result-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 -20px 16px;padding:0 20px 16px;background:var(--ui-page,#f2f4f6)}
+#commute-dialog .bus-result-date{font-size:13px;font-weight:550;color:var(--ui-muted,#6b7684);white-space:nowrap}
+body[data-pref-theme] #commute-dialog .bus-result-conditions{min-height:40px;padding:8px 13px;border:0!important;box-shadow:none!important;border-radius:20px!important;background:var(--ui-card,#fff)!important;color:var(--ui-blue,#3182f6)!important;font:inherit;font-size:12px;font-weight:600}
+#commute-dialog .bus-search-results .bus-results-heading{margin-top:0;margin-bottom:12px}
+#commute-dialog .bus-search-results .bus-result-count{font-size:13px;font-weight:550;color:var(--ui-muted,#6b7684);outline:0}
+#commute-dialog.bus-results-mode .bus-route-search-context{display:none}
+#commute-dialog .bus-search-results .bus-route{padding:16px 18px;border:0;border-radius:18px;background:var(--ui-card,#fff);box-shadow:none;margin:10px 0}
+#commute-dialog .bus-search-results .bus-route-heading{display:flex;align-items:center;gap:10px;min-height:30px}
+#commute-dialog .bus-search-results .bus-route-heading strong{flex:1;min-width:0;font-size:14px;font-weight:600;line-height:1.5;color:var(--ui-muted,#6b7684)}
+#commute-dialog .bus-search-results .bus-star{flex:none;width:36px;min-height:36px;padding:4px;font-size:22px}
+#commute-dialog .bus-search-results .bus-details{margin:0;border:0;padding:0}
+#commute-dialog .bus-search-results .bus-details summary{display:flex;align-items:center;justify-content:space-between;gap:16px;list-style:none;padding:5px 0 0;min-height:70px;cursor:pointer}
+#commute-dialog .bus-search-results .bus-details summary::-webkit-details-marker{display:none}
+#commute-dialog .bus-result-main{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
+#commute-dialog .bus-result-time-row{display:flex;align-items:baseline;gap:8px;min-width:0}
+#commute-dialog .bus-departure-time{font-size:25px;font-weight:750;letter-spacing:-.7px;line-height:1.2;color:var(--ui-ink,#191f28)}
+#commute-dialog .bus-result-time-label{font-size:11px;color:var(--ui-muted,#8b95a1);white-space:nowrap}
+#commute-dialog .bus-result-stop{font-size:13px;line-height:1.5;color:var(--ui-muted,#6b7684);overflow-wrap:anywhere}
+#commute-dialog .bus-result-distance{font-size:11px;line-height:1.4;color:var(--ui-muted,#8b95a1)}
+#commute-dialog .bus-search-results .bus-details summary .bus-result-action{display:block;flex:none;min-width:58px;box-sizing:border-box;padding:8px 10px;border:1px solid var(--ui-line,#e5e8eb);border-radius:10px;font-size:12px;font-weight:550;color:var(--ui-muted,#6b7684);text-align:center}
+#commute-dialog .bus-search-results .bus-details summary .bus-result-action::after{content:' ›';color:inherit}
+#commute-dialog .bus-search-results .bus-details[open] summary .bus-result-action::after{content:' ⌃'}
+#commute-dialog .bus-search-results .bus-details[open] summary{padding-bottom:14px}
+@media(max-width:350px){#commute-dialog .bus-result-journey{font-size:14px;margin-right:32px}#commute-dialog .bus-search-results .bus-route{padding:14px}#commute-dialog .bus-departure-time{font-size:23px}}
+
+#commute-dialog .bus-search-results .bus-route-heading strong{order:0}
+#commute-dialog .bus-search-results .bus-star{order:1;margin-left:auto}
+
+#commute-dialog.bus-results-mode .commute-topbar{background:var(--ui-card,#fff)}
+#commute-dialog .bus-result-toolbar{background:var(--ui-card,#fff)}
+body[data-pref-theme] #commute-dialog .bus-result-conditions{background:var(--ui-field,#f2f4f6)!important}
