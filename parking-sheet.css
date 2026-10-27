@@ -18,13 +18,13 @@ body[data-pref-theme] #parking-dialog #parking-refresh{display:grid;place-items:
 #parking-refresh svg{width:20px;height:20px}
 #parking-refresh:disabled svg{opacity:.45}
 #parking-dialog .parking-signals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
-body[data-pref-theme] #parking-dialog .parking-signals button{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;min-height:78px;padding:13px 4px;border:1px solid transparent;border-radius:18px;color:var(--ui-copy,#4e5968);background:var(--ui-card,#fff);font:inherit;box-shadow:none;opacity:1}
+body[data-pref-theme] #parking-dialog .parking-signals button{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;min-height:112px;padding:16px 4px;border:1px solid transparent;border-radius:18px;color:var(--ui-copy,#4e5968);background:var(--ui-card,#fff);font:inherit;box-shadow:none;opacity:1}
 #parking-dialog [data-value=free]{--parking-dot:#35ad7c}
 #parking-dialog [data-value=busy]{--parking-dot:#e6b746}
 #parking-dialog [data-value=full]{--parking-dot:#ee6d76}
-#parking-dialog .parking-signal-label{display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:550;white-space:nowrap}
+#parking-dialog .parking-signal-label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:550;white-space:nowrap}
 #parking-dialog .parking-signal-label>span{font-size:inherit}
-#parking-dialog .parking-dot{display:block;width:7px;height:7px;border-radius:50%;background:var(--parking-dot);flex:none}
+#parking-dialog .parking-dot{display:block;width:22px;height:22px;border-radius:50%;background:var(--parking-dot);flex:none}
 #parking-dialog .parking-signal-count{font-size:13px;line-height:1.2;color:var(--ui-muted,#8b95a1)}
 #parking-dialog .parking-signal-count strong{font-size:17px;font-weight:600;letter-spacing:-.3px;color:var(--ui-copy,#4e5968);font-variant-numeric:tabular-nums}
 #parking-dialog .parking-signal-count small{font-size:12px;font-weight:400;margin-left:2px}
