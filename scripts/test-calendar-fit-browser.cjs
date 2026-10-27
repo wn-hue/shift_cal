@@ -15,7 +15,7 @@ const assert=require('node:assert/strict');
  // All themes remain discoverable through the actual settings sheet.
  await page.locator('#account-menu-button').click();await page.locator('.menu-preferences').click();
  await page.locator('#choose-theme').click();
- assert.deepEqual(await page.locator('#settings-options .settings-radio-row').evaluateAll(els=>els.map(e=>[e.querySelector('input').value,e.querySelector('span').textContent])),[['test1','테스트1'],['test3','테스트2'],['test4','테스트3'],['current','낮밤'],['test','따뜻함'],['toss','블루컬러'],['gpt','그레이'],['dark','다크모드']]);
+ assert.deepEqual(await page.locator('#settings-options .settings-radio-row').evaluateAll(els=>els.map(e=>[e.querySelector('input').value,e.querySelector('span').textContent])),[['current','낮밤'],['test','따뜻함'],['toss','블루컬러'],['gpt','그레이'],['dark','다크모드'],['test1','테스트1'],['test3','테스트2'],['test4','테스트3']]);
  await page.keyboard.press('Escape');
  for(const theme of ['test1','test3','test4','test']){
   await page.locator('#choose-theme').click();await page.locator(`#settings-options input[value=${theme}]`).check();

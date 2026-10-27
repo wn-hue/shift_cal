@@ -100,3 +100,7 @@ body[data-pref-theme=test] .nav-capsule{border:2px solid #ffffffd9;box-shadow:0 
 body[data-pref-theme=test] .bottom-nav .nav-item,body[data-pref-theme=test] .bottom-nav .nav-item .nav-visual{min-height:58px}
 body[data-pref-theme=test] .bottom-nav .nav-item .nav-visual{gap:4px;padding:7px 3px}
 body[data-pref-theme=test] .bottom-nav .nav-item svg{width:25px;height:25px}
+
+/* Inset strokes stay visible inside the cell without changing the seven-column layout. */
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-grid .cal-day.today{position:relative;border-radius:14px}
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-grid .cal-day.today::after{content:'';position:absolute;inset:1px;border:1.5px solid var(--test-today-edge);border-radius:13px;pointer-events:none}

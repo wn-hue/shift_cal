@@ -87,10 +87,14 @@ body[data-pref-theme=test4] .bottom-nav .nav-item.active .nav-visual{background:
 
 body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item:active .nav-visual{background:var(--nav-tap)!important;color:var(--test-accent)!important}
 
-/* Let the title and weather/actions keep their intrinsic width, rather than overlap. */
-body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-view=calendar] .reference-header{flex-wrap:wrap;column-gap:8px;row-gap:4px;overflow:visible}
-body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-title-area{flex:1 0 max-content;min-width:0;max-width:100%;padding:3px 4px;box-sizing:border-box;overflow:visible}
-body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .reference-header .month-title-btn{max-width:100%;min-height:44px;padding:4px 2px;box-sizing:border-box;line-height:1.35;border-radius:10px;white-space:normal;overflow:visible;text-align:left}
-body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .reference-header .month-title-btn:focus-visible{outline:2px solid var(--test-accent);outline-offset:2px}
-body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions{flex:0 0 auto;min-width:0;max-width:100%;margin-left:auto;flex-wrap:wrap;row-gap:4px}
-body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid{min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 162px - var(--theme-header-height,68px)),740px)}
+/* Let the title and weather/actions keep their intrinsic width, rather than overlap. Warmth shares this sizing contract. */
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-view=calendar] .reference-header{flex-wrap:wrap;column-gap:8px;row-gap:4px;overflow:visible}
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-title-area{flex:1 0 max-content;min-width:0;max-width:100%;padding:3px 4px;box-sizing:border-box;overflow:visible}
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .reference-header .month-title-btn{max-width:100%;min-height:44px;padding:4px 2px;box-sizing:border-box;line-height:1.35;border-radius:10px;white-space:normal;overflow:visible;text-align:left}
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .reference-header .month-title-btn:focus-visible{outline:2px solid var(--test-accent);outline-offset:2px}
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions{flex:0 0 auto;min-width:0;max-width:100%;margin-left:auto;flex-wrap:wrap;row-gap:4px}
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid{min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 182px - var(--theme-header-height,68px)),740px)}
+
+/* Leave room for the entire rounded toolbar below the native/browser safe area. */
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-view=calendar] .container{padding-top:16px}
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-view=calendar] .reference-header{margin-top:0}
