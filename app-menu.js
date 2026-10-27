@@ -25,7 +25,7 @@ function openAppPreferences(){window.SettingsPage.open();}
             if (name === 'theme') {
                 document.body.removeAttribute('data-pref-mode');
                 document.documentElement.style.colorScheme = value === 'dark' ? 'dark' : 'light';
-                document.querySelector('meta[name="theme-color"]')?.setAttribute('content',({dark:'#111820',test:'#eeeae4',test2:'#edf0f5'})[value] || '#ffffff');
+                document.querySelector('meta[name="theme-color"]')?.setAttribute('content',({dark:'#111820',test:'#f3f5f7',test2:'#edf0f5'})[value] || '#ffffff');
             }
             return value;
         };

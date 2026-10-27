@@ -16,7 +16,7 @@ const assert=require('node:assert/strict');
  }
  await page.locator('#settings-back').click();await page.locator('#bnav-cal').click();
  await page.evaluate(()=>{const e=document.getElementById('pref-theme');e.value='current';e.dispatchEvent(new Event('change'))});
- const mainCard=await page.locator('.cal-day:not(.other-month)').first().evaluate(e=>({radius:getComputedStyle(e).borderRadius,border:getComputedStyle(e).borderWidth}));assert.equal(mainCard.radius,'9px');assert.equal(mainCard.border,'1px');
+ const mainCard=await page.locator('.cal-day:not(.other-month)').first().evaluate(e=>({radius:getComputedStyle(e).borderRadius,border:getComputedStyle(e).borderWidth}));assert.equal(mainCard.radius,'0px');assert.equal(await page.locator('#calendar-grid').evaluate(e=>getComputedStyle(e).gap),'normal');
  for(const theme of ['test','test2']){
   await page.evaluate(t=>{const e=document.getElementById('pref-theme');e.value=t;e.dispatchEvent(new Event('change'));},theme);
   await page.reload();assert.equal(await page.locator('body').getAttribute('data-pref-theme'),theme);
