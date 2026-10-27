@@ -87,3 +87,47 @@ body[data-pref-theme] #lost-found-dialog .lost-search-card input[type=search]{fo
 #lost-found-dialog .lost-search-card .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 #lost-found-dialog .lost-card-age{display:none}
 #lost-found-dialog .lost-card-tools summary{font-size:11px;min-height:44px;line-height:44px}
+
+/* Search-first board, with quick filter chips and a floating registration action. */
+#lost-found-dialog .lost-page-topbar{justify-content:flex-start;gap:4px;padding-left:max(12px,calc((100vw - 560px)/2));padding-right:max(20px,calc((100vw - 560px)/2));min-height:70px}
+#lost-found-dialog .lost-page-topbar h2{flex:none;font-size:22px;letter-spacing:-.7px}
+body[data-pref-theme] #lost-found-dialog .lost-info-button{display:grid;place-items:center;width:40px;height:44px;padding:9px;border:0;background:none;color:var(--ui-muted,#8b95a1);box-shadow:none}
+#lost-found-dialog .lost-info-button svg{width:21px;height:21px}
+#lost-found-dialog .lost-page-body{padding-top:10px;padding-bottom:120px}
+#lost-found-dialog .lost-segments{gap:24px;margin:4px 0 18px}
+body[data-pref-theme] #lost-found-dialog .lost-segments button{font-size:16px;min-height:44px}
+#lost-found-dialog .lost-search-card{height:52px;padding:4px 14px;border-radius:13px;gap:0}
+#lost-found-dialog .lost-search-card .lost-search-row{min-height:44px}
+body[data-pref-theme] #lost-found-dialog .lost-query-button{position:absolute;width:1px;height:1px;min-height:0;overflow:hidden;clip-path:inset(50%);padding:0;border:0}
+#lost-found-dialog .lost-query-button:focus-visible{position:static;width:auto;height:44px;min-height:44px;clip-path:none;padding:8px}
+#lost-found-dialog .lost-filter-bar{display:flex;align-items:center;gap:8px;margin:14px 0 0;min-width:0}
+body[data-pref-theme] #lost-found-dialog .lost-filter-chip{display:inline-flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;min-width:0;min-height:36px;padding:6px 12px;border:1px solid var(--ui-line,#d8dbe1);border-radius:24px;background:var(--ui-card,#fff);color:var(--ui-ink,#333d4b);font:inherit;font-size:13px;font-weight:500;box-shadow:none}
+#lost-found-dialog .lost-filter-chip svg{width:16px;height:16px;flex:none}
+#lost-found-dialog .lost-filter-chip .lost-chip-arrow{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid currentColor;opacity:.8;flex:none}
+body[data-pref-theme] #lost-found-dialog .lost-filter-chip.is-active{border-color:var(--ui-blue,#3182f6);color:var(--ui-blue,#3182f6);background:var(--ui-blue-soft,#eaf3ff)}
+#lost-found-dialog .lost-results-heading{margin-top:24px}
+#lost-found-dialog .lost-results-heading[hidden]{display:none}
+#lost-found-dialog .lost-empty{text-align:center;padding:42px 0 24px;color:var(--ui-muted,#8b95a1)}
+#lost-found-dialog .lost-empty[hidden]{display:none}
+#lost-found-dialog .lost-empty-art{display:block;width:170px;height:150px;margin:0 auto 18px}
+#lost-found-dialog .lost-empty h2{margin:0;font-size:21px;font-weight:700;letter-spacing:-.6px;color:var(--ui-muted,#8b95a1)}
+#lost-found-dialog .lost-empty p{font-size:15px;margin:12px 0 18px;line-height:1.5}
+body[data-pref-theme] :is(#lost-found-dialog,.lost-filter-sheet) .lost-reset-filters{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 16px;border:0;border-radius:24px;background:var(--ui-field,#f2f4f6);color:var(--ui-muted,#6b7684);font:inherit;font-size:13px;font-weight:600;box-shadow:none}
+#lost-found-dialog>.lost-compose-bar{position:absolute;right:max(24px,calc((100vw - 520px)/2));bottom:max(28px,env(safe-area-inset-bottom));z-index:2}
+body[data-pref-theme] #lost-found-dialog #lost-new{display:flex;align-items:center;gap:8px;min-height:48px;padding:11px 19px;background:#0785f7;color:#fff;border:0;border-radius:30px;font-size:17px;font-weight:650;box-shadow:0 5px 14px #191f2826}
+#lost-found-dialog #lost-new::before{content:'+';font-size:28px;line-height:1;font-weight:400}
+body[data-pref-theme] dialog.lost-filter-sheet{background:var(--ui-card,#fff);color:var(--ui-ink,#191f28);border:0;padding:20px 24px 28px;box-sizing:border-box}
+.lost-filter-sheet h2{font-size:19px;margin:10px 0 18px;letter-spacing:-.4px}
+.lost-filter-sheet .lost-search-row,.lost-filter-sheet .lost-mine-row{display:flex;align-items:center;gap:12px;justify-content:space-between;min-height:64px;border-bottom:1px solid var(--ui-line,#f2f4f6);margin-bottom:12px}
+.lost-filter-sheet .lost-search-copy{display:flex;align-items:center;gap:20px;flex:1;justify-content:space-between;font-size:15px}
+.lost-filter-sheet .lost-field-icon{display:none}
+.lost-filter-sheet select{border:0;background:transparent;color:inherit;font:inherit;font-size:16px;padding:10px}
+.lost-filter-sheet #lost-mine{width:22px;height:22px;accent-color:#3182f6}
+.lost-info-sheet .lost-page-guidance{font-size:14px;line-height:1.8;color:var(--ui-muted,#6b7684)}
+.lost-info-sheet .lost-page-guidance>summary{display:none}
+.lost-info-sheet button{min-height:44px}
+@media(max-width:360px){#lost-found-dialog .lost-page-topbar h2{font-size:20px}#lost-found-dialog .lost-filter-bar{gap:6px}body[data-pref-theme] #lost-found-dialog .lost-filter-chip{padding:6px 9px;font-size:12px}#lost-found-dialog .lost-empty{padding-top:30px}}
+#lost-found-dialog .lost-filter-bar{overflow-x:auto;scrollbar-width:none}
+#lost-found-dialog .lost-filter-bar::-webkit-scrollbar{display:none}
+body[data-pref-theme] #lost-found-dialog .lost-filter-chip{flex:none}
+#lost-found-dialog .lost-filter-bar[hidden]{display:none}

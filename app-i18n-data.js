@@ -1,5 +1,12 @@
 /* UI-only translations. User notes, event names, meals and source documents stay untouched. */
 window.AppTranslations=Object.fromEntries(`
+물품 분류|Item category|物品分类|品目
+기간|Period|期间|期間
+최근 7일|Last 7 days|最近7天|過去7日
+최근 30일|Last 30 days|最近30天|過去30日
+최근 90일|Last 90 days|最近90天|過去90日
+필터 초기화|Reset filters|重置筛选|絞り込みをリセット
+
 신정|New Year’s Day|元旦|元日
 설날|Lunar New Year|春节|旧正月
 삼일절|Independence Movement Day|三一节|三一節
