@@ -6,17 +6,19 @@
  const content=overlay.querySelector('.editor-content'),tabs=overlay.querySelector('.editor-tabs');
  // Tabs must not move with the long sticker grid or focused memo content.
  content.before(tabs);
- let frame=0,locked=false,scrollYBefore=0,savedBody=null,normalHeight=0,keyboardOpen=false;
+ let frame=0,locked=false,scrollYBefore=0,savedBody=null,normalHeight=0,keyboardOpen=false,settleTimer=0,previousHeight=-1;
  function lock(active){
   if(active===locked)return;
   locked=active;
   if(active){
    scrollYBefore=window.scrollY;
-   normalHeight=viewport?.height||innerHeight;keyboardOpen=false;
+   normalHeight=viewport?.height||innerHeight;keyboardOpen=false;previousHeight=-1;
+   clearTimeout(settleTimer);settleTimer=setTimeout(()=>{if(locked&&overlay.classList.contains('active')&&overlay.dataset.sheetClosing!=='true')overlay.dataset.editorSettled='true'},240);
    savedBody={};for(const name of ['position','top','left','right','width'])savedBody[name]=document.body.style[name];
    Object.assign(document.body.style,{position:'fixed',top:-scrollYBefore+'px',left:'0',right:'0',width:'100%'});
    content.scrollTop=0;
   }else{
+   clearTimeout(settleTimer);delete overlay.dataset.editorSettled;
    Object.assign(document.body.style,savedBody);
    window.scrollTo({top:scrollYBefore,left:0,behavior:'instant'});
    for(const name of ['height','width','top','left'])overlay.style.removeProperty('--memo-viewport-'+name);
@@ -39,10 +41,16 @@
   keyboardOpen=(editing||keyboardOpen)&&normalHeight-height>120;
   const values={height,width:viewport?.width||innerWidth,top:keyboardOpen?(viewport?.offsetTop||0):0,left:viewport?.offsetLeft||0};
   for(const [name,value]of Object.entries(values))overlay.style.setProperty('--memo-viewport-'+name,value+'px');
-  const resting=normalHeight<540?normalHeight-24:Math.min(780,normalHeight*.74);
-  overlay.style.setProperty('--editor-sheet-height',Math.max(0,Math.min(resting,height-(keyboardOpen?12:0)))+'px');
   overlay.dataset.editorKeyboard=String(keyboardOpen);overlay.dataset.editorFocus=keyboardOpen&&focused.id==='modal-memo-input'?'memo':keyboardOpen&&editing?'event':'';
   overlay.dataset.memoCompact=String(keyboardOpen||height<540);overlay.dataset.editorTiny=String(height<300);
+  const panel=document.getElementById(overlay.dataset.editorTab==='memo'?'memo-panel':'work-panel');
+  const padding=getComputedStyle(content),header=overlay.querySelector('.override-header');
+  // The panel has natural height even when its parent scrolls. Do not measure the parent's stretched height.
+  const natural=header.offsetHeight+tabs.offsetHeight+Math.max(panel.offsetHeight,panel.scrollHeight)+44+parseFloat(padding.paddingTop)+parseFloat(padding.paddingBottom);
+  const limit=normalHeight<540?normalHeight-24:Math.min(740,normalHeight*.78);
+  const resting=Math.min(limit,natural);
+  const target=Math.ceil(Math.max(0,keyboardOpen?height-12:Math.min(resting,height)));
+  if(target!==previousHeight){previousHeight=target;overlay.style.setProperty('--editor-sheet-height',target+'px');}
   // Scroll the editable pane, never the fixed sheet or its backdrop, to reveal a field.
   if(keyboardOpen&&editing&&content.contains(focused)){
    const pane=content.getBoundingClientRect(),field=focused.getBoundingClientRect();
@@ -52,6 +60,9 @@
  }
  function schedule(){if(!frame)frame=requestAnimationFrame(fit)}
  new MutationObserver(fit).observe(overlay,{attributes:true,attributeFilter:['class','data-editor-tab']});
+ // Selection previews, agenda rows and translated labels can change the natural panel height.
+ if(window.ResizeObserver){const observer=new ResizeObserver(schedule);for(const el of[overlay.querySelector('.override-header'),tabs,document.getElementById('work-panel'),document.getElementById('memo-panel')])observer.observe(el);}
+ new MutationObserver(schedule).observe(content,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden']});
  overlay.addEventListener('focusin',schedule);
  overlay.addEventListener('focusout',schedule);
  viewport?.addEventListener('resize',schedule);
