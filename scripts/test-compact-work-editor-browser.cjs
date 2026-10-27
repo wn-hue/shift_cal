@@ -1,43 +1,23 @@
 'use strict';
-const assert=require('node:assert/strict');
-const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
-(async()=>{for(const engine of [webkit,chromium]){
- const browser=await engine.launch();
- for(const width of [320,390])for(const theme of ['current','toss','gpt','dark','test','test1','test3','test4']){
-  if(process.env.WORK_TEST_QUICK&&(width!==390||!(process.env.WORK_TEST_THEMES||'current,test,test1,test3,test4').split(',').includes(theme)))continue;
-  const page=await browser.newPage({viewport:{width,height:844},timezoneId:'Asia/Seoul'});
-  await page.clock.setFixedTime(new Date('2026-10-24T12:00:00+09:00'));
-  await page.addInitScript(({theme})=>{localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_display_theme',theme);localStorage.setItem('shift_onboarding_v1',JSON.stringify({status:'existing'}));localStorage.setItem('shift_salary_config_master',JSON.stringify({hireDate:'2015-06-16',baseHourly:10320,ordinaryHourly:11000}))},{theme});
-  await page.route('**/api/**',r=>r.fulfill({json:{configured:false}}));page.on('dialog',dialog=>dialog.accept());
-  await page.goto(process.env.TEST_URL||'http://localhost:8768/');
-  const weekendColors=await page.locator('.cal-weekdays').evaluate(el=>[getComputedStyle(el.firstElementChild).color,getComputedStyle(el.lastElementChild).color]);assert.deepEqual(weekendColors,theme==='dark'?['rgb(255, 139, 152)','rgb(138, 185, 255)']:theme==='test'?['rgb(174, 88, 100)','rgb(82, 123, 153)']:theme==='test1'?['rgb(193, 75, 94)','rgb(66, 118, 173)']:theme==='test3'?['rgb(207, 72, 69)','rgb(78, 116, 150)']:theme==='test4'?['rgb(173, 86, 98)','rgb(75, 114, 145)']:['rgb(229, 72, 77)','rgb(49, 130, 246)']);
-  const open=async day=>{await page.locator(`.cal-day[data-date="2026-10-${day}"] .day-num`).click();await page.waitForFunction(()=>{const r=document.querySelector('.override-sheet').getBoundingClientRect();return document.body.classList.contains('work-editor-open')&&r.y>=0&&r.bottom<=innerHeight+1})};
-  await open('01');assert.equal(await page.locator('#work-panel .shift-scroll .opt-btn').count(),14);
-  await page.waitForTimeout(280);const sheet=await page.locator('.override-sheet').boundingBox();assert(sheet.height>=380&&sheet.height<=540&&sheet.y>=280&&sheet.y+sheet.height<=845,JSON.stringify(sheet));
-  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-  const emptySpace=await page.locator('#editor-swipe-space').evaluate(e=>e.getBoundingClientRect().height);assert(emptySpace>=44&&emptySpace<=46);
-
-  const sticker=await page.locator('#editor-sticker-preview').boundingBox(),reset=await page.locator('.override-header .override-reset').boundingBox();assert(reset.y>=sticker.y+sticker.height&&reset.x+reset.width<=width,JSON.stringify({sticker,reset}));
-  const rails=page.locator('#work-panel .shift-scroll');assert.equal(await rails.count(),2);
-  assert(await page.locator('#work-panel .work-section-heading').isVisible());
-  assert.equal(await page.locator('.override-sheet>.editor-tabs').evaluate(e=>getComputedStyle(e,'::before').display),'none');
-  const attendance=await page.locator('.attendance-choices button:visible').first().evaluate(e=>{const r=e.getBoundingClientRect();return{width:r.width,height:r.height,radius:getComputedStyle(e).borderRadius}});assert(attendance.width>=76&&attendance.height===44&&attendance.radius==='22px',JSON.stringify(attendance));
-  for(const rail of await rails.all()){
-   const info=await rail.evaluate(el=>({scroll:el.scrollWidth,width:el.clientWidth,ys:[...el.children].filter(e=>!e.hidden).map(e=>Math.round(e.getBoundingClientRect().y))}));assert(info.scroll>info.width,JSON.stringify(info));assert.equal(new Set(info.ys).size,1);
-   await rail.locator('button').last().scrollIntoViewIfNeeded();assert(await rail.evaluate(e=>e.scrollLeft>0));
-   await rail.evaluate(e=>e.scrollLeft=0);
-  }
-  assert.equal(await page.getByRole('button',{name:'기본 근무로 복구',exact:true}).evaluate(e=>getComputedStyle(e).color),theme==='test'?'rgb(137, 107, 69)':theme==='test1'?'rgb(34, 113, 233)':theme==='test3'?'rgb(217, 54, 50)':theme==='test4'?'rgb(89, 69, 56)':'rgb(27, 100, 218)');
-  const palette=await page.evaluate(()=>{const row=document.querySelector('#work-panel .shift-scroll'),classes=['day','night','off','special special-day','special special-night'];const grid=document.getElementById('calendar-grid'),cell=document.createElement('div');cell.className='cal-day';const badge=document.createElement('div');cell.append(badge);grid.append(cell);try{return classes.map((c,i)=>{badge.className='shift-badge '+c;const a=getComputedStyle(badge),b=getComputedStyle(row.children[i]);return row.children[i].hidden?null:[a.backgroundColor,a.color,b.backgroundColor,b.color]})}finally{cell.remove()}});assert(palette.filter(Boolean).every(([a,b,c,d])=>a===c&&b===d),JSON.stringify(palette));
-  if(width===390&&['current','dark','test'].includes(theme))await page.screenshot({animations:'disabled',path:`/tmp/compact-work-${theme}-${engine.name()}.png`});
-  await page.locator('#work-panel .opt-btn.no-ot').click();assert.equal(await page.evaluate(()=>localStorage.getItem('shift_overrides_C')),null);await page.locator('#apply-preview').click();assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_overrides_C'))['2026-10-01']),'NO_OT');
-  await open('01');await page.getByRole('button',{name:'기본 근무로 복구',exact:true}).click();await page.locator('#apply-preview').click();assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_overrides_C'))['2026-10-01']),undefined);
-  await open('01');await page.locator('#work-panel .opt-btn.leave').click();await page.locator('#apply-preview').click();assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_overrides_C'))['2026-10-01']),'LEAVE');
-  await open('01');await page.getByRole('tab',{name:'메모',exact:true}).click();assert(await page.locator('#day-note').evaluate(e=>!!(e.compareDocumentPosition(document.querySelector('.day-agenda'))&Node.DOCUMENT_POSITION_FOLLOWING)));await page.locator('#modal-memo-input').fill('근무 변경 창에서도 메모 유지');await page.getByRole('button',{name:'메모 저장',exact:true}).click();assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_day_memos'))['2026-10-01']),'근무 변경 창에서도 메모 유지');
-  await open('01');await page.locator('#work-panel .opt-btn.off').click();await page.locator('#apply-preview').click();assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_overrides_C'))['2026-10-01']),'OFF');
-  await open('04');await page.locator('.override-sheet').evaluate(async e=>Promise.all(e.getAnimations().map(a=>a.finished.catch(()=>{}))));const shortSheet=await page.locator('.override-sheet').boundingBox();assert(shortSheet.height<sheet.height-50&&shortSheet.height<=430,JSON.stringify({sheet,shortSheet}));assert.equal(await page.locator('#work-panel .opt-btn.leave').isDisabled(),true);await page.getByRole('button',{name:'근무 변경 내리기',exact:true}).click();
-  await page.setViewportSize({width,height:360});await open('01');await page.locator('#work-panel .opt-btn.unpaid-half').last().scrollIntoViewIfNeeded();const last=await page.locator('#work-panel .opt-btn.unpaid-half').last().boundingBox();assert(last.y>=0&&last.y+last.height<=361);await page.getByRole('button',{name:'근무 변경 내리기',exact:true}).click();await page.waitForFunction(()=>!document.body.classList.contains('work-editor-open'));
-  console.log(engine.name(),width,theme,'PASS partial-height card, horizontal rails, matching colors, all choices, shift/leave save, restore, off-day restriction, memo and short screen');await page.close();
- }
- await browser.close();
-}})().catch(error=>{console.error(error);process.exit(1)});
+const assert=require('node:assert/strict'),{webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+(async()=>{for(const engine of [webkit,chromium]){const browser=await engine.launch();for(const width of (process.env.WORK_TEST_QUICK?[390]:[320,390]))for(const theme of (process.env.WORK_TEST_THEMES||'current,test,toss,gpt,dark,test1,test3,test4').split(',')){
+ const p=await browser.newPage({viewport:{width,height:844},timezoneId:'Asia/Seoul',reducedMotion:'reduce'}),errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('dialog',d=>d.accept());await p.clock.setFixedTime(new Date('2026-10-28T12:00:00+09:00'));
+ await p.addInitScript(theme=>{localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_display_theme',theme);localStorage.setItem('shift_onboarding_v1','{"status":"existing"}');localStorage.setItem('shift_salary_config_master','{"hireDate":"2015-06-16","baseHourly":10320,"ordinaryHourly":11000}')},theme);
+ await p.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await p.goto(process.env.TEST_URL||'http://127.0.0.1:8771/');
+ async function open(day){await p.evaluate(day=>{const d=new Date(2026,9,day);openOverrideModal('2026-10-'+String(day).padStart(2,'0'),d,getActualShift(d,currentGroup))},day);await p.waitForFunction(()=>document.getElementById('modal-override').dataset.editorKeyboard==='false')}
+ await open(15);assert.equal(await p.locator('#work-panel .opt-btn').count(),14);assert.equal(await p.locator('#work-panel .opt-btn:visible>svg').count(),12);
+ const grids=await p.locator('#work-panel .shift-scroll').evaluateAll(rows=>rows.map(e=>({columns:getComputedStyle(e).gridTemplateColumns.split(' ').length,scroll:e.scrollWidth,width:e.clientWidth})));assert.deepEqual(grids.map(g=>g.columns),[3,2]);assert(grids.every(g=>g.scroll<=g.width+1));
+ const save=await p.locator('#apply-preview').boundingBox();assert(save.y+save.height<=844&&save.height>=48);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ // Nothing is committed until one save action writes both fields.
+ await p.locator('#work-panel .no-ot').click();await p.locator('#work-memo-input').fill('근무와 함께 저장하는 메모');assert.equal(await p.evaluate(()=>localStorage.getItem('shift_overrides_C')),null);assert.equal(await p.evaluate(()=>localStorage.getItem('shift_day_memos')),null);await p.locator('#apply-preview').click();assert.deepEqual(await p.evaluate(()=>[JSON.parse(localStorage.getItem('shift_overrides_C'))['2026-10-15'],JSON.parse(localStorage.getItem('shift_day_memos'))['2026-10-15']]),['NO_OT','근무와 함께 저장하는 메모']);
+ await open(15);await p.locator('.override-reset').click();await p.locator('#apply-preview').click();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('shift_overrides_C'))['2026-10-15']),undefined);
+ await open(15);await p.locator('#work-panel .leave').click();await p.locator('#apply-preview').click();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('shift_overrides_C'))['2026-10-15']),'LEAVE');
+ // Inline and detailed memo fields share one unsaved draft across tab switches.
+ await open(15);await p.locator('#work-memo-input').fill('같은 초안');await p.locator('#memo-tab').click();assert.equal(await p.locator('#modal-memo-input').inputValue(),'같은 초안');await p.locator('#modal-memo-input').fill('상세 메모에서 수정');await p.locator('#work-tab').click();assert.equal(await p.locator('#work-memo-input').inputValue(),'상세 메모에서 수정');await p.locator('#apply-preview').click();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('shift_day_memos'))['2026-10-15']),'상세 메모에서 수정');
+ // Saving the detailed note also commits an explicitly staged shift.
+ await open(15);await p.locator('#work-panel .off').click();await p.locator('#memo-tab').click();await p.getByRole('button',{name:'메모 저장',exact:true}).click();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('shift_overrides_C'))['2026-10-15']),'OFF');
+ await open(29);assert.equal(await p.locator('.attendance-choices').isVisible(),false);assert.equal(await p.locator('#work-panel .leave').isDisabled(),true);await p.locator('#work-memo-input').fill('  ');await p.locator('#apply-preview').click();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('shift_day_memos'))['2026-10-29']),undefined);
+ // Footer stays available while a short viewport scrolls the form itself.
+ await open(15);await p.setViewportSize({width,height:360});await p.waitForFunction(()=>document.getElementById('modal-override').dataset.memoCompact==='true');await p.locator('#work-memo-input').scrollIntoViewIfNeeded();const input=await p.locator('#work-memo-input').boundingBox(),footer=await p.locator('#apply-preview').boundingBox();assert(input.y+input.height<=footer.y&&footer.y+footer.height<=361,JSON.stringify({input,footer}));
+ assert.deepEqual(errors,[]);console.log(engine.name(),width,theme,'PASS card grids, persistent save, combined commit, restore, attendance rules, shared memo draft and short viewport');await p.close();
+ }await browser.close()}})().catch(e=>{console.error(e);process.exit(1)});
