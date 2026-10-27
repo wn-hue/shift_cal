@@ -23,8 +23,9 @@
         const visual=button.querySelector('.nav-visual');
         if (!visual?.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         visual.getAnimations().forEach(animation=>animation.cancel());
+        const tapColor=getComputedStyle(document.body).getPropertyValue('--nav-tap').trim()||'#ececed';
         visual.animate([
-            {backgroundColor:'#ececed',transform:'scale(.94)'},
+            {backgroundColor:tapColor,transform:'scale(.94)'},
             {backgroundColor:'transparent',transform:'scale(1)'}
         ],{duration:320,easing:'cubic-bezier(.2,.7,.2,1)'});
     }

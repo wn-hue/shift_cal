@@ -10,6 +10,9 @@ const assert=require('node:assert/strict');
  await page.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await page.goto(process.env.TEST_URL||'http://127.0.0.1:8771/');
  // Both reference themes must be discoverable through the actual settings sheet.
  await page.locator('#account-menu-button').click();await page.locator('.menu-preferences').click();
+ await page.locator('#choose-theme').click();
+ assert.deepEqual(await page.locator('#settings-options .settings-radio-row').evaluateAll(els=>els.map(e=>[e.querySelector('input').value,e.querySelector('span').textContent])),[['test','따뜻함'],['current','밤과 낮'],['toss','블루컬러'],['gpt','그레이'],['dark','다크모드'],['test2','테스트2']]);
+ await page.keyboard.press('Escape');
  for(const theme of ['test2','test']){
   await page.locator('#choose-theme').click();await page.locator(`#settings-options input[value=${theme}]`).check();
   assert.equal(await page.locator('body').getAttribute('data-pref-theme'),theme);
@@ -41,6 +44,17 @@ const assert=require('node:assert/strict');
   await page.evaluate(()=>window.scrollTo(0,0));
   if(width===390){await page.evaluate(()=>document.fonts.ready);await page.screenshot({path:`/tmp/reference-${theme}-${engine.name()}.png`,animations:'disabled'});const grid=await page.locator('#calendar-grid').boundingBox(),nav=await page.locator('.bottom-nav').boundingBox();assert(grid.y+grid.height<nav.y,JSON.stringify({grid,nav}));}
  }
- assert.deepEqual(errors,[]);console.log(engine.name(),width,'PASS reference themes, radio selection, persistence, 4/5/6 weeks, removed summary, colored today number, inline holiday, memo and navigation clearance');await page.close();
+ // The Blue theme must show blue after selecting every navigation destination and during the tap animation.
+ await page.evaluate(()=>{const e=document.getElementById('pref-theme');e.value='toss';e.dispatchEvent(new Event('change'));window.__navTaps=[];for(const v of document.querySelectorAll('.nav-visual')){const animate=v.animate.bind(v);v.animate=(frames,...args)=>{window.__navTaps.push(frames[0].backgroundColor);return animate(frames,...args)}}});
+ await page.emulateMedia({reducedMotion:'no-preference'});
+ for(const id of ['bnav-groups','bnav-pay','bnav-menu','account-menu-button','bnav-cal']){
+  const target=page.locator('#'+id);await target.scrollIntoViewIfNeeded();const box=await target.boundingBox();await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();
+  assert.equal(await page.locator('#'+id+' .nav-visual').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(219, 234, 254)');await page.mouse.up();
+  await page.locator('#'+id+' .nav-visual').evaluate(async e=>Promise.all(e.getAnimations().map(a=>a.finished.catch(()=>{}))));
+  const selected=await page.locator('#'+id+' .nav-visual').evaluate(e=>({ink:getComputedStyle(e).color,fill:getComputedStyle(e).backgroundColor,icon:getComputedStyle(e.querySelector('svg')).color}));
+  assert.equal(selected.ink,'rgb(49, 130, 246)');assert.equal(selected.icon,selected.ink);assert.equal(selected.fill,'rgb(234, 243, 255)');
+ }
+ assert.deepEqual(await page.evaluate(()=>window.__navTaps),Array(5).fill('#dbeafe'));
+ assert.deepEqual(errors,[]);console.log(engine.name(),width,'PASS warm-first settings, blue navigation and tap feedback, theme persistence, 4/5/6 weeks, removed summary, colored today number, inline holiday, memo and navigation clearance');await page.close();
  }await browser.close();
 }})().catch(e=>{console.error(e);process.exit(1)});

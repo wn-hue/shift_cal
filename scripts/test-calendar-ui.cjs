@@ -36,11 +36,13 @@ for(const [view,id] of [['calendar','bnav-cal'],['payroll','bnav-pay'],['menu','
 }
 assert.equal(menuLoads,1);assert.equal(elements.get('header-view-title').textContent,'전체');
 let leaveOpened=0;ctx.SettingsUI={openLeave:()=>leaveOpened++};run("switchView('leave')");assert.equal(leaveOpened,1);assert.ok(elements.get('view-all').classList.contains('active'));assert.equal(elements.has('bnav-leave'),false);
-let animations=0,cancelled=0,reducedMotion=false;
-const visual={getAnimations:()=>[{cancel:()=>cancelled++}],animate:(frames,options)=>{animations++;assert.equal(frames.at(-1).backgroundColor,'transparent');assert.ok(options.duration<500)}};
+let animations=0,cancelled=0,reducedMotion=false,tapColor='',lastTapColor='';
+ctx.getComputedStyle=()=>({getPropertyValue:()=>tapColor});
+const visual={getAnimations:()=>[{cancel:()=>cancelled++}],animate:(frames,options)=>{animations++;lastTapColor=frames[0].backgroundColor;assert.equal(frames.at(-1).backgroundColor,'transparent');assert.ok(options.duration<500)}};
 ctx.matchMedia=()=>({matches:reducedMotion});
-ctx.ShiftUI.tap({querySelector:()=>visual});assert.equal(animations,1);assert.equal(cancelled,1);
-reducedMotion=true;ctx.ShiftUI.tap({querySelector:()=>visual});assert.equal(animations,1,'Reduced motion must keep navigation functional without the tap animation');
+ctx.ShiftUI.tap({querySelector:()=>visual});assert.equal(animations,1);assert.equal(cancelled,1);assert.equal(lastTapColor,'#ececed');
+tapColor='#dbeafe';ctx.ShiftUI.tap({querySelector:()=>visual});assert.equal(lastTapColor,'#dbeafe');
+reducedMotion=true;ctx.ShiftUI.tap({querySelector:()=>visual});assert.equal(animations,2,'Reduced motion must keep navigation functional without the tap animation');
 
 // Direct group buttons use the same persisted group and group-specific edits as the calendar.
 const stored=new Map([['shift_overrides_A',JSON.stringify({'2026-10-01':'LEAVE'})],['shift_overrides_B',JSON.stringify({'2026-10-02':'NO_OT'})]]);

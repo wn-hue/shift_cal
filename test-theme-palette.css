@@ -1,11 +1,11 @@
-/* Test 1 keeps its rounded UI with Night and Day colors; Test 2 uses a cool blue palette. */
+/* Warmth keeps the first reference’s rounded UI and ivory palette; Test 2 uses cool blue. */
 body[data-pref-theme=test]{
- --test-page:#f3f5f7;--test-surface:#fff;--test-field:#f7f7f7;--test-line:#e5e5e5;
- --test-ink:#303030;--test-copy:#555;--test-muted:#737373;--test-accent:#303030;--test-accent-soft:#f3f5f7;
- --test-day-fill:#ffd600;--test-day-ink:#424242;--test-night-fill:#424242;--test-night-ink:#fff;
- --test-special-day:#437c77;--test-special-night:#586f94;--test-off:#e8687f;--test-holiday:#e5484d;--test-saturday:#3182f6;
- --test-today:#fff;--test-today-edge:#979da5;--test-today-soft:#f3f5f7;--test-badge-shadow:none;
- --test-attendance:#66717f;--test-day-no-ot:#bfd9d4;--test-night-no-ot:#c3cde0;
+ --test-page:#eeeae4;--test-surface:#faf9f6;--test-field:#e9e4dd;--test-line:#ded8d0;
+ --test-ink:#302f2c;--test-copy:#605b54;--test-muted:#746b61;--test-accent:#896b45;--test-accent-soft:#eee1ce;
+ --test-day-fill:#ffebcc;--test-day-ink:#8c5b22;--test-night-fill:#3e3e52;--test-night-ink:#fff;
+ --test-special-day:#527970;--test-special-night:#65717e;--test-off:#877373;--test-holiday:#ae5864;--test-saturday:#527b99;
+ --test-today:#fffefa;--test-today-edge:#b69a75;--test-today-soft:#f5ece0;--test-badge-shadow:none;
+ --test-attendance:#e8dce0;--test-day-no-ot:#cfdfda;--test-night-no-ot:#d5dce5;
 }
 body[data-pref-theme=test2]{
  --test-page:#edf0f5;--test-surface:#fff;--test-field:#e9edf3;--test-line:#dce2eb;
