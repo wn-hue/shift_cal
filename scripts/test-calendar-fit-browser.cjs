@@ -28,6 +28,9 @@ const assert=require('node:assert/strict');
    if(theme==='test2')assert.equal(await page.locator('#cal-month-title-text').textContent(),`${year}년 ${month+1}월`);
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
    assert.equal(await page.locator('.reference-month-summary').count(),0);
+   const surface=await page.locator('.cal-day:not(.other-month)').first().evaluate(e=>({border:getComputedStyle(e).borderWidth,shadow:getComputedStyle(e).boxShadow}));assert.equal(surface.border,'0px');
+   assert.equal(await page.locator('#calendar-grid').evaluate(e=>getComputedStyle(e).gap),theme==='test'?'4px':'0px');
+   if(theme==='test2')assert.equal(surface.shadow,'none');
   }
   await page.evaluate(()=>{currentCalDate=new Date(2026,9,1);overrides['2026-10-03']='LEAVE';dayMemos['2026-10-03']='공휴일 메모 확인';renderCalendar()});
   assert.equal(await page.locator('.reference-today-label').count(),0);

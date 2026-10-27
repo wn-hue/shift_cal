@@ -30,7 +30,7 @@ body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(#view-payroll,#view-
 }
 body:is([data-pref-theme=test],[data-pref-theme=test2]) .reference-header{background:transparent!important}
 body:is([data-pref-theme=test],[data-pref-theme=test2]) .reference-header .month-title-btn{color:var(--test-ink);font-weight:750}
-body[data-pref-theme=test][data-view=calendar] .reference-header{border:1px solid #ffffffb3;border-radius:16px;background:var(--test-surface)!important;box-shadow:0 5px 16px #3030300a;padding:10px 12px}
+body[data-pref-theme=test][data-view=calendar] .reference-header{min-height:52px;margin-left:-6px;margin-right:-6px;padding:8px;border:1px solid #ffffffc9;border-radius:16px;background:#ffffffbf!important;box-shadow:0 6px 18px #3030300d;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
 body:is([data-pref-theme=test],[data-pref-theme=test2])[data-view=calendar] #view-calendar .calendar-card{padding:0;margin:20px 0 12px;border:0;overflow:visible;background:transparent;box-shadow:none;border-radius:0}
 body:is([data-pref-theme=test],[data-pref-theme=test2]) #view-calendar .cal-weekdays{padding:10px 0 12px;background:transparent;border:0;font-size:12px;font-weight:550;color:var(--test-muted)}
 body:is([data-pref-theme=test],[data-pref-theme=test2]) #view-calendar .cal-weekdays>:first-child{color:var(--test-holiday)!important}
@@ -78,7 +78,7 @@ body:is([data-pref-theme=test],[data-pref-theme=test2]) #modal-override[data-edi
 body:is([data-pref-theme=test],[data-pref-theme=test2]) #modal-override[data-editor-tab]>.override-sheet>.editor-tabs button[aria-selected=true]{color:var(--test-ink)!important}
 body:is([data-pref-theme=test],[data-pref-theme=test2]) #modal-override[data-editor-tab] .override-header .override-reset{background:var(--test-accent-soft)!important;color:var(--test-accent)!important}
 
-/* Leave room for the fixed navigation and the second theme’s monthly summary. */
+/* Leave room for the fixed navigation. */
 body[data-pref-theme=test] .cal-grid{min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 250px),680px)}
 body[data-pref-theme=test2] .cal-grid{min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 300px),680px)}
 
@@ -108,7 +108,7 @@ body[data-pref-theme=test2] #weather-icon{font-size:23px}
 body[data-pref-theme=test2] #weather-temperature{font-size:17px;font-weight:550;color:#14171d}
 body[data-pref-theme=test2] .reference-stats-bars{display:none}
 body[data-pref-theme=test2] .reference-stats-list{display:block}
-body[data-pref-theme=test2][data-view=calendar] #view-calendar .calendar-card{margin:0 0 12px;padding:0 9px 16px;border-radius:18px;box-shadow:0 6px 9px #28334a20;background:#ffffff}
+body[data-pref-theme=test2][data-view=calendar] #view-calendar .calendar-card{margin:0 0 12px;padding:0 10px 20px;border-radius:24px;box-shadow:0 7px 14px #28334a1c;background:#ffffff}
 body[data-pref-theme=test2] #view-calendar .cal-weekdays{padding:10px 0 9px;font-size:13px;font-weight:550;color:#989ca6}
 body[data-pref-theme=test2] .cal-grid{min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 260px),720px)}
 body[data-pref-theme=test2] .cal-grid .cal-day{padding:3px 1px 5px;overflow:visible}
@@ -147,6 +147,27 @@ body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .holiday-bar{f
 body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .cal-day.today{background:var(--test-surface);box-shadow:inset 0 0 0 1px var(--test-today-edge);border-radius:10px}
 body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .cal-day.today .day-num{width:22px;min-width:22px;height:22px;line-height:22px;justify-content:center;border-radius:50%;background:var(--test-accent)!important;color:#fff!important;font-weight:650}
 body[data-pref-theme=test2][data-view=calendar] #view-calendar .calendar-card{margin-top:8px}
-body[data-pref-theme=test2] .cal-grid{gap:4px;min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 220px),760px)}
-body[data-pref-theme=test2] #view-calendar .cal-grid .cal-day{border:1px solid #e2e7ef;border-radius:10px;background:#fff;padding:4px 2px 6px;overflow:hidden}
-body[data-pref-theme=test2] #view-calendar .cal-grid .cal-day.today{border-color:var(--test-today-edge);box-shadow:none}
+body[data-pref-theme=test2] .cal-grid{gap:0;min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 220px),760px)}
+body[data-pref-theme=test2] #view-calendar .cal-grid .cal-day{border:0;border-radius:14px;background:transparent;padding:4px 3px 6px;overflow:hidden}
+body[data-pref-theme=test2] #view-calendar .cal-grid .cal-day.today{background:transparent;box-shadow:none}
+
+/* Reference 1's floating toolbar, open weekday row and soft individual date cards. */
+body[data-pref-theme=test][data-view=calendar] .container{padding-top:8px}
+body[data-pref-theme=test][data-view=calendar] .reference-header .month-title-btn{font-size:clamp(25px,7.2vw,30px);font-weight:800;letter-spacing:-1px;line-height:1.2}
+body[data-pref-theme=test] .header-calendar-actions{gap:4px}
+body[data-pref-theme=test] .header-calendar-actions .icon-button:not(.weather-trigger){width:30px;min-width:30px;height:34px;padding:4px;border:0;border-radius:12px;background:transparent;color:var(--test-copy)}
+body[data-pref-theme=test] .header-calendar-actions .icon-button:not(.weather-trigger) svg{width:22px;height:22px}
+body[data-pref-theme=test] #weather-icon{font-size:23px}
+body[data-pref-theme=test] #weather-temperature{font-size:17px;font-weight:500;color:var(--test-ink)}
+body[data-pref-theme=test][data-view=calendar] #view-calendar .calendar-card{margin-top:14px}
+body[data-pref-theme=test] #view-calendar .cal-weekdays{padding:9px 0 12px;color:var(--test-ink);font-size:13px;line-height:18px;font-weight:400}
+body[data-pref-theme=test] .cal-grid{gap:4px;min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 230px),720px)}
+body[data-pref-theme=test] #view-calendar .cal-grid .cal-day{border:0;border-radius:10px;background:var(--test-surface);padding:5px 3px;box-shadow:0 1px 2px #30303003}
+body[data-pref-theme=test] #view-calendar .cal-grid .cal-day.today{box-shadow:0 4px 10px #30303017}
+body[data-pref-theme=test] .cal-grid .cal-day .day-num{font-size:13.5px;font-weight:400}
+body[data-pref-theme=test] .cal-grid .shift-badge{font-size:14px;font-weight:500}
+body[data-pref-theme=test] .cal-grid .shift-badge.special{font-size:12px;border-radius:18px}
+body[data-pref-theme=test] .nav-capsule{border:2px solid #ffffffd9;box-shadow:0 5px 16px #3030301c}
+body[data-pref-theme=test] .bottom-nav .nav-item,body[data-pref-theme=test] .bottom-nav .nav-item .nav-visual{min-height:58px}
+body[data-pref-theme=test] .bottom-nav .nav-item .nav-visual{gap:4px;padding:7px 3px}
+body[data-pref-theme=test] .bottom-nav .nav-item svg{width:25px;height:25px}
