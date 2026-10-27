@@ -1,5 +1,22 @@
 /* UI-only translations. User notes, event names, meals and source documents stay untouched. */
 window.AppTranslations=Object.fromEntries(`
+명| people|人|人
+여유|Available|有空位|空きあり
+혼잡|Busy|拥挤|混雑
+만차|Full|已满|満車
+🟢 여유|🟢 Available|🟢 有空位|🟢 空きあり
+🟡 혼잡|🟡 Busy|🟡 拥挤|🟡 混雑
+🔴 만차|🔴 Full|🔴 已满|🔴 満車
+아직 제보 없음|No reports yet|暂无反馈|まだ報告がありません
+
+평일 06:50~07:30 운영|Weekdays 06:50–07:30|工作日 06:50–07:30 开放|平日 06:50〜07:30
+최근 10분 기준|Reports from the last 10 minutes|最近10分钟的反馈|直近10分の情報
+마지막 제보|Last report|最新反馈|最終報告
+만차 시 알림 받기|Notify me when full|车位已满时通知|満車時に通知
+주차장 이용 안내|Parking information|停车场使用说明|駐車場のご案内
+주차장 새로고침|Refresh parking status|刷新停车状态|駐車状況を更新
+주간 근무자가 최근 10분 동안 제보한 상태를 집계해요. 실제 주차 가능 여부와 다를 수 있어요.|Reports from day-shift workers in the last 10 minutes. Actual availability may differ.|汇总白班员工最近10分钟的反馈，实际车位情况可能不同。|日勤者の直近10分の報告です。実際の空き状況と異なる場合があります。
+
 물품 분류|Item category|物品分类|品目
 기간|Period|期间|期間
 최근 7일|Last 7 days|最近7天|過去7日
