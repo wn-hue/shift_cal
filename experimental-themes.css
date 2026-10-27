@@ -1,0 +1,88 @@
+/* Three independent interpretations of our own shift calendar. */
+body[data-pref-theme=test1]{
+ --test-page:#f2f4f6;--test-surface:#fff;--test-field:#f2f4f6;--test-line:#e8edf2;
+ --test-ink:#191f28;--test-copy:#4e5968;--test-muted:#6b7684;--test-accent:#3182f6;--test-accent-soft:#eaf3ff;
+ --test-day-fill:#eaf3ff;--test-day-ink:#1b64da;--test-night-fill:#34445c;--test-night-ink:#fff;
+ --test-special-day:#236ab4;--test-special-night:#5b58a8;--test-off:#6b7684;--test-holiday:#d9576d;--test-saturday:#3182f6;
+ --test-today:#f7faff;--test-today-edge:#a7c9fa;--test-today-soft:#eaf3ff;--test-badge-shadow:none;
+ --nav-tap:#dbeafe;
+}
+body[data-pref-theme=test3]{
+ --test-page:#f2f2f7;--test-surface:#fff;--test-field:#f2f2f7;--test-line:#e5e5ea;
+ --test-ink:#1c1c1e;--test-copy:#48484a;--test-muted:#737378;--test-accent:#d93632;--test-accent-soft:#fff0ee;
+ --test-day-fill:#fff4d6;--test-day-ink:#8b620d;--test-night-fill:#414959;--test-night-ink:#fff;
+ --test-special-day:#34776a;--test-special-night:#6c5c9e;--test-off:#737378;--test-holiday:#d93632;--test-saturday:#3478c5;
+ --test-today:#fff;--test-today-edge:#e8b7b2;--test-today-soft:#fff0ee;--test-badge-shadow:none;
+ --nav-tap:#fbe3e1;
+}
+body[data-pref-theme=test4]{
+ --test-page:#eef0f3;--test-surface:#fff;--test-field:#f4f5f7;--test-line:#e5e8ec;
+ --test-ink:#29252a;--test-copy:#51494e;--test-muted:#777079;--test-accent:#443637;--test-accent-soft:#fff4b3;
+ --test-day-fill:#fee500;--test-day-ink:#443637;--test-night-fill:#4a3c40;--test-night-ink:#fff;
+ --test-special-day:#357b75;--test-special-night:#685c91;--test-off:#826971;--test-holiday:#c76378;--test-saturday:#5680a3;
+ --test-today:#fffdf2;--test-today-edge:#eadb83;--test-today-soft:#fff6c9;--test-badge-shadow:none;
+ --nav-tap:#fff1a2;
+}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]){--nav-active-ink:var(--test-accent)}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-view=calendar] .container{padding:4px 16px 0}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-view=calendar] .reference-header{min-height:68px;padding:10px 2px 12px;gap:6px}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .reference-header .month-title-btn{font-size:clamp(23px,7vw,30px);font-weight:750;letter-spacing:-1px;line-height:1.25}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions{gap:4px}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions .icon-button:not(.weather-trigger){width:32px;height:34px;min-width:32px;padding:6px;border:0;border-radius:12px;background:var(--test-surface);color:var(--test-copy)}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions .icon-button:not(.weather-trigger) svg{width:20px;height:20px}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions .weather-trigger{min-width:38px;padding:0 2px;color:var(--test-copy)}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-view=calendar] #view-calendar .calendar-card{margin:10px 0 16px;padding:0 9px 14px;background:var(--test-surface);border:0;border-radius:24px;box-shadow:none;overflow:hidden}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-weekdays{padding:14px 0 12px;color:var(--test-muted);font-size:12px;font-weight:550}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid{gap:0;min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 230px),740px)}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-grid .cal-day{padding:6px 3px;border:0;border-bottom:1px solid var(--test-line);border-radius:0;background:transparent;box-shadow:none;overflow:hidden}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-day:nth-last-child(-n+7){border-bottom:0}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .day-meta{height:26px;min-height:26px;flex-direction:row;align-items:center;gap:2px}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .cal-day .day-num{font-size:14px;font-weight:550;min-width:18px;height:22px;line-height:22px}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .holiday-bar{height:18px;min-height:18px;line-height:18px;font-size:8px}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) :is(.cal-grid,#modal-override) .shift-badge{width:30px;min-width:30px;height:30px;min-height:30px;flex-basis:30px;border-radius:11px;box-shadow:none;font-size:13px;font-weight:650}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .shift-badge.special{width:32px;min-width:32px;border-radius:11px;padding:0 1px;font-size:11px}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-pref-shape=circle] :is(.cal-grid,#modal-override) .shift-badge{border-radius:50%}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .cal-day.today .day-num{background:var(--test-accent)!important;color:#fff!important;border-radius:50%;width:22px;min-width:22px}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .memo-tag{font-size:10px;line-height:13px;min-height:26px;max-height:26px;font-weight:400;color:var(--test-copy)}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav{padding:6px 16px calc(10px + env(safe-area-inset-bottom))}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .nav-capsule{background:var(--test-surface);border:1px solid var(--test-line);box-shadow:0 3px 12px #20283808}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item,body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item .nav-visual{min-height:56px}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item .nav-visual{padding:7px 3px;gap:4px;color:var(--test-muted)!important}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item.active .nav-visual{background:var(--test-accent-soft)!important;color:var(--test-accent)!important}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item svg{width:24px;height:24px}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-visual>span{font-size:10px;font-weight:550}
+/* Test 1: a clear blue hierarchy, flat surfaces and generous spacing. */
+body[data-pref-theme=test1] .reference-header .month-title-btn{font-weight:800}
+body[data-pref-theme=test1] #view-calendar .cal-grid .cal-day.today{background:#f5f9ff}
+body[data-pref-theme=test1] .cal-grid .shift-badge.day{font-weight:750}
+body[data-pref-theme=test1] .nav-capsule{border-radius:24px}
+body[data-pref-theme=test1] .bottom-nav .nav-item.active .nav-visual{border-radius:18px}
+/* Test 3: quiet system surfaces, fine rules and a restrained red accent. */
+body[data-pref-theme=test3]{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif}
+body[data-pref-theme=test3] .reference-header .month-title-btn{font-weight:650;letter-spacing:-.9px}
+body[data-pref-theme=test3] .header-calendar-actions .icon-button:not(.weather-trigger){background:transparent;color:var(--test-accent)}
+body[data-pref-theme=test3][data-view=calendar] #view-calendar .calendar-card{border-radius:18px;border:1px solid #e8e8ed;padding-left:8px;padding-right:8px}
+body[data-pref-theme=test3] .cal-grid .cal-day .day-num{font-size:15px;font-weight:400}
+body[data-pref-theme=test3] :is(.cal-grid,#modal-override) .shift-badge{border-radius:7px;font-weight:500}
+body[data-pref-theme=test3] .cal-grid .shift-badge.special{border-radius:7px}
+body[data-pref-theme=test3] .nav-capsule{background:#ffffffd9;border-color:#dedee6;border-radius:26px;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+body[data-pref-theme=test3] .bottom-nav .nav-item.active .nav-visual{background:transparent!important}
+/* Test 4: yellow accents, dark brown ink and friendly soft tiles. */
+body[data-pref-theme=test4][data-view=calendar] .reference-header{margin-top:4px;padding-left:12px;padding-right:10px;background:#fff!important;border-radius:22px}
+body[data-pref-theme=test4] .reference-header .month-title-btn::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:#fee500;margin-right:7px;vertical-align:middle}
+body[data-pref-theme=test4][data-view=calendar] #view-calendar .calendar-card{border-radius:24px;padding:0 8px 14px;box-shadow:0 3px 9px #493a4010}
+body[data-pref-theme=test4] #view-calendar .cal-weekdays{font-weight:500}
+body[data-pref-theme=test4] #view-calendar .cal-grid .cal-day{border-bottom:0;border-radius:13px}
+body[data-pref-theme=test4] #view-calendar .cal-grid .cal-day.today{background:#fff9df}
+body[data-pref-theme=test4] :is(.cal-grid,#modal-override) .shift-badge{border-radius:12px 12px 12px 4px}
+body[data-pref-theme=test4] .cal-grid .shift-badge.special{border-radius:12px 12px 12px 4px}
+body[data-pref-theme=test4] .nav-capsule{border:2px solid #fff;border-radius:38px;box-shadow:0 4px 12px #493a4015}
+body[data-pref-theme=test4] .bottom-nav .nav-item.active .nav-visual{background:#fee500!important}
+@media(max-width:360px){
+ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-view=calendar] .container{padding-left:12px;padding-right:12px}
+ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions{gap:2px}
+ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .reference-header .month-title-btn{font-size:21px}
+ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav{padding-left:12px;padding-right:12px}
+}
+
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item:active .nav-visual{background:var(--nav-tap)!important;color:var(--test-accent)!important}
