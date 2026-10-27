@@ -190,3 +190,9 @@ body[data-pref-theme] #commute-dialog .bus-result-conditions{min-height:40px;pad
 #commute-dialog.bus-results-mode .commute-topbar{background:var(--ui-card,#fff)}
 #commute-dialog .bus-result-toolbar{background:var(--ui-card,#fff)}
 body[data-pref-theme] #commute-dialog .bus-result-conditions{background:var(--ui-field,#f2f4f6)!important}
+
+/* A compact dated notice keeps the current timetable distinct from the upcoming change. */
+#commute-dialog .bus-schedule-update{margin:18px 0 12px;padding:0 14px;border-radius:16px;background:var(--ui-blue-soft,#eaf3ff);color:var(--ui-blue,#3182f6);font-size:13px}
+.bus-schedule-update>summary{min-height:46px;line-height:1.6;padding:12px 0;box-sizing:border-box;font-weight:550;cursor:pointer}
+#commute-dialog .bus-schedule-update .bus-tip{font-size:12px;line-height:1.8;margin:0 0 12px;color:var(--ui-copy,#4e5968)}
+#commute-dialog.bus-results-mode .bus-schedule-update{display:none}

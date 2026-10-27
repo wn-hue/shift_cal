@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),C=require('../bus-location-core.js');
 const context={window:{}};for(const file of['bus-routes.js','bus-stop-locations.js'])vm.runInNewContext(fs.readFileSync(require.resolve('../'+file),'utf8'),context);
-const {points}=context.window.BusStopLocations,{routes}=context.window.ShiftBusRoutes;
+const {points}=context.window.BusStopLocations,{routes}=context.window.ShiftBusRoutes.forDate('2026-10-27');
 const exact=q=>Array.from(C.search(points,q,{limit:100}),p=>p.name);
 assert.deepEqual(exact('시화병원'),['시화병원'],'the former hospital is a different stop');
 assert.deepEqual(exact('노현숙한의원'),['노현숙한의원']);

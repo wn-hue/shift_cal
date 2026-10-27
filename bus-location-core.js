@@ -38,12 +38,12 @@
  function searchRoutes(routes,query,catalog=[]){
   const raw=String(query||'').normalize('NFKC').toLowerCase().replace(/본사/g,'1공장').trim();if(!raw)return routes;
   const norm=s=>String(s||'').normalize('NFKC').toLowerCase().replace(/본사/g,'1공장').replace(/[\s·().,\-]/g,'');
-  const numbers=[];let words=raw.replace(/(\d+)\s*(?:호(?:\s*차)?|번(?:\s*(?:차|버스))?)/g,(_,n)=>{numbers.push(Number(n));return ' ';});
-  if(/^\d+$/.test(raw)){numbers.push(Number(raw));words='';}
+  const numbers=[];let words=raw.replace(/(\d+(?:\s*[-–—]\s*\d+)?)\s*(?:호(?:\s*차)?|번(?:\s*(?:차|버스))?)/g,(_,n)=>{numbers.push(n.replace(/\s/g,'').replace(/[–—]/g,'-'));return ' ';});
+  if(/^\d+(?:\s*[-–—]\s*\d+)?$/.test(raw)){numbers.push(raw.replace(/\s/g,'').replace(/[–—]/g,'-'));words='';}
   words=words.replace(/(?:방면|방향)(?:으로|로)?|쪽(?:으로|로)?|(?:으로|로)?\s*가는(?:\s*(?:버스|차|노선))?/g,' ');
   const tokens=words.split(/\s+/).map(norm).filter(token=>token&&!['버스','차','노선','차량','검색','찾기','알려줘'].includes(token));if(!numbers.length&&!tokens.length)return [];
   const found=routes.map((route,index)=>{
-   const number=route.name.match(/^(\d+)호/);if(numbers.length&&(!number||!numbers.includes(Number(number[1]))))return null;
+   const number=route.name.match(/^(\d+(?:-\d+)?)호/);if(numbers.length&&(!number||!numbers.includes(number[1])))return null;
    const names=[route.name,route.destination,...route.stops.map(s=>s.name)];
    for(const stop of route.stops){const p=lookup(catalog,stop.name);if(p)names.push(p.name,...(p.searchTerms||[]),...p.aliases);}
    const normalized=names.map(norm),corpus=normalized.join(' '),routeName=norm(route.name);

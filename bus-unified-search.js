@@ -34,7 +34,7 @@
  function abort(){++token;controller?.abort();controller=null;gps.disabled=false;submit.disabled=false;submit.setAttribute('aria-busy','false');}
  function context(){return configuration?.context()||{routes:[],periodLabel:'',factory:'1',direction:'in'};}
  function placeRegion(p){const address=p.address||'';if(address.includes('시흥'))return 'siheung';if(address.includes('안산'))return 'ansan';if(!p.aliases){if(/siheung/i.test(address))return 'siheung';if(/ansan/i.test(address))return 'ansan';return 'other';}return ['시화중학교','서해중학교','도일초등학교','시흥소방서'].includes(p.name)?'siheung':'ansan';}
- const routeOnly=q=>/^\d+\s*(?:호(?:\s*차)?|번(?:\s*(?:차|버스))?)(?:\s|$)|^\d+$|방면|방향|가는|쪽/.test(q);
+ const routeOnly=q=>/^\d+(?:\s*[-–—]\s*\d+)?\s*(?:호(?:\s*차)?|번(?:\s*(?:차|버스))?)(?:\s|$)|^\d+(?:\s*[-–—]\s*\d+)?$|방면|방향|가는|쪽/.test(String(q).normalize('NFKC'));
  const acceptsPlace=p=>region==='all'||placeRegion(p)===region;
  const acceptsRoute=r=>region==='all'||(/시화|배곧/.test(r.name)?'siheung':'ansan')===region;
  function rowPlace(p){
@@ -81,5 +81,5 @@
   catch(error){if(current===token&&showing&&error.name!=='AbortError')status.textContent=error.message==='Failed to fetch'?'인터넷 연결을 확인해 주세요.':error.message;}
   finally{if(current===token&&showing){submit.disabled=false;submit.setAttribute('aria-busy','false');}}
  };
- window.BusUnifiedSearch={configure(next){configuration=next;},open,close,hide,syncHistory(){if(history.state?.shiftCommute&&history.state?.shiftBusSearch)show({reset:false});else hide();},get isOpen(){return showing;},setStatus(message,busy=false){if(showing){status.textContent=message;gps.disabled=busy;}},cancel:abort};
+ window.BusUnifiedSearch={configure(next){configuration=next;if(showing)render();},open,close,hide,syncHistory(){if(history.state?.shiftCommute&&history.state?.shiftBusSearch)show({reset:false});else hide();},get isOpen(){return showing;},setStatus(message,busy=false){if(showing){status.textContent=message;gps.disabled=busy;}},cancel:abort};
 })();

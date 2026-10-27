@@ -1,4 +1,4 @@
-/* Transcribed from the three user-provided commute sheets. No inferred stop times. */
+/* Company timetables: preserve the June service until the Nov 2 change takes effect in Korea. */
 (()=>{'use strict';
 const routes=[];
 function add(id,name,period,depart,destination,stops,notes=''){routes.push({id,name,period,depart,destination,stops:stops.map(s=>typeof s==='string'?{name:s,time:null}:{name:s[0],time:s[1]}),notes});}
@@ -40,5 +40,25 @@ back('r0610-2','2호 시화','r0610','06:10',['관광호텔','시화공고사거
 const both=[['1호 본오동',['은혜와진리교회','경찰서민원실','중앙초등학교','성포주공10단지(터미널)','한대역 튼튼병원앞','상록수역','우성A사거리','문화고'],'2공장 출발'],['2호 월피동',['안산역','연수원사거리','선부9단지','중앙주유소','노현숙한의원','덕성초정류장','롯데리아앞'],'1공장 출발'],['3호 와동',['선부롯데마트','와동체육공원','디미고정류장','열녀문사거리','창동빌라'],'1공장 출발'],['4호 선부동',['주택새마을금고','원곡고입구','효성A','기사촌사거리','동명A','원일중(기숙사)정류장','서울프라자(15단지)'],'1공장 출발'],['7호 배곧',['관광호텔','이지더원 버스정류장','한라A 버스정류장','호반A 앞','한신A 1002동앞','헤리움2차횡단보도'],'1공장 출발'],['8호 시화1',['시화공고','죽율푸르지오A','도일초정류장'],'1공장 출발'],['10호 시화3',['시화공고','어린이도서관(우체국)'],'1공장 출발'],['11호 시화4',['대우A','이마트','계룡1차 A','시화병원(구)','건영 2차 A','삼성A'],'원문: 유니텍'],['12호 시화5',['하늘빛교회','롯데시네마정류장'],''],['13호 시화6',['시흥관광호텔','대우아파트','(구)이마트','(구)시화병원','서해중 정류장','정왕(하이마트)','정왕 어린이도서관앞','시화공고','시화중학교'],'4공장 출발']];
 for(const period of['r0910','r2055'])for(const[n,s,note]of both)back(period+'-'+n.split('호')[0],n,period,period==='r0910'?'09:10':'20:55',s,note);
 back('r2055-6','6호 상록수','r2055','20:55',['안산역','상록수역','한대역 튼튼병원앞'],'20:55에만 운행 · 원문에 공장 표기가 없습니다.');
-window.ShiftBusRoutes={routes,sourceDate:'2026-06-01',notice:'도로 사정에 따라 1~2분 빠를 수 있으니 출발 5분 전까지 나와 주세요.'};
+const effectiveFrom='2026-11-02',nextRoutes=routes.map(r=>({...r,stops:r.stops.map(s=>({...s}))}));
+const next=id=>nextRoutes.find(r=>r.id===id);
+next('day-2').stops.splice(-1,0,{name:'안산역건너(진성고시텔)',time:'07:12'});
+next('day-2').notes='11월 2일부터 안산역건너(진성고시텔)를 07:12에 경유해요. 6호차도 함께 경유합니다.';
+next('day-3').stops=next('day-3').stops.filter(s=>s.name!=='선부롯데마트');
+next('day-3').notes='선부롯데마트 탑승은 11월 2일부터 3-1호차 07:07로 변경됩니다.';
+next('day-4').stops=next('day-4').stops.filter(s=>!['기사촌사거리','선일초','땟골'].includes(s.name));
+next('day-4').notes='기사촌·선일초·땟골 탑승은 11월 2일부터 3-1호차로 변경됩니다.';
+nextRoutes.splice(nextRoutes.indexOf(next('day-3'))+1,0,{id:'day-3-1',name:'3-1호 와동·선부동',period:'day',depart:null,destination:'1공장·2공장',stops:[{name:'선부롯데마트',time:'07:07'},{name:'기사촌삼거리',time:'07:09'},{name:'선일초',time:'07:11'},{name:'땟골',time:'07:12'},{name:'1공장·2공장',time:'07:45'}],notes:'11월 2일 신설 · 주간 출근 노선입니다.'});
+// The supplied updated sheet separately lists 25-seat and 45-seat departures at 07:45.
+next('shuttle-12-1').name='안산역 셔틀 · 1·2공장 (25인승 · 07:30)';
+next('shuttle-12-2').name='안산역 셔틀 · 1·2공장 (45인승 · 07:45)';
+next('shuttle-12-2').notes='45인승 · 원문: 2회 운행 · 4공장 미하차. 도착 시각은 원문에 없습니다.';
+nextRoutes.splice(nextRoutes.indexOf(next('shuttle-12-2')),0,{id:'shuttle-12-25-0745',name:'안산역 셔틀 · 1·2공장 (25인승 · 07:45)',period:'shuttle',depart:'07:45',destination:'1공장·2공장',stops:[{name:'안산역 (25인승)',time:'07:45'},{name:'1공장·2공장',time:null}],notes:'25인승 · 원문: 1회 운행 · 4공장 미하차. 도착 시각은 원문에 없습니다.'});
+next('shuttle-4').notes='25인승 2대 · 2공장 미하차. 4공장 도착 시각은 원문에 없습니다.';
+next('r1750-3').stops=['시화관광호텔','시화공고사거리','하늘빛교회'].map(name=>({name,time:null}));
+const freeze=items=>Object.freeze(items.map(r=>Object.freeze({...r,stops:Object.freeze(r.stops.map(s=>Object.freeze(s)))})));
+const schedules=Object.freeze([Object.freeze({version:'2026-06-01',sourceDate:'2026-06-01',routes:freeze(routes)}),Object.freeze({version:effectiveFrom,sourceDate:effectiveFrom,routes:freeze(nextRoutes)})]);
+function dateKey(value=new Date()){if(typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)){if(new Date(value+'T00:00:00Z').toISOString().slice(0,10)!==value)throw new RangeError('Invalid schedule date');return value;}const date=new Date(value);if(!Number.isFinite(date.getTime()))throw new RangeError('Invalid schedule date');return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);}
+const forDate=value=>dateKey(value)>=effectiveFrom?schedules[1]:schedules[0];
+window.ShiftBusRoutes={forDate,dateKey,schedules,effectiveFrom,announcementDate:'2026-10-27',get routes(){return forDate().routes;},get sourceDate(){return forDate().sourceDate;},get version(){return forDate().version;},notice:'도로 사정에 따라 1~2분 빠를 수 있으니 출발 5분 전까지 나와 주세요.'};
 })();

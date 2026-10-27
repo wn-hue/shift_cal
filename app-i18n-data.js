@@ -1,5 +1,13 @@
 /* UI-only translations. User notes, event names, meals and source documents stay untouched. */
 window.AppTranslations=Object.fromEntries(`
+11월 2일 통근버스 변경 예정|Bus changes from November 2|11月2日通勤班车调整预告|11月2日から通勤バス変更予定
+11월 2일 변경 노선 안내|Routes changed on November 2|11月2日调整路线说明|11月2日の路線変更案内
+2026년 11월 2일부터 적용됩니다.|Effective November 2, 2026.|自2026年11月2日起实施。|2026年11月2日から適用されます。
+주간 출근 3-1호차 신설: 선부롯데마트 07:07 → 기사촌삼거리 07:09 → 선일초 07:11 → 땟골 07:12|New day-shift bus 3-1: 선부롯데마트 07:07 → 기사촌삼거리 07:09 → 선일초 07:11 → 땟골 07:12|新增白班上班3-1号车：선부롯데마트 07:07 → 기사촌삼거리 07:09 → 선일초 07:11 → 땟골 07:12|日勤出勤3-1号車新設：선부롯데마트 07:07 → 기사촌삼거리 07:09 → 선일초 07:11 → 땟골 07:12
+선부롯데마트는 3호차에서, 기사촌·선일초·땟골은 4호차에서 3-1호차로 바뀝니다.|선부롯데마트 moves from bus 3 to 3-1; 기사촌, 선일초 and 땟골 move from bus 4 to 3-1.|선부롯데마트由3号车改为3-1号车；기사촌、선일초、땟골由4号车改为3-1号车。|선부롯데마트は3号車から、기사촌・선일초・땟골は4号車から3-1号車へ変更されます。
+안산역건너(진성고시텔)는 주간 출근 2호차와 6호차가 모두 07:12에 경유합니다.|Day-shift buses 2 and 6 both stop at 안산역건너(진성고시텔) at 07:12.|白班上班2号车和6号车均于07:12停靠안산역건너(진성고시텔)。|日勤出勤2号車と6号車はどちらも07:12に안산역건너(진성고시텔)へ停車します。
+시행 전까지 검색 결과에는 기존 노선이 표시됩니다.|Search results use the current routes until the effective date.|实施前的搜索结果仍显示现有路线。|実施日までは検索結果に現行路線を表示します。
+
 급여 공제 기준|Salary deduction basis|工资扣除规则|給与の控除基準
 상여 공제 기준|Bonus deduction basis|奖金扣除规则|賞与の控除基準
 
