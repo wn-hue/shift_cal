@@ -1,8 +1,5 @@
 /* UI-only translations. User notes, event names, meals and source documents stay untouched. */
 window.AppTranslations=Object.fromEntries(`
-근태 · 휴가|Attendance & leave|出勤与休假|勤怠・休暇
-오늘의 메모 남기기|Leave a note for today|记录今天的备忘|今日のメモを残す
-변경사항 저장하기|Save changes|保存更改|変更を保存
 11월 2일 통근버스 변경 예정|Bus changes from November 2|11月2日通勤班车调整预告|11月2日から通勤バス変更予定
 11월 2일 변경 노선 안내|Routes changed on November 2|11月2日调整路线说明|11月2日の路線変更案内
 2026년 11월 2일부터 적용됩니다.|Effective November 2, 2026.|自2026年11月2日起实施。|2026年11月2日から適用されます。
