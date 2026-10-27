@@ -1,66 +1,93 @@
-/* A softer light palette for the Test theme; layout and saved preferences stay shared. */
+/* Reference 1: warm individual day cards. Reference 2: a cool, continuous calendar. */
 body[data-pref-theme=test]{
- --test-page:#f1f3ed;--test-surface:#fafbf7;--test-field:#edf1e9;--test-line:#dce3d8;
- --test-ink:#303c36;--test-copy:#4f6055;--test-muted:#5f6c63;
- --test-blue:#4e6f93;--test-blue-soft:#e8eef3;--test-day:#39715e;--test-night:#696186;--test-off:#915967;--test-holiday:#a64d5a;
- --test-today:#e8efe5;--test-today-edge:#768f7d;
+ --test-page:#eeeae4;--test-surface:#faf9f6;--test-field:#e9e4dd;--test-line:#ded8d0;
+ --test-ink:#302f2c;--test-copy:#605b54;--test-muted:#746b61;--test-accent:#896b45;--test-accent-soft:#eee1ce;
+ --test-day-fill:#ffebcc;--test-day-ink:#8c5b22;--test-night-fill:#3e3e52;--test-night-ink:#fff;
+ --test-special-day:#527970;--test-special-night:#65717e;--test-off:#877373;--test-holiday:#ae5864;--test-saturday:#527b99;
+ --test-today:#fffefa;--test-today-edge:#b69a75;--test-today-soft:#f5ece0;--test-badge-shadow:none;
+}
+body[data-pref-theme=test2]{
+ --test-page:#edf0f5;--test-surface:#fff;--test-field:#e9edf3;--test-line:#dce2eb;
+ --test-ink:#263244;--test-copy:#566174;--test-muted:#6b7584;--test-accent:#3174bb;--test-accent-soft:#e7f0fc;
+ --test-day-fill:#e7f0fc;--test-day-ink:#2c6bac;--test-night-fill:#303d52;--test-night-ink:#fff;
+ --test-special-day:#3d74aa;--test-special-night:#454168;--test-off:#717985;--test-holiday:#b64f62;--test-saturday:#3174bb;
+ --test-today:#e8f2ff;--test-today-edge:#a5c5ec;--test-today-soft:#e7f0fc;--test-badge-shadow:0 3px 5px #25395522;
+}
+body:is([data-pref-theme=test],[data-pref-theme=test2]){
  --page-bg:var(--test-page);--bg-main:var(--test-page);--surface:var(--test-surface);--card-bg:var(--test-surface);--surface-soft:var(--test-field);
- --theme-text:var(--test-ink);--text-main:var(--test-ink);--text-sub:var(--test-muted);--work-ink:var(--test-copy);--theme-line:var(--test-line);--border:var(--test-line);--cal-line:var(--test-line);
- --accent:var(--test-blue);--accent-soft:var(--test-blue-soft);--primary:var(--test-blue);--primary-dark:#3d5979;
- --shift-day:#e6eee5;--shift-night:#eeebf3;--shift-special-day:#e6eee5;--shift-special-night:#eeebf3;--shift-off:var(--test-off);--attendance:var(--test-off);
- --special-day-no-ot:#e6eee5;--special-night-no-ot:#eeebf3;--choice-bg:var(--test-field);--choice-ink:var(--test-copy);
- --nav-surface:var(--test-surface);--nav-ink:var(--test-ink);--nav-line:var(--test-line);--nav-selected:#e7ede3;
- color:var(--test-ink);background:var(--test-page);color-scheme:light;
+ --theme-text:var(--test-ink);--text-main:var(--test-ink);--text-sub:var(--test-muted);--work-ink:#fff;--theme-line:var(--test-line);--border:var(--test-line);--cal-line:var(--test-line);
+ --accent:var(--test-accent);--accent-soft:var(--test-accent-soft);--primary:var(--test-accent);--primary-dark:var(--test-accent);
+ --shift-day:var(--test-day-fill);--shift-night:var(--test-night-fill);--shift-special-day:var(--test-special-day);--shift-special-night:var(--test-special-night);--shift-off:var(--test-off);--attendance:#e8dce0;
+ --special-day-no-ot:#cfdfda;--special-night-no-ot:#d5dce5;--choice-bg:var(--test-field);--choice-ink:var(--test-copy);
+ --nav-surface:var(--test-surface);--nav-ink:var(--test-copy);--nav-line:var(--test-line);--nav-selected:var(--test-accent-soft);
+ background:var(--test-page)!important;color:var(--test-ink);color-scheme:light;
 }
-body[data-pref-theme=test]:is([data-view=calendar],[data-view=groups],[data-view=payroll],[data-view=menu],[data-view=all]){background:var(--test-page)}
-/* Surfaces own their tokens elsewhere in the app, so propagate only this theme. */
-body[data-pref-theme=test] :is(#view-payroll,#view-menu,#view-all,#app-preferences-dialog,#commute-dialog,#lost-found-dialog,dialog,.modal-sheet){
+body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(#view-payroll,#view-menu,#view-all,#app-preferences-dialog,#commute-dialog,#lost-found-dialog,dialog,.modal-sheet){
  --ui-page:var(--test-page);--ui-card:var(--test-surface);--ui-field:var(--test-field);--ui-line:var(--test-line);
- --ui-ink:var(--test-ink);--ui-copy:var(--test-copy);--ui-muted:var(--test-muted);--ui-blue:var(--test-blue);--ui-blue-soft:var(--test-blue-soft);
- --surface:var(--test-surface);--surface-soft:var(--test-field);--theme-text:var(--test-ink);--text-main:var(--test-ink);--text-sub:var(--test-muted);--theme-line:var(--test-line);--accent:var(--test-blue);--accent-soft:var(--test-blue-soft);--primary:var(--test-blue);
+ --ui-ink:var(--test-ink);--ui-copy:var(--test-copy);--ui-muted:var(--test-muted);--ui-blue:var(--test-accent);--ui-blue-soft:var(--test-accent-soft);
+ --surface:var(--test-surface);--surface-soft:var(--test-field);--theme-text:var(--test-ink);--text-main:var(--test-ink);--text-sub:var(--test-muted);--theme-line:var(--test-line);--accent:var(--test-accent);--accent-soft:var(--test-accent-soft);--primary:var(--test-accent);
 }
-body[data-pref-theme=test][data-view=calendar] #view-calendar .calendar-card{background:var(--test-surface);border-color:var(--test-line)}
-body[data-pref-theme=test] #calendar-grid{background:var(--test-surface)}
-body[data-pref-theme=test] .cal-weekdays{background:#f0f3ec;color:var(--test-muted);border-color:var(--test-line)}
-body[data-pref-theme=test] #view-calendar .cal-weekdays>:first-child{color:var(--test-holiday)!important}
-body[data-pref-theme=test] #view-calendar .cal-weekdays>:last-child{color:var(--test-blue)!important}
-body[data-pref-theme=test] .cal-day{background:var(--test-surface);border-color:var(--test-line)}
-body[data-pref-theme=test] .cal-day.other-month{background:var(--test-field)}
-body[data-pref-theme=test] .cal-day.today{background:var(--test-today);box-shadow:inset 0 0 0 1px var(--test-today-edge)}
-body[data-pref-theme=test] #calendar-grid .cal-day .day-num{color:var(--test-ink)!important}
-body[data-pref-theme=test] #calendar-grid .cal-day.holiday .day-num{color:var(--test-holiday)!important}
-body[data-pref-theme=test] .holiday-bar{color:var(--test-holiday)}
-body[data-pref-theme=test] #calendar-grid .cal-day :is(.shift-badge.day,.shift-badge.special-day){color:var(--test-day)}
-body[data-pref-theme=test] #calendar-grid .cal-day :is(.shift-badge.night,.shift-badge.special-night){color:var(--test-night)}
-body[data-pref-theme=test] #calendar-grid .cal-day .shift-badge.off{color:var(--test-off)!important}
-body[data-pref-theme=test] #calendar-grid .cal-day .attendance-pill{color:var(--test-off);background:transparent}
-body[data-pref-theme=test] #calendar-grid .cal-day .sub-tag{color:var(--test-muted)}
-body[data-pref-theme=test] #calendar-grid .cal-day .memo-tag{color:var(--test-copy)}
-body[data-pref-theme=test] #calendar-grid .cal-day .memo-tag:active{color:var(--test-blue);background:var(--test-blue-soft)}
-body[data-pref-theme=test] #calendar-grid :is(.cal-day,.day-meta,.memo-tag):focus-visible{outline-color:var(--test-blue)}
-/* Group comparison uses the same shift colors and a restrained sage today marker. */
-body[data-pref-theme=test] :is(#view-groups,#group-day-dialog){
- --group-surface:var(--test-surface);--group-bg:var(--test-page);--group-ink:var(--test-ink);--group-muted:var(--test-muted);--group-line:var(--test-line);--group-blue:var(--test-day);
- --group-highlight:#f0f4ed;--group-today-bg:#e4ece2;--group-today-accent:#4b7162;--group-today-ink:#fff;
-}
-body[data-pref-theme=test] :is(.group-shift.day,.group-shift.special-day){color:var(--test-day)}
-body[data-pref-theme=test] :is(.group-shift.night,.group-shift.special-night){color:var(--test-night)}
-body[data-pref-theme=test] .group-shift.off{color:var(--test-off)}
-body[data-pref-theme=test] :is(.group-weekday.sun,.group-date .holiday-number,.group-date small){color:var(--test-holiday)}
-body[data-pref-theme=test] .group-weekday.sat{color:var(--test-blue)}
-/* Keep the work/memo sheet warm too; its work choices already sample the calendar. */
-body[data-pref-theme=test] #modal-override .editor-current-shift .shift-badge{color:var(--test-copy)!important}
-body[data-pref-theme=test] #modal-override .editor-current-shift :is(.shift-badge.day,.shift-badge.special-day){color:var(--test-day)!important}
-body[data-pref-theme=test] #modal-override .editor-current-shift :is(.shift-badge.night,.shift-badge.special-night){color:var(--test-night)!important}
-body[data-pref-theme=test] #modal-override .editor-current-shift .shift-badge.off{color:var(--test-off)!important}
-body[data-pref-theme=test] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs::before{background:var(--test-field)}
-body[data-pref-theme=test] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs::after{background:var(--test-surface)}
-body[data-pref-theme=test] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs button{color:var(--test-muted)!important}
-body[data-pref-theme=test] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs button[aria-selected=true]{color:var(--test-ink)!important}
-body[data-pref-theme=test] #modal-override[data-editor-tab] .override-header .override-reset{background:var(--test-blue-soft)!important;color:var(--test-blue)!important}
-body[data-pref-theme=test] #modal-override[data-editor-tab] #work-panel .selection-check{color:var(--test-blue)}
-body[data-pref-theme=test] #modal-override[data-editor-tab] #work-panel .opt-btn:focus-visible{outline-color:var(--test-blue)!important}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .reference-header{background:transparent!important}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .reference-header .month-title-btn{color:var(--test-ink);font-weight:750}
+body[data-pref-theme=test][data-view=calendar] .reference-header{border:1px solid #ffffffb3;border-radius:16px;background:#faf9f699!important;box-shadow:0 5px 16px #51422b0a;padding:10px 12px}
+body:is([data-pref-theme=test],[data-pref-theme=test2])[data-view=calendar] #view-calendar .calendar-card{padding:0;margin:20px 0 12px;border:0;overflow:visible;background:transparent;box-shadow:none;border-radius:0}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) #view-calendar .cal-weekdays{padding:10px 0 12px;background:transparent;border:0;font-size:12px;font-weight:550;color:var(--test-muted)}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) #view-calendar .cal-weekdays>:first-child{color:var(--test-holiday)!important}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) #view-calendar .cal-weekdays>:last-child{color:var(--test-saturday)!important}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid{background:transparent;border:0;border-radius:0;gap:4px;isolation:isolate}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .cal-day{min-height:88px;padding:5px 3px;gap:0;border:0;border-radius:9px;background:var(--test-surface);align-items:center;box-sizing:border-box;overflow:hidden;box-shadow:none}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .cal-day.other-month{background:var(--test-surface);opacity:.32}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .day-meta{width:100%;height:29px;min-height:29px;position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:0}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .cal-day .day-num{display:flex;align-items:center;justify-content:flex-start;width:auto;min-width:18px;height:18px;line-height:18px;margin:0;border-radius:0;background:transparent!important;color:var(--test-ink)!important;font-size:13px;font-weight:500;box-shadow:none}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .cal-day.holiday .day-num{color:var(--test-holiday)!important}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .holiday-bar{position:static;flex:none;width:100%;height:11px;min-height:11px;padding:0;margin:0;text-align:left;background:transparent;color:var(--test-holiday);font-size:8px;font-weight:400;line-height:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(.cal-grid,#modal-override) .shift-badge{display:flex;align-items:center;justify-content:center;width:29px;min-width:29px;height:29px;min-height:29px;flex:0 0 29px;margin:0 0 2px;padding:0 1px;box-sizing:border-box;border:0;border-radius:50%;font-size:13px;font-weight:550;line-height:1;letter-spacing:-.5px;outline:0;filter:none;box-shadow:var(--test-badge-shadow)}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(.cal-grid,#modal-override,.group-week,#group-day-dialog) :is(.shift-badge.day,.group-shift.day){background:var(--test-day-fill)!important;color:var(--test-day-ink)!important}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(.cal-grid,#modal-override,.group-week,#group-day-dialog) :is(.shift-badge.night,.group-shift.night){background:var(--test-night-fill)!important;color:var(--test-night-ink)!important}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(.cal-grid,#modal-override,.group-week,#group-day-dialog) :is(.shift-badge.special-day,.group-shift.special-day){background:var(--test-special-day)!important;color:#fff!important}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(.cal-grid,#modal-override,.group-week,#group-day-dialog) :is(.shift-badge.special-night,.group-shift.special-night){background:var(--test-special-night)!important;color:#fff!important}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(.cal-grid,#modal-override,.group-week,#group-day-dialog) :is(.shift-badge.off,.group-shift.off){background:transparent!important;color:var(--test-off)!important;border:0;box-shadow:none}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .shift-badge.special{width:auto;min-width:29px;padding:0 4px;font-size:11px;border-radius:18px}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .cal-day.today{background:var(--test-today);box-shadow:0 4px 10px #75553122,inset 0 0 0 1px var(--test-today-edge)}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .cal-day.today .day-num{font-weight:750}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .reference-today-label{display:block;margin-top:auto;padding-top:2px;color:var(--test-accent);font-size:9px;line-height:13px;font-weight:650}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .attendance-pill{height:18px;min-height:18px;flex-shrink:0;line-height:18px;font-size:10px;padding:0;margin:0;border:0;background:transparent;color:var(--test-holiday);white-space:nowrap}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .sub-tag{position:static;height:16px;min-height:16px;line-height:16px;padding:0;background:transparent;color:var(--test-muted);font-size:8px;white-space:nowrap}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .memo-tag{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;width:100%;min-height:24px;max-height:24px;margin:0;padding:0 1px;border:0;border-radius:0;background:transparent;color:var(--test-copy);font-weight:500;font-family:inherit;font-size:10px;line-height:12px;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;overflow:hidden;cursor:pointer;box-sizing:border-box;flex-shrink:0}
+body:is([data-pref-theme=test],[data-pref-theme=test2])[data-pref-memos=false] .cal-grid .memo-tag{display:none}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid :is(.cal-day,.day-meta,.memo-tag):focus-visible{outline:2px solid var(--test-accent);outline-offset:-2px}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .nav-capsule{box-shadow:0 5px 16px #333b4b15;border-color:#ffffffba}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .bottom-nav .nav-item.active .nav-visual{color:var(--test-accent)!important}
+/* The second reference uses whitespace rather than cell dividers. */
+body[data-pref-theme=test2][data-view=calendar] #view-calendar .calendar-card{background:var(--test-surface);border-radius:22px;padding:0 7px 10px;box-shadow:0 5px 12px #27354d14;margin-top:8px;overflow:hidden}
+body[data-pref-theme=test2] .cal-grid{gap:0}
+body[data-pref-theme=test2] .cal-grid .cal-day{border-radius:0;background:transparent;padding:5px 3px 7px}
+body[data-pref-theme=test2] .cal-grid .cal-day.other-month{background:transparent}
+body[data-pref-theme=test2] .cal-grid .cal-day.today{border-radius:10px;box-shadow:inset 0 0 0 1.5px var(--test-today-edge)}
+body[data-pref-theme=test2] .cal-grid .cal-day.sunday:not(.holiday) .day-num{color:var(--test-holiday)!important}
+body[data-pref-theme=test2] .cal-grid .cal-day.saturday:not(.holiday) .day-num{color:var(--test-saturday)!important}
+body[data-pref-theme=test2] .reference-month-summary{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin:16px 0 8px;padding:13px 8px;border-radius:15px;background:var(--test-surface);color:var(--test-copy);font-size:12px;line-height:1.5;box-shadow:0 4px 9px #27354d12}
+body[data-pref-theme=test2] .reference-month-summary strong{font-weight:750}
+body[data-pref-theme=test2] #reference-day-count{color:var(--test-day-ink)}
+body[data-pref-theme=test2] #reference-night-count{color:var(--test-night-fill)}
+body[data-pref-theme=test2] #reference-special-count{color:var(--test-special-night)}
+/* Shared comparison and editing surfaces follow each calendar's actual palette. */
+body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(#view-groups,#group-day-dialog){--group-surface:var(--test-surface);--group-bg:var(--test-page);--group-ink:var(--test-ink);--group-muted:var(--test-muted);--group-line:var(--test-line);--group-blue:var(--test-accent);--group-highlight:var(--test-today-soft);--group-today-bg:var(--test-today-soft);--group-today-accent:var(--test-accent);--group-today-ink:#fff}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .group-shift{border-radius:50%}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(.group-weekday.sun,.group-date .holiday-number,.group-date small){color:var(--test-holiday)}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .group-weekday.sat{color:var(--test-saturday)}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) #modal-override[data-editor-tab]>.override-sheet>.override-header{background:var(--test-field)!important}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) #modal-override[data-editor-tab]>.override-sheet>.editor-tabs::before{background:var(--test-field)}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) #modal-override[data-editor-tab]>.override-sheet>.editor-tabs::after{background:var(--test-surface)}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) #modal-override[data-editor-tab]>.override-sheet>.editor-tabs button{color:var(--test-muted)!important}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) #modal-override[data-editor-tab]>.override-sheet>.editor-tabs button[aria-selected=true]{color:var(--test-ink)!important}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) #modal-override[data-editor-tab] .override-header .override-reset{background:var(--test-accent-soft)!important;color:var(--test-accent)!important}
 
-body[data-pref-theme=test] .reference-header{background:transparent!important}
-body[data-pref-theme=test] .reference-header .month-title-btn{color:var(--test-ink)}
-body[data-pref-theme=test] #modal-override[data-editor-tab]>.override-sheet>.override-header{background:var(--test-field)!important}
+/* Leave room for the fixed navigation and the second theme’s monthly summary. */
+body[data-pref-theme=test] .cal-grid{min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 250px),680px)}
+body[data-pref-theme=test2] .cal-grid{min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 300px),680px)}
+
+body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(.cal-grid,#modal-override) .shift-badge.special-day.special-no-ot{background:var(--special-day-no-ot)!important;color:#26343a!important}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(.cal-grid,#modal-override) .shift-badge.special-night.special-no-ot{background:var(--special-night-no-ot)!important;color:#26343a!important}
+/* Attendance replaces the base badge, keeping notes and stickers readable in the same row. */
+body:is([data-pref-theme=test],[data-pref-theme=test2]) #view-calendar .cal-grid .cal-day:has(.attendance-pill) .shift-badge{display:none}

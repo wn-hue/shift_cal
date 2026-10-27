@@ -99,6 +99,11 @@ window.AppTranslations=Object.fromEntries(`
 3. 그레이|3. Gray|3. 灰色|3. グレー
 4. 다크모드|4. Dark|4. 深色|4. ダーク
 5. 테스트|5. Test|5. 测试|5. テスト
+6. 테스트2|6. Test 2|6. 测试2|6. テスト2
+테스트2|Test 2|测试2|テスト2
+이번 달|This month|本月|今月
+특근|Extra|加班|休日出勤
+이번 달 근무 요약|This month’s shifts|本月班次概览|今月の勤務概要
 밤과 낮|Day & night|日夜|昼と夜
 블루컬러|Blue|蓝色|ブルー
 그레이|Gray|灰色|グレー

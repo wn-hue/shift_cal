@@ -1,31 +1,3 @@
-/* Test theme follows the shared calendar dimensions and cell structure. */
+/* Controls remain shared across calendar themes. */
 .routine-calendar-toolbar{display:none}
-body[data-pref-theme=test]{--accent:#3182f6;--accent-soft:#eaf3ff;--primary:#3182f6;--primary-dark:#1b64da;--page-bg:#fff;--surface:#fff;--surface-soft:#f2f4f6;--theme-text:#333d4b;--text-main:#333d4b;--text-sub:#6b7684;--theme-line:#edf0f3;--shift-day:#eaf3ff;--shift-night:#edf0f4;--shift-special-day:#eaf3ff;--shift-special-night:#edf0f4;--shift-off:#8b95a1;--special-day-no-ot:#eaf3ff;--special-night-no-ot:#edf0f4;--choice-bg:#f4f6f8;--choice-ink:#6b7684;--attendance:#f07583;--work-ink:#4e5968}
-body[data-view=calendar][data-pref-theme=test]{background:#fff}
-body[data-view=calendar][data-pref-theme=test] #view-calendar .calendar-card{border:1px solid #e9edf1;border-radius:14px;box-shadow:none;background:#fff;overflow:hidden;margin-left:0;margin-right:0;padding:0}
-body[data-pref-theme=test] .cal-weekdays{padding:10px 0;border-bottom:1px solid #e9edf1;background:#fafbfc;color:#6b7684;font-size:12px;font-weight:500}
-body[data-pref-theme=test] .cal-weekdays>:first-child{color:#e5484d}
-body[data-pref-theme=test] .cal-weekdays>:last-child{color:#3182f6}
-body[data-pref-theme=test] #calendar-grid{border:0;border-radius:0;background:#fff;gap:0}
-body[data-pref-theme=test] .cal-day{min-height:88px;padding:3px;gap:0;border-right:1px solid #edf0f3;border-bottom:1px solid #edf0f3;background:#fff;align-items:center;box-sizing:border-box}
-body[data-pref-theme=test] .cal-day:nth-child(7n){border-right:0}
-body[data-pref-theme=test] .cal-day:nth-last-child(-n+7){border-bottom:0}
-body[data-pref-theme=test] .cal-day.other-month{background:#fafbfc;opacity:.32}
-body[data-pref-theme=test] .cal-day.today{background:#f8fbff;box-shadow:inset 0 0 0 1px #b9d4fa}
-body[data-pref-theme=test] .day-meta{height:32px;min-height:32px;position:relative;flex-direction:column;justify-content:flex-start;align-items:flex-start;gap:0}
-body[data-pref-theme=test] .cal-day .day-num{display:flex;align-items:center;justify-content:flex-start;width:auto;min-width:20px;height:20px;margin:0;border-radius:4px;background:transparent!important;color:#191f28!important;font-size:14px;font-weight:500;line-height:20px;box-shadow:none}
-body[data-pref-theme=test] .cal-day.today .day-num{font-weight:700}
-body[data-pref-theme=test] .cal-day.holiday .day-num{color:#e5484d!important}
-body[data-pref-theme=test] .holiday-bar{position:static;flex:none;width:100%;height:12px;padding:0;margin:0;text-align:left;background:transparent;color:#b16b76;font-size:9px;font-weight:400;line-height:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-body[data-pref-theme=test] #calendar-grid .cal-day .shift-badge{display:flex;align-items:center;justify-content:center;width:auto;min-width:0;height:20px;min-height:20px;flex:0 0 20px;margin:0;padding:0 2px;border:0;border-radius:0;background:transparent!important;color:#4e5968;font-size:13px;font-weight:500;line-height:20px;letter-spacing:-.3px;outline:0;filter:none;box-shadow:none}
-body[data-pref-theme=test] #calendar-grid .cal-day :is(.shift-badge.day,.shift-badge.special-day){color:#3182f6}
-body[data-pref-theme=test] #calendar-grid .cal-day :is(.shift-badge.night,.shift-badge.special-night){color:#4e5968}
-body[data-pref-theme=test] #calendar-grid .cal-day .shift-badge.off{color:#bc526c!important;font-weight:500}
-body[data-pref-theme=test] #calendar-grid .cal-day:is(:has(.attendance-pill),:has(.sub-tag)) .shift-badge{display:none}
-body[data-pref-theme=test] .cal-day .attendance-pill{height:20px;min-height:20px;flex-shrink:0;line-height:20px;font-size:12px;padding:0;margin:0;border:0;background:transparent;color:#d65f75;white-space:nowrap}
-body[data-pref-theme=test] .cal-day .sub-tag{position:static;height:20px;min-height:20px;line-height:20px;background:transparent;font-size:10px;white-space:nowrap;color:#6b7684}
-body[data-pref-theme=test] .cal-day .memo-tag{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;width:100%;min-height:28px;max-height:28px;margin:0;padding:0 1px;border:0;border-radius:0;background:transparent;color:#4e5968;font-family:inherit;font-size:11px;font-weight:500;line-height:14px;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;overflow:hidden;cursor:pointer;box-sizing:border-box;flex-shrink:0}
-body[data-pref-theme=test] .cal-day .memo-tag:active{color:#1b64da;background:#eaf3ff;border-radius:4px}
-body[data-pref-theme=test] .cal-day :is(.memo-tag,.day-meta):focus-visible{outline:2px solid #3182f6;outline-offset:-2px;border-radius:4px}
-body[data-pref-theme=test] .cal-day:focus-visible{outline:2px solid #3182f6;outline-offset:-2px}
-body[data-pref-theme=test][data-pref-memos=false] .cal-day .memo-tag{display:none}
+.reference-month-summary,.reference-today-label{display:none}

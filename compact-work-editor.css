@@ -32,10 +32,3 @@ body[data-pref-theme] #modal-override:is([data-editor-tab=work],[data-editor-tab
 #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #change-preview strong{display:block;font-size:13px;line-height:1.5}
 #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #change-preview p{font-size:11px;line-height:1.5;margin:5px 0 10px}
 #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) #apply-preview{min-height:44px;margin:0;padding:9px 12px;border-radius:10px;font-size:13px}
-
-/* Test theme: text choices with a check mark, without circular tiles or rings. */
-body[data-pref-theme=test] #modal-override #work-panel .opt-btn:not(.reset){width:100%;min-width:0;height:48px;min-height:48px;padding:8px 16px 8px 4px;border:0!important;border-radius:0!important;background:transparent!important;color:#4e5968!important;box-shadow:none!important;outline:0!important;font-size:12px}
-body[data-pref-theme=test] #modal-override #work-panel .opt-btn[aria-pressed=true]{color:#1b64da!important;font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
-body[data-pref-theme=test] #modal-override #work-panel .selection-check{top:50%;right:1px;transform:translateY(-50%);background:transparent;color:#1b64da;border-radius:0}
-body[data-pref-theme=test] #modal-override #work-panel .opt-btn:focus-visible{outline:2px solid #3182f6!important;outline-offset:0;border-radius:4px!important}
-body[data-pref-theme=test] #modal-override:is([data-editor-tab=work],[data-editor-tab=stickers],[data-editor-tab=memo]) .editor-current-shift .shift-badge{width:auto;min-width:28px;background:transparent!important;color:#4e5968!important;border:0;border-radius:0;box-shadow:none}
