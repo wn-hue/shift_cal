@@ -76,3 +76,16 @@ body:has(#group-day-dialog[open]){overflow:hidden}
 
 #group-weeks{touch-action:pan-y pinch-zoom;outline:none}
 #group-weeks:focus-visible{outline:2px solid #3182f6;outline-offset:3px;border-radius:18px}
+
+/* Match the calendar's today stroke; keep team and date emphasis free of colored fills. */
+body[data-pref-theme=current] #view-groups { --group-outline:#737373; --group-outline-width:1.5px; --group-blue:#555; --group-today-accent:#555; }
+body[data-pref-theme=toss] #view-groups { --group-outline:#dbe9fc; --group-outline-width:1px; }
+body[data-pref-theme=gpt] #view-groups { --group-outline:#aaa; --group-outline-width:1px; --group-blue:#666; --group-today-accent:#666; }
+body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week :is(.my-group>*,.selected-date,th.today,td.today) { background:transparent; }
+body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week :is(th,td) { position:relative; }
+body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week .my-group>*::before { content:''; position:absolute; inset:1px 0; border-top:var(--group-outline-width) solid var(--group-outline); border-bottom:var(--group-outline-width) solid var(--group-outline); pointer-events:none; }
+body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week .my-group>:first-child::before { left:1px; border-left:var(--group-outline-width) solid var(--group-outline); border-radius:12px 0 0 12px; }
+body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week .my-group>:last-child::before { right:1px; border-right:var(--group-outline-width) solid var(--group-outline); border-radius:0 12px 12px 0; }
+body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week :is(th,td).today::after { content:''; position:absolute; inset:0 1px; border-left:var(--group-outline-width) solid var(--group-outline); border-right:var(--group-outline-width) solid var(--group-outline); pointer-events:none; }
+body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week thead th.today::after { top:1px; border-top:var(--group-outline-width) solid var(--group-outline); border-radius:12px 12px 0 0; }
+body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week tbody tr:last-child td.today::after { bottom:1px; border-bottom:var(--group-outline-width) solid var(--group-outline); border-radius:0 0 12px 12px; }

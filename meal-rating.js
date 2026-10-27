@@ -30,5 +30,5 @@ new MutationObserver(()=>{if(document.body.dataset.view==='menu'){attach();if(Da
 document.getElementById('today-menu-refresh').addEventListener('click',()=>{if(cards().length)request();});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&document.body.dataset.view==='menu'&&cards().length)request();});
 setInterval(()=>{if(!document.hidden&&document.body.dataset.view==='menu'&&cards().length&&Date.now()-lastRead>60000)request();},60000);
-const note=node('p','meal-rating-note','식단 평가는 전체 이용자의 표로 집계됩니다. 브라우저별 끼니당 한 표로, 변경·취소할 수 있어요.');note.append(document.createTextNode(' '));const link=node('a','','저장 안내');link.href='./privacy.html';note.append(link);root.after(note);new MutationObserver(()=>{note.hidden=!cards().length;}).observe(root,{childList:true});note.hidden=!cards().length;attach();
+const note=node('p','meal-rating-note','식단 평가는 전체 이용자의 표로 집계됩니다. 브라우저별 끼니당 한 표로, 변경·취소할 수 있어요.');root.after(note);new MutationObserver(()=>{note.hidden=!cards().length;}).observe(root,{childList:true});note.hidden=!cards().length;attach();
 })();

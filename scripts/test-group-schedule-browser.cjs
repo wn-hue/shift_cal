@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');const{webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
-(async()=>{for(const engine of [webkit,chromium]){const browser=await engine.launch();for(const width of [320,390,412]){
+(async()=>{for(const engine of [webkit,chromium]){const browser=await engine.launch();for(const width of (process.env.GROUP_QUICK?[390]:[320,390,412])){
  const page=await browser.newPage({viewport:{width,height:844},timezoneId:'Asia/Seoul',reducedMotion:'reduce'}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.clock.setFixedTime(new Date('2026-10-26T12:00:00+09:00'));
  await page.addInitScript(()=>{if(localStorage.getItem('shift_active_group'))return;localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_onboarding_v1',JSON.stringify({status:'existing'}));localStorage.setItem('shift_salary_config_master',JSON.stringify({hireDate:'2015-06-16',baseHourly:10320,ordinaryHourly:11000}));for(const[g,type]of[['A','OFF'],['B','DAY'],['C','LEAVE']])localStorage.setItem('shift_overrides_'+g,JSON.stringify({'2026-10-18':type}));});
  await page.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await page.goto(process.env.TEST_URL||'http://localhost:8768/');
@@ -27,7 +27,11 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
   assert.equal(await page.locator('#group-weeks table').count(),5);
   assert.equal(await page.locator('thead .today .group-today-label').textContent(),'오늘');
   const marker=await page.locator('thead .today strong').evaluate(el=>({background:getComputedStyle(el).backgroundColor,color:getComputedStyle(el).color,radius:getComputedStyle(el).borderRadius}));
-  assert.equal(marker.background,theme==='dark'?'rgb(139, 184, 255)':theme==='test'?'rgb(137, 107, 69)':theme==='test3'?'rgb(217, 54, 50)':theme==='test4'?'rgb(68, 54, 55)':'rgb(49, 130, 246)');assert.equal(marker.radius,'50%');assert.notEqual(marker.color,marker.background);
+  assert.equal(marker.background,({current:'rgb(85, 85, 85)',gpt:'rgb(102, 102, 102)',dark:'rgb(139, 184, 255)',test:'rgb(137, 107, 69)',test1:'rgb(34, 113, 233)',test3:'rgb(217, 54, 50)',test4:'rgb(89, 69, 56)'})[theme]||'rgb(49, 130, 246)');assert.equal(marker.radius,'50%');assert.notEqual(marker.color,marker.background);
+  if(['current','toss','gpt'].includes(theme)){
+   const outlines=await page.evaluate(()=>{const row=document.querySelector('#group-weeks .my-group'),date=document.querySelector('#group-weeks thead .today'),last=document.querySelector('#group-weeks tbody tr:last-child td.today'),style=(e,p)=>getComputedStyle(e,p);return{fills:[...document.querySelectorAll('#group-weeks .my-group>*,#group-weeks .today,#group-weeks .selected-date')].map(e=>style(e).backgroundColor),row:style(row.firstElementChild,'::before').borderTopColor,rowRadius:style(row.firstElementChild,'::before').borderTopLeftRadius,column:style(date,'::after').borderLeftColor,top:style(date,'::after').borderTopLeftRadius,bottom:style(last,'::after').borderBottomLeftRadius,pointer:style(date,'::after').pointerEvents}});
+   assert(outlines.fills.every(c=>c==='rgba(0, 0, 0, 0)'));assert.equal(outlines.row,({current:'rgb(115, 115, 115)',toss:'rgb(219, 233, 252)',gpt:'rgb(170, 170, 170)'})[theme]);assert.equal(outlines.column,outlines.row);assert.equal(outlines.rowRadius,'12px');assert.equal(outlines.top,'12px');assert.equal(outlines.bottom,'12px');assert.equal(outlines.pointer,'none');
+  }
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   assert(await page.locator('.nav-capsule>button').evaluateAll(els=>els.every(e=>{const r=e.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.right<=innerWidth})));
   for(const[g,type]of[['A','OFF'],['B','DAY'],['C','LEAVE']])assert.equal(await page.locator(`tr[data-group="${g}"] td[data-date="2026-10-18"]`).getAttribute('data-shift'),type);

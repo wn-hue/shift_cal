@@ -52,7 +52,7 @@
 #onboarding-dialog :is(#onboarding-login,#onboarding-import-again){display:block;border:0;background:transparent;color:#6b7684;font:inherit;font-size:12px;min-height:40px;padding:10px 0;cursor:pointer;text-align:center;width:100%}
 #onboarding-dialog #onboarding-login{margin-top:8px}
 #onboarding-dialog :is(button,input):focus-visible{outline:2px solid #3182f6;outline-offset:3px}
-#view-all #onboarding-reopen{display:block;margin:6px auto 18px;border:0;background:transparent;color:var(--menu-sub,#6b7684);font:inherit;font-size:12px;min-height:40px;padding:8px 14px;cursor:pointer}
+#view-all #onboarding-reopen{display:block;margin:6px 0 18px;border:0;background:transparent;color:var(--menu-sub,#6b7684);font:inherit;font-size:12px;min-height:40px;padding:8px 14px;cursor:pointer;text-align:left}
 @media(max-width:350px){#onboarding-dialog :is(.onboarding-top,.onboarding-main,.onboarding-footer){padding-left:20px;padding-right:20px}#onboarding-dialog h1{font-size:27px}#onboarding-dialog .onboarding-main{padding-top:22px}}
 @media(max-height:650px){#onboarding-dialog .onboarding-art{width:52px;height:52px;border-radius:17px;margin-bottom:16px}#onboarding-dialog .onboarding-main{padding-top:18px}#onboarding-dialog #onboarding-description{margin-bottom:20px}}
 
