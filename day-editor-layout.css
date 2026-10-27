@@ -1,6 +1,6 @@
 /* Content-sized day sheets with a dedicated layout while the keyboard is open. */
 body[data-pref-theme] #modal-override.active[data-editor-tab]{padding:0!important;align-items:flex-end;overflow:hidden;overflow:clip}
-body[data-pref-theme] #modal-override[data-editor-tab]>.override-sheet{height:var(--editor-sheet-height,auto);max-height:100%;min-height:0;overflow:hidden;overflow:clip;border-radius:28px 28px 0 0}
+body[data-pref-theme] #modal-override[data-editor-tab]>.override-sheet{height:auto;max-height:min(100%,var(--editor-sheet-limit,78dvh));min-height:0;overflow:hidden;overflow:clip;border-radius:28px 28px 0 0}
 body[data-pref-theme] #modal-override[data-editor-tab] .override-header{position:relative;flex:0 0 auto;min-height:156px;padding:30px 24px 18px}
 body[data-pref-theme] #modal-override[data-editor-tab] #override-title{font-size:11px;line-height:16px;margin:0}
 body[data-pref-theme] #modal-override[data-editor-tab] #modal-date-text{font-size:22px;line-height:30px;margin:6px 0 12px;padding-right:58px}
@@ -10,7 +10,7 @@ body[data-pref-theme] #modal-override[data-editor-tab] #editor-sticker-preview{t
 body[data-pref-theme] #modal-override[data-editor-tab] .override-header .override-reset{position:absolute;top:92px;right:18px;display:flex;align-items:center;justify-content:center;gap:5px;width:auto;min-width:0;height:44px;min-height:44px;padding:8px 10px;border:0!important;border-radius:18px;background:#eaf3ff!important;color:#1b64da!important;box-shadow:none!important;outline:0;font:inherit;font-size:11px;white-space:nowrap}
 #modal-override .override-header .override-reset>svg{width:15px;height:15px;flex:none}
 #modal-override .override-header .override-reset .selection-check{display:none}
-body[data-pref-theme] #modal-override[data-editor-tab] .editor-content{flex:1 1 0;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:8px 20px max(18px,env(safe-area-inset-bottom))}
+body[data-pref-theme] #modal-override[data-editor-tab] .editor-content{flex:0 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:8px 20px max(18px,env(safe-area-inset-bottom))}
 #modal-override #memo-panel .day-agenda{padding-bottom:16px;margin-bottom:16px}
 #modal-override #memo-panel .event-empty{margin:12px 0}
 body[data-pref-theme] #modal-override[data-editor-tab] #modal-memo-input{height:clamp(120px,18dvh,180px)!important;min-height:120px!important;margin:8px 0}
@@ -63,6 +63,6 @@ body[data-pref-theme] #modal-override[data-editor-tab] #work-panel #change-previ
 #modal-override #memo-panel .day-agenda{padding-bottom:12px;margin-bottom:12px}
 #modal-override #memo-panel .agenda-heading{margin-bottom:4px}
 body[data-pref-theme] #modal-override[data-editor-keyboard=false] #modal-memo-input{height:clamp(112px,16dvh,160px)!important;min-height:112px!important}
-@media(prefers-reduced-motion:no-preference){
- body[data-pref-theme] #modal-override[data-editor-settled=true][data-editor-keyboard=false]>.override-sheet:not([data-sheet-closing=true]){transition:height .22s cubic-bezier(.2,.7,.2,1)}
-}
+/* Resting content keeps its intrinsic height. Only the keyboard layout fills the visible viewport. */
+body[data-pref-theme] #modal-override[data-editor-keyboard=true]>.override-sheet{height:var(--editor-sheet-limit);max-height:100%}
+body[data-pref-theme] #modal-override[data-editor-keyboard=true] .editor-content{flex:1 1 0}
