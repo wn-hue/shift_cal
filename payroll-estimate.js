@@ -48,7 +48,7 @@
             event.preventDefault();selectMethod(methods[event.key==='Home'?0:event.key==='End'?1:1-index],true);
         });
     }
-    const smsIntro=document.querySelector('#payroll-sms-title + p'), smsLabel=document.querySelector('label[for="payroll-sms-text"]');
+    const smsIntro=document.getElementById('wage-import-intro'), smsLabel=document.querySelector('label[for="payroll-sms-text"]');
     const defaultIntro=smsIntro?.textContent, defaultLabel=smsLabel?.textContent;
     api.open = options => {
         const onboarding=options?.onboarding===true;
@@ -104,7 +104,7 @@
     api.update = (gross, breakdown) => { parts=breakdown || {regular:gross,bonus:0,support:0}; render(); };
     api.reloadReference = () => {profile=loadProfile(storageKey);bonusProfile=loadProfile(bonusKey);render();};
     toggle.checked = false; toggle.addEventListener('change', render);
-    function clearDraft() { text.placeholder='기본시급: 10,320원\n통상시급: 11,000원\n자격: 0원\n직무: 0원\n가족: 0원\n직책: 0원'; text.value='';bonusText.value='';apply.disabled=true;preview.textContent='';status.textContent='';manualBase.value='';manualOrdinary.value='';manualStatus.textContent='';for(const input of [manualBase,manualOrdinary])input.setAttribute('aria-invalid','false'); }
+    function clearDraft() { document.getElementById('payroll-sms-recognized').hidden=true;document.getElementById('payroll-sms-recognized').textContent='';for(const id of ['wage-import-review','wage-bonus-input','wage-import-help'])document.getElementById(id).open=false;document.getElementById('wage-import-review').hidden=true;document.getElementById('wage-import-info').setAttribute('aria-expanded','false');text.placeholder='기본시급: 10,320원\n통상시급: 11,000원\n자격: 0원\n직무: 0원\n가족: 0원\n직책: 0원'; text.value='';bonusText.value='';apply.disabled=true;preview.textContent='';status.textContent='';manualBase.value='';manualOrdinary.value='';manualStatus.textContent='';for(const input of [manualBase,manualOrdinary])input.setAttribute('aria-invalid','false'); }
     api.clearDraft = () => { clearDraft(); if(dialog.open)dialog.close(); };
     api.clearReference = () => {
         localStorage.removeItem(storageKey);localStorage.removeItem(bonusKey);profile=null;bonusProfile=null;api.clearDraft();render();
@@ -121,7 +121,7 @@
         return {salary,bonus};
     }
     function refreshPreview() {
-        preview.textContent='';status.textContent='';apply.disabled=true;
+        preview.textContent='';status.textContent='';apply.disabled=true;const recognized=document.getElementById('payroll-sms-recognized'),review=document.getElementById('wage-import-review');recognized.hidden=true;recognized.textContent='';review.hidden=true;
         if(!text.value.trim()&&!bonusText.value.trim())return;
         try {
             const {salary,bonus}=parseDraft(),lines=[];
@@ -132,7 +132,7 @@
                 status.textContent=salary.warnings.join(' ');
             }
             if(bonus)lines.push('\n상여 공제 기준','지급 합계: '+fmt(bonus.profile.gross),'공제 합계: '+fmt(bonus.profile.total),basis('상여',bonus.profile));
-            preview.textContent=lines.join('\n');apply.disabled=false;
+            preview.textContent=lines.join('\n');const summary=[];for(const key of ['baseHourly','ordinaryHourly'])if(salary&&Object.hasOwn(salary.wages,key))summary.push(labels[key]+' '+fmt(salary.wages[key]));if(salary&&Object.hasOwn(salary.wages,'dutyPay'))summary.push('고정수당 '+fmt(salary.wages.dutyPay));if(salary?.profile)summary.push('급여 공제 기준');if(bonus)summary.push('상여 공제 기준');recognized.textContent='인식 완료: '+summary.join(' · ');recognized.hidden=false;review.hidden=false;apply.disabled=false;
         }catch(error){status.textContent=error.message;}
     }
     text.addEventListener('input',refreshPreview);bonusText.addEventListener('input',refreshPreview);

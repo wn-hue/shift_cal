@@ -1,5 +1,18 @@
 /* UI-only translations. User notes, event names, meals and source documents stay untouched. */
 window.AppTranslations=Object.fromEntries(`
+급여 공제 기준|Salary deduction basis|工资扣除规则|給与の控除基準
+상여 공제 기준|Bonus deduction basis|奖金扣除规则|賞与の控除基準
+
+문자 붙여넣기|Paste message|粘贴短信|メッセージを貼り付け
+복사한 문자 붙여넣기|Paste copied message|粘贴已复制的短信|コピーしたメッセージを貼り付け
+인식한 항목 자세히 보기|Review recognized items|查看识别项目|読み取った項目を確認
+상여금 문자도 함께 등록하기|Add a bonus message|同时添加奖金短信|賞与のメッセージも追加
+상여금 문자|Bonus message|奖金短信|賞与のメッセージ
+시급 설정 안내|Wage settings information|时薪设置说明|時給設定のご案内
+적용하거나 닫으면 지워져요. 상세 안내|Cleared when applied or closed. Details|应用或关闭后清除。详细说明|適用または閉じると消去します。詳細
+문자 입력칸을 길게 눌러 붙여넣어 주세요.|Touch and hold the message field to paste.|请长按短信输入框进行粘贴。|入力欄を長押しして貼り付けてください。
+복사한 문자가 없어요. 급여 문자를 먼저 복사해 주세요.|Copy your pay message first.|尚未复制短信，请先复制工资短信。|給与のメッセージを先にコピーしてください。
+
 현재 주차 상태|Current parking status|当前停车状态|現在の駐車状況
 만차 제보가 모이면 알려드려요|We’ll notify you when full reports add up.|满位反馈增加时通知您|満車の報告が集まったらお知らせします
 주차장 만차|Parking is full|停车场已满|駐車場は満車です

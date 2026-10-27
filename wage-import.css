@@ -1,0 +1,53 @@
+/* A compact import flow using the app's existing surfaces and blue actions. */
+#payroll-sms-dialog .sms-dialog-header{margin:2px 0 16px}
+#payroll-sms-dialog .wage-import-title{display:flex;align-items:center;gap:4px}
+body[data-pref-theme] #payroll-sms-dialog .wage-import-title h2{font-size:23px;font-weight:650;letter-spacing:-.7px;margin:0}
+body[data-pref-theme] #payroll-sms-dialog #wage-import-info{display:grid;place-items:center;width:36px;min-height:40px;padding:8px;border:0;border-radius:0;background:transparent;color:var(--ui-muted,#8b95a1);box-shadow:none}
+#wage-import-info svg{width:19px;height:19px}
+#payroll-sms-dialog #wage-import-intro{margin:6px 0 0;font-size:13px;line-height:1.7;color:var(--ui-muted,#6b7684)}
+#payroll-sms-dialog .wage-method-tabs{margin:0 0 14px}
+#payroll-sms-dialog .wage-input-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 9px}
+#payroll-sms-dialog .wage-input-heading .sms-input-label{font-size:15px;font-weight:600;line-height:1.5;margin:0;color:var(--ui-ink,#191f28)}
+body[data-pref-theme] #payroll-sms-dialog .wage-paste-button{display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:none;min-height:40px;max-width:55%;border:0;border-radius:10px;padding:8px 10px;background:var(--ui-blue-soft,#eaf3ff);color:var(--ui-blue,#3182f6);font:inherit;font-size:12px;font-weight:550;line-height:1.5}
+.wage-paste-button svg{width:16px;height:16px;flex:none}
+.wage-paste-button:disabled{opacity:.55}
+#payroll-sms-dialog .wage-import-field{padding:14px;border:0;border-radius:17px;background:var(--ui-field,#f2f4f6)}
+body[data-pref-theme] #payroll-sms-dialog .wage-import-field .sms-textarea{display:block;width:100%;height:128px;min-height:120px;max-height:none;padding:0;border:0!important;background:transparent!important;color:var(--ui-copy,#4e5968);border-radius:0;font:inherit;font-size:16px;line-height:1.6;resize:vertical;box-shadow:none}
+#payroll-sms-dialog .sms-textarea::placeholder{color:var(--ui-muted,#8b95a1);opacity:.8}
+#payroll-sms-dialog #payroll-sms-recognized{position:relative;margin:12px 0 0;padding:10px 10px 10px 30px;background:var(--ui-blue-soft,#eaf3ff);border-radius:10px;color:var(--ui-blue,#3182f6);font-size:12px;font-weight:550;line-height:1.7;overflow-wrap:anywhere}
+#payroll-sms-recognized::before{content:'✓';position:absolute;left:10px;font-size:14px}
+#payroll-sms-dialog .wage-input-tools{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:0 0 6px}
+body[data-pref-theme] #payroll-sms-dialog #payroll-sms-clear{min-height:36px;padding:4px 2px;border:0;border-radius:0;background:none;color:var(--ui-muted,#8b95a1);font:inherit;font-size:12px}
+#payroll-sms-dialog #payroll-sms-status{margin:0 0 12px;font-size:12px;color:var(--ui-copy,#4e5968);line-height:1.7}
+#payroll-sms-dialog #payroll-sms-status:empty{display:none}
+#payroll-sms-dialog .wage-import-review{font-size:12px;color:var(--ui-muted,#6b7684);margin:0}
+.wage-import-review summary{min-height:36px;line-height:36px;cursor:pointer}
+#payroll-sms-dialog .wage-import-review .sms-preview{margin:0;padding:14px;font-size:12px;line-height:1.8;background:var(--ui-field,#f2f4f6);color:var(--ui-copy,#4e5968);overflow-wrap:anywhere}
+#payroll-sms-dialog .wage-bonus-input{padding:0;margin:0 0 12px;border:0;border-radius:16px;background:var(--ui-field,#f2f4f6)}
+#payroll-sms-dialog .wage-bonus-input>summary{display:flex;align-items:center;gap:7px;list-style:none;min-height:54px;padding:12px 14px;box-sizing:border-box;font-size:14px;font-weight:550;color:var(--ui-copy,#4e5968);cursor:pointer}
+.wage-bonus-input>summary::-webkit-details-marker,.wage-import-help>summary::-webkit-details-marker{display:none}
+.wage-bonus-input>summary::before{content:'+';font-size:21px;color:var(--ui-muted,#8b95a1);font-weight:400;flex:none}
+.wage-bonus-input>summary::after{content:'';flex:none;width:7px;height:7px;margin-left:auto;border-right:1.5px solid var(--ui-muted,#8b95a1);border-bottom:1.5px solid var(--ui-muted,#8b95a1);transform:rotate(45deg);margin-top:-4px}
+.wage-bonus-input[open]>summary::after{transform:rotate(225deg);margin-top:4px}
+.wage-bonus-input summary small{font-size:11px;color:var(--ui-muted,#8b95a1);font-weight:400;flex:none}
+#payroll-sms-dialog .wage-bonus-body{padding:0 14px 14px}
+#payroll-sms-dialog .wage-bonus-body .sms-textarea{width:100%;height:126px;padding:12px;border:0;border-radius:12px;font-size:16px;resize:vertical}
+#payroll-sms-dialog .wage-bonus-body .sms-privacy{margin:0 0 10px}
+#payroll-sms-dialog .wage-import-help{margin:0;padding:0;border:0;border-radius:16px;background:var(--ui-field,#f2f4f6)}
+#payroll-sms-dialog .wage-import-help>summary{display:flex;align-items:center;gap:10px;list-style:none;padding:13px 14px;cursor:pointer;line-height:1.6;min-height:56px;box-sizing:border-box}
+.wage-import-help>summary svg{width:18px;height:18px;flex:none;color:var(--ui-muted,#8b95a1)}
+.wage-import-help>summary span{display:flex;flex-direction:column;gap:2px}
+.wage-import-help>summary strong{font-size:12px;font-weight:500;color:var(--ui-copy,#4e5968)}
+.wage-import-help>summary small{font-size:11px;color:var(--ui-muted,#8b95a1)}
+.wage-help-body{padding:0 14px 14px;font-size:12px;line-height:1.8;color:var(--ui-muted,#6b7684)}
+.wage-help-body h3{font-size:13px;color:var(--ui-copy,#4e5968)}
+#payroll-sms-dialog .sms-actions{position:sticky;bottom:0;display:block;padding:14px 0 2px;margin:0;background:var(--ui-card,#fff);z-index:1}
+body[data-pref-theme] #payroll-sms-dialog #payroll-sms-apply{display:block;width:100%;min-height:50px;font-size:16px;font-weight:600;margin:0}
+body[data-pref-theme] #payroll-sms-dialog #payroll-sms-apply:disabled{background:var(--ui-field,#f2f4f6);color:var(--ui-muted,#8b95a1);opacity:1}
+#payroll-sms-dialog [hidden]{display:none!important}
+#payroll-sms-dialog[data-onboarding=true] #wage-bonus-input{display:none}
+@media(max-width:360px){#payroll-sms-dialog .wage-input-heading{align-items:flex-start}#payroll-sms-dialog .wage-input-heading .sms-input-label{font-size:14px;padding-top:8px}body[data-pref-theme] #payroll-sms-dialog .wage-paste-button{font-size:11px;gap:4px;padding:8px}#payroll-sms-dialog .wage-bonus-input>summary{font-size:12px;gap:5px}#payroll-sms-dialog .wage-import-field{padding:12px}}
+@media(max-height:500px){body[data-pref-theme] #payroll-sms-dialog .wage-import-field .sms-textarea{height:120px}#payroll-sms-dialog .sms-actions{padding-top:10px}}
+
+#payroll-sms-dialog .wage-input-tools #payroll-sms-clear{margin-left:auto}
+#payroll-sms-dialog .wage-input-tools:has(details[open]) details{flex-basis:100%;min-width:0}
