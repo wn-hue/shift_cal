@@ -91,3 +91,70 @@ body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(.cal-grid,#modal-ove
 body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(.cal-grid,#modal-override) .shift-badge.special-night.special-no-ot{background:var(--special-night-no-ot)!important;color:#26343a!important}
 /* Attendance replaces the base badge, keeping notes and stickers readable in the same row. */
 body:is([data-pref-theme=test],[data-pref-theme=test2]) #view-calendar .cal-grid .cal-day:has(.attendance-pill) .shift-badge{display:none}
+
+/* Test 2 closely follows the second supplied calendar reference. */
+body[data-pref-theme=test2]{
+ --test-page:#edf0f5;--test-ink:#14171d;--test-copy:#858b95;--test-muted:#9297a0;
+ --test-accent:#3b80c5;--test-accent-soft:#edf0f5;
+ --test-day-fill:#edf4ff;--test-day-ink:#4389c7;--test-night-fill:#303b50;
+ --test-special-day:#3d7fb8;--test-special-night:#29264d;--test-off:#b1b4bd;
+ --test-holiday:#ce6276;--test-saturday:#3e7fb9;--test-today:#e9f3ff;--test-today-edge:#b0caeb;
+ --test-badge-shadow:0 4px 6px #27395136,inset 0 1px 1px #ffffff40;
+ --nav-ink:#8c929c;--nav-selected:#edf0f5;
+}
+body[data-pref-theme=test2][data-view=calendar] .container{padding-left:20px;padding-right:20px}
+body[data-pref-theme=test2][data-view=calendar] .reference-header{min-height:64px;padding:10px 0 8px;gap:5px}
+body[data-pref-theme=test2][data-view=calendar] .reference-header .month-title-btn{font-size:clamp(21px,7.2vw,30px);font-weight:800;letter-spacing:-1.1px;line-height:1.25;color:#080a0e;padding:0}
+body[data-pref-theme=test2] .header-calendar-actions{gap:5px}
+body[data-pref-theme=test2] .header-calendar-actions .icon-button:not(.weather-trigger){width:31px;height:33px;min-width:31px;padding:6px;border:1px solid #d7dce5;border-radius:11px;background:transparent;color:#939aa8;box-shadow:0 1px 2px #ffffff80 inset}
+body[data-pref-theme=test2] .header-calendar-actions .icon-button:not(.weather-trigger) svg{width:20px;height:20px}
+body[data-pref-theme=test2] .header-calendar-actions .weather-trigger{min-width:44px;width:auto;height:36px;padding:0 2px;color:#14171d}
+body[data-pref-theme=test2] #weather-icon{font-size:23px}
+body[data-pref-theme=test2] #weather-temperature{font-size:17px;font-weight:550;color:#14171d}
+body[data-pref-theme=test2] .reference-stats-bars{display:none}
+body[data-pref-theme=test2] .reference-stats-list{display:block}
+body[data-pref-theme=test2] .reference-month-summary{flex-wrap:wrap;gap:5px;margin:0 0 8px;padding:10px 8px;min-height:42px;border-radius:14px;font-size:clamp(12px,3.85vw,16px);line-height:1.45;color:#20242b;box-shadow:0 5px 7px #28334a1c;letter-spacing:-.55px}
+body[data-pref-theme=test2] .reference-month-summary>span{white-space:nowrap}
+body[data-pref-theme=test2] .reference-month-summary b{font-weight:750}
+body[data-pref-theme=test2] .reference-month-summary strong{font-weight:450;color:#90949e}
+body[data-pref-theme=test2] .reference-summary-day b{color:#7aabe0}
+body[data-pref-theme=test2] #reference-day-count{color:#8db4e0}
+body[data-pref-theme=test2] .reference-summary-night b{color:#26354a}
+body[data-pref-theme=test2] .reference-summary-special b{color:#34384f;background:#e6e5ed;border-radius:6px;padding:2px 3px}
+body[data-pref-theme=test2] .reference-summary-night::before,body[data-pref-theme=test2] .reference-summary-special::before{content:'·';margin-right:5px;color:#a0a4ad;font-weight:500}
+body[data-pref-theme=test2][data-view=calendar] #view-calendar .calendar-card{margin:0 0 12px;padding:0 9px 16px;border-radius:18px;box-shadow:0 6px 9px #28334a20;background:#ffffff}
+body[data-pref-theme=test2] #view-calendar .cal-weekdays{padding:10px 0 9px;font-size:13px;font-weight:550;color:#989ca6}
+body[data-pref-theme=test2] .cal-grid{min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 260px),720px)}
+body[data-pref-theme=test2] .cal-grid .cal-day{padding:3px 1px 5px;overflow:visible}
+body[data-pref-theme=test2] .cal-grid .cal-day.other-month{opacity:.3}
+body[data-pref-theme=test2] .cal-grid .day-meta{height:21px;min-height:21px;flex-direction:row;align-items:baseline;gap:2px}
+body[data-pref-theme=test2] .cal-grid .cal-day .day-num{font-size:13.5px;line-height:19px;height:19px;min-width:15px;font-weight:400}
+body[data-pref-theme=test2] .cal-grid .holiday-bar{flex:1;min-width:0;width:auto;height:18px;min-height:18px;line-height:18px;font-size:9px;letter-spacing:-.5px;text-align:right}
+body[data-pref-theme=test2] :is(.cal-grid,#modal-override) .shift-badge{font-size:14px;font-weight:550;letter-spacing:-.6px}
+body[data-pref-theme=test2] .cal-grid .shift-badge{margin:2px 0 3px;width:29px;height:29px;min-width:29px;min-height:29px;flex-basis:29px}
+body[data-pref-theme=test2] .cal-grid .shift-badge.special{width:29px;min-width:29px;padding:0;font-size:12px;border-radius:50%}
+body[data-pref-theme=test2] .cal-grid .shift-badge.off{font-size:13px;font-weight:500}
+body[data-pref-theme=test2] .cal-grid .memo-tag{color:#8b8d97;font-weight:400;font-size:10px;line-height:13px;min-height:26px;max-height:26px}
+body[data-pref-theme=test2] .cal-grid .cal-day.today{background:transparent;box-shadow:none;border-radius:0;isolation:isolate}
+body[data-pref-theme=test2] .cal-grid .cal-day.today::before{content:'';position:absolute;top:0;left:0;right:0;height:62px;box-sizing:border-box;background:#e9f3ff;border:1.5px solid #afcbed;border-radius:10px;z-index:-1;pointer-events:none}
+body[data-pref-theme=test2] .cal-grid .cal-day.today .day-num{color:#3984ca!important;font-weight:500}
+body[data-pref-theme=test2] .reference-today-label{position:absolute;top:2px;right:1px;margin:0;padding:2px 3px;border-radius:10px;background:#d6e8ff;color:#3b81c4;font-size:9px;font-weight:550;line-height:12px;box-shadow:0 2px 4px #7b9ac219}
+body[data-pref-theme=test2] .bottom-nav{padding:6px 20px calc(10px + env(safe-area-inset-bottom))}
+body[data-pref-theme=test2] .nav-capsule{max-width:560px;border:4px solid #fff;padding:0;border-radius:40px;box-shadow:0 6px 12px #28334a26;background:#fff}
+body[data-pref-theme=test2] .bottom-nav .nav-item{min-height:54px}
+body[data-pref-theme=test2] .bottom-nav .nav-item .nav-visual{min-height:54px;gap:4px;padding:6px 2px;max-width:84px;color:#8c929c!important}
+body[data-pref-theme=test2] .bottom-nav .nav-item.active .nav-visual{background:#edf0f5!important;color:#3c80c4!important}
+body[data-pref-theme=test2] .bottom-nav .nav-visual>span{font-size:11px;font-weight:500;letter-spacing:-.35px}
+body[data-pref-theme=test2] .bottom-nav .nav-item.active .nav-visual>span{font-weight:650}
+body[data-pref-theme=test2] .bottom-nav .nav-item svg{width:23px;height:23px;stroke-width:1.8}
+@media(max-width:360px){
+ body[data-pref-theme=test2][data-view=calendar] .container{padding-left:16px;padding-right:16px}
+ body[data-pref-theme=test2] .header-calendar-actions{gap:3px}
+ body[data-pref-theme=test2] #weather-temperature{font-size:15px}
+ body[data-pref-theme=test2] .header-calendar-actions .weather-trigger{min-width:36px}
+ body[data-pref-theme=test2] .reference-today-label{font-size:8px;padding-left:2px;padding-right:2px}
+ body[data-pref-theme=test2] .bottom-nav{padding-left:16px;padding-right:16px}
+ body[data-pref-theme=test2] .bottom-nav .nav-visual>span{font-size:10px}
+}
+
+body[data-pref-theme=test2] :is(#reference-night-count,#reference-special-count){color:#90949e}

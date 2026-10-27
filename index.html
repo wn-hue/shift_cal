@@ -934,7 +934,7 @@
 <link rel="stylesheet" href="./screen-refinement.css?v=6">
 <link rel="stylesheet" href="./onboarding.css?v=3">
 <link rel="stylesheet" href="./mobile-surfaces.css?v=10">
-<link rel="stylesheet" href="./test-calendar.css?v=7">
+<link rel="stylesheet" href="./test-calendar.css?v=8">
 <link rel="stylesheet" href="./month-picker.css?v=1">
 <link rel="stylesheet" href="./memo-editor.css?v=3">
 <link rel="stylesheet" href="./compact-work-editor.css?v=7">
@@ -953,7 +953,7 @@
 <link rel="stylesheet" href="./lost-found-page.css?v=3">
 <link rel="stylesheet" href="./parking-sheet.css?v=3">
 <link rel="stylesheet" href="./wage-import.css?v=1">
-<link rel="stylesheet" href="./test-theme-palette.css?v=2">
+<link rel="stylesheet" href="./test-theme-palette.css?v=3">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -966,7 +966,7 @@
             <div id="header-calendar-actions" class="header-calendar-actions">
                 <button type="button" id="weather-open" class="icon-button weather-trigger" aria-label="오늘 날씨 확인" title="오늘 날씨" onclick="document.getElementById('today-weather').showModal()"><span class="weather-current"><span id="weather-icon" aria-hidden="true"></span><span id="weather-temperature">--°</span></span><span id="weather-alert" hidden></span></button>
                 <button type="button" class="icon-button" onclick="openScheduleShare()" aria-label="근무표 공유" title="공유"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4M9 14l6 4"/></svg></button>
-                <button type="button" class="icon-button" onclick="openMonthStatsModal()" aria-label="월 근무 통계" title="근무 통계"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16v-4M12 16V7M17 16V9"/></svg></button>
+                <button type="button" class="icon-button" onclick="openMonthStatsModal()" aria-label="월 근무 통계" title="근무 통계"><svg class="reference-stats-bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16v-4M12 16V7M17 16V9"/></svg><svg class="reference-stats-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M9 5h11M9 10h11M9 15h11M9 20h11"/><path d="M4 5h.01M4 10h.01M4 15h.01M4 20h.01" stroke-width="3"/></svg></button>
             </div>
             <button type="button" class="meal-refresh" id="today-menu-refresh" hidden>새로고침</button>
         </header>
@@ -982,7 +982,7 @@
 
             <div class="calendar-month-controls" hidden></div>
 
-            <div class="reference-month-summary" aria-label="이번 달 근무 요약"><span>이번 달</span><span>주간 <strong id="reference-day-count">0일</strong></span><span>야간 <strong id="reference-night-count">0일</strong></span><span>특근 <strong id="reference-special-count">0일</strong></span></div>
+            <div class="reference-month-summary" aria-label="이번 달 근무 요약"><span>이번 달</span><span class="reference-summary-day"><b>주간</b> <strong id="reference-day-count">0일</strong></span><span class="reference-summary-night"><b>야간</b> <strong id="reference-night-count">0일</strong></span><span class="reference-summary-special"><b>특근</b> <strong id="reference-special-count">0일</strong></span></div>
             <div class="calendar-card">
                 <div class="routine-calendar-toolbar">
                     <span class="routine-group"><strong id="routine-calendar-group">내 근무표</strong></span>
@@ -1795,7 +1795,7 @@
         function renderCalendar() {
             const year = currentCalDate.getFullYear();
             const month = currentCalDate.getMonth();
-            document.getElementById('cal-month-title-text').innerText = `${year}. ${String(month + 1).padStart(2, '0')}`;
+            document.getElementById('cal-month-title-text').innerText = document.body.dataset.prefTheme === 'test2' ? `${year}년 ${month + 1}월` : `${year}. ${String(month + 1).padStart(2, '0')}`;
             const firstDayIndex = new Date(year, month, 1).getDay();
             const lastDate = new Date(year, month + 1, 0).getDate();
             const rows = Math.ceil((firstDayIndex + lastDate) / 7);
@@ -3026,7 +3026,7 @@
 <script src="./wage-import-ui.js?v=1"></script>
 <script src="./app-i18n-data.js?v=13"></script>
 <script src="./app-i18n-zh.js?v=2"></script>
-<script src="./app-i18n.js?v=5"></script>
+<script src="./app-i18n.js?v=6"></script>
 <script src="./app-currency.js?v=2"></script>
 </body>
 </html>

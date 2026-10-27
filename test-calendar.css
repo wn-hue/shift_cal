@@ -1,3 +1,4 @@
 /* Controls remain shared across calendar themes. */
 .routine-calendar-toolbar{display:none}
 .reference-month-summary,.reference-today-label{display:none}
+.reference-stats-list{display:none}
