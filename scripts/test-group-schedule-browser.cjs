@@ -27,7 +27,7 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
   assert.equal(await page.locator('#group-weeks table').count(),5);
   assert.equal(await page.locator('thead .today .group-today-label').textContent(),'오늘');
   const marker=await page.locator('thead .today strong').evaluate(el=>({background:getComputedStyle(el).backgroundColor,color:getComputedStyle(el).color,radius:getComputedStyle(el).borderRadius}));
-  assert.equal(marker.background,theme==='dark'?'rgb(139, 184, 255)':'rgb(49, 130, 246)');assert.equal(marker.radius,'50%');assert.notEqual(marker.color,marker.background);
+  assert.equal(marker.background,theme==='dark'?'rgb(139, 184, 255)':theme==='test'?'rgb(75, 113, 98)':'rgb(49, 130, 246)');assert.equal(marker.radius,'50%');assert.notEqual(marker.color,marker.background);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   assert(await page.locator('.nav-capsule>button').evaluateAll(els=>els.every(e=>{const r=e.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.right<=innerWidth})));
   for(const[g,type]of[['A','OFF'],['B','DAY'],['C','LEAVE']])assert.equal(await page.locator(`tr[data-group="${g}"] td[data-date="2026-10-18"]`).getAttribute('data-shift'),type);

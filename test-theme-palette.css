@@ -1,0 +1,66 @@
+/* A softer light palette for the Test theme; layout and saved preferences stay shared. */
+body[data-pref-theme=test]{
+ --test-page:#f1f3ed;--test-surface:#fafbf7;--test-field:#edf1e9;--test-line:#dce3d8;
+ --test-ink:#303c36;--test-copy:#4f6055;--test-muted:#5f6c63;
+ --test-blue:#4e6f93;--test-blue-soft:#e8eef3;--test-day:#39715e;--test-night:#696186;--test-off:#915967;--test-holiday:#a64d5a;
+ --test-today:#e8efe5;--test-today-edge:#768f7d;
+ --page-bg:var(--test-page);--bg-main:var(--test-page);--surface:var(--test-surface);--card-bg:var(--test-surface);--surface-soft:var(--test-field);
+ --theme-text:var(--test-ink);--text-main:var(--test-ink);--text-sub:var(--test-muted);--work-ink:var(--test-copy);--theme-line:var(--test-line);--border:var(--test-line);--cal-line:var(--test-line);
+ --accent:var(--test-blue);--accent-soft:var(--test-blue-soft);--primary:var(--test-blue);--primary-dark:#3d5979;
+ --shift-day:#e6eee5;--shift-night:#eeebf3;--shift-special-day:#e6eee5;--shift-special-night:#eeebf3;--shift-off:var(--test-off);--attendance:var(--test-off);
+ --special-day-no-ot:#e6eee5;--special-night-no-ot:#eeebf3;--choice-bg:var(--test-field);--choice-ink:var(--test-copy);
+ --nav-surface:var(--test-surface);--nav-ink:var(--test-ink);--nav-line:var(--test-line);--nav-selected:#e7ede3;
+ color:var(--test-ink);background:var(--test-page);color-scheme:light;
+}
+body[data-pref-theme=test]:is([data-view=calendar],[data-view=groups],[data-view=payroll],[data-view=menu],[data-view=all]){background:var(--test-page)}
+/* Surfaces own their tokens elsewhere in the app, so propagate only this theme. */
+body[data-pref-theme=test] :is(#view-payroll,#view-menu,#view-all,#app-preferences-dialog,#commute-dialog,#lost-found-dialog,dialog,.modal-sheet){
+ --ui-page:var(--test-page);--ui-card:var(--test-surface);--ui-field:var(--test-field);--ui-line:var(--test-line);
+ --ui-ink:var(--test-ink);--ui-copy:var(--test-copy);--ui-muted:var(--test-muted);--ui-blue:var(--test-blue);--ui-blue-soft:var(--test-blue-soft);
+ --surface:var(--test-surface);--surface-soft:var(--test-field);--theme-text:var(--test-ink);--text-main:var(--test-ink);--text-sub:var(--test-muted);--theme-line:var(--test-line);--accent:var(--test-blue);--accent-soft:var(--test-blue-soft);--primary:var(--test-blue);
+}
+body[data-pref-theme=test][data-view=calendar] #view-calendar .calendar-card{background:var(--test-surface);border-color:var(--test-line)}
+body[data-pref-theme=test] #calendar-grid{background:var(--test-surface)}
+body[data-pref-theme=test] .cal-weekdays{background:#f0f3ec;color:var(--test-muted);border-color:var(--test-line)}
+body[data-pref-theme=test] #view-calendar .cal-weekdays>:first-child{color:var(--test-holiday)!important}
+body[data-pref-theme=test] #view-calendar .cal-weekdays>:last-child{color:var(--test-blue)!important}
+body[data-pref-theme=test] .cal-day{background:var(--test-surface);border-color:var(--test-line)}
+body[data-pref-theme=test] .cal-day.other-month{background:var(--test-field)}
+body[data-pref-theme=test] .cal-day.today{background:var(--test-today);box-shadow:inset 0 0 0 1px var(--test-today-edge)}
+body[data-pref-theme=test] #calendar-grid .cal-day .day-num{color:var(--test-ink)!important}
+body[data-pref-theme=test] #calendar-grid .cal-day.holiday .day-num{color:var(--test-holiday)!important}
+body[data-pref-theme=test] .holiday-bar{color:var(--test-holiday)}
+body[data-pref-theme=test] #calendar-grid .cal-day :is(.shift-badge.day,.shift-badge.special-day){color:var(--test-day)}
+body[data-pref-theme=test] #calendar-grid .cal-day :is(.shift-badge.night,.shift-badge.special-night){color:var(--test-night)}
+body[data-pref-theme=test] #calendar-grid .cal-day .shift-badge.off{color:var(--test-off)!important}
+body[data-pref-theme=test] #calendar-grid .cal-day .attendance-pill{color:var(--test-off);background:transparent}
+body[data-pref-theme=test] #calendar-grid .cal-day .sub-tag{color:var(--test-muted)}
+body[data-pref-theme=test] #calendar-grid .cal-day .memo-tag{color:var(--test-copy)}
+body[data-pref-theme=test] #calendar-grid .cal-day .memo-tag:active{color:var(--test-blue);background:var(--test-blue-soft)}
+body[data-pref-theme=test] #calendar-grid :is(.cal-day,.day-meta,.memo-tag):focus-visible{outline-color:var(--test-blue)}
+/* Group comparison uses the same shift colors and a restrained sage today marker. */
+body[data-pref-theme=test] :is(#view-groups,#group-day-dialog){
+ --group-surface:var(--test-surface);--group-bg:var(--test-page);--group-ink:var(--test-ink);--group-muted:var(--test-muted);--group-line:var(--test-line);--group-blue:var(--test-day);
+ --group-highlight:#f0f4ed;--group-today-bg:#e4ece2;--group-today-accent:#4b7162;--group-today-ink:#fff;
+}
+body[data-pref-theme=test] :is(.group-shift.day,.group-shift.special-day){color:var(--test-day)}
+body[data-pref-theme=test] :is(.group-shift.night,.group-shift.special-night){color:var(--test-night)}
+body[data-pref-theme=test] .group-shift.off{color:var(--test-off)}
+body[data-pref-theme=test] :is(.group-weekday.sun,.group-date .holiday-number,.group-date small){color:var(--test-holiday)}
+body[data-pref-theme=test] .group-weekday.sat{color:var(--test-blue)}
+/* Keep the work/memo sheet warm too; its work choices already sample the calendar. */
+body[data-pref-theme=test] #modal-override .editor-current-shift .shift-badge{color:var(--test-copy)!important}
+body[data-pref-theme=test] #modal-override .editor-current-shift :is(.shift-badge.day,.shift-badge.special-day){color:var(--test-day)!important}
+body[data-pref-theme=test] #modal-override .editor-current-shift :is(.shift-badge.night,.shift-badge.special-night){color:var(--test-night)!important}
+body[data-pref-theme=test] #modal-override .editor-current-shift .shift-badge.off{color:var(--test-off)!important}
+body[data-pref-theme=test] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs::before{background:var(--test-field)}
+body[data-pref-theme=test] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs::after{background:var(--test-surface)}
+body[data-pref-theme=test] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs button{color:var(--test-muted)!important}
+body[data-pref-theme=test] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs button[aria-selected=true]{color:var(--test-ink)!important}
+body[data-pref-theme=test] #modal-override[data-editor-tab] .override-header .override-reset{background:var(--test-blue-soft)!important;color:var(--test-blue)!important}
+body[data-pref-theme=test] #modal-override[data-editor-tab] #work-panel .selection-check{color:var(--test-blue)}
+body[data-pref-theme=test] #modal-override[data-editor-tab] #work-panel .opt-btn:focus-visible{outline-color:var(--test-blue)!important}
+
+body[data-pref-theme=test] .reference-header{background:transparent!important}
+body[data-pref-theme=test] .reference-header .month-title-btn{color:var(--test-ink)}
+body[data-pref-theme=test] #modal-override[data-editor-tab]>.override-sheet>.override-header{background:var(--test-field)!important}
