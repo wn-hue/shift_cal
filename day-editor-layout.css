@@ -66,3 +66,62 @@ body[data-pref-theme] #modal-override[data-editor-keyboard=false] #modal-memo-in
 /* Resting content keeps its intrinsic height. Only the keyboard layout fills the visible viewport. */
 body[data-pref-theme] #modal-override[data-editor-keyboard=true]>.override-sheet{height:var(--editor-sheet-limit);max-height:100%}
 body[data-pref-theme] #modal-override[data-editor-keyboard=true] .editor-content{flex:1 1 0}
+
+/* A quiet day summary above an open, clearly divided editing surface. */
+body[data-pref-theme] #modal-override[data-editor-keyboard=false] .override-header{padding:32px 24px 18px}
+body[data-pref-theme] #modal-override[data-editor-keyboard=false] #modal-date-text{font-size:24px;line-height:32px;letter-spacing:-.7px;margin:5px 0 12px}
+body[data-pref-theme] #modal-override[data-editor-keyboard=false] .editor-current-shift .shift-badge{width:40px;height:40px;min-width:40px;min-height:40px;flex-basis:40px;font-size:16px}
+body[data-pref-theme] #modal-override[data-editor-keyboard=false] .editor-day-summary{padding:0 118px 0 0;min-height:44px}
+body[data-pref-theme] #modal-override[data-editor-keyboard=false] .editor-day-summary .override-base{font-size:12px;line-height:20px}
+body[data-pref-theme] #modal-override[data-editor-keyboard=false] #editor-sticker-preview{top:33px;right:20px}
+body[data-pref-theme] #modal-override[data-editor-keyboard=false] .override-header .override-reset{bottom:18px;right:20px;border-radius:14px}
+body[data-pref-theme=current] #modal-override[data-editor-tab][data-base=DAY] .override-header{background:#f7f5ee!important}
+body[data-pref-theme=current] #modal-override[data-editor-tab][data-base=NIGHT] .override-header{background:#f1f3f6!important}
+body[data-pref-theme=current] #modal-override[data-editor-tab][data-base=OFF] .override-header{background:#f5f6f7!important}
+body[data-pref-theme=test] #modal-override[data-editor-tab]>.override-sheet>.override-header{background:#f0eae1!important}
+
+/* The tab itself carries the indicator; there is no nested segment box. */
+body[data-pref-theme] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs{gap:26px!important;min-height:62px;padding:8px 24px 0!important;border-radius:24px 24px 0 0;background:var(--surface,#fff)!important}
+body[data-pref-theme] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs::before,
+body[data-pref-theme] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs::after{display:none}
+body[data-pref-theme] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs button{flex:0 1 auto;min-width:52px;min-height:48px!important;padding:8px 2px 10px!important;border-radius:0;border-bottom:3px solid transparent!important;color:var(--text-sub,#8b95a1)!important;font-size:17px!important;line-height:24px;font-weight:550}
+body[data-pref-theme] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs button[aria-selected=true]{color:var(--theme-text,#191f28)!important;border-bottom-color:var(--theme-text,#191f28)!important;font-weight:700}
+body[data-pref-theme] #modal-override[data-editor-keyboard=false] .editor-content{padding:18px 24px max(16px,env(safe-area-inset-bottom));background:var(--surface,#fff)}
+body[data-pref-theme] #modal-override[data-editor-tab] #work-panel .work-section-heading{display:flex;margin:0 0 8px}
+body[data-pref-theme] #modal-override[data-editor-tab] #work-panel .override-section-title{font-size:13px;line-height:20px;font-weight:650;color:var(--theme-text,#333d4b)}
+body[data-pref-theme] #modal-override[data-editor-tab] #work-panel>.override-section-title{margin:12px 0 10px;padding-top:18px;border-top:1px solid var(--theme-line,#edf0f3);font-size:13px;line-height:20px;color:var(--theme-text,#333d4b)}
+body[data-pref-theme] #modal-override[data-editor-tab] #work-panel .shift-scroll{gap:14px;padding:6px 4px 10px;margin:0;scrollbar-width:none}
+#modal-override #work-panel .shift-scroll::-webkit-scrollbar{display:none}
+/* Attendance is an action label, while the familiar colored circles remain shifts. */
+body[data-pref-theme] #modal-override[data-editor-tab] #work-panel .shift-scroll.attendance-choices .opt-btn{flex:0 0 auto;width:auto;min-width:76px;height:44px;min-height:44px;padding:8px 14px;border-radius:22px!important;background:var(--surface,#fff)!important;color:var(--theme-text,#333d4b)!important;box-shadow:inset 0 0 0 1px var(--theme-line,#e5e8eb)!important;font-size:12px;line-height:20px;text-decoration:none!important}
+body[data-pref-theme] #modal-override[data-editor-tab] #work-panel .shift-scroll.attendance-choices .opt-btn[aria-pressed=true]{background:var(--accent-soft,#eaf3ff)!important;color:var(--accent,#3182f6)!important;outline:2px solid var(--accent,#3182f6)!important}
+body[data-pref-theme] #modal-override[data-editor-tab] #work-panel #change-preview{border-radius:16px;padding:14px 16px;margin:16px 0 0}
+
+/* Lead with the personal note; the day's agenda is available below it. */
+#modal-override #memo-panel:not([hidden]){display:flex;flex-direction:column}
+#modal-override #day-note{order:0}
+#modal-override #memo-panel .day-agenda{order:1;border-bottom:0;border-top:1px solid var(--theme-line,#edf0f3);padding:18px 0 0;margin:20px 0 0}
+#modal-override #memo-panel #day-note>label{display:block;font-size:13px;font-weight:650;line-height:20px}
+body[data-pref-theme] #modal-override[data-editor-keyboard=false] #modal-memo-input{height:clamp(120px,17dvh,160px)!important;min-height:120px!important;padding:14px;margin:8px 0 0;background:var(--surface-soft,#f2f4f6)!important;border:0;border-radius:16px}
+#modal-override #modal-memo-input:focus{outline:none}
+#modal-override #modal-memo-input:focus-visible{box-shadow:inset 2px 0 var(--accent,#3182f6);padding-left:12px}
+body[data-pref-theme] #modal-override[data-editor-keyboard=false] #memo-panel #day-note .btn-save{border-radius:14px;min-height:48px;margin-top:14px;background:var(--accent,#3182f6)}
+#modal-override #memo-panel .event-empty{font-size:13px;line-height:20px;margin:8px 0 0}
+#modal-override #memo-panel .agenda-heading h3{font-size:13px}
+
+/* Keep the compact, tested keyboard geometry, including very short viewports. */
+body[data-pref-theme] #modal-override[data-editor-keyboard=true]>.override-sheet>.editor-tabs{min-height:52px;padding:2px 20px 0!important}
+body[data-pref-theme] #modal-override[data-editor-keyboard=true]>.override-sheet>.editor-tabs button{min-height:44px!important;padding:6px 2px!important;font-size:14px!important}
+body[data-pref-theme] #modal-override[data-editor-tiny=true][data-editor-keyboard=true]>.override-sheet>.editor-tabs{min-height:40px;padding:0 16px!important}
+body[data-pref-theme] #modal-override[data-editor-tiny=true][data-editor-keyboard=true]>.override-sheet>.editor-tabs button{min-height:40px!important;padding:4px 2px!important}
+body[data-pref-theme] #modal-override[data-editor-tiny=true][data-editor-focus=memo] #memo-panel #day-note>label{display:none}
+body[data-pref-theme] #modal-override[data-memo-compact=true][data-editor-keyboard=false] .override-header{padding:28px 20px 62px}
+body[data-pref-theme] #modal-override[data-memo-compact=true][data-editor-keyboard=false] #modal-date-text{font-size:18px;line-height:26px;margin:0;padding-right:0}
+body[data-pref-theme] #modal-override[data-memo-compact=true][data-editor-keyboard=false] #editor-sticker-preview{top:auto;bottom:8px;left:20px;right:auto}
+body[data-pref-theme] #modal-override[data-memo-compact=true][data-editor-keyboard=false] .override-header .override-reset{bottom:8px}
+@media(max-width:350px){
+ body[data-pref-theme] #modal-override[data-editor-keyboard=false] .override-header{padding-left:20px;padding-right:20px}
+ body[data-pref-theme] #modal-override[data-editor-keyboard=false] #modal-date-text{font-size:21px;line-height:30px}
+ body[data-pref-theme] #modal-override[data-editor-keyboard=false] .editor-content{padding-left:20px;padding-right:20px}
+ body[data-pref-theme] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs{padding-left:20px!important;padding-right:20px!important}
+}

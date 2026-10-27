@@ -5,7 +5,7 @@
  const memo=document.createElement('div');memo.id='day-note';while(panel.firstChild)memo.append(panel.firstChild);
  panel.append(memo);
  const agenda=document.createElement('section');agenda.className='day-agenda';agenda.innerHTML='<div class="agenda-heading"><h3>이날의 일정</h3><button type="button" id="event-add">+ 일정 추가</button></div><div id="event-list"></div><p id="event-status" role="status"></p>';
- panel.prepend(agenda);
+ panel.append(agenda);
  const form=document.createElement('form');form.id='event-form';form.hidden=true;form.innerHTML=`
  <div class="agenda-heading"><h3 id="event-form-title">새 일정</h3><button type="button" id="event-cancel">취소</button></div>
  <label class="event-title-label" for="event-title">제목</label><input id="event-title" class="event-title-input" placeholder="어떤 일정인가요?" maxlength="120" required>
