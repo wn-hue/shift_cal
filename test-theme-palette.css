@@ -50,7 +50,6 @@ body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(.cal-grid,#modal-ove
 body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .shift-badge.special{width:auto;min-width:29px;padding:0 4px;font-size:11px;border-radius:18px}
 body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .cal-day.today{background:var(--test-today);box-shadow:0 4px 10px #75553122,inset 0 0 0 1px var(--test-today-edge)}
 body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .cal-day.today .day-num{font-weight:750}
-body:is([data-pref-theme=test],[data-pref-theme=test2]) .reference-today-label{display:block;margin-top:auto;padding-top:2px;color:var(--test-accent);font-size:9px;line-height:13px;font-weight:650}
 body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .attendance-pill{height:18px;min-height:18px;flex-shrink:0;line-height:18px;font-size:10px;padding:0;margin:0;border:0;background:transparent;color:var(--test-holiday);white-space:nowrap}
 body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .sub-tag{position:static;height:16px;min-height:16px;line-height:16px;padding:0;background:transparent;color:var(--test-muted);font-size:8px;white-space:nowrap}
 body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .memo-tag{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;width:100%;min-height:24px;max-height:24px;margin:0;padding:0 1px;border:0;border-radius:0;background:transparent;color:var(--test-copy);font-weight:500;font-family:inherit;font-size:10px;line-height:12px;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;overflow:hidden;cursor:pointer;box-sizing:border-box;flex-shrink:0}
@@ -66,11 +65,6 @@ body[data-pref-theme=test2] .cal-grid .cal-day.other-month{background:transparen
 body[data-pref-theme=test2] .cal-grid .cal-day.today{border-radius:10px;box-shadow:inset 0 0 0 1.5px var(--test-today-edge)}
 body[data-pref-theme=test2] .cal-grid .cal-day.sunday:not(.holiday) .day-num{color:var(--test-holiday)!important}
 body[data-pref-theme=test2] .cal-grid .cal-day.saturday:not(.holiday) .day-num{color:var(--test-saturday)!important}
-body[data-pref-theme=test2] .reference-month-summary{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin:16px 0 8px;padding:13px 8px;border-radius:15px;background:var(--test-surface);color:var(--test-copy);font-size:12px;line-height:1.5;box-shadow:0 4px 9px #27354d12}
-body[data-pref-theme=test2] .reference-month-summary strong{font-weight:750}
-body[data-pref-theme=test2] #reference-day-count{color:var(--test-day-ink)}
-body[data-pref-theme=test2] #reference-night-count{color:var(--test-night-fill)}
-body[data-pref-theme=test2] #reference-special-count{color:var(--test-special-night)}
 /* Shared comparison and editing surfaces follow each calendar's actual palette. */
 body:is([data-pref-theme=test],[data-pref-theme=test2]) :is(#view-groups,#group-day-dialog){--group-surface:var(--test-surface);--group-bg:var(--test-page);--group-ink:var(--test-ink);--group-muted:var(--test-muted);--group-line:var(--test-line);--group-blue:var(--test-accent);--group-highlight:var(--test-today-soft);--group-today-bg:var(--test-today-soft);--group-today-accent:var(--test-accent);--group-today-ink:#fff}
 body:is([data-pref-theme=test],[data-pref-theme=test2]) .group-shift{border-radius:50%}
@@ -113,15 +107,6 @@ body[data-pref-theme=test2] #weather-icon{font-size:23px}
 body[data-pref-theme=test2] #weather-temperature{font-size:17px;font-weight:550;color:#14171d}
 body[data-pref-theme=test2] .reference-stats-bars{display:none}
 body[data-pref-theme=test2] .reference-stats-list{display:block}
-body[data-pref-theme=test2] .reference-month-summary{flex-wrap:wrap;gap:5px;margin:0 0 8px;padding:10px 8px;min-height:42px;border-radius:14px;font-size:clamp(12px,3.85vw,16px);line-height:1.45;color:#20242b;box-shadow:0 5px 7px #28334a1c;letter-spacing:-.55px}
-body[data-pref-theme=test2] .reference-month-summary>span{white-space:nowrap}
-body[data-pref-theme=test2] .reference-month-summary b{font-weight:750}
-body[data-pref-theme=test2] .reference-month-summary strong{font-weight:450;color:#90949e}
-body[data-pref-theme=test2] .reference-summary-day b{color:#7aabe0}
-body[data-pref-theme=test2] #reference-day-count{color:#8db4e0}
-body[data-pref-theme=test2] .reference-summary-night b{color:#26354a}
-body[data-pref-theme=test2] .reference-summary-special b{color:#34384f;background:#e6e5ed;border-radius:6px;padding:2px 3px}
-body[data-pref-theme=test2] .reference-summary-night::before,body[data-pref-theme=test2] .reference-summary-special::before{content:'·';margin-right:5px;color:#a0a4ad;font-weight:500}
 body[data-pref-theme=test2][data-view=calendar] #view-calendar .calendar-card{margin:0 0 12px;padding:0 9px 16px;border-radius:18px;box-shadow:0 6px 9px #28334a20;background:#ffffff}
 body[data-pref-theme=test2] #view-calendar .cal-weekdays{padding:10px 0 9px;font-size:13px;font-weight:550;color:#989ca6}
 body[data-pref-theme=test2] .cal-grid{min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 260px),720px)}
@@ -136,9 +121,7 @@ body[data-pref-theme=test2] .cal-grid .shift-badge.special{width:29px;min-width:
 body[data-pref-theme=test2] .cal-grid .shift-badge.off{font-size:13px;font-weight:500}
 body[data-pref-theme=test2] .cal-grid .memo-tag{color:#8b8d97;font-weight:400;font-size:10px;line-height:13px;min-height:26px;max-height:26px}
 body[data-pref-theme=test2] .cal-grid .cal-day.today{background:transparent;box-shadow:none;border-radius:0;isolation:isolate}
-body[data-pref-theme=test2] .cal-grid .cal-day.today::before{content:'';position:absolute;top:0;left:0;right:0;height:62px;box-sizing:border-box;background:#e9f3ff;border:1.5px solid #afcbed;border-radius:10px;z-index:-1;pointer-events:none}
 body[data-pref-theme=test2] .cal-grid .cal-day.today .day-num{color:#3984ca!important;font-weight:500}
-body[data-pref-theme=test2] .reference-today-label{position:absolute;top:2px;right:1px;margin:0;padding:2px 3px;border-radius:10px;background:#d6e8ff;color:#3b81c4;font-size:9px;font-weight:550;line-height:12px;box-shadow:0 2px 4px #7b9ac219}
 body[data-pref-theme=test2] .bottom-nav{padding:6px 20px calc(10px + env(safe-area-inset-bottom))}
 body[data-pref-theme=test2] .nav-capsule{max-width:560px;border:4px solid #fff;padding:0;border-radius:40px;box-shadow:0 6px 12px #28334a26;background:#fff}
 body[data-pref-theme=test2] .bottom-nav .nav-item{min-height:54px}
@@ -152,9 +135,29 @@ body[data-pref-theme=test2] .bottom-nav .nav-item svg{width:23px;height:23px;str
  body[data-pref-theme=test2] .header-calendar-actions{gap:3px}
  body[data-pref-theme=test2] #weather-temperature{font-size:15px}
  body[data-pref-theme=test2] .header-calendar-actions .weather-trigger{min-width:36px}
- body[data-pref-theme=test2] .reference-today-label{font-size:8px;padding-left:2px;padding-right:2px}
  body[data-pref-theme=test2] .bottom-nav{padding-left:16px;padding-right:16px}
  body[data-pref-theme=test2] .bottom-nav .nav-visual>span{font-size:10px}
 }
 
-body[data-pref-theme=test2] :is(#reference-night-count,#reference-special-count){color:#90949e}
+
+/* Rounded date outlines and inline holidays; today is carried by its date number. */
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .day-meta{height:25px;min-height:25px;flex-direction:row;align-items:center;gap:2px}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .holiday-bar{flex:1;min-width:0;width:auto;height:18px;min-height:18px;line-height:18px;margin:0;text-align:left;font-size:8px;letter-spacing:-.45px}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .cal-day.today{background:var(--test-surface);box-shadow:inset 0 0 0 1px var(--test-today-edge);border-radius:10px}
+body:is([data-pref-theme=test],[data-pref-theme=test2]) .cal-grid .cal-day.today .day-num{width:22px;min-width:22px;height:22px;line-height:22px;justify-content:center;border-radius:50%;background:var(--test-accent)!important;color:#fff!important;font-weight:650}
+body[data-pref-theme=test2][data-view=calendar] #view-calendar .calendar-card{margin-top:8px}
+body[data-pref-theme=test2] .cal-grid{gap:4px;min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 220px),760px)}
+body[data-pref-theme=test2] #view-calendar .cal-grid .cal-day{border:1px solid #e2e7ef;border-radius:10px;background:#fff;padding:4px 2px 6px;overflow:hidden}
+body[data-pref-theme=test2] #view-calendar .cal-grid .cal-day.today{border-color:var(--test-today-edge);box-shadow:none}
+
+/* Night and day adopts Test 1's rounded calendar structure, retaining its shift palette. */
+body[data-pref-theme=current][data-view=calendar]{background:#f2f3f5}
+body[data-pref-theme=current][data-view=calendar] .reference-header{border:1px solid #ffffffb3;border-radius:16px;background:#fff!important;box-shadow:0 5px 16px #30343b08;padding:10px 12px}
+body[data-pref-theme=current][data-view=calendar] #view-calendar .calendar-card{padding:0;margin:20px 0 12px;border:0;overflow:visible;background:transparent;box-shadow:none;border-radius:0}
+body[data-pref-theme=current] #view-calendar .cal-weekdays{padding:10px 0 12px;background:transparent;border:0;font-size:12px;font-weight:550;color:#737373}
+body[data-pref-theme=current] .cal-grid{background:transparent;border:0;border-radius:0;gap:4px;isolation:isolate;min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 250px),680px)}
+body[data-pref-theme=current] #view-calendar .cal-grid .cal-day{min-height:88px;padding:5px 3px;gap:0;border:1px solid #e5e7eb;border-radius:9px;background:#fff;align-items:center;box-sizing:border-box;overflow:hidden;box-shadow:none}
+body[data-pref-theme=current] .cal-grid .day-meta{width:100%;height:25px;min-height:25px;position:relative;display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:2px}
+body[data-pref-theme=current] .cal-grid .holiday-bar{flex:1;min-width:0;width:auto;height:18px;min-height:18px;line-height:18px;padding:0;margin:0;text-align:left;background:transparent;color:#a16b6b;font-size:8px;font-weight:400;letter-spacing:-.45px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-pref-theme=current] #view-calendar .cal-grid .cal-day.today{border-color:#979da5}
+body[data-pref-theme=current] .cal-grid .cal-day.today .day-num{width:22px;min-width:22px;height:22px;line-height:22px;justify-content:center;border-radius:50%;background:#303030!important;color:#fff!important;font-weight:650}

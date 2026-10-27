@@ -934,7 +934,7 @@
 <link rel="stylesheet" href="./screen-refinement.css?v=6">
 <link rel="stylesheet" href="./onboarding.css?v=3">
 <link rel="stylesheet" href="./mobile-surfaces.css?v=10">
-<link rel="stylesheet" href="./test-calendar.css?v=8">
+<link rel="stylesheet" href="./test-calendar.css?v=9">
 <link rel="stylesheet" href="./month-picker.css?v=1">
 <link rel="stylesheet" href="./memo-editor.css?v=3">
 <link rel="stylesheet" href="./compact-work-editor.css?v=7">
@@ -953,7 +953,7 @@
 <link rel="stylesheet" href="./lost-found-page.css?v=3">
 <link rel="stylesheet" href="./parking-sheet.css?v=3">
 <link rel="stylesheet" href="./wage-import.css?v=1">
-<link rel="stylesheet" href="./test-theme-palette.css?v=3">
+<link rel="stylesheet" href="./test-theme-palette.css?v=4">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -982,7 +982,6 @@
 
             <div class="calendar-month-controls" hidden></div>
 
-            <div class="reference-month-summary" aria-label="이번 달 근무 요약"><span>이번 달</span><span class="reference-summary-day"><b>주간</b> <strong id="reference-day-count">0일</strong></span><span class="reference-summary-night"><b>야간</b> <strong id="reference-night-count">0일</strong></span><span class="reference-summary-special"><b>특근</b> <strong id="reference-special-count">0일</strong></span></div>
             <div class="calendar-card">
                 <div class="routine-calendar-toolbar">
                     <span class="routine-group"><strong id="routine-calendar-group">내 근무표</strong></span>
@@ -1805,18 +1804,12 @@
             const today = new Date();
             const todayStr = toDateKey(today.getFullYear(), today.getMonth(), today.getDate());
             const noteActions = ['test','test2'].includes(document.body.dataset.prefTheme);
-            const monthCounts = {day:0,night:0,special:0};
             window.CalendarStickers?.begin();
             window.DayScheduler?.begin();
             const labels = { DAY:'주', NIGHT:'야', OFF:'휴', LEAVE:'연차', HALF_PRE:'반전', HALF_POST:'반후', UNPAID_OFF:'무휴', UNPAID_HALF_PRE:'무전', UNPAID_HALF_POST:'무후', SPECIAL_DAY:'주특', SPECIAL_NIGHT:'야특', SPECIAL_DAY_NO_OT:'주특', SPECIAL_NIGHT_NO_OT:'야특' };
             function appendDay(dateObj, adjacent) {
                 const dateStr = toDateKey(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
                 const shift = getActualShift(dateObj, currentGroup);
-                if (!adjacent) {
-                    if (shift.type.startsWith('SPECIAL_')) monthCounts.special++;
-                    else if (shift.type === 'DAY' || shift.type === 'NO_OT' && shift.origType === 'DAY') monthCounts.day++;
-                    else if (shift.type === 'NIGHT' || shift.type === 'NO_OT' && shift.origType === 'NIGHT') monthCounts.night++;
-                }
                 const cell = document.createElement('div');
                 const classes = ['cal-day'];
                 if (adjacent) classes.push('other-month');
@@ -1887,14 +1880,12 @@
                 window.DayScheduler?.decorate(cell, dateStr, adjacent);
                 if (dateStr === todayStr && !adjacent) {
                     cell.setAttribute('aria-current','date');
-                    const marker = document.createElement('span'); marker.className='reference-today-label'; marker.textContent='오늘'; cell.appendChild(marker);
                 }
                 grid.appendChild(cell);
             }
             for (let offset = 1 - firstDayIndex; offset <= rows * 7 - firstDayIndex; offset++) {
                 appendDay(new Date(year, month, offset), offset < 1 || offset > lastDate);
             }
-            for (const [kind,count] of Object.entries(monthCounts)) document.getElementById('reference-'+kind+'-count').textContent=count+'일';
             if (window.ShiftUI) ShiftUI.rendered(currentGroup);
             updateLeaveStats();
             if (window.GoogleSync) GoogleSync.viewChanged();
