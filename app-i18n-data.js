@@ -1,5 +1,10 @@
 /* UI-only translations. User notes, event names, meals and source documents stay untouched. */
 window.AppTranslations=Object.fromEntries(`
+현재 주차 상태|Current parking status|当前停车状态|現在の駐車状況
+만차 제보가 모이면 알려드려요|We’ll notify you when full reports add up.|满位反馈增加时通知您|満車の報告が集まったらお知らせします
+주차장 만차|Parking is full|停车场已满|駐車場は満車です
+최근 10분간 만차 제보가 5건 모였어요|5 full reports in the last 10 minutes.|最近10分钟收到5条满位反馈|直近10分で満車の報告が5件ありました
+
 명| people|人|人
 여유|Available|有空位|空きあり
 혼잡|Busy|拥挤|混雑
