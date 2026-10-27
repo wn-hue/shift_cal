@@ -10,19 +10,21 @@ const assert=require('node:assert/strict');
  await page.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await page.goto(process.env.TEST_URL||'http://127.0.0.1:8771/');
  // A fresh preference defaults to Day & night, followed by Warmth.
  await page.evaluate(()=>localStorage.removeItem('shift_display_theme'));await page.reload();assert.equal(await page.locator('body').getAttribute('data-pref-theme'),'current');
+ // A removed Test 2 preference safely returns to the default; the surviving keys stay stable.
+ await page.evaluate(()=>localStorage.setItem('shift_display_theme','test2'));await page.reload();assert.equal(await page.locator('body').getAttribute('data-pref-theme'),'current');assert.equal(await page.locator('#pref-theme option[value=test2]').count(),0);assert.equal(await page.evaluate(()=>localStorage.getItem('shift_display_theme')),'current');
  // All themes remain discoverable through the actual settings sheet.
  await page.locator('#account-menu-button').click();await page.locator('.menu-preferences').click();
  await page.locator('#choose-theme').click();
- assert.deepEqual(await page.locator('#settings-options .settings-radio-row').evaluateAll(els=>els.map(e=>[e.querySelector('input').value,e.querySelector('span').textContent])),[['current','낮밤'],['test','따뜻함'],['toss','블루컬러'],['gpt','그레이'],['dark','다크모드'],['test1','테스트1'],['test2','테스트2'],['test3','테스트3'],['test4','테스트4']]);
+ assert.deepEqual(await page.locator('#settings-options .settings-radio-row').evaluateAll(els=>els.map(e=>[e.querySelector('input').value,e.querySelector('span').textContent])),[['test1','테스트1'],['test3','테스트2'],['test4','테스트3'],['current','낮밤'],['test','따뜻함'],['toss','블루컬러'],['gpt','그레이'],['dark','다크모드']]);
  await page.keyboard.press('Escape');
- for(const theme of ['test2','test1','test3','test4','test']){
+ for(const theme of ['test1','test3','test4','test']){
   await page.locator('#choose-theme').click();await page.locator(`#settings-options input[value=${theme}]`).check();
   assert.equal(await page.locator('body').getAttribute('data-pref-theme'),theme);
  }
  await page.locator('#settings-back').click();await page.locator('#bnav-cal').click();
  await page.evaluate(()=>{const e=document.getElementById('pref-theme');e.value='current';e.dispatchEvent(new Event('change'))});
  const mainCard=await page.locator('.cal-day:not(.other-month)').first().evaluate(e=>({radius:getComputedStyle(e).borderRadius,border:getComputedStyle(e).borderWidth}));assert.equal(mainCard.radius,'0px');assert.equal(await page.locator('#calendar-grid').evaluate(e=>getComputedStyle(e).gap),'normal');
- for(const theme of ['test','test1','test2','test3','test4']){
+ for(const theme of ['test','test1','test3','test4']){
   await page.evaluate(t=>{const e=document.getElementById('pref-theme');e.value=t;e.dispatchEvent(new Event('change'));},theme);
   await page.reload();assert.equal(await page.locator('body').getAttribute('data-pref-theme'),theme);
   assert(await page.locator('.nav-capsule>button').evaluateAll(els=>els.every(e=>{const r=e.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.right<=innerWidth})));
@@ -30,12 +32,12 @@ const assert=require('node:assert/strict');
   for(const [year,month,rows]of [[2026,9,5],[2026,4,6],[2026,1,4]]){
    await page.evaluate(([y,m])=>{currentCalDate=new Date(y,m,1);renderCalendar()},[year,month]);
    assert.equal(await page.locator('#calendar-grid .cal-day').count(),rows*7);
-   if(['test2','test3'].includes(theme))assert.equal(await page.locator('#cal-month-title-text').textContent(),`${year}년 ${month+1}월`);
+   if(theme==='test3')assert.equal(await page.locator('#cal-month-title-text').textContent(),`${year}년 ${month+1}월`);
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
    assert.equal(await page.locator('.reference-month-summary').count(),0);
-   const surface=await page.locator('.cal-day:not(.other-month)').first().evaluate(e=>({border:getComputedStyle(e).borderWidth,top:getComputedStyle(e).borderTopWidth,left:getComputedStyle(e).borderLeftWidth,right:getComputedStyle(e).borderRightWidth,bottom:getComputedStyle(e).borderBottomWidth,shadow:getComputedStyle(e).boxShadow}));assert.equal(surface.top,'0px');assert.equal(surface.left,'0px');assert.equal(surface.right,'0px');assert.equal(surface.bottom,['test1','test2','test3'].includes(theme)?'1px':'0px');
+   const surface=await page.locator('.cal-day:not(.other-month)').first().evaluate(e=>({border:getComputedStyle(e).borderWidth,top:getComputedStyle(e).borderTopWidth,left:getComputedStyle(e).borderLeftWidth,right:getComputedStyle(e).borderRightWidth,bottom:getComputedStyle(e).borderBottomWidth,shadow:getComputedStyle(e).boxShadow}));assert.equal(surface.top,'0px');assert.equal(surface.left,'0px');assert.equal(surface.right,'0px');assert.equal(surface.bottom,['test1','test3'].includes(theme)?'1px':'0px');
    assert.equal(await page.locator('#calendar-grid').evaluate(e=>getComputedStyle(e).gap),theme==='test'?'4px':'0px');
-   if(['test2','test3'].includes(theme))assert.equal(surface.shadow,'none');
+   if(theme==='test3')assert.equal(surface.shadow,'none');
   }
   await page.evaluate(()=>{currentCalDate=new Date(2026,9,1);overrides['2026-10-03']='LEAVE';dayMemos['2026-10-03']='공휴일 메모 확인';renderCalendar()});
   assert.equal(await page.locator('.reference-today-label').count(),0);
@@ -57,6 +59,6 @@ const assert=require('node:assert/strict');
   assert.equal(selected.ink,'rgb(49, 130, 246)');assert.equal(selected.icon,selected.ink);assert.equal(selected.fill,'rgb(234, 243, 255)');
  }
  assert.deepEqual(await page.evaluate(()=>window.__navTaps),Array(5).fill('#dbeafe'));
- assert.deepEqual(errors,[]);console.log(engine.name(),width,'PASS default/order, 3 design themes, horizontal-only rules, blue navigation, persistence, 4/5/6 weeks, removed summary, colored today number, inline holiday, memo and navigation clearance');await page.close();
+ assert.deepEqual(errors,[]);console.log(engine.name(),width,'PASS default/order, 3 design themes, removed theme fallback, 3 sequential tests, blue navigation, persistence, 4/5/6 weeks, removed summary, colored today number, inline holiday, memo and navigation clearance');await page.close();
  }await browser.close();
 }})().catch(e=>{console.error(e);process.exit(1)});

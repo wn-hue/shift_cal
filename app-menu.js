@@ -13,7 +13,7 @@ function openAppPreferences(){window.SettingsPage.open();}
             if (saved !== null) {
                 if (name === 'theme') {
                     const theme = ['routine','google'].includes(saved) ? 'test' : saved;
-                    input.value = ['current','gpt','toss','dark','test','test1','test2','test3','test4'].includes(theme) ? theme : 'current';
+                    input.value = ['current','gpt','toss','dark','test','test1','test3','test4'].includes(theme) ? theme : 'current';
                     if (input.value !== saved) localStorage.setItem(key,input.value);
                 } else if (name === 'shape') input.value = saved === 'circle' ? 'circle' : 'square';
                 else input.checked = saved !== 'false';
@@ -25,7 +25,7 @@ function openAppPreferences(){window.SettingsPage.open();}
             if (name === 'theme') {
                 document.body.removeAttribute('data-pref-mode');
                 document.documentElement.style.colorScheme = value === 'dark' ? 'dark' : 'light';
-                document.querySelector('meta[name="theme-color"]')?.setAttribute('content',({dark:'#111820',test:'#eeeae4',test2:'#edf0f5',test1:'#f2f4f6',test3:'#f2f2f7',test4:'#eef0f3'})[value] || '#ffffff');
+                document.querySelector('meta[name="theme-color"]')?.setAttribute('content',({dark:'#111820',test:'#eeeae4',test1:'#f2f4f6',test3:'#f2f2f7',test4:'#eef0f3'})[value] || '#ffffff');
             }
             return value;
         };

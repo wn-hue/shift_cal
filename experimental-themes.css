@@ -57,7 +57,7 @@ body[data-pref-theme=test1] #view-calendar .cal-grid .cal-day.today{background:#
 body[data-pref-theme=test1] .cal-grid .shift-badge.day{font-weight:750}
 body[data-pref-theme=test1] .nav-capsule{border-radius:24px}
 body[data-pref-theme=test1] .bottom-nav .nav-item.active .nav-visual{border-radius:18px}
-/* Test 3: quiet system surfaces, fine rules and a restrained red accent. */
+/* Test 2 (stable key test3): quiet system surfaces and a restrained red accent. */
 body[data-pref-theme=test3]{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif}
 body[data-pref-theme=test3] .reference-header .month-title-btn{font-weight:650;letter-spacing:-.9px}
 body[data-pref-theme=test3] .header-calendar-actions .icon-button:not(.weather-trigger){background:transparent;color:var(--test-accent)}
@@ -67,7 +67,7 @@ body[data-pref-theme=test3] :is(.cal-grid,#modal-override) .shift-badge{border-r
 body[data-pref-theme=test3] .cal-grid .shift-badge.special{border-radius:7px}
 body[data-pref-theme=test3] .nav-capsule{background:#ffffffd9;border-color:#dedee6;border-radius:26px;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
 body[data-pref-theme=test3] .bottom-nav .nav-item.active .nav-visual{background:transparent!important}
-/* Test 4: yellow accents, dark brown ink and friendly soft tiles. */
+/* Test 3 (stable key test4): yellow accents and friendly soft tiles. */
 body[data-pref-theme=test4][data-view=calendar] .reference-header{margin-top:4px;padding-left:12px;padding-right:10px;background:#fff!important;border-radius:22px}
 body[data-pref-theme=test4] .reference-header .month-title-btn::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:#fee500;margin-right:7px;vertical-align:middle}
 body[data-pref-theme=test4][data-view=calendar] #view-calendar .calendar-card{border-radius:24px;padding:0 8px 14px;box-shadow:0 3px 9px #493a4010}
@@ -86,3 +86,11 @@ body[data-pref-theme=test4] .bottom-nav .nav-item.active .nav-visual{background:
 }
 
 body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item:active .nav-visual{background:var(--nav-tap)!important;color:var(--test-accent)!important}
+
+/* Let the title and weather/actions keep their intrinsic width, rather than overlap. */
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-view=calendar] .reference-header{flex-wrap:wrap;column-gap:8px;row-gap:4px;overflow:visible}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-title-area{flex:1 0 max-content;min-width:0;max-width:100%;padding:3px 4px;box-sizing:border-box;overflow:visible}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .reference-header .month-title-btn{max-width:100%;min-height:44px;padding:4px 2px;box-sizing:border-box;line-height:1.35;border-radius:10px;white-space:normal;overflow:visible;text-align:left}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .reference-header .month-title-btn:focus-visible{outline:2px solid var(--test-accent);outline-offset:2px}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions{flex:0 0 auto;min-width:0;max-width:100%;margin-left:auto;flex-wrap:wrap;row-gap:4px}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid{min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 162px - var(--theme-header-height,68px)),740px)}

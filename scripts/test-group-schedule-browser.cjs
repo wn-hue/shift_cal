@@ -22,12 +22,12 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
  // Drag from a date's button, not only from gaps between dates.
  await swipe(-100);assert.match(await page.locator('#group-month-title').textContent(),/2026\. 11/);
  await swipe(100);assert.match(await page.locator('#group-month-title').textContent(),/2026\. 10/);
- for(const theme of ['current','toss','gpt','dark','test','test1','test2','test3','test4']){
+ for(const theme of ['current','toss','gpt','dark','test','test1','test3','test4']){
   await page.evaluate(t=>{const s=document.getElementById('pref-theme');s.value=t;s.dispatchEvent(new Event('change'))},theme);
   assert.equal(await page.locator('#group-weeks table').count(),5);
   assert.equal(await page.locator('thead .today .group-today-label').textContent(),'오늘');
   const marker=await page.locator('thead .today strong').evaluate(el=>({background:getComputedStyle(el).backgroundColor,color:getComputedStyle(el).color,radius:getComputedStyle(el).borderRadius}));
-  assert.equal(marker.background,theme==='dark'?'rgb(139, 184, 255)':theme==='test'?'rgb(137, 107, 69)':theme==='test2'?'rgb(59, 128, 197)':theme==='test3'?'rgb(217, 54, 50)':theme==='test4'?'rgb(68, 54, 55)':'rgb(49, 130, 246)');assert.equal(marker.radius,'50%');assert.notEqual(marker.color,marker.background);
+  assert.equal(marker.background,theme==='dark'?'rgb(139, 184, 255)':theme==='test'?'rgb(137, 107, 69)':theme==='test3'?'rgb(217, 54, 50)':theme==='test4'?'rgb(68, 54, 55)':'rgb(49, 130, 246)');assert.equal(marker.radius,'50%');assert.notEqual(marker.color,marker.background);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   assert(await page.locator('.nav-capsule>button').evaluateAll(els=>els.every(e=>{const r=e.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.right<=innerWidth})));
   for(const[g,type]of[['A','OFF'],['B','DAY'],['C','LEAVE']])assert.equal(await page.locator(`tr[data-group="${g}"] td[data-date="2026-10-18"]`).getAttribute('data-shift'),type);
@@ -61,5 +61,5 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
  await page.locator('thead th[data-date="2026-10-18"] button').click();await page.locator('#group-open-calendar').click();assert.equal(await page.locator('body').getAttribute('data-view'),'calendar');assert.equal(await page.evaluate(()=>currentGroup),'C');assert.equal(await page.evaluate(()=>getActualShift(new Date(2026,9,18),currentGroup).type),'HALF_PRE');
  await page.locator('#bnav-pay').click();assert.equal(await page.locator('#view-payroll').isVisible(),true);await page.locator('#bnav-menu').click();assert.equal(await page.locator('#view-menu').isVisible(),true);await page.locator('#account-menu-button').click();assert.equal(await page.locator('#view-all').isVisible(),true);
  await page.locator('#bnav-groups').click();await page.setViewportSize({width,height:360});await page.locator('thead th[data-date="2026-10-26"] button').click();await page.locator('#group-open-calendar').scrollIntoViewIfNeeded();const button=await page.locator('#group-open-calendar').boundingBox();assert(button.y>=0&&button.y+button.height<=361);await page.locator('#group-day-dialog .sheet-dismiss-handle').click();
- assert.deepEqual(errors,[]);console.log(engine.name(),width,'PASS 9-theme comparison, group isolation, date detail, month navigation, restore, 5-tab navigation, short screen');await page.close();
+ assert.deepEqual(errors,[]);console.log(engine.name(),width,'PASS 8-theme comparison, group isolation, date detail, month navigation, restore, 5-tab navigation, short screen');await page.close();
  }await browser.close()}})().catch(e=>{console.error(e);process.exit(1)});

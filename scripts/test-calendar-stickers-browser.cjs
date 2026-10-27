@@ -1,6 +1,6 @@
 'use strict';
 const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');const assert=require('node:assert/strict');
-(async()=>{for(const engine of [webkit,chromium]){const browser=await engine.launch();for(const [width,theme]of [[320,'test'],[390,'test'],[320,'test2'],[390,'test2'],[390,'current'],[320,'test1'],[320,'test3'],[320,'test4']]){
+(async()=>{for(const engine of [webkit,chromium]){const browser=await engine.launch();for(const [width,theme]of [[320,'test'],[390,'test'],[390,'current'],[320,'test1'],[320,'test3'],[320,'test4']]){
  const page=await browser.newPage({viewport:{width,height:844},timezoneId:'Asia/Seoul',reducedMotion:'reduce'});const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.clock.setFixedTime(new Date('2026-10-25T12:00:00+09:00'));
  await page.addInitScript(theme=>{if(localStorage.getItem('shift_active_group'))return;localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_display_theme',theme);localStorage.setItem('shift_onboarding_v1',JSON.stringify({status:'existing'}));localStorage.setItem('shift_salary_config_master',JSON.stringify({hireDate:'2015-06-16',baseHourly:10320,ordinaryHourly:11000}));},theme);
  await page.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await page.goto(process.env.TEST_URL||'http://localhost:8768/');
