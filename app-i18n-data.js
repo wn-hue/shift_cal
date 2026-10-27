@@ -345,4 +345,42 @@ Apple 계정으로 계속하기|Continue with Apple|使用 Apple 继续|Appleで
 앱에서 사용하는 오픈소스 및 이미지 정보예요.|Open-source software and images used in this app.|本应用使用的开源软件和图像信息。|アプリで使用するオープンソースと画像の情報です。
 창 내리기|Dismiss sheet|收起窗口|シートを閉じる
 캘린더 연결|Calendar connections|日历连接|カレンダー連携
+분실물 찾기|Find lost items|寻找失物|忘れ物を探す
+분실물 검색 조건|Lost item search filters|失物搜索条件|忘れ物の検索条件
+물건이나 장소를 입력해 주세요|Enter an item or place|请输入物品或地点|物や場所を入力してください
+게시물 조회|Find posts|查询信息|投稿を検索
+물건별 빠른 검색|Quick search by item|按物品快速搜索|種類でクイック検索
+▶ 전체 게시물 보기|▶ View all posts|▶ 查看全部信息|▶ すべての投稿を見る
+검색 조건 변경|Change search filters|修改搜索条件|検索条件を変更
+이용 안내|Help|使用说明|利用案内
+게시물 종류|Post type|信息类型|投稿の種類
+물건과 보관위치 빠른 필터|Quick item and storage filters|物品与保管地点快捷筛选|物・保管場所の絞り込み
+게시물 불러오는 중…|Loading posts…|正在加载信息…|投稿を読み込み中…
+게시판 불러오는 중…|Loading posts…|正在加载信息…|投稿を読み込み中…
+조건에 맞는 게시물이 없습니다.|No posts match these filters.|没有符合条件的信息。|条件に合う投稿がありません。
+로그인됨 · 내 글은 같은 계정으로 다른 기기에서도 관리할 수 있어요.|Signed in · Manage your posts on other devices with this account.|已登录 · 可使用同一账户在其他设备上管理自己的发布。|ログイン中・同じアカウントで他の端末からも投稿を管理できます。
+조회는 누구나 가능합니다. 등록·관리·신고는 Google 또는 Apple 로그인이 필요합니다.|Anyone can browse. Sign in with Google or Apple to post, manage or report.|任何人均可浏览，发布、管理及举报需使用 Google 或 Apple 登录。|閲覧は誰でもできます。投稿・管理・通報にはGoogleまたはAppleでのログインが必要です。
+로그인 후 등록|Sign in to post|登录后发布|ログインして投稿
+간단 등록|Quick post|快速发布|かんたん投稿
+내 글 수정|Edit my post|编辑我的信息|自分の投稿を編集
+수정 저장|Save changes|保存更改|変更を保存
+주운 물건 등록|Post a found item|发布拾获物品|拾った物を投稿
+주운 물건과 실제 보관 위치를 알려주세요. 경비실 보관을 권장해요.|Describe the found item and its actual storage location. We recommend the guard office.|请填写拾获物品及实际保管地点，建议交由警卫室保管。|拾った物と実際の保管場所を入力してください。警備室での保管をおすすめします。
+잃어버린 물건과 마지막으로 본 장소를 알려주세요.|Describe the lost item and where you last saw it.|请填写遗失物品及最后见到的地点。|なくした物と最後に見た場所を入力してください。
+분실장소|Place lost|遗失地点|なくした場所
+주웠어요 · 습득|Found item|拾获物品|拾った物
+찾고 있어요 · 분실|Lost item|遗失物品|なくした物
+찾는 중|Searching|寻找中|探しています
+찾았어요|Found it|已找回|見つかりました
+주인에게 반환|Returned to owner|已归还失主|持ち主に返却済み
+방금 전|Just now|刚刚|たった今
+처리 기록|Activity history|处理记录|対応履歴
+수정|Edit|编辑|編集
+게시물이 등록·저장되었습니다.|Post saved.|信息已发布并保存。|投稿を保存しました。
+장소와 물건을 선택해 주세요.|Choose a place and an item.|请选择地点和物品。|場所と物を選んでください。
+작성을 취소하고 닫을까요? 입력한 내용은 저장되지 않아요.|Discard this draft? Your input will not be saved.|放弃编辑吗？输入内容不会保存。|入力を破棄しますか？内容は保存されません。
+엊그제|Two days ago|前天|一昨日
+하루 전|Previous day|前一天|前の日
+하루 뒤|Next day|后一天|次の日
+물건을 간단히 적어 주세요|Briefly describe the item|请简单描述物品|物を簡単に説明してください
 `.trim().split('\n').map(line=>{const [ko,en,zh,ja]=line.split('|');return [ko,{en,zh,ja}]}));

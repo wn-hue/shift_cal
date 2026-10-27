@@ -40,6 +40,7 @@
   if(!value&&(m=s.match(/^(.+) · (\d{2}:\d{2})$/)))value=t(m[1])+' · '+m[2];
   if(!value&&(m=s.match(/^(.+) ⌄$/)))value=t(m[1])+' ⌄';
   if(!value&&(m=s.match(/^(\d+)개 노선(?: · (.+))?$/)))value=copy(`${m[1]} routes`,`${m[1]}条路线`,`${m[1]}路線`)+(m[2]?' · '+t(m[2]):'');
+  if(!value&&(m=s.match(/^조회 결과 (\d+)개$/)))value=copy(`${m[1]} results`,`${m[1]}条结果`,`${m[1]}件の結果`);
   if(!value&&(m=s.match(/^노선 검색 결과 (\d+)개 보기$/)))value=copy(`View ${m[1]} matching routes`,`查看${m[1]}条匹配路线`,`${m[1]}件の路線検索結果を見る`);
   if(!value&&(m=s.match(/^(.+) ([\d.]+)일$/))&&dict[m[1]])value=t(m[1])+' '+t(m[2]+'일');
   if(!value&&(m=s.match(/^(.+) · (\d+)곳 경유$/)))value=t(m[1])+' · '+copy(`${m[2]} stops`,`${m[2]}个站点`,`${m[2]}か所経由`);
