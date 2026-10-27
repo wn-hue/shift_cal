@@ -32,7 +32,7 @@ const assert=require('node:assert/strict');
   for(const [year,month,rows]of [[2026,9,5],[2026,4,6],[2026,1,4]]){
    await page.evaluate(([y,m])=>{currentCalDate=new Date(y,m,1);renderCalendar()},[year,month]);
    assert.equal(await page.locator('#calendar-grid .cal-day').count(),rows*7);
-   if(theme==='test3')assert.equal(await page.locator('#cal-month-title-text').textContent(),`${year}년 ${month+1}월`);
+   if(theme!=='test')assert.equal(await page.locator('#cal-month-title-text').textContent(),`${year}년 ${month+1}월`);
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
    assert.equal(await page.locator('.reference-month-summary').count(),0);
    const surface=await page.locator('.cal-day:not(.other-month)').first().evaluate(e=>({border:getComputedStyle(e).borderWidth,top:getComputedStyle(e).borderTopWidth,left:getComputedStyle(e).borderLeftWidth,right:getComputedStyle(e).borderRightWidth,bottom:getComputedStyle(e).borderBottomWidth,shadow:getComputedStyle(e).boxShadow}));assert.equal(surface.top,'0px');assert.equal(surface.left,'0px');assert.equal(surface.right,'0px');assert.equal(surface.bottom,['test1','test3'].includes(theme)?'1px':'0px');

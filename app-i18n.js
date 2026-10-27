@@ -4,17 +4,20 @@
  let language='ko',frame=0;try{const saved=localStorage.getItem('shift_display_language');if(languages[saved])language=saved}catch{}
  const skip='script,style,textarea,input,code,pre,[data-no-i18n],[data-language],#settings-language-name,.memo-tag,.day-event-tag,.external-event,.meal-items,#external-calendar-list,#account-email,.lost-card h3,.lost-card-place,.lost-card-storage,.event-open strong,.event-open span,#schedule-reminder p,.bus-unified-place strong,.bus-unified-place small,.bus-unified-route strong,.bus-route-heading strong,.bus-stop-name,.bus-result-stop';
  const days={en:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],zh:['日','一','二','三','四','五','六'],ja:['日','月','火','水','木','金','土']};
- function t(source,el){
+ function t(source,el,attribute=false){
   if(language==='ko')return source;
   const s=source.trim();let value=dict[s]?.[language],m;
   if(el?.closest('.cal-weekdays,.group-weekday')&&'일월화수목금토'.includes(s)&&s.length===1)value=days[language]['일월화수목금토'.indexOf(s)];
   if(!value&&el?.closest('.shift-badge,.stats-badge,.opt-btn,.group-shift,.attendance-pill')&&['주','야','휴'].includes(s))value={en:{주:'D',야:'N',휴:'Off'},zh:{주:'白',야:'夜',휴:'休'},ja:{주:'日',야:'夜',휴:'休'}}[language][s];
+  // Keep compact calendar badges legible; titles and accessible names retain the full wording.
+  if(!attribute&&el?.closest('.cal-grid .shift-badge')&&['test1','test3','test4'].includes(document.body.dataset.prefTheme)&&['주특','야특'].includes(s))value={en:{주특:'D+',야특:'N+'},zh:{주특:'白加',야특:'夜加'},ja:{주특:'日特',야특:'夜特'}}[language][s];
   if(!value&&s==='원')value=el?.closest('#pref-shape')?{en:'Circle',zh:'圆形',ja:'円'}[language]:{en:'KRW',zh:'韩元',ja:'ウォン'}[language];
   if(!value&&(m=s.match(/^([ABC])조( 근무표)?$/)))value={en:'Team '+m[1]+(m[2]?' schedule':''),zh:m[1]+'组'+(m[2]?'班表':''),ja:m[1]+'組'+(m[2]?'の勤務表':'')}[language];
   if(!value&&(m=s.match(/^([ABC])조 · 3조 2교대$/)))value={en:'Team '+m[1]+' · 3 teams / 2 shifts',zh:m[1]+'组 · 三班两倒',ja:m[1]+'組・3組2交替'}[language];
   if(!value&&(m=s.match(/^(\d+)년 (\d+)월 급여$/)))value={en:`Pay · ${m[1]}.${m[2]}`,zh:`${m[1]}年${m[2]}月工资`,ja:`${m[1]}年${m[2]}月の給与`}[language];
   if(!value&&(m=s.match(/^(\d+)월 (\d+)일 ([일월화수목금토])요일$/))){const y=typeof currentCalDate==='undefined'?new Date().getFullYear():currentCalDate.getFullYear();value=new Intl.DateTimeFormat(languages[language][0],{month:'long',day:'numeric',weekday:'long'}).format(new Date(y,Number(m[1])-1,Number(m[2])));}
   if(!value&&(m=s.match(/^(\d{4})년 (\d{1,2})월$/)))value=new Intl.DateTimeFormat(languages[language][0],{year:'numeric',month:'long'}).format(new Date(Number(m[1]),Number(m[2])-1,1));
+  if(!value&&(m=s.match(/^(\d{1,2})월$/)))value=new Intl.DateTimeFormat(languages[language][0],{month:'long'}).format(new Date(2026,Number(m[1])-1,1));
   if(!value&&(m=s.match(/^(\d+)년$/)))value={en:m[1],zh:m[1]+'年',ja:m[1]+'年'}[language];
   if(!value&&(m=s.match(/^([+−-]?[\d,]+(?:\.\d+)?)\s*원$/)))value={en:'KRW '+m[1],zh:m[1]+'韩元',ja:m[1]+'ウォン'}[language];
   if(!value&&(m=s.match(/^(\d+(?:\.\d+)?)일$/)))value={en:m[1]+(m[1]==='1'?' day':' days'),zh:m[1]+'天',ja:m[1]+'日'}[language];
@@ -77,7 +80,7 @@
   for(const el of document.querySelectorAll('[aria-label],[placeholder],[title],[alt]')){
    if(el.closest('[data-no-i18n],.memo-tag,.day-event-tag,.external-event,.meal-items,.lost-card h3,.lost-card-place,.lost-card-storage,#event-list,#account-email'))continue;
    const records=attrs.get(el)||{};
-   for(const name of ['aria-label','placeholder','title','alt'])if(el.hasAttribute(name)){const value=el.getAttribute(name);let r=records[name];if(!r||value!==r.rendered)r={source:value};r.rendered=t(r.source,el);if(r.rendered!==value)el.setAttribute(name,r.rendered);records[name]=r;}
+   for(const name of ['aria-label','placeholder','title','alt'])if(el.hasAttribute(name)){const value=el.getAttribute(name);let r=records[name];if(!r||value!==r.rendered)r={source:value};r.rendered=t(r.source,el,true);if(r.rendered!==value)el.setAttribute(name,r.rendered);records[name]=r;}
    attrs.set(el,records);
   }
   const label=document.getElementById('settings-language-name');if(label)label.textContent=languages[language][1];

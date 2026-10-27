@@ -25,7 +25,7 @@ function openAppPreferences(){window.SettingsPage.open();}
             if (name === 'theme') {
                 document.body.removeAttribute('data-pref-mode');
                 document.documentElement.style.colorScheme = value === 'dark' ? 'dark' : 'light';
-                document.querySelector('meta[name="theme-color"]')?.setAttribute('content',({dark:'#111820',test:'#eeeae4',test1:'#f2f4f6',test3:'#f2f2f7',test4:'#eef0f3'})[value] || '#ffffff');
+                document.querySelector('meta[name="theme-color"]')?.setAttribute('content',({dark:'#111820',test:'#eeeae4',test1:'#f2f4f6',test3:'#f5f5f7',test4:'#f6f5f1'})[value] || '#ffffff');
             }
             return value;
         };
