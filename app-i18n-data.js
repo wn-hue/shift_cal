@@ -383,4 +383,5 @@ Apple 계정으로 계속하기|Continue with Apple|使用 Apple 继续|Appleで
 하루 전|Previous day|前一天|前の日
 하루 뒤|Next day|后一天|次の日
 물건을 간단히 적어 주세요|Briefly describe the item|请简单描述物品|物を簡単に説明してください
+필터|Filters|筛选|絞り込み
 `.trim().split('\n').map(line=>{const [ko,en,zh,ja]=line.split('|');return [ko,{en,zh,ja}]}));
