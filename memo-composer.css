@@ -16,3 +16,11 @@ body[data-pref-theme] #modal-override#modal-override #modal-memo-input{display:n
 #memo-compose-input{display:block;box-sizing:border-box;flex:1 1 0;width:100%;min-height:0;margin:0;padding:18px 22px;border:0;border-radius:0;outline:0;resize:none;overflow:auto;background:transparent;color:inherit;font:inherit;font-size:16px!important;line-height:1.75;overscroll-behavior:contain;overflow-wrap:anywhere}
 #memo-compose-input::placeholder{color:var(--ed-sub,#6b7684)}
 #memo-compose-dialog button:focus-visible,#memo-compose-open:focus-visible{outline:2px solid var(--ed-blue,#3182f6);outline-offset:2px}
+
+/* A dedicated drag surface keeps swipes out of the writing area's native scroll gestures. */
+#memo-compose-dialog{transform:translateY(var(--compose-drag,0px));padding-top:env(safe-area-inset-top,0px)}
+#memo-compose-dismiss{flex:none;display:flex;align-items:center;justify-content:center;width:100%;height:24px;min-height:24px;padding:0;margin:0;border:0;background:transparent;color:#b8bfc8;cursor:grab;touch-action:none}
+#memo-compose-dismiss span{width:34px;height:4px;border-radius:4px;background:currentColor}
+.memo-compose-header,#memo-compose-date{touch-action:none}
+#memo-compose-dialog:has(#memo-compose-dismiss) .memo-compose-header{padding-top:4px}
+@media(prefers-reduced-motion:reduce){#memo-compose-dialog{transform:none}}
