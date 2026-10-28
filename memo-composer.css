@@ -1,0 +1,18 @@
+/* Read-only preview in the day sheet; editing has its own modal and scroll container. */
+body[data-pref-theme] #modal-override#modal-override #modal-memo-input{display:none!important}
+#memo-compose-open{display:flex;align-items:center;gap:14px;width:100%;min-height:64px;margin:10px 0 8px;padding:16px;border:0;border-radius:16px;background:var(--ed-bg,#f2f4f6);color:var(--ed-text,#191f28);font:inherit;font-size:15px;text-align:left}
+#memo-compose-preview{flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}
+#memo-compose-open[data-empty=true]{color:var(--ed-sub,#6b7684)}
+#memo-compose-open>span:last-child{font-size:24px;color:var(--ed-sub,#6b7684)}
+#memo-compose-dialog{position:fixed;inset:auto;margin:0;top:var(--compose-top,0px);left:var(--compose-left,0px);width:var(--compose-width,100vw);height:var(--compose-height,100dvh);max-width:none;max-height:none;box-sizing:border-box;padding:0 0 env(safe-area-inset-bottom,0px);border:0;border-radius:0;background:var(--ed-card,#fff);color:var(--ed-text,#191f28);overflow:hidden;overscroll-behavior:none}
+#memo-compose-dialog[open]{display:flex;flex-direction:column}
+#memo-compose-dialog::backdrop{background:#0006}
+.memo-compose-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:none;padding:max(10px,env(safe-area-inset-top,0px)) 18px 10px;border-bottom:1px solid var(--ed-line,#e9edf1)}
+.memo-compose-header h2{margin:0;font-size:18px;font-weight:700;line-height:26px}
+.memo-compose-header button{display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex:none;padding:10px;border:0;border-radius:50%;background:transparent;color:var(--ed-text,#191f28);cursor:pointer}
+.memo-compose-header svg{width:24px;height:24px}
+#memo-compose-save{background:var(--ed-blue,#3182f6);color:#fff}
+#memo-compose-date{flex:none;margin:16px 22px 0;color:var(--ed-sub,#6b7684);font-size:13px;line-height:20px}
+#memo-compose-input{display:block;box-sizing:border-box;flex:1 1 0;width:100%;min-height:0;margin:0;padding:18px 22px;border:0;border-radius:0;outline:0;resize:none;overflow:auto;background:transparent;color:inherit;font:inherit;font-size:16px!important;line-height:1.75;overscroll-behavior:contain;overflow-wrap:anywhere}
+#memo-compose-input::placeholder{color:var(--ed-sub,#6b7684)}
+#memo-compose-dialog button:focus-visible,#memo-compose-open:focus-visible{outline:2px solid var(--ed-blue,#3182f6);outline-offset:2px}

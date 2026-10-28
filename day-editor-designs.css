@@ -191,3 +191,15 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design=toss][da
 body[data-pref-theme] #modal-override#modal-override[data-editor-design=kakao] #work-panel .design-extra-choices .no-ot{grid-column:1 / -1}
 
 body[data-pref-theme] #modal-override#modal-override[data-editor-design=toss][data-design-pane=memo][data-editor-keyboard=true] #modal-memo-input{height:100px!important;min-height:60px!important;max-height:100px!important}
+
+/* The default work sheet leaves calendar context above it and grows only for real content. */
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=toss]>.override-sheet{height:auto;max-height:min(84%,var(--editor-sheet-limit,720px));min-height:0}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=toss] .editor-content{flex:0 1 auto;padding:8px 16px 12px}
+#modal-override#modal-override[data-editor-design=toss] .design-toolbar{min-height:60px;padding:12px 16px 4px}
+#modal-override#modal-override[data-editor-design=toss] .design-hero{padding:4px 4px 18px}
+#modal-override#modal-override[data-editor-design=toss] #design-question{display:none}
+#modal-override#modal-override[data-editor-design=toss] #design-date{font-size:22px;line-height:30px;font-weight:700;letter-spacing:-.5px;color:var(--ed-text);margin:0 0 8px}
+#modal-override#modal-override[data-editor-design=toss] .design-base{font-size:13px;line-height:20px}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=toss] #work-panel .design-main-choices .opt-btn{min-height:60px;padding:10px 14px}
+#modal-override#modal-override[data-editor-design=toss] summary,#modal-override#modal-override[data-editor-design=toss] .design-memo-link{min-height:58px;padding:12px 14px}
+#modal-override#modal-override[data-editor-design=toss] .design-footer{padding:10px 16px max(12px,env(safe-area-inset-bottom))}

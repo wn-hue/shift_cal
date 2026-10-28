@@ -86,7 +86,7 @@
  function fit(){const vp=visualViewport,w=vp?.width||innerWidth,h=vp?.height||innerHeight,top=vp?.offsetTop||0,left=vp?.offsetLeft||0,gap=h<420?24:Math.max(56,h*.08);
   for(const d of document.querySelectorAll('dialog.app-bottom-sheet')){if(d.dataset.sheetClosing==='true')continue;d.style.setProperty('--sheet-limit',Math.max(120,h-gap)+'px');d.style.setProperty('--sheet-width',Math.min(w,560)+'px');d.style.setProperty('--sheet-left',left+(w-Math.min(w,560))/2+'px');d.style.setProperty('--sheet-bottom',Math.max(0,innerHeight-top-h)+'px');}
  }
- function attach(sheet){if(attached.has(sheet)||sheet.id==='onboarding-dialog'||sheet.closest('#modal-override'))return;attached.add(sheet);
+ function attach(sheet){if(attached.has(sheet)||sheet.id==='onboarding-dialog'||sheet.id==='memo-compose-dialog'||sheet.closest('#modal-override'))return;attached.add(sheet);
   const native=sheet.tagName==='DIALOG',original=sheet.querySelector('button[aria-label*="닫기"],.sms-close-btn,.login-sheet-close,#lost-close,.override-close,.picker-close');
   if(!native&&!original)return;
   const dismiss=()=>original?original.click():sheet.close();
