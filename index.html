@@ -947,7 +947,7 @@
 <link rel="stylesheet" href="./settings-page.css?v=2">
 <link rel="stylesheet" href="./app-i18n.css?v=1">
 <link rel="stylesheet" href="./sheet-interactions.css?v=5">
-<link rel="stylesheet" href="./day-editor-layout.css?v=4">
+<link rel="stylesheet" href="./day-editor-layout.css?v=5">
 <link rel="stylesheet" href="./app-currency.css?v=1">
 <link rel="stylesheet" href="./commute-page.css?v=13">
 <link rel="stylesheet" href="./lost-found-page.css?v=3">
@@ -1546,11 +1546,11 @@
                 <button type="button" id="editor-dismiss" aria-label="근무 변경 내리기" onclick="closeModalDirect()"><span aria-hidden="true"></span></button>
             </div>
             <div class="editor-content"><div class="editor-tabs" role="tablist"><button id="work-tab" role="tab" aria-controls="work-panel" tabindex="0" aria-selected="true" onclick="switchEditorTab('work')">근무</button><button id="memo-tab" role="tab" aria-controls="memo-panel" tabindex="-1" aria-selected="false" onclick="switchEditorTab('memo')">메모</button></div>
-            <section id="work-panel" class="override-section" role="tabpanel" aria-labelledby="work-tab"><div class="work-section-heading"><h3 class="override-section-title">근무</h3></div><div class="shift-scroll" role="group" aria-label="근무 선택"><button type="button" class="opt-btn day" onclick="setDayOverride('DAY')"><span>주</span></button><button type="button" class="opt-btn night" onclick="setDayOverride('NIGHT')"><span>야</span></button><button type="button" class="opt-btn off" onclick="setDayOverride('OFF')"><span>휴</span></button><button class="opt-btn day-sp" onclick="setDayOverride('SPECIAL_DAY')">
-                    <span>주특</span>
+            <section id="work-panel" class="override-section" role="tabpanel" aria-labelledby="work-tab"><div class="work-section-heading"><h3 class="override-section-title">근무</h3></div><div class="shift-scroll" role="group" aria-label="근무 선택"><button type="button" class="opt-btn day" onclick="setDayOverride('DAY')"><span>주간</span></button><button type="button" class="opt-btn night" onclick="setDayOverride('NIGHT')"><span>야간</span></button><button type="button" class="opt-btn off" onclick="setDayOverride('OFF')"><span>휴무</span></button><button class="opt-btn day-sp" onclick="setDayOverride('SPECIAL_DAY')">
+                    <span>주간 특근</span>
                 </button><button class="opt-btn night-sp" onclick="setDayOverride('SPECIAL_NIGHT')">
-                    <span>야특</span>
-                </button><button class="opt-btn day-sp special-no-ot" onclick="setDayOverride('SPECIAL_DAY_NO_OT')"><span>주특<br>잔업X</span></button><button class="opt-btn night-sp special-no-ot" onclick="setDayOverride('SPECIAL_NIGHT_NO_OT')"><span>야특<br>잔업X</span></button><button class="opt-btn no-ot" onclick="setDayOverride('NO_OT')">
+                    <span>야간 특근</span>
+                </button><button class="opt-btn day-sp special-no-ot" onclick="setDayOverride('SPECIAL_DAY_NO_OT')"><span>주간 특근<br>잔업X</span></button><button class="opt-btn night-sp special-no-ot" onclick="setDayOverride('SPECIAL_NIGHT_NO_OT')"><span>야간 특근<br>잔업X</span></button><button class="opt-btn no-ot" onclick="setDayOverride('NO_OT')">
                     <span>O.T 해제</span>
                 </button></div><h3 class="override-section-title">근태</h3><div class="shift-scroll attendance-choices" role="group" aria-label="근태 선택"><button class="opt-btn leave" onclick="setDayOverride('LEAVE')">
                     <span>연차</span>
@@ -3013,7 +3013,7 @@
 </dialog>
 <script src="./onboarding.js?v=2"></script>
 <script src="./payslip-alert.js?v=3"></script>
-<script src="./memo-editor.js?v=9"></script>
+<script src="./memo-editor.js?v=11"></script>
 <script src="./day-editor-navigation.js?v=7"></script>
 <script src="./day-scheduler-core.js?v=1"></script>
 <script src="./day-scheduler.js?v=4"></script>

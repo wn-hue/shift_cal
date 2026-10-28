@@ -43,7 +43,7 @@
   overlay.dataset.memoCompact=String(keyboardOpen||height<540);overlay.dataset.editorTiny=String(height<300);
   // Only cap the available viewport. CSS lays out the real content at its intrinsic height.
   // Measuring a panel that is hidden or mid-layout can report zero and clip every choice below the tabs.
-  const restingLimit=normalHeight<540?normalHeight-24:Math.min(740,normalHeight*.78);
+  const restingLimit=normalHeight<540?normalHeight-24:overlay.dataset.editorTab==='work'?Math.min(780,normalHeight*.88):Math.min(740,normalHeight*.78);
   const limit=Math.ceil(Math.max(0,keyboardOpen?height-12:Math.min(restingLimit,height)));
   if(limit!==previousLimit){previousLimit=limit;overlay.style.setProperty('--editor-sheet-limit',limit+'px');}
   // Scroll the editable pane, never the fixed sheet or its backdrop, to reveal a field.
