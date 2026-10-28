@@ -1,0 +1,160 @@
+/* Scoped to the day editor. Calendar themes and other sheets retain their own design. */
+body[data-pref-theme] #modal-override#modal-override[data-editor-design]{--ed-bg:#f2f4f6;--ed-card:#fff;--ed-text:#191f28;--ed-sub:#6b7684;--ed-line:#e9edf1;--ed-blue:#3182f6;--ed-selected:#eaf3ff;--editor-top-inset:env(safe-area-inset-top,12px);color:var(--ed-text)}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design]>.override-sheet{height:var(--editor-sheet-limit,calc(100dvh - 16px));max-height:100%;background:var(--ed-bg)!important;box-shadow:none;isolation:isolate;border-radius:28px 28px 0 0;padding:0}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] .override-header,
+body[data-pref-theme] #modal-override#modal-override[data-editor-design]>.override-sheet>.editor-tabs,
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #editor-swipe-space,
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] .work-section-heading,
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel>.override-section-title{display:none!important}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] .editor-content{display:block;flex:1 1 0;min-height:0;padding:8px 20px 20px;background:var(--ed-bg)!important;overflow:auto;scrollbar-width:none;border-radius:0}
+#modal-override#modal-override[data-editor-design] button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#modal-override#modal-override[data-editor-design] button:focus-visible,#modal-override#modal-override[data-editor-design] summary:focus-visible{outline:3px solid var(--ed-blue)!important;outline-offset:3px}
+#modal-override#modal-override[data-editor-design] [hidden]{display:none!important}
+#modal-override#modal-override[data-editor-design] .design-toolbar{display:flex;align-items:center;justify-content:space-between;flex:none;position:relative;min-height:72px;padding:20px 18px 4px;gap:12px;box-sizing:border-box}
+#modal-override#modal-override[data-editor-design] .design-toolbar>strong{font-size:17px;line-height:24px;flex:1;text-align:center;color:var(--ed-text)}
+#modal-override#modal-override[data-editor-design] .design-toolbar button{border:0;background:none;color:var(--ed-text);min-width:44px;min-height:44px;padding:10px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:15px}
+#modal-override#modal-override[data-editor-design] .design-toolbar svg{width:23px;height:23px}
+#modal-override#modal-override[data-editor-design] #design-back span{display:none}
+#modal-override#modal-override[data-editor-design] .design-toolbar-actions{display:flex;gap:4px;align-items:center}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #editor-sticker-preview{position:static!important;width:44px;height:44px;min-height:44px;flex:none;padding:9px;color:var(--ed-sub)}
+#modal-override#modal-override[data-editor-design] #editor-sticker-preview::after{display:none}
+#modal-override#modal-override[data-editor-design] #editor-sticker-preview svg{width:24px;height:24px}
+#modal-override#modal-override[data-editor-design] #design-done{display:none}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #editor-dismiss{position:absolute;top:0;left:calc(50% - 24px);width:48px;height:18px;min-height:18px;padding:0;background:none!important}
+#modal-override#modal-override[data-editor-design] #editor-dismiss span{height:4px;width:32px;border-radius:9px;background:#b8bfc8}
+#modal-override#modal-override[data-editor-design] .design-hero{padding:14px 4px 24px}
+#modal-override#modal-override[data-editor-design] #design-date{margin:0 0 12px;color:var(--ed-sub);font-size:14px;line-height:22px}
+#modal-override#modal-override[data-editor-design] #design-question{font-size:30px;line-height:1.32;letter-spacing:-1.1px;margin:0 0 14px;font-weight:750;color:var(--ed-text)}
+#modal-override#modal-override[data-editor-design] .design-base{font-size:14px;line-height:22px;color:var(--ed-sub);margin:0;display:flex;gap:6px;align-items:center}
+#modal-override#modal-override[data-editor-design] .design-base strong{font-weight:650;color:var(--ed-text)}
+#modal-override#modal-override[data-editor-design] .design-week,#modal-override#modal-override[data-editor-design] .design-bubble,#modal-override#modal-override[data-editor-design] .design-tabs{display:none}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel{padding:0;margin:0;border:0;background:transparent}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .shift-scroll{display:flex;flex-direction:column;gap:0;overflow:visible;padding:0;margin:0;background:var(--ed-card);border-radius:20px;scroll-snap-type:none}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .shift-scroll .opt-btn{display:flex;align-items:center;justify-content:flex-start;gap:14px;position:relative;flex:0 0 auto;width:100%;min-width:0;height:auto;min-height:70px;padding:14px 16px;border:0!important;border-radius:16px!important;background:transparent!important;color:var(--ed-text)!important;box-shadow:none!important;outline:0;text-decoration:none!important;white-space:normal;line-height:22px;font-size:16px;text-align:left;box-sizing:border-box;transform:none}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .shift-scroll .opt-btn[aria-pressed=true]{background:var(--ed-selected)!important;outline:0!important;color:var(--ed-text)!important}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .opt-btn::before,body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .opt-btn::after{display:none!important}
+#modal-override#modal-override[data-editor-design] .design-choice-badge{display:flex;align-items:center;justify-content:center;flex:0 0 40px;width:40px;height:40px;border-radius:50%;background:var(--calendar-choice-fill,#f2f4f6);color:var(--calendar-choice-ink,#333);font-size:16px;font-weight:650}
+#modal-override#modal-override[data-editor-design] .design-choice-icon{display:none}
+#modal-override#modal-override[data-editor-design] .design-choice-label{flex:1;min-width:0;font-weight:650;overflow-wrap:anywhere}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .selection-check{position:static;display:flex;align-items:center;justify-content:center;flex:0 0 22px;width:22px;height:22px;border-radius:50%;border:1.5px solid #d1d6db;background:transparent;color:white;opacity:1;box-shadow:none;transform:none;margin-left:auto}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .selection-check svg{width:16px;height:16px;visibility:hidden}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel [aria-pressed=true] .selection-check{background:var(--ed-blue);border-color:var(--ed-blue)}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel [aria-pressed=true] .selection-check svg{visibility:visible}
+#modal-override#modal-override[data-editor-design] .design-extra,#modal-override#modal-override[data-editor-design] .design-attendance,#modal-override#modal-override[data-editor-design] .design-memo-link{background:var(--ed-card);border:0;border-radius:20px;margin:12px 0 0;width:100%;box-sizing:border-box}
+#modal-override#modal-override[data-editor-design] summary,#modal-override#modal-override[data-editor-design] .design-memo-link{display:flex;align-items:center;gap:12px;padding:18px 16px;min-height:64px;list-style:none;color:var(--ed-text);text-align:left;cursor:pointer}
+#modal-override#modal-override[data-editor-design] summary::-webkit-details-marker{display:none}
+#modal-override#modal-override[data-editor-design] summary strong,#modal-override#modal-override[data-editor-design] .design-memo-link strong{display:block;font-size:15px;line-height:22px;font-weight:650}
+#modal-override#modal-override[data-editor-design] summary small,#modal-override#modal-override[data-editor-design] .design-memo-link small{display:block;font-size:12px;color:var(--ed-sub);line-height:19px;margin-top:3px}
+#modal-override#modal-override[data-editor-design] .design-row-icon{width:36px;height:36px;flex:0 0 36px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--ed-bg);color:#5a7b9b}
+#modal-override#modal-override[data-editor-design] .design-row-icon svg{width:22px;height:22px}
+#modal-override#modal-override[data-editor-design] .design-attendance .design-row-icon{color:#249b87}
+#modal-override#modal-override[data-editor-design] .design-chevron{margin-left:auto;font-size:24px;color:#8b95a1;font-weight:400}
+#modal-override#modal-override[data-editor-design] details[open]>summary .design-chevron{transform:rotate(90deg)}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .design-extra-choices .opt-btn,body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .attendance-choices .opt-btn{min-height:52px;font-size:14px;border-radius:12px!important}
+#modal-override#modal-override[data-editor-design] .design-extra-choices .design-choice-badge,#modal-override#modal-override[data-editor-design] .attendance-choices .design-choice-badge{display:none}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] .design-reset{display:flex;align-items:center;justify-content:center;position:static;gap:6px;width:100%;height:auto;min-height:48px;margin:10px 0 0;padding:10px;border:0!important;outline:0!important;background:none!important;color:var(--ed-blue)!important;box-shadow:none!important;font-size:13px;border-radius:12px}
+#modal-override#modal-override[data-editor-design] .design-reset svg{width:17px;height:17px}
+#modal-override#modal-override[data-editor-design] .design-reset .selection-check{display:none}
+#modal-override#modal-override[data-editor-design] .design-footer{display:flex;flex:none;align-items:center;gap:12px;background:var(--ed-card);padding:12px 20px max(16px,env(safe-area-inset-bottom));border-top:1px solid var(--ed-line)}
+#modal-override#modal-override[data-editor-design] .design-change{flex:1;min-width:0;overflow-wrap:anywhere}
+#modal-override#modal-override[data-editor-design] .design-change strong{display:block;font-size:14px;line-height:22px;font-weight:650}
+#modal-override#modal-override[data-editor-design] .design-change small{display:block;color:var(--ed-sub);font-size:10px;line-height:16px}
+#modal-override#modal-override[data-editor-design] #apply-preview{border:0;background:var(--ed-blue);color:#fff;font:inherit;font-size:15px;font-weight:650;min-height:52px;width:auto;min-width:128px;padding:12px 18px;border-radius:16px;margin:0;flex:1}
+#modal-override#modal-override[data-editor-design] #design-cancel{display:none}
+#modal-override#modal-override[data-editor-design] .design-pay{margin:0 0 12px;border-top:1px solid var(--ed-line)}
+#modal-override#modal-override[data-editor-design] .design-pay summary{padding:12px 4px;min-height:44px;font-size:12px;color:var(--ed-sub)}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel #change-preview{padding:8px 12px;margin:0;background:var(--ed-card);font-size:12px;border:0}
+#modal-override#modal-override[data-editor-design][data-design-pane=memo] .design-hero{display:none}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #day-note>.btn-save{display:none!important}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #memo-panel{background:var(--ed-card);border-radius:20px;padding:18px;color:var(--ed-text)}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #modal-memo-input{background:var(--ed-bg)!important;color:var(--ed-text);font-size:16px!important}
+#modal-override#modal-override[data-editor-design][data-design-event=true] .design-footer{display:none}
+/* Test 2 — native list editing with top-bar completion and an inline date strip. */
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=apple]{--ed-bg:#f2f2f7;--ed-blue:#007aff;--ed-selected:#f1f6ff;--ed-line:#e1e2e7}
+#modal-override#modal-override[data-editor-design=apple] #design-back>svg{display:none}
+#modal-override#modal-override[data-editor-design=apple] #design-back span{display:inline;color:var(--ed-blue)}
+#modal-override#modal-override[data-editor-design=apple] #design-done{display:flex;background:var(--ed-blue);color:#fff}
+#modal-override#modal-override[data-editor-design=apple] .design-hero{padding-top:12px;padding-bottom:20px;text-align:center}
+#modal-override#modal-override[data-editor-design=apple] #design-date{font-size:25px;line-height:34px;letter-spacing:-.8px;color:var(--ed-text);font-weight:700}
+#modal-override#modal-override[data-editor-design=apple] #design-question{display:none}
+#modal-override#modal-override[data-editor-design=apple] .design-base{justify-content:center;font-size:13px}
+#modal-override#modal-override[data-editor-design=apple] .design-week,#modal-override#modal-override[data-editor-design=kakao] .design-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-top:20px}
+#modal-override#modal-override[data-editor-design] .design-week-day{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;border:0;background:none;color:var(--ed-text);padding:6px 0;border-radius:14px;min-height:60px}
+#modal-override#modal-override[data-editor-design] .design-week-day small{font-size:11px;color:var(--ed-sub);line-height:16px}
+#modal-override#modal-override[data-editor-design] .design-week-day strong{display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500;width:32px;height:32px;border-radius:50%}
+#modal-override#modal-override[data-editor-design=apple] .design-week-day[aria-pressed=true] strong{background:var(--ed-blue);color:#fff}
+#modal-override#modal-override[data-editor-design=apple] .design-week-shift{display:none}
+#modal-override#modal-override[data-editor-design=apple] .design-extra{margin:0;border-radius:0 0 16px 16px}
+#modal-override#modal-override[data-editor-design=apple] .design-extra>summary{display:none}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=apple] #work-panel .design-main-choices{border-radius:16px 16px 0 0}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=apple] #work-panel .shift-scroll .opt-btn{min-height:48px;padding:9px 16px;border-radius:0!important;font-size:15px;border-bottom:1px solid var(--ed-line)!important}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=apple] #work-panel .shift-scroll .opt-btn[aria-pressed=true]{background:transparent!important}
+#modal-override#modal-override[data-editor-design=apple] .design-choice-badge{height:30px;width:30px;flex-basis:30px;font-size:13px}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=apple] #work-panel .selection-check{border:0;background:transparent;color:var(--ed-blue)}
+#modal-override#modal-override[data-editor-design=apple] .design-footer{display:none}
+#modal-override#modal-override[data-editor-design=apple] #work-panel .design-reset{background:var(--ed-card)!important;justify-content:flex-start;padding-left:16px}
+#modal-override#modal-override[data-editor-design=apple] .design-attendance,#modal-override#modal-override[data-editor-design=apple] .design-memo-link{border-radius:16px}
+#modal-override#modal-override[data-editor-design=apple] .design-row-icon{background:none;color:var(--ed-sub)}
+/* Test 3 — calendar context, a personal status bubble and a compact action pad. */
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=kakao]{--ed-bg:#faf9f6;--ed-text:#302c29;--ed-sub:#77716b;--ed-blue:#fee500;--ed-selected:#fff8bc;--ed-line:#ece8e2}
+#modal-override#modal-override[data-editor-design=kakao] #design-question{display:none}
+#modal-override#modal-override[data-editor-design=kakao] .design-hero{padding:8px 0 18px}
+#modal-override#modal-override[data-editor-design=kakao] #design-date{color:var(--ed-text);font-size:21px;font-weight:700;margin:0 4px 4px}
+#modal-override#modal-override[data-editor-design=kakao] .design-base{margin:0 4px;font-size:12px}
+#modal-override#modal-override[data-editor-design=kakao] .design-week{background:var(--ed-card);padding:10px 6px;border-radius:20px;margin-top:14px;gap:2px}
+#modal-override#modal-override[data-editor-design=kakao] .design-week-day{border:1.5px solid transparent;gap:4px;border-radius:14px}
+#modal-override#modal-override[data-editor-design=kakao] .design-week-day[aria-pressed=true]{background:#fffbe5;border-color:#edcf00}
+#modal-override#modal-override[data-editor-design=kakao] .design-week-shift{display:flex;align-items:center;justify-content:center;border-radius:50%;width:26px;height:26px;background:#fff0a4;color:#554b24;font-size:11px}
+#modal-override#modal-override[data-editor-design=kakao] .design-week-shift[data-shift=NIGHT]{background:#505969;color:#fff}
+#modal-override#modal-override[data-editor-design=kakao] .design-week-shift[data-shift=OFF]{background:#fce8e8;color:#ba6771}
+#modal-override#modal-override[data-editor-design=kakao] .design-bubble{display:flex;flex-wrap:wrap;gap:4px 8px;position:relative;background:#fff1a4;padding:14px 16px;border-radius:18px;margin:16px 0 0;font-size:13px;line-height:22px}
+#modal-override#modal-override[data-editor-design=kakao] .design-bubble::before{content:'';position:absolute;top:-6px;left:27px;width:13px;height:13px;border-radius:2px;background:#fff1a4;transform:rotate(45deg)}
+#modal-override#modal-override[data-editor-design=kakao] .design-tabs{display:flex;gap:4px;margin-bottom:14px;border-bottom:1px solid var(--ed-line)}
+#modal-override#modal-override[data-editor-design=kakao] .design-tabs button{flex:1;min-height:46px;border:0;border-bottom:3px solid transparent;background:none;color:var(--ed-sub);font-size:13px;padding:7px 2px;font-weight:650;white-space:nowrap}
+#modal-override#modal-override[data-editor-design=kakao] .design-tabs button[aria-pressed=true]{border-bottom-color:var(--ed-text);color:var(--ed-text)}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=kakao] #work-panel .design-main-choices,body[data-pref-theme] #modal-override#modal-override[data-editor-design=kakao] #work-panel .design-extra-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;background:none;border-radius:0}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=kakao] #work-panel .design-main-choices .opt-btn,body[data-pref-theme] #modal-override#modal-override[data-editor-design=kakao] #work-panel .design-extra-choices .opt-btn{flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:90px;padding:12px 5px;background:#f0eeeb!important;border-radius:18px!important;text-align:center;font-size:13px;line-height:18px}
+#modal-override#modal-override[data-editor-design=kakao] .design-choice-badge{display:none}
+#modal-override#modal-override[data-editor-design=kakao] .design-choice-icon{display:block;height:29px;color:#e9ad23}
+#modal-override#modal-override[data-editor-design=kakao] .design-choice-icon svg{width:29px;height:29px}
+#modal-override#modal-override[data-editor-design=kakao] .night .design-choice-icon,#modal-override#modal-override[data-editor-design=kakao] .night-sp .design-choice-icon{color:#505969}
+#modal-override#modal-override[data-editor-design=kakao] .off .design-choice-icon{color:#d88794}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=kakao] #work-panel .selection-check{position:absolute;right:6px;top:6px;width:16px;height:16px;min-width:0;flex-basis:16px;background:#302c29!important;border:0;display:none}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=kakao] #work-panel [aria-pressed=true] .selection-check{display:flex;color:#fff}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=kakao] #work-panel .shift-scroll .opt-btn[aria-pressed=true]{background:#fee77b!important}
+#modal-override#modal-override[data-editor-design=kakao] .design-extra{margin-top:8px;background:none}
+#modal-override#modal-override[data-editor-design=kakao] .design-extra>summary{display:none}
+#modal-override#modal-override[data-editor-design=kakao] .design-reset{color:#69615b!important;font-size:12px}
+#modal-override#modal-override[data-editor-design=kakao] #apply-preview{color:#302c29;background:#fee500;flex:2}
+#modal-override#modal-override[data-editor-design=kakao] #design-cancel{display:block;flex:1;min-height:52px;border:1px solid #dedbd7;border-radius:16px;background:var(--ed-card);color:var(--ed-text);font-size:14px}
+#modal-override#modal-override[data-editor-design=kakao] .design-change{display:none}
+#modal-override#modal-override[data-editor-design=kakao][data-design-pane=work] .design-attendance{display:none}
+#modal-override#modal-override[data-editor-design=kakao][data-design-pane=attendance] .design-main-choices,#modal-override#modal-override[data-editor-design=kakao][data-design-pane=attendance] .design-extra,#modal-override#modal-override[data-editor-design=kakao][data-design-pane=attendance] .design-memo-link{display:none!important}
+#modal-override#modal-override[data-editor-design=kakao][data-design-pane=attendance] .design-attendance>summary{display:none}
+/* Dark mode keeps the default layout without a bright flash. */
+body[data-pref-theme=dark] #modal-override#modal-override[data-editor-design=toss]{--ed-bg:#161a20;--ed-card:#242a32;--ed-text:#eef1f5;--ed-sub:#abb4c1;--ed-line:#353d49;--ed-selected:#243c5d;--ed-blue:#6ba7ff}
+/* Isolate choice content from the legacy circular-button typography. */
+body[data-pref-theme] #modal-override#modal-override[data-editor-design]:not([data-editor-design=kakao]) #work-panel .shift-scroll .opt-btn{flex-direction:row}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .opt-btn .design-choice-label{font-size:15px!important;line-height:22px!important;color:var(--ed-text);font-weight:600;margin:0}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=kakao] #work-panel .opt-btn .design-choice-label{font-size:12px!important;line-height:18px!important;flex:0 0 auto}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .opt-btn .design-choice-badge{font-size:15px;line-height:20px;margin:0}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=apple] #work-panel .opt-btn .selection-check{background:transparent;border:0;color:var(--ed-blue)}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .design-reset{background:transparent!important;width:100%;height:48px;justify-content:center;color:var(--ed-blue)!important;border-radius:12px}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] .design-reset>span{font-size:13px;line-height:20px}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=apple] #work-panel .design-reset{background:var(--ed-card)!important;justify-content:flex-start;padding-left:16px}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=kakao] .design-reset{color:var(--ed-sub)!important}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #apply-preview{background:var(--ed-blue)!important;color:white!important}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design=kakao] #apply-preview{color:var(--ed-text)!important}
+/* Keyboard and short screens: scroll the form, never put controls behind the keyboard. */
+body[data-pref-theme] #modal-override#modal-override[data-editor-design][data-editor-keyboard=true] .editor-content{display:block;padding:8px 16px 12px}
+#modal-override#modal-override[data-editor-design][data-editor-keyboard=true] .design-toolbar{min-height:56px;padding-top:12px}
+#modal-override#modal-override[data-editor-design][data-editor-keyboard=true] .design-hero,#modal-override#modal-override[data-editor-design][data-editor-keyboard=true] .design-tabs{display:none}
+#modal-override#modal-override[data-editor-design][data-editor-keyboard=true] .design-footer{padding:6px 12px;gap:8px}
+#modal-override#modal-override[data-editor-design][data-editor-keyboard=true] #apply-preview{min-height:44px;padding:8px 12px}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design][data-editor-keyboard=true] #memo-panel{padding:8px}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design][data-editor-keyboard=true] #modal-memo-input{min-height:72px!important;height:100px!important;max-height:160px!important;flex:none}
+@media(max-width:350px){body[data-pref-theme] #modal-override#modal-override[data-editor-design] .editor-content{padding-left:14px;padding-right:14px}#modal-override#modal-override[data-editor-design] #design-question{font-size:27px}#modal-override#modal-override[data-editor-design] .design-footer{padding-left:14px;padding-right:14px}#modal-override#modal-override[data-editor-design] #apply-preview{min-width:110px;font-size:13px;padding:10px}#modal-override#modal-override[data-editor-design] .design-change strong{font-size:12px}#modal-override#modal-override[data-editor-design] .design-toolbar{gap:4px;padding-left:12px;padding-right:12px}}
+@media(max-height:540px){#modal-override#modal-override[data-editor-design] .design-toolbar{min-height:56px;padding-top:12px}#modal-override#modal-override[data-editor-design] .design-hero{padding-top:4px}#modal-override#modal-override[data-editor-design] #design-question{font-size:24px}#modal-override#modal-override[data-editor-design] .design-footer{padding-top:6px;padding-bottom:6px}}
+
+#modal-override#modal-override[data-editor-design] #editor-sticker-preview>span{display:none}
+#modal-override#modal-override[data-editor-design] #editor-sticker-preview svg{flex:none}

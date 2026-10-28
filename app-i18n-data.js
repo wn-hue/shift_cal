@@ -1,5 +1,31 @@
 /* UI-only translations. User notes, event names, meals and source documents stay untouched. */
 window.AppTranslations=Object.fromEntries(`
+기본근무로 복구|Restore base shift|恢复基本班次|基本勤務に戻す
+주간특근|Extra day shift|白班加班|日勤特別勤務
+야간특근|Extra night shift|夜班加班|夜勤特別勤務
+변경사항을 저장하지 않고 닫을까요?|Close without saving changes?|不保存更改并关闭吗？|変更を保存せず閉じますか？
+변경사항 저장|Save changes|保存更改|変更を保存
+어떤 근무로|Which shift would|要改成|どの勤務に
+바꿀까요?|you like?|哪个班次？|変更しますか？
+추가 근무와 잔업 설정|Extra shifts and overtime|加班和延时设置|追加勤務と残業の設定
+특근 · O.T 설정|Extra shifts · Overtime|加班 · 延时设置|特別勤務・残業設定
+근태 · 휴가|Attendance · Leave|考勤 · 休假|勤怠・休暇
+선택 안 함|None selected|未选择|未選択
+메모 · 일정|Notes · Events|备注 · 日程|メモ・予定
+추가할 내용이 있나요?|Anything to add?|有需要补充的吗？|追加することはありますか？
+메모가 있어요|Note added|已添加备注|メモあり
+기본 근무|Base shift|基本班次|基本勤務
+저장된 근무|Saved shift|已保存的班次|保存済みの勤務
+아직 저장하지 않았어요.|Not saved yet.|尚未保存。|まだ保存されていません。
+변경사항 저장하지 않고 닫기|Close without saving|不保存并关闭|保存せず閉じる
+변경 완료|Done|完成更改|変更完了
+반차(전)|First half leave|前半天休假|前半休
+반차(후)|Second half leave|后半天休假|後半休
+무급휴무|Unpaid leave|无薪休假|無給休暇
+무급반차(전)|Unpaid first half|无薪前半天休假|無給前半休
+무급반차(후)|Unpaid second half|无薪后半天休假|無給後半休
+주간특근 · 잔업 없음|Extra day · No overtime|白班加班 · 无延时|日勤特別・残業なし
+야간특근 · 잔업 없음|Extra night · No overtime|夜班加班 · 无延时|夜勤特別・残業なし
 11월 2일 통근버스 변경 예정|Bus changes from November 2|11月2日通勤班车调整预告|11月2日から通勤バス変更予定
 11월 2일 변경 노선 안내|Routes changed on November 2|11月2日调整路线说明|11月2日の路線変更案内
 2026년 11월 2일부터 적용됩니다.|Effective November 2, 2026.|自2026年11月2日起实施。|2026年11月2日から適用されます。
