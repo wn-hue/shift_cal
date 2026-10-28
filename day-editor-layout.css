@@ -125,12 +125,3 @@ body[data-pref-theme] #modal-override[data-memo-compact=true][data-editor-keyboa
  body[data-pref-theme] #modal-override[data-editor-keyboard=false] .editor-content{padding-left:20px;padding-right:20px}
  body[data-pref-theme] #modal-override[data-editor-tab]>.override-sheet>.editor-tabs{padding-left:20px!important;padding-right:20px!important}
 }
-
-/* Keep the existing editor; only its choices become compact rounded cards. */
-body[data-pref-theme] #modal-override[data-editor-tab] #work-panel .shift-scroll{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;padding:4px;margin:0;overflow:visible;scroll-snap-type:none}
-body[data-pref-theme] #modal-override[data-editor-tab] #work-panel .shift-scroll.attendance-choices{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-body[data-pref-theme] #modal-override[data-editor-tab] #work-panel .shift-scroll .opt-btn:not(.reset){flex:none;justify-self:stretch;width:100%;min-width:0;height:auto;min-height:64px;padding:12px 7px;border-radius:16px!important;font-size:13px;line-height:19px;text-decoration:none!important;overflow-wrap:anywhere}
-body[data-pref-theme] #modal-override[data-editor-tab] #work-panel .shift-scroll.attendance-choices .opt-btn{min-width:0;min-height:46px;height:auto;padding:10px 12px;border-radius:14px!important;font-size:12px;line-height:18px}
-body[data-pref-theme] #modal-override[data-editor-tab] #work-panel .shift-scroll .opt-btn[aria-pressed=true]{outline:2px solid var(--accent,#3182f6)!important;outline-offset:2px}
-#modal-override #work-panel .shift-scroll .selection-check{top:6px;right:6px;background:var(--accent,#3182f6);color:var(--work-ink,#fff)}
-body[data-pref-theme] #modal-override[data-editor-tab] #work-panel .shift-scroll .opt-btn:focus-visible{outline:2px solid var(--accent,#3182f6)!important;outline-offset:2px}
