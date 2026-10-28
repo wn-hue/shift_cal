@@ -17,12 +17,12 @@ const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
    const closed=()=>page.waitForFunction(()=>!document.getElementById('modal-override').classList.contains('active'));
    const read=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('shift_overrides_C')||'{}'));
    await open();assert.equal(await page.locator('#modal-override').getAttribute('data-editor-design'),theme==='test3'?'apple':theme==='test4'?'kakao':'toss');
-   const choice=page.locator('#work-panel [data-override="NIGHT"]');await choice.click();assert.equal((await read())['2026-10-20'],undefined);
+   const chosenType=theme==='current'?'OFF':'NIGHT';const choice=page.locator('#work-panel [data-override="'+chosenType+'"]');await choice.click();assert.equal((await read())['2026-10-20'],undefined);
    assert.equal(await choice.getAttribute('aria-pressed'),'true');
    const target=theme==='test3'?'#design-done':'#apply-preview';const bounds=await page.locator(target).boundingBox();assert(bounds.y>=0&&bounds.y+bounds.height<=844);
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
    // A single completion saves both pending work and the note, including after tab navigation.
-   await page.locator('.design-memo-link').click();await page.locator('#modal-memo-input').fill('새 디자인 메모');await save();await closed();assert.equal((await read())['2026-10-20'],'NIGHT');assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_day_memos'))['2026-10-20']),'새 디자인 메모');
+   await page.locator('.design-memo-link').click();await page.locator('#modal-memo-input').fill('새 디자인 메모');await save();await closed();assert.equal((await read())['2026-10-20'],chosenType);assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_day_memos'))['2026-10-20']),'새 디자인 메모');
    await open();await page.locator('.design-reset').click();await save();await closed();assert.equal((await read())['2026-10-20'],undefined);
    // Cancelling a dismissal preserves drafts; accepting discards them without saving.
    await open();await page.locator('#work-panel [data-override="OFF"]').click();accept=false;await page.locator('#design-back').click();assert(await page.locator('#modal-override').evaluate(e=>e.classList.contains('active')));assert.equal((await read())['2026-10-20'],undefined);accept=true;await page.locator('#design-back').click();await closed();

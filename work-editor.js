@@ -16,9 +16,13 @@
   for(const row of document.querySelectorAll('#work-panel .shift-scroll'))row.scrollLeft=0;
  }
  function filterOptions(date){
+  const base=getBaseShift(new Date(date+'T12:00:00'),currentGroup).type;
+  const guided=document.getElementById('modal-override').dataset.editorDesign==='toss';
   for(const button of document.querySelectorAll('#work-panel .opt-btn')){
    const type=button.dataset.override||null;
-   const unavailable=!!validateDayOverride(date,type);
+   // Keep the guided editor on the scheduled day/night shift. Stored changes remain untouched.
+   const opposite=guided&&((base==='DAY'&&type==='NIGHT')||(base==='NIGHT'&&type==='DAY'));
+   const unavailable=opposite||!!validateDayOverride(date,type);
    button.hidden=unavailable;button.disabled=unavailable;
   }
   for(const row of document.querySelectorAll('#work-panel .shift-scroll')){
