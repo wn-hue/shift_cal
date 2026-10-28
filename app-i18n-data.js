@@ -1,5 +1,13 @@
 /* UI-only translations. User notes, event names, meals and source documents stay untouched. */
 window.AppTranslations=Object.fromEntries(`
+나의 하루|My day|我的一天|私の一日
+근무 고르기|Choose a shift|选择班次|勤務を選択
+오늘의 메모 남기기|Add a note for today|添加今日备注|今日のメモを追加
+변경할 근무|New shift|更改后的班次|変更後の勤務
+현재 근무|Current shift|当前班次|現在の勤務
+근무를 선택하면 예상 급여 변화를 확인할 수 있어요.|Select a shift to preview the estimated pay change.|选择班次后可查看预计工资变化。|勤務を選択すると給与の変化を確認できます。
+이전 날짜|Previous day|前一天|前の日
+다음 날짜|Next day|后一天|次の日
 기본근무로 복구|Restore base shift|恢复基本班次|基本勤務に戻す
 주간특근|Extra day shift|白班加班|日勤特別勤務
 야간특근|Extra night shift|夜班加班|夜勤特別勤務

@@ -26,10 +26,10 @@ const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
    await open();await page.locator('.design-reset').click();await save();await closed();assert.equal((await read())['2026-10-20'],undefined);
    // Cancelling a dismissal preserves drafts; accepting discards them without saving.
    await open();await page.locator('#work-panel [data-override="OFF"]').click();accept=false;await page.locator('#design-back').click();assert(await page.locator('#modal-override').evaluate(e=>e.classList.contains('active')));assert.equal((await read())['2026-10-20'],undefined);accept=true;await page.locator('#design-back').click();await closed();
-   await open();if(theme==='test4')await page.locator('[data-pane="attendance"]').click();else await page.locator('.design-attendance>summary').click();await page.locator('[data-override="LEAVE"]').click();await save();await closed();assert.equal((await read())['2026-10-20'],'LEAVE');
+   await open();if(!await page.locator('.design-attendance').evaluate(e=>e.open))await page.locator('.design-attendance>summary').click();await page.locator('[data-override="LEAVE"]').click();await save();await closed();assert.equal((await read())['2026-10-20'],'LEAVE');
    // Off days retain the original attendance/OT restrictions.
    await open('22');assert(await page.locator('[data-override="LEAVE"]').isDisabled());assert(await page.locator('[data-override="NO_OT"]').isHidden());await page.locator('#design-back').click();await closed();
-   if(theme!=='current'){await open();await page.locator('.design-week-day[data-date="2026-10-21"]').click();assert.equal(await page.evaluate(()=>selectedDateStr),'2026-10-21');await page.locator('#design-back').click();await closed();}
+   if(theme!=='current'){await open();if(theme==='test4')await page.locator('#kakao-next-day').click();else await page.locator('.design-week-day[data-date="2026-10-21"]').click();assert.equal(await page.evaluate(()=>selectedDateStr),'2026-10-21');await page.locator('#design-back').click();await closed();}
    // Extras stay reachable and commit via the existing validator.
    await open();if(theme==='current')await page.locator('.design-extra>summary').click();await page.locator('[data-override="NO_OT"]').click();await save();await closed();assert.equal((await read())['2026-10-20'],'NO_OT');
    // Sticker picker and event editor remain available.
