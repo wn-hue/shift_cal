@@ -18,7 +18,7 @@ const assert=require('node:assert/strict'),{webkit,chromium,devices}=require('pl
  await open();const count=dialogs;await swipe('#memo-compose-title',0,100);await page.waitForFunction(()=>!document.querySelector('#memo-compose-dialog').open);assert.equal(dialogs,count,'unchanged memo closes without confirmation');
  // The handle remains a keyboard/tap-accessible close control.
  await open();await page.locator('#memo-compose-dismiss').tap();await page.waitForFunction(()=>!document.querySelector('#memo-compose-dialog').open);
- await open();await page.locator('#memo-compose-input').fill('저장된 메모');await page.locator('#memo-compose-save').tap();await open();await swipe('#memo-compose-title',0,100);await page.waitForFunction(()=>!document.querySelector('#memo-compose-dialog').open);assert.equal(await page.evaluate(()=>dayMemos['2026-10-20']),'저장된 메모');
+ await open();await page.locator('#memo-compose-input').fill('저장된 메모');await page.locator('#memo-compose-save').tap();await page.waitForFunction(()=>!document.querySelector('#modal-override').classList.contains('active'));await page.waitForTimeout(750);await page.locator('.cal-day[data-date="2026-10-20"] .day-num').tap();await page.locator('.design-memo-link').tap();await open();await swipe('#memo-compose-title',0,100);await page.waitForFunction(()=>!document.querySelector('#memo-compose-dialog').open);assert.equal(await page.evaluate(()=>dayMemos['2026-10-20']),'저장된 메모');
  if(engine===chromium){
   await open();const b=await page.locator('#memo-compose-title').boundingBox(),x=b.x+b.width/2,y=b.y+b.height/2,cdp=await page.context().newCDPSession(page);
   await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});

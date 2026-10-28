@@ -21,8 +21,8 @@ const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
    assert.equal(await choice.getAttribute('aria-pressed'),'true');
    const target=theme==='test3'?'#design-done':'#apply-preview';const bounds=await page.locator(target).boundingBox();assert(bounds.y>=0&&bounds.y+bounds.height<=844);
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-   // Memo completion saves the note independently; work remains staged until its own completion.
-   await page.locator('.design-memo-link').click();await page.locator('#memo-compose-open').click();await page.locator('#memo-compose-input').fill('새 디자인 메모');await page.locator('#memo-compose-save').click();assert.equal((await read())['2026-10-20'],undefined);await save();await closed();assert.equal((await read())['2026-10-20'],chosenType);assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_day_memos'))['2026-10-20']),'새 디자인 메모');
+   // Memo completion commits the pending work and note in one action.
+   await page.locator('.design-memo-link').click();await page.locator('#memo-compose-open').click();await page.locator('#memo-compose-input').fill('새 디자인 메모');await page.locator('#memo-compose-save').click();await closed();assert.equal((await read())['2026-10-20'],chosenType);assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_day_memos'))['2026-10-20']),'새 디자인 메모');
    await open();await page.locator('.design-reset').click();await save();await closed();assert.equal((await read())['2026-10-20'],undefined);
    // Cancelling a dismissal preserves drafts; accepting discards them without saving.
    await open();await page.locator('#work-panel [data-override="OFF"]').click();accept=false;await page.locator('#design-back').click();assert(await page.locator('#modal-override').evaluate(e=>e.classList.contains('active')));assert.equal((await read())['2026-10-20'],undefined);accept=true;await page.locator('#design-back').click();await closed();
@@ -35,7 +35,7 @@ const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
    // Sticker picker and event editor remain available.
    await open();await page.locator('#editor-sticker-preview').click();assert(await page.locator('#sticker-dialog').isVisible());await page.evaluate(()=>CalendarStickers.close());await page.locator('.design-memo-link').click();await page.locator('#event-add').click();await page.locator('#event-title').fill('새 화면 일정');await page.locator('#event-save').click();assert(await page.locator('#event-list').getByText('새 화면 일정',{exact:true}).isVisible());await page.locator('#design-back').click();await page.locator('#design-back').click();await closed();
    // A short viewport must scroll its content while keeping completion reachable.
-   await page.setViewportSize({width,height:360});await open();await page.locator('.design-memo-link').click();await page.locator('#memo-compose-open').click();await page.locator('#memo-compose-input').fill('작은 화면에서도 저장');await page.locator('#memo-compose-save').click();const small=await page.locator(target).boundingBox();assert(small.y>=0&&small.y+small.height<=360);await save();await closed();
+   await page.setViewportSize({width,height:360});await open();await page.locator('.design-memo-link').click();await page.locator('#memo-compose-open').click();await page.locator('#memo-compose-input').fill('작은 화면에서도 저장');const small=await page.locator('#memo-compose-save').boundingBox();assert(small.y>=0&&small.y+small.height<=360);await page.locator('#memo-compose-save').click();await closed();
    assert.deepEqual(errors,[]);console.log(engine.name(),width,theme,'PASS layout, staged work+memo save, reset, discard, leave, restrictions, date navigation, OT, sticker, events, short screen');await page.close();
   }
   await browser.close();

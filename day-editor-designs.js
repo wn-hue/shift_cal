@@ -64,7 +64,18 @@
  const open=openOverrideModal;openOverrideModal=function(...args){pane='work';overlay.dataset.editorDesign=design();extra.open=design()==='apple'||design()==='kakao';attend.open=design()==='kakao';pay.open=false;opening=true;try{open(...args);}finally{opening=false;}week();update();};
  const choose=setDayOverride;setDayOverride=function(type){choose(type);update();};
  // All presentations save the same pending shift and memo; event forms keep their own save action.
- function save(){if(!$('event-form').hidden){$('event-form').requestSubmit();return;}const pending=ShiftTools.pending();if(pending){const reason=validateDayOverride(selectedDateStr,pending.type);if(reason){alert(reason);return;}}saving=true;try{if(!ShiftTools.commit())return;const val=$('modal-memo-input').value.trim();if(val)dayMemos[selectedDateStr]=val;else delete dayMemos[selectedDateStr];localStorage.setItem('shift_day_memos',JSON.stringify(dayMemos));window.AccountSync?.changed();window.GoogleSync?.changed(selectedDateStr);renderCalendar();closeModalDirect();}finally{saving=false;}}
+ // Memo completion uses this same transaction, so there is only one save and one exit.
+ function save(memoValue){
+  if(!$('event-form').hidden){$('event-form').requestSubmit();return false;}
+  const pending=ShiftTools.pending();if(pending){const reason=validateDayOverride(selectedDateStr,pending.type);if(reason){alert(reason);return false;}}
+  saving=true;try{
+   if(!ShiftTools.commit())return false;
+   const val=typeof memoValue==='string'?memoValue.trim():$('modal-memo-input').value.trim();
+   if(val)dayMemos[selectedDateStr]=val;else delete dayMemos[selectedDateStr];
+   localStorage.setItem('shift_day_memos',JSON.stringify(dayMemos));$('modal-memo-input').value=val;
+   window.AccountSync?.changed();window.GoogleSync?.changed(selectedDateStr);renderCalendar();closeModalDirect();return true;
+  }finally{saving=false;}
+ }
  $('apply-preview').onclick=save;$('design-done').onclick=save;saveMemoDirect=save;
  const close=closeModalDirect;closeModalDirect=function(){if(!saving&&dirty()&&!confirm('변경사항을 저장하지 않고 닫을까요?'))return;close();};
  $('design-back').onclick=()=>pane!=='work'?showPane('work'):closeModalDirect();$('design-cancel').onclick=()=>closeModalDirect();

@@ -8,7 +8,7 @@
  source.hidden=true;source.after(button);
  source.previousElementSibling?.setAttribute('for','memo-compose-open');
  const dialog=document.createElement('dialog');dialog.id='memo-compose-dialog';dialog.setAttribute('aria-labelledby','memo-compose-title');
- dialog.innerHTML='<button type="button" id="memo-compose-dismiss" aria-label="창 내리기"><span aria-hidden="true"></span></button><header class="memo-compose-header"><button type="button" id="memo-compose-back" aria-label="취소"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><h2 id="memo-compose-title">메모</h2><button type="button" id="memo-compose-save" aria-label="메모 저장"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button></header><p id="memo-compose-date"></p><textarea id="memo-compose-input" maxlength="16000" placeholder="메모 입력" aria-labelledby="memo-compose-title" autofocus></textarea>';
+ dialog.innerHTML='<button type="button" id="memo-compose-dismiss" aria-label="창 내리기"><span aria-hidden="true"></span></button><header class="memo-compose-header"><button type="button" id="memo-compose-back" aria-label="취소"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><h2 id="memo-compose-title">메모</h2><button type="button" id="memo-compose-save" aria-label="변경사항 저장"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button></header><p id="memo-compose-date"></p><textarea id="memo-compose-input" maxlength="16000" placeholder="메모 입력" aria-labelledby="memo-compose-title" autofocus></textarea>';
  document.body.append(dialog);
  const input=dialog.querySelector('textarea'),viewport=window.visualViewport;
  let date='',initial='',opener=null,closing=false,drag=null,offset=0,returnAnimation=null,suppressClickUntil=0;
@@ -24,12 +24,12 @@
   dialog.querySelector('#memo-compose-date').textContent=new Intl.DateTimeFormat(locale,{month:'long',day:'numeric',weekday:'long'}).format(new Date(date+'T12:00:00'));
   overlay.dataset.memoComposing='true';dialog.showModal();fit();input.focus({preventScroll:true});
  }
- function close(animated=false){if(closing)return;closing=true;
-  const finish=()=>{if(animated)suppressClickUntil=performance.now()+400;input.blur();dialog.close();clearDrag();closing=false;delete overlay.dataset.memoComposing;refresh();if(opener?.isConnected)opener.focus({preventScroll:true});window.dispatchEvent(new Event('resize'));};
+ function close(animated=false,restoreFocus=true){if(closing)return;closing=true;
+  const finish=()=>{if(animated)suppressClickUntil=performance.now()+400;input.blur();dialog.close();clearDrag();closing=false;delete overlay.dataset.memoComposing;refresh();if(restoreFocus&&opener?.isConnected)opener.focus({preventScroll:true});window.dispatchEvent(new Event('resize'));};
   if(animated&&!reduced()){returnAnimation?.cancel();const animation=dialog.animate([{transform:`translateY(${offset}px)`},{transform:`translateY(${viewport?.height||innerHeight}px)`}],{duration:180,easing:'cubic-bezier(.4,0,1,1)',fill:'forwards'});animation.finished.then(()=>{finish();animation.cancel();},finish);}else finish();
  }
  function cancel(animated=false){if(closing)return;if(input.value!==initial&&!confirm(tr('작성 중인 메모를 저장하지 않고 이동할까요?'))){if(animated)suppressClickUntil=performance.now()+400;settle();return;}close(animated);}
- function save(){if(closing)return;const value=input.value.trim();if(value)dayMemos[date]=value;else delete dayMemos[date];localStorage.setItem('shift_day_memos',JSON.stringify(dayMemos));source.value=value;source.dispatchEvent(new Event('input',{bubbles:true}));window.AccountSync?.changed();window.GoogleSync?.changed(date);renderCalendar();close();}
+ function save(){if(closing||date!==selectedDateStr)return;if(window.DayEditorDesigns.save(input.value))close(false,false);}
  button.onclick=open;dialog.querySelector('#memo-compose-back').onclick=()=>cancel();dialog.querySelector('#memo-compose-dismiss').onclick=()=>cancel(true);dialog.querySelector('#memo-compose-save').onclick=save;
  dialog.addEventListener('cancel',e=>{e.preventDefault();cancel();});
  dialog.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'&&!e.isComposing){e.preventDefault();save();}});

@@ -37,12 +37,17 @@ const {webkit,chromium,devices}=require('playwright');
  // Rejecting cancellation keeps the draft, accepting it leaves the saved note untouched.
  await page.locator('#memo-compose-back').tap();assert(await page.locator('#memo-compose-dialog').isVisible());accept=true;await page.locator('#memo-compose-back').tap();assert(await page.locator('#memo-compose-dialog').isHidden());assert.equal(await page.evaluate(()=>dayMemos['2026-10-20']),undefined);
  await page.locator('#memo-compose-open').tap();await page.locator('#memo-compose-input').fill('메모 작성 확인\n두 번째 줄');
+ // A failed work validation must leave both the memo draft and pending work intact.
+ await page.evaluate(()=>{window.testOriginalValidate=validateDayOverride;validateDayOverride=()=> '검증 실패';});
+ await page.locator('#memo-compose-save').tap();assert(await page.locator('#memo-compose-dialog').isVisible());assert.equal(await page.evaluate(()=>dayMemos['2026-10-20']),undefined);assert.equal(await page.evaluate(()=>ShiftTools.pending().type),'OFF');assert.equal(await page.locator('#memo-compose-input').inputValue(),'메모 작성 확인\n두 번째 줄');
+ await page.evaluate(()=>{validateDayOverride=testOriginalValidate;});
  if(theme==='current'&&engine===webkit)await page.screenshot({path:'/tmp/memo-composer-fixed.png',animations:'disabled'});
  await page.locator('#memo-compose-save').tap();assert(await page.locator('#memo-compose-dialog').isHidden());
- assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_day_memos'))['2026-10-20']),'메모 작성 확인\n두 번째 줄');assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_overrides_C')||'{}')['2026-10-20']),undefined);assert.equal(await page.evaluate(()=>ShiftTools.pending().type),'OFF');
- if(theme==='current'){await compact();if(engine===webkit)await page.screenshot({path:'/tmp/memo-preview-fixed.png',animations:'disabled'});}
- await page.locator('#memo-compose-open').tap();assert.equal(await page.locator('#memo-compose-input').inputValue(),'메모 작성 확인\n두 번째 줄');await page.locator('#memo-compose-input').fill('');await page.locator('#memo-compose-save').tap();assert.equal(await page.evaluate(()=>dayMemos['2026-10-20']),undefined);
- await page.locator(theme==='test3'?'#design-done':'#apply-preview').tap();await page.waitForFunction(()=>!document.querySelector('#modal-override').classList.contains('active'));assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_overrides_C'))['2026-10-20']),'OFF');assert.deepEqual(errors,[]);
+ await page.waitForFunction(()=>!document.querySelector('#modal-override').classList.contains('active'));
+ assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_day_memos'))['2026-10-20']),'메모 작성 확인\n두 번째 줄');assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_overrides_C'))['2026-10-20']),'OFF');assert.equal(await page.evaluate(()=>!!ShiftTools.pending()),false);
+ await page.waitForTimeout(750);await page.locator('.cal-day[data-date="2026-10-20"] .day-num').tap();await page.locator('.design-memo-link').tap();
+ if(theme==='current')await compact();
+ await page.locator('#memo-compose-open').tap();assert.equal(await page.locator('#memo-compose-input').inputValue(),'메모 작성 확인\n두 번째 줄');await page.locator('#memo-compose-input').fill('');await page.locator('#memo-compose-save').tap();await page.waitForFunction(()=>!document.querySelector('#modal-override').classList.contains('active'));assert.equal(await page.evaluate(()=>dayMemos['2026-10-20']),undefined);assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_overrides_C'))['2026-10-20']),'OFF');assert.deepEqual(errors,[]);
  console.log(engine.name(),theme,'PASS mobile sheet proportion, separate memo, frozen parent, keyboard/pan, cancel/save/delete, staged work');await page.close();
  }await browser.close();
 }})().catch(e=>{console.error(e);process.exit(1)});
