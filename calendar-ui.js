@@ -22,10 +22,11 @@
     function tap(button) {
         const visual=button.querySelector('.nav-visual');
         if (!visual?.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        visual.getAnimations().forEach(animation=>animation.cancel());
+        const active=visual.getAnimations(),from=active.length?getComputedStyle(visual).transform:'scale(.94)';
+        active.forEach(animation=>animation.cancel());
         const tapColor=getComputedStyle(document.body).getPropertyValue('--nav-tap').trim()||'#ececed';
         visual.animate([
-            {backgroundColor:tapColor,transform:'scale(.94)'},
+            {backgroundColor:tapColor,transform:from},
             {backgroundColor:'transparent',transform:'scale(1)'}
         ],{duration:320,easing:'cubic-bezier(.2,.7,.2,1)'});
     }

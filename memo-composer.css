@@ -60,3 +60,39 @@ body.memo-composer-open{overflow:hidden;overscroll-behavior:none}
 #modal-override[data-editor-design=kakao] #memo-compose-add{color:var(--ed-text,#3c3333)}
 body[data-pref-theme] #modal-override#modal-override[data-editor-design][data-design-pane=memo]:not([data-design-event=true])>.override-sheet{height:auto;min-height:0;max-height:min(100%,var(--editor-sheet-limit,100dvh))}
 body[data-pref-theme] #modal-override#modal-override[data-editor-design][data-design-pane=memo]:not([data-design-event=true]) .editor-content{flex:0 1 auto}
+
+/* One entry point: text is a memo; optional reminder fields turn it into a schedule. */
+#modal-override[data-unified-memo=true] .day-agenda{display:none!important}
+#memo-compose-content{display:flex;flex-direction:column;flex:1 1 0;min-height:0;overflow-y:auto;overscroll-behavior:contain;scroll-padding:12px}
+#memo-compose-content #memo-compose-input{flex:1 0 100px;min-height:100px;max-height:none}
+#memo-alarm{flex:none;padding:0 22px 12px}
+.memo-alarm-toggle{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:56px;border-top:1px solid var(--ed-line,#e9edf1);cursor:pointer}
+.memo-alarm-toggle strong{font-size:14px;font-weight:600}
+.memo-alarm-toggle small{display:block;margin-top:3px;font-size:12px;color:var(--ed-sub,#6b7684)}
+#memo-alarm-enabled{appearance:none;width:44px;height:26px;flex:none;margin:0;background:#cbd1d8;border-radius:20px;position:relative;transition:background-color .16s}
+#memo-alarm-enabled::before{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0002;transition:transform .16s}
+#memo-alarm-enabled:checked{background:var(--ed-blue,#3182f6)}
+#memo-alarm-enabled:checked::before{transform:translateX(18px)}
+#memo-alarm-fields[hidden]{display:none}
+#memo-alarm-fields>label,#memo-alarm-more label{display:block;margin:12px 0 6px;font-size:13px;color:var(--ed-sub,#6b7684)}
+#memo-alarm-fields input:not([type=checkbox]),#memo-alarm-fields select{box-sizing:border-box;display:block;min-width:0;width:100%;min-height:44px;border:1px solid var(--ed-line,#e9edf1);border-radius:12px;padding:10px 12px;background:var(--ed-card,#fff);color:var(--ed-text,#191f28);font:inherit;font-size:16px}
+#memo-alarm-more{margin-top:14px;font-size:13px}
+#memo-alarm-more summary{min-height:40px;display:flex;align-items:center;color:var(--ed-sub,#6b7684);cursor:pointer}
+#memo-alarm-all-day{accent-color:var(--ed-blue,#3182f6)}
+.memo-alarm-help{color:var(--ed-sub,#6b7684);font-size:12px;line-height:1.6;margin:12px 0 0}
+#memo-compose-error{color:#c43740;font-size:13px;line-height:1.5;margin:8px 0}
+#memo-compose-error[hidden]{display:none}
+#memo-compose-dialog[data-alarm=true] #memo-compose-input{flex:none;height:clamp(80px,calc(var(--compose-height,100dvh) - 240px),160px);min-height:80px}
+#memo-compose-dialog[data-compact=true] #memo-compose-date{display:none}
+#memo-compose-dialog[data-compact=true] #memo-compose-input{min-height:64px;flex-basis:64px;padding-top:8px;padding-bottom:8px}
+#memo-compose-dialog[data-compact=true] #memo-alarm{padding-bottom:4px}
+#memo-compose-dialog[data-compact=true] .memo-alarm-toggle{min-height:44px}
+#memo-compose-dialog[data-compact=true] .memo-alarm-toggle small{display:none}
+.memo-entry-main{flex:1;min-width:0}
+.memo-entry-main .memo-entry-open{width:100%}
+.memo-entry-alarm{display:block;padding:0 16px 6px;font-size:12px;line-height:1.6;color:var(--ed-sub,#6b7684)}
+.memo-entry-export{display:block;min-height:44px;padding:6px 16px 10px;border:0;background:none;color:var(--ed-text,#191f28);font:inherit;font-size:12px;text-align:left}
+#memo-alarm-enabled:focus-visible,#memo-alarm-fields :is(input,select,summary):focus-visible{outline:2px solid var(--ed-blue,#3182f6);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){#memo-alarm-enabled,#memo-alarm-enabled::before{transition:none}}
+#memo-alarm-fields select{appearance:none;padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238b95a1' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+#memo-compose-dialog[data-design=kakao] #memo-compose-save{color:#332e26}

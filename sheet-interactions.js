@@ -61,13 +61,15 @@
   sheet.addEventListener('pointerdown',()=>{suppressUntil=0;},true);
   sheet.addEventListener('touchstart',e=>{
    if(sheet.dataset.sheetClosing==='true')return;
-   openings.get(sheet)?.finish();
-   const transform=getComputedStyle(sheet).transform,offset=sheet.classList.contains('sheet-returning')&&transform!=='none'?new DOMMatrixReadOnly(transform).m42:0;
-   cancelReturn(sheet);reset();if(offset)sheet.style.setProperty('--sheet-drag',offset+'px');
-   suppressUntil=0;if(e.touches.length!==1||e.target.closest('input,textarea,select,[contenteditable=true]'))return;
+   if(e.touches.length!==1||e.target.closest('input,textarea,select,[contenteditable=true]'))return;
    const t=e.touches[0],r=sheet.getBoundingClientRect();if(t.clientX<r.left||t.clientX>r.right||t.clientY<r.top||t.clientY>r.bottom)return;
    // A scrolled list gets its normal scroll gesture. Pull to dismiss only at its top.
    for(let el=e.target;!e.target.closest('.sheet-dismiss-handle,#editor-dismiss')&&el&&sheet.contains(el);el=el.parentElement){if(el.scrollTop>1&&el.scrollHeight>el.clientHeight+1)return;if(el===sheet)break;}
+   // Continue from the currently painted position instead of finishing entry with a snap.
+   const css=getComputedStyle(sheet),transform=css.transform,translation=css.translate.split(/\s+/),offset=(transform==='none'?0:new DOMMatrixReadOnly(transform).m42)+(parseFloat(translation[1])||0);
+   openings.get(sheet)?.cancel();openings.delete(sheet);
+   cancelReturn(sheet);reset();if(offset)sheet.style.setProperty('--sheet-drag',offset+'px');
+   suppressUntil=0;
    start={x:t.clientX,y:t.clientY-offset};
   },{passive:true});
   sheet.addEventListener('touchmove',e=>{
@@ -78,7 +80,7 @@
   },{passive:false});
   sheet.addEventListener('touchend',e=>{const t=e.changedTouches[0],close=start&&t&&t.clientY-start.y>70&&t.clientY-start.y>Math.abs(t.clientX-start.x)*1.3;
    if(close){suppressUntil=performance.now()+600;if(e.cancelable)e.preventDefault();start=null;delta=0;fence();dismiss();settle(sheet);}else{start=null;delta=0;settle(sheet);}},{passive:false});
-  sheet.addEventListener('touchcancel',reset,{passive:true});
+  sheet.addEventListener('touchcancel',()=>{start=null;delta=0;settle(sheet);},{passive:true});
   sheet.addEventListener('click',e=>{if(performance.now()<suppressUntil&&!e.target.closest('.sheet-original-close')){e.preventDefault();e.stopImmediatePropagation();}},true);
  }
 

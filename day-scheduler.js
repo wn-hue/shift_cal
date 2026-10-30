@@ -24,6 +24,7 @@
  function discard(){return !dirty()||confirm('작성 중인 일정을 저장하지 않고 닫을까요?');}
  function timeFields(){const all=$('event-all-day').checked;for(const id of ['event-start-time','event-end-time']){$(id).hidden=all;$(id).required=!all;} $('event-reminder').options[1].textContent=all?'당일 오전 9시':'일정 시작할 때';$('event-alarm-help').textContent=(all?'종일 일정은 오전 9시를 기준으로 알려드려요. ':'')+'웹 화면이 열려 있을 때 알려드려요. 잠금 화면 알림은 저장 후 휴대폰 캘린더에 추가해 설정해 주세요.';}
  function edit(entry){
+  if(window.MemoComposer?.openEvent){window.MemoComposer.openEvent(entry);return;}
   if(!discard())return;
   editing=entry?{id:entry.id,date:entry.date}:null;
   const start=entry?.start||selectedDateStr+'T09:00',end=entry?.end||selectedDateStr+'T10:00';
@@ -35,7 +36,7 @@
   $('modal-override').querySelector('.editor-content').scrollTop=0;
  }
  function list(){
-  begin();const host=$('event-list');host.replaceChildren();const events=C.onDate(data,selectedDateStr);
+  begin();if(window.MemoComposer){MemoComposer.refresh();return;}const host=$('event-list');host.replaceChildren();const events=C.onDate(data,selectedDateStr);
   if(!events.length){const p=document.createElement('p');p.className='event-empty';p.textContent='아직 일정이 없어요.';host.append(p);}
   for(const e of events){
    const row=document.createElement('div');row.className='event-card';const button=document.createElement('button');button.type='button';button.className='event-open';button.setAttribute('aria-label',e.title+' 일정 수정');
@@ -58,15 +59,17 @@
  $('event-add').onclick=()=>edit(null);$('event-cancel').onclick=()=>{if(discard())overview();};$('event-all-day').onchange=timeFields;
  $('event-start-date').onchange=()=>{if($('event-end-date').value<$('event-start-date').value)$('event-end-date').value=$('event-start-date').value;};
  async function exportEvent(e){
-  const file=new File([C.ics(e)],'교대루틴-일정.ics',{type:'text/calendar;charset=utf-8'});
-  try{if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:e.title});}
+  const report=text=>{const target=document.getElementById('memo-compose-status')||$('event-status');target.textContent=text;target.hidden=false;};
+  try{const memoText=e.memoId&&window.DayEntryCore?.notes({memos:dayMemos,items:JSON.parse(localStorage.getItem('shift_day_memo_items_v1')||'{}')},e.date)?.[e.memoId];
+  const file=new File([C.ics(memoText?{...e,notes:memoText}:e)],'교대루틴-일정.ics',{type:'text/calendar;charset=utf-8'});
+  if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:e.title});}
    else{const url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download=file.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
-   $('event-status').textContent='캘린더 앱에서 가져온 뒤 알림 설정을 확인해 주세요. 여기서 수정·삭제해도 내보낸 일정은 바뀌지 않아요.';
-  }catch(error){if(error.name!=='AbortError')$('event-status').textContent='내보내지 못했어요. 다른 브라우저에서 다시 시도해 주세요.';}
+   report('캘린더 앱에서 가져온 뒤 알림 설정을 확인해 주세요. 여기서 수정·삭제해도 내보낸 일정은 바뀌지 않아요.');
+  }catch(error){if(error.name!=='AbortError')report('내보내지 못했어요. 다른 브라우저에서 다시 시도해 주세요.');}
  }
  function decorate(cell,date,adjacent){
   if(adjacent)return;const events=C.onDate(data,date);if(!events.length)return;cell.classList.add('has-day-event');
-  const tag=document.createElement('span');tag.className='day-event-tag';tag.textContent=events[0].title+(events.length>1?' +'+(events.length-1):'');tag.title=events.map(e=>e.title).join(', ');cell.append(tag);cell.setAttribute('aria-label',(cell.getAttribute('aria-label')||date)+', 일정 '+tag.title);
+  const tag=document.createElement('span');tag.className='day-event-tag';const first=events[0],caption=first.memoId&&first.date===date?(first.allDay?'종일':first.start.slice(11))+(first.reminder===null?' 일정':' 알림'):first.title;tag.textContent=caption+(events.length>1?' +'+(events.length-1):'');tag.title=events.map(e=>e.title).join(', ');cell.append(tag);cell.setAttribute('aria-label',(cell.getAttribute('aria-label')||date)+', 일정 '+tag.title);
   tag.onclick=e=>{e.stopPropagation();const d=new Date(date+'T12:00');openOverrideModal(date,d,getActualShift(d,currentGroup));switchEditorTab('memo');};
  }
  function tick(){
@@ -82,5 +85,5 @@
  window.addEventListener('storage',e=>{if(e.key===C.key||e.key===null){renderCalendar();if(form.hidden)list();}});
  window.addEventListener('shift-account-changed',()=>{form.hidden=true;toast.hidden=true;announced.clear();if(loadedDate)open(selectedDateStr);});
  document.addEventListener('visibilitychange',tick);setInterval(tick,15000);
- window.DayScheduler={begin,open,decorate,tick,canLeave:discard};renderCalendar();tick();
+ window.DayScheduler={begin,open,decorate,tick,exportEvent,canLeave:discard};renderCalendar();tick();
 })();

@@ -1,0 +1,23 @@
+'use strict';
+const assert=require('node:assert/strict'),C=require('../day-entry-core.js'),A=require('../account-data-core.js');
+const date='2026-10-20',nextDate='2026-10-21';
+const schedule={start:date+'T14:00',end:date+'T15:00',allDay:false,location:'병원',reminder:10};
+const validate=s=>A.normalize({shift_day_memos:s.memos,shift_day_memo_items_v1:s.items,shift_day_events:s.events});
+let state={memos:{[date]:'기존 메모\n\n문단'},items:{},events:{}};
+state=C.plan(state,{date,memoId:'legacy'},{text:'기존 메모\n\n문단',date,schedule},'new-id');validate(state);
+assert.equal(state.memos[date],'기존 메모\n\n문단');assert.equal(state.events[date].legacy.memoId,'legacy');assert.equal(C.eventText(state,{date,...state.events[date].legacy}),state.memos[date]);
+const source={date,memoId:'legacy',eventId:'legacy'};
+const version=C.signature(state,source);state.events[date].legacy.location='변경';assert.notEqual(C.signature(state,source),version);
+state=C.plan(state,source,{text:'알림 끔',date,schedule:null},'new-id');validate(state);assert.deepEqual(state.events,{});assert.equal(state.memos[date],'알림 끔');
+// Moving a legacy memo must never overwrite another date's legacy memo or event IDs.
+state.memos[nextDate]='다음 날 기존 메모';
+state=C.plan(state,{date,memoId:'legacy'},{text:'이동할 메모',date,schedule:{...schedule,start:nextDate+'T09:00',end:nextDate+'T10:00'}},'moved-id');validate(state);
+assert.equal(state.memos[date],undefined);assert.equal(state.memos[nextDate],'다음 날 기존 메모\n\n이동할 메모');assert.equal(state.events[nextDate]['moved-id'].memoId,'moved-id');
+state=C.plan(state,{date:nextDate,memoId:'moved-id',eventId:'moved-id'},{text:'',date:nextDate,schedule:null},'unused');validate(state);assert.equal(state.memos[nextDate],'다음 날 기존 메모');assert.deepEqual(state.events,{});
+const old={title:'기존 일정',start:date+'T00:00',end:nextDate+'T00:00',allDay:true,location:'서울',notes:'설명',reminder:null};
+state.events[date]={old};assert.equal(C.eventText(state,{date,...old}),'기존 일정\n\n설명');
+state=C.plan(state,{date,eventId:'old'},{text:C.eventText(state,{date,...old}),date,schedule:old},'converted');validate(state);assert.equal(state.events[date].old.memoId,'converted');assert.equal(state.events[date].old.end,nextDate+'T00:00');assert.equal(state.events[date].old.location,'서울');
+assert.throws(()=>C.plan(state,null,{text:'잘못된 시간',date,schedule:{...schedule,end:schedule.start}},'bad'));
+assert.throws(()=>C.plan(state,null,{text:'x'.repeat(16001),date,schedule:null},'bad'));
+const raw=C.plan(state,null,{text:'x'.repeat(12000),date:nextDate,schedule:{...schedule,start:nextDate+'T09:00',end:nextDate+'T10:00'}},'long');validate(raw);assert.equal(C.eventText(raw,{date:nextDate,...raw.events[nextDate].long}).length,12000);
+console.log('PASS memo/reminder conversion, legacy preservation, date moves/collisions, linked deletion, remote change signatures, limits and long memo');
