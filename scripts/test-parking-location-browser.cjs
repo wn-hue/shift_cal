@@ -1,13 +1,15 @@
 'use strict';
 const assert=require('node:assert/strict'),{webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const {handlerFor}=require('../api/parking')._test,core=require('../lib/parking-core');
+const crypto=require('node:crypto'),key=crypto.createECDH('prime256v1');key.generateKeys();const subscription={endpoint:'https://web.push.apple.com/test',keys:{p256dh:key.getPublicKey().toString('base64url'),auth:crypto.randomBytes(16).toString('base64url')}};process.env.PARKING_VAPID_PUBLIC_KEY='dGVzdA';
 (async()=>{for(const engine of [webkit,chromium]){const browser=await engine.launch();for(const width of [320,390]){
  let now=Date.parse('2026-10-27T07:00:00+09:00'),cookie='',posts=[];const records=new Map();
  const store={read:async p=>records.get(p)||null,write:async(p,v)=>records.set(p,structuredClone(v))};
  const handler=handlerFor(store,{secret:'test-secret',origin:'https://parking.test',now:()=>now,defer:()=>{}});
  const page=await browser.newPage({viewport:{width,height:844},isMobile:true,hasTouch:true,timezoneId:'Asia/Seoul',reducedMotion:'reduce'}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));await page.clock.setFixedTime(new Date(now));
- await page.addInitScript(()=>{
+ await page.addInitScript(subscription=>{
+  const sub={toJSON:()=>subscription,unsubscribe:async()=>true},reg={pushManager:{getSubscription:async()=>sub,subscribe:async()=>sub}};Object.defineProperty(navigator,'serviceWorker',{value:{getRegistration:async()=>reg,register:async()=>reg,ready:Promise.resolve(reg),addEventListener(){}}});Object.defineProperty(window,'Notification',{value:{permission:'granted',requestPermission:async()=>'granted'}});if(!window.PushManager)window.PushManager=function(){};
   localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_onboarding_v1',JSON.stringify({status:'existing'}));
   window.gpsMode='inside';window.gpsCalls=0;
   Object.defineProperty(navigator,'geolocation',{value:{getCurrentPosition(ok,fail,options){
@@ -18,7 +20,7 @@ const {handlerFor}=require('../api/parking')._test,core=require('../lib/parking-
    if(gpsMode==='pending'){window.finishGPS=()=>ok(position);return;}
    ok(position);
   }}});
- });
+ },subscription);
  await page.route('**/api/**',async route=>{
   const request=route.request();if(!request.url().includes('/api/parking'))return route.fulfill({json:{configured:false}});
   const body=request.postDataJSON();if(body)posts.push(body);
@@ -31,8 +33,9 @@ const {handlerFor}=require('../api/parking')._test,core=require('../lib/parking-
  const open=async()=>{await page.evaluate(()=>{currentGroup='C';getActualShift=()=>({type:'DAY'});switchView('all')});await page.locator('#parking-open').click();await page.waitForFunction(()=>!document.getElementById('parking-refresh').disabled)};
  await open();const free=page.locator('#parking-dialog [data-value=free]');
  assert.equal(await page.evaluate(()=>gpsCalls),0,'reading parking never asks for location');
+ assert(await free.isDisabled(),'OFF blocks voting before location request');await page.locator('#parking-alert-toggle').click();await page.waitForFunction(()=>document.getElementById('parking-alert-toggle').getAttribute('aria-checked')==='true');
  await free.click();await page.waitForFunction(()=>document.querySelector('#parking-dialog [data-value=free]').getAttribute('aria-pressed')==='true');
- assert.equal(posts.at(-1).location.latitude,core.LOCATION_RULE.latitude);
+ assert.equal(posts.filter(p=>Object.hasOwn(p,'vote')).at(-1).location.latitude,core.LOCATION_RULE.latitude);
  assert.deepEqual(await page.evaluate(()=>gpsOptions),{enableHighAccuracy:true,maximumAge:0,timeout:12000});
  await free.click();await page.waitForFunction(()=>document.querySelector('#parking-dialog [data-value=free]').getAttribute('aria-pressed')==='false');
  for(const [mode,message] of [['outside','반경 1km'],['inaccurate','위치 오차'],['stale','오래됐어요'],['denied','위치 권한'],['timeout','확인하지 못했어요']]){
@@ -44,7 +47,7 @@ const {handlerFor}=require('../api/parking')._test,core=require('../lib/parking-
  await page.evaluate(()=>gpsMode='inside');await free.click();await page.waitForFunction(()=>document.querySelector('#parking-dialog [data-value=free]').getAttribute('aria-pressed')==='true');
  assert(Object.values(records.get('parking/current.json').votes).every(v=>Object.keys(v).sort().join(',')==='at,value'));
  assert.equal(await page.locator('#parking-prompt-toggle').count(),0);
- assert.equal(await page.locator('#parking-alert-value').textContent(),'항상 알리지 않음');
+ assert.equal(await page.locator('#parking-alert-value').textContent(),'제보와 알림 켜짐');
  await page.locator('#parking-dialog .sheet-dismiss-handle').click();
  await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));await page.waitForTimeout(200);
  assert.equal(await page.locator('#parking-dialog').evaluate(e=>e.open),false,'never automatically request a report');
@@ -54,6 +57,6 @@ const {handlerFor}=require('../api/parking')._test,core=require('../lib/parking-
  now=Date.parse('2026-10-27T07:31:00+09:00');await page.evaluate(()=>finishGPS());await page.waitForFunction(()=>document.getElementById('parking-status').textContent.includes('06:50~07:30'));
  await page.locator('#parking-refresh').click();await page.waitForFunction(()=>document.querySelector('#parking-dialog [data-value=free]').disabled&&!document.getElementById('parking-refresh').disabled);
  const count=await page.evaluate(()=>gpsCalls);await page.locator('#parking-refresh').click();assert.equal(await page.evaluate(()=>gpsCalls),count);
- await page.evaluate(()=>AppI18n.setLanguage('zh'));assert.equal(await page.locator('#parking-alert-toggle strong').innerText(),'停车场满位提醒');
- assert.deepEqual(errors,[]);console.log(engine.name(),width,'PASS actual handler integration: time+GPS, no saved coordinates, denied/retry, fresh reads, full-alert-only setting, no automatic report prompt');await page.close();
+ await page.evaluate(()=>AppI18n.setLanguage('zh'));assert.equal(await page.locator('#parking-alert-toggle strong').innerText(),'参与反馈 · 满位提醒');
+ assert.deepEqual(errors,[]);console.log(engine.name(),width,'PASS actual handler integration: time+GPS, no saved coordinates, denied/retry, fresh reads, joint participation and full-alert setting, no automatic report prompt');await page.close();
  }await browser.close()}})().catch(e=>{console.error(e);process.exit(1)});

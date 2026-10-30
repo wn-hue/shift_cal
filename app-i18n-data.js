@@ -391,6 +391,15 @@ Apple 계정으로 계속하기|Continue with Apple|使用 Apple 继续|Appleで
 평일 06:50~07:30에 제보할 수 있습니다.|Reports are open on weekdays from 06:50 to 07:30.|工作日06:50～07:30可反馈。|平日06:50～07:30に報告できます。
 오늘 주간 근무자만 제보할 수 있어요.|Only today's day-shift workers can report.|仅当天白班员工可反馈。|本日の日勤者のみ報告できます。
 주차장 만차 알림|Parking full alerts|停车场满位提醒|駐車場の満車通知
+제보 참여 · 만차 알림|Report participation & full alerts|参与反馈 · 满位提醒|状況報告への参加・満車通知
+제보와 알림 켜짐|Reports and alerts on|反馈与提醒已开启|報告と通知がオン
+제보와 알림 꺼짐|Reports and alerts off|反馈与提醒已关闭|報告と通知がオフ
+제보에 함께 참여하고 만차 알림을 받아요. 끄면 제보와 알림이 모두 중단돼요.|Participate in reporting and receive full alerts. Turning this off disables both.|参与反馈并接收满位提醒。关闭后两项功能均停止。|状況報告に参加して満車通知を受け取ります。オフにすると両方が停止します。
+제보에 참여하려면 아래 스위치를 켜 주세요.|Turn on the switch below to participate.|请开启下方开关参与反馈。|報告に参加するには下のスイッチをオンにしてください。
+제보 참여와 만차 알림을 먼저 켜 주세요.|First enable report participation and full alerts.|请先开启反馈参与和满位提醒。|先に報告への参加と満車通知をオンにしてください。
+제보 참여와 만차 알림을 켰습니다. 만차 제보가 5건 이상이면 하루 한 번 알려드려요.|Reports and full alerts are on. We notify you once a day after at least five full reports.|反馈与满位提醒已开启。满位反馈达到5条时每天提醒一次。|報告と満車通知をオンにしました。満車報告が5件以上になると1日1回通知します。
+제보 참여와 만차 알림을 껐습니다.|Reports and full alerts are off.|反馈与满位提醒已关闭。|報告と満車通知をオフにしました。
+제보 참여와 만차 알림은 함께 켜고 끌 수 있습니다. 아이폰은 홈 화면에 추가한 후 권한을 허용해 주세요. 알림 소리는 기기의 알림·집중 모드 설정을 따릅니다.|Reports and full alerts are enabled together. On iPhone, add the app to your Home Screen and allow notifications. Sound follows device notification and Focus settings.|反馈和满位提醒同时开启或关闭。iPhone请添加到主屏幕并允许通知。声音遵循设备通知与专注模式设置。|報告と満車通知は同時にオン・オフできます。iPhoneではホーム画面に追加し通知を許可してください。通知音は端末の通知・集中モード設定に従います。
 주차장|Parking|停车场|駐車場
 분실물 · 습득물|Lost & found|失物招领|落とし物・拾い物
 잃어버린 물건 찾기|Find a lost item|寻找遗失物品|落とし物を探す
