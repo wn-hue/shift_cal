@@ -70,12 +70,24 @@
   $('group-weeks').replaceChildren(fragment);markDate();if(dialog.open)fillDay();
  }
  function changeMonth(delta){currentCalDate=new Date(currentCalDate.getFullYear(),currentCalDate.getMonth()+delta,1);selected='';renderCalendar()}
- function today(){const now=new Date();currentCalDate=new Date(now.getFullYear(),now.getMonth(),1);selected=key(now);renderCalendar();requestAnimationFrame(()=>{$('group-weeks').querySelector('thead .today')?.closest('table').scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'})})}
+ function focusToday(behavior='instant'){
+  requestAnimationFrame(()=>{
+   if(document.body.dataset.view!=='groups')return;
+   const week=$('group-weeks').querySelector('thead .today')?.closest('table');
+   const viewport=window.visualViewport,top=viewport?.offsetTop||0,bottom=top+(viewport?.height||innerHeight);
+   const nav=document.querySelector('.bottom-nav')?.getBoundingClientRect();
+   const visibleBottom=nav&&nav.height>0?Math.min(bottom,nav.top):bottom;
+   const rect=week?.getBoundingClientRect();
+   const target=rect?scrollY+rect.top-top-Math.max(12,(visibleBottom-top-rect.height)/2):0;
+   window.scrollTo({top:Math.max(0,target),behavior});
+  });
+ }
+ function today(){const now=new Date();currentCalDate=new Date(now.getFullYear(),now.getMonth(),1);selected=key(now);renderCalendar();focusToday(matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth')}
  window.ShiftUI.bindMonthSwipe($('group-weeks'),$('group-weeks'),changeMonth,{allowButtons:'.group-cell,.group-date'});
  $('group-weeks').addEventListener('keydown',event=>{if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();window.ShiftUI.slideMonth($('group-weeks'),event.key==='ArrowLeft'?-1:1,()=>changeMonth(event.key==='ArrowLeft'?-1:1))}});
  $('group-day-close').onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close()}});
  dialog.addEventListener('close',()=>{const target=lastTrigger?.isConnected?lastTrigger:$('group-weeks').querySelector(`thead th[data-date="${selected}"] button`);target?.focus({preventScroll:true})});
  $('group-open-calendar').onclick=()=>{dialog.close();const d=date(selected);currentCalDate=new Date(d.getFullYear(),d.getMonth(),1);switchView('calendar');requestAnimationFrame(()=>document.querySelector(`.cal-day[data-date="${selected}"]`)?.scrollIntoView({block:'center'}))};
  window.addEventListener('storage',e=>{if(e.key===null||e.key==='shift_overrides_'+currentGroup){loadOverrides();renderCalendar()}else if(e.key?.startsWith('shift_overrides_'))render()});
- window.GroupSchedule={render,today};
+ window.GroupSchedule={render,today,focusToday};
 })();
