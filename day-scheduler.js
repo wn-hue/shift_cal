@@ -60,7 +60,8 @@
  $('event-start-date').onchange=()=>{if($('event-end-date').value<$('event-start-date').value)$('event-end-date').value=$('event-start-date').value;};
  async function exportEvent(e){
   const report=text=>{const target=document.getElementById('memo-compose-status')||$('event-status');target.textContent=text;target.hidden=false;};
-  try{const memoText=e.memoId&&window.DayEntryCore?.notes({memos:dayMemos,items:JSON.parse(localStorage.getItem('shift_day_memo_items_v1')||'{}')},e.date)?.[e.memoId];
+  try{if(e.repeat){begin();const original=data[e.date]?.[e.id];if(original)e={date:e.date,id:e.id,...original};}
+  const memoText=e.memoId&&window.DayEntryCore?.notes({memos:dayMemos,items:JSON.parse(localStorage.getItem('shift_day_memo_items_v1')||'{}')},e.date)?.[e.memoId];
   const file=new File([C.ics(memoText?{...e,notes:memoText}:e)],'교대루틴-일정.ics',{type:'text/calendar;charset=utf-8'});
   if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:e.title});}
    else{const url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download=file.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
@@ -70,12 +71,12 @@
  function decorate(cell,date,adjacent){
   if(adjacent)return;const events=C.onDate(data,date);if(!events.length)return;cell.classList.add('has-day-event');
   const tag=document.createElement('span');tag.className='day-event-tag';const first=events[0],caption=first.memoId&&first.date===date?(first.allDay?'종일':first.start.slice(11))+(first.reminder===null?' 일정':' 알림'):first.title;tag.textContent=caption+(events.length>1?' +'+(events.length-1):'');tag.title=events.map(e=>e.title).join(', ');cell.append(tag);cell.setAttribute('aria-label',(cell.getAttribute('aria-label')||date)+', 일정 '+tag.title);
-  tag.onclick=e=>{e.stopPropagation();const d=new Date(date+'T12:00');openOverrideModal(date,d,getActualShift(d,currentGroup));switchEditorTab('memo');};
+  tag.onclick=e=>{e.stopPropagation();const d=new Date(date+'T12:00');openOverrideModal(date,d,getActualShift(d,currentGroup));switchEditorTab('memo');window.MemoComposer?.openEvent(events[0]);};
  }
  function tick(){
   if(document.visibilityState==='hidden')return;begin();const now=Date.now();
   let seen={};try{const stored=JSON.parse(localStorage.getItem('shift_event_reminders_seen')||'{}');if(stored&&typeof stored==='object'&&!Array.isArray(stored))seen=stored;}catch{}
-  const due=C.entries(data).filter(e=>{const at=C.alarmTime(e),token=C.token(e);return at!==null&&at<=now&&now-at<300000&&!seen[token]&&!announced.has(token);});
+  const due=C.due(data,now).filter(e=>{const token=C.token(e);return !seen[token]&&!announced.has(token);});
   if(!due.length)return;
   for(const e of due){const token=C.token(e);seen[token]=now;announced.add(token);}
   try{for(const [k,v]of Object.entries(seen))if(now-v>172800000)delete seen[k];localStorage.setItem('shift_event_reminders_seen',JSON.stringify(seen));}catch{}

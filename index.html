@@ -949,7 +949,7 @@
 <link rel="stylesheet" href="./sheet-interactions.css?v=5">
 <link rel="stylesheet" href="./day-editor-layout.css?v=4">
 <link rel="stylesheet" href="./day-editor-designs.css?v=5">
-<link rel="stylesheet" href="./memo-composer.css?v=5">
+<link rel="stylesheet" href="./memo-composer.css?v=6">
 <link rel="stylesheet" href="./app-currency.css?v=1">
 <link rel="stylesheet" href="./commute-page.css?v=13">
 <link rel="stylesheet" href="./lost-found-page.css?v=3">
@@ -1809,7 +1809,7 @@
             grid.style.gridTemplateRows = `repeat(${rows}, minmax(${designedTheme ? 'min-content' : '88px'}, 1fr))`;
             const today = new Date();
             const todayStr = toDateKey(today.getFullYear(), today.getMonth(), today.getDate());
-            const noteActions = ['test','test1','test3','test4'].includes(document.body.dataset.prefTheme);
+            const noteActions = true;
             window.CalendarStickers?.begin();
             window.DayScheduler?.begin();
             const labels = { DAY:'주', NIGHT:'야', OFF:'휴', LEAVE:'연차', HALF_PRE:'반전', HALF_POST:'반후', UNPAID_OFF:'무휴', UNPAID_HALF_PRE:'무전', UNPAID_HALF_POST:'무후', SPECIAL_DAY:'주특', SPECIAL_NIGHT:'야특', SPECIAL_DAY_NO_OT:'주특', SPECIAL_NIGHT_NO_OT:'야특' };
@@ -1866,7 +1866,7 @@
                     if (noteActions) {
                         memo.type = 'button';
                         memo.setAttribute('aria-label', `${dateObj.getMonth()+1}월 ${dateObj.getDate()}일 메모: ${dayMemos[dateStr]}`);
-                        memo.onclick = event => { event.stopPropagation(); openOverrideModal(dateStr, dateObj, shift); switchEditorTab('memo'); };
+                        memo.onclick = event => { event.stopPropagation(); openOverrideModal(dateStr, dateObj, shift); if(window.MemoComposer)MemoComposer.enter();else switchEditorTab('memo'); };
                         memo.onkeydown = event => event.stopPropagation();
                         // Expose two sibling actions rather than nesting a note button in a date button.
                         cell.setAttribute('role', 'group');
@@ -2945,7 +2945,7 @@
     <script src="./calendar-integration.js?v=6"></script>
     <script src="./schedule-share.js?v=3"></script>
     <script src="./google-sync-core.js?v=6"></script>
-    <script src="./account-data-core.js?v=entries-11"></script>
+    <script src="./account-data-core.js?v=repeat-12"></script>
     <script src="./app-motion.js?v=1"></script>
     <script src="./calendar-ui.js?v=55"></script>
     <script src="./group-schedule.js?v=4"></script>
@@ -3020,13 +3020,13 @@
 <script src="./payslip-alert.js?v=3"></script>
 <script src="./memo-editor.js?v=12"></script>
 <script src="./day-editor-navigation.js?v=7"></script>
-<script src="./day-scheduler-core.js?v=1"></script>
-<script src="./day-scheduler.js?v=5"></script>
+<script src="./day-scheduler-core.js?v=2"></script>
+<script src="./day-scheduler.js?v=6"></script>
 <script src="./sheet-interactions.js?v=7"></script>
 <script src="./day-memos-core.js?v=1"></script>
 <script src="./day-entry-core.js?v=1"></script>
-<script src="./day-editor-designs.js?v=6"></script>
-<script src="./memo-composer.js?v=6"></script>
+<script src="./day-editor-designs.js?v=7"></script>
+<script src="./memo-composer.js?v=7"></script>
 <script src="./settings-options.js?v=2"></script>
 <script src="./wage-import-ui.js?v=1"></script>
 <script src="./app-i18n-data.js?v=23"></script>

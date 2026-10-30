@@ -2,7 +2,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('nod
 const html=fs.readFileSync(require.resolve('../index.html'),'utf8'),elements=new Map();
 function element(){const classes=new Set();return {style:{},dataset:{},attributes:{},children:[],_html:'',hidden:false,
     set innerHTML(v){this._html=v;this.children=[]},get innerHTML(){return this._html},
-    setAttribute(k,v){this.attributes[k]=v},appendChild(e){this.children.push(e)},classList:{add(c){classes.add(c)},remove(c){classes.delete(c)},contains(c){return classes.has(c)}}};}
+    setAttribute(k,v){this.attributes[k]=v},getAttribute(k){return this.attributes[k]},removeAttribute(k){delete this.attributes[k]},querySelector(selector){this._queries??=new Map();if(!this._queries.has(selector))this._queries.set(selector,element());return this._queries.get(selector)},appendChild(e){this.children.push(e)},classList:{add(c){classes.add(c)},remove(c){classes.delete(c)},contains(c){return classes.has(c)}}};}
 for(const m of html.matchAll(/\bid="([^"]+)"/g)){assert.ok(!elements.has(m[1]),'IDs remain unique: '+m[1]);elements.set(m[1],element());}
 const ctx={document:{body:element(),getElementById:id=>elements.get(id),createElement:element},window:null,TextEncoder,URLSearchParams,Date};
 ctx.window=ctx;vm.createContext(ctx);
@@ -13,13 +13,14 @@ run("updateLeaveStats=()=>{};currentGroup='C';currentCalDate=new Date(2026,9,1);
 assert.equal(grid.children.length,35);assert.equal(grid.style.gridTemplateRows,'repeat(5, minmax(88px, 1fr))');
 assert.equal(elements.get('cal-month-title-text').innerText,'2026. 10');
 assert.equal(elements.has('calendar-group-label'),false);
-const days=grid.children.filter(e=>e.attributes.role==='button');assert.equal(days.length,31);
+const days=grid.children.filter(e=>['button','group'].includes(e.attributes.role));assert.equal(days.length,31);
 assert.equal(grid.children.filter(e=>e.attributes['aria-hidden']==='true').length,4);
 const memo=days[0].children[0];assert.equal(memo.textContent,'<img src=x onerror=alert(1)>');assert.ok(!days[0].innerHTML.includes('onerror'));
 assert.match(days[2].className,/holiday/);assert.match(days[2].innerHTML,/special-night/);
 let opened=null;ctx.capture=(...args)=>opened=args;run('openOverrideModal=capture');
-let prevented=false;days[0].onkeydown({key:'Enter',preventDefault(){prevented=true}});
+let prevented=false;days[0].querySelector('.day-meta').onkeydown({key:'Enter',preventDefault(){prevented=true},stopPropagation(){}});
 assert.ok(prevented);assert.equal(opened[0],'2026-10-01');
+let memoEntries=0;ctx.MemoComposer={enter:()=>memoEntries++};memo.onclick({stopPropagation(){}});assert.equal(memoEntries,1,'calendar memo enters writing directly');
 run("currentCalDate=new Date(2026,4,1);renderCalendar()");assert.equal(grid.children.length,42);
 run("currentCalDate=new Date(2028,1,1);renderCalendar()");assert.equal(grid.children.filter(e=>e.attributes.role==='button').length,29);
 ctx.ShiftUI.showView('all');assert.equal(ctx.document.body.dataset.view,'all');assert.equal(elements.get('cal-month-title-btn').hidden,true);assert.equal(elements.get('header-calendar-actions').hidden,true);

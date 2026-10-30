@@ -10,7 +10,7 @@ const assert=require('node:assert/strict'),{webkit,chromium}=require('playwright
   const e=new Event('touchstart',{bubbles:true,cancelable:true});Object.defineProperties(e,{touches:{value:[{clientX:x,clientY:y}]}});el.querySelector('#editor-dismiss').dispatchEvent(e);
   const after=el.getBoundingClientRect().top;const cancel=new Event('touchcancel',{bubbles:true});el.dispatchEvent(cancel);return {before,after};
  });assert(Math.abs(geometry.before-geometry.after)<1,JSON.stringify(geometry));await page.waitForTimeout(250);assert.equal(await page.locator('.sheet-returning').count(),0);
- await page.locator('.design-memo-link').tap();await page.locator('#memo-compose-open').tap();
+ await page.locator('.design-memo-link').tap();
  if(!reduced){
   const sample=await page.locator('#memo-compose-dialog').evaluate(el=>{const a=el.getAnimations()[0];if(a){a.pause();a.currentTime=60;}const before=el.getBoundingClientRect().top,r=el.getBoundingClientRect(),target=el.querySelector('#memo-compose-dismiss');const props={bubbles:true,cancelable:true,pointerId:1,pointerType:'touch',isPrimary:true,button:0,clientX:r.x+50,clientY:r.y+10};target.dispatchEvent(new PointerEvent('pointerdown',props));const after=el.getBoundingClientRect().top;target.dispatchEvent(new PointerEvent('pointercancel',props));return {before,after};});assert(Math.abs(sample.before-sample.after)<1,JSON.stringify(sample));
  }

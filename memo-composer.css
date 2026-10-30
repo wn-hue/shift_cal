@@ -96,3 +96,26 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design][data-de
 @media(prefers-reduced-motion:reduce){#memo-alarm-enabled,#memo-alarm-enabled::before{transition:none}}
 #memo-alarm-fields select{appearance:none;padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238b95a1' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
 #memo-compose-dialog[data-design=kakao] #memo-compose-save{color:#332e26}
+
+/* The previous schedule form is also the quick memo form: compact title, optional body, then schedule fields. */
+#memo-compose-content{display:block;padding:8px 22px 20px;box-sizing:border-box}
+#memo-compose-content #memo-compose-input,#memo-compose-dialog[data-alarm=true] #memo-compose-input{box-sizing:border-box;display:block;width:100%;height:70px;min-height:70px;max-height:160px;margin:0 0 16px;padding:10px 0 14px;border:0;border-bottom:1px solid var(--ed-line,#e9edf1);border-radius:0;background:transparent;color:var(--ed-text,#191f28);font-weight:650;line-height:1.6;resize:vertical;overflow:auto}
+.memo-field-label{display:block;margin:0 0 8px;font-size:13px;color:var(--ed-sub,#6b7684)}
+#memo-compose-details{box-sizing:border-box;display:block;width:100%;height:112px;min-height:80px;max-height:240px;padding:12px;border:1px solid var(--ed-line,#e9edf1);border-radius:12px;background:var(--ed-card,#fff);color:var(--ed-text,#191f28);font:inherit;font-size:16px;line-height:1.6;resize:vertical;overflow:auto;overscroll-behavior:contain}
+#memo-alarm{padding:16px 0 0}
+#memo-alarm-fields .memo-all-day-row{display:flex;align-items:center;justify-content:space-between;min-height:44px;margin:12px 0}
+#memo-alarm-all-day{appearance:none;width:44px;height:26px;position:relative;border:0;border-radius:20px;background:#cbd1d8;flex:none;margin:0}
+#memo-alarm-all-day::before{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff}
+#memo-alarm-all-day:checked{background:var(--ed-blue,#3182f6)}
+#memo-alarm-all-day:checked::before{transform:translateX(18px)}
+#memo-repeat-until-row[hidden]{display:none}
+#memo-repeat-until-row>label{display:block;margin:12px 0 6px;font-size:13px;color:var(--ed-sub,#6b7684)}
+#memo-compose-list{flex:none;align-self:flex-end;min-height:36px;padding:6px 22px;margin:0;border:0;background:none;color:var(--ed-sub,#6b7684);font:inherit;font-size:12px}
+#memo-compose-list[hidden]{display:none}
+#memo-compose-dialog[data-compact=true] #memo-compose-content{padding-top:4px}
+#memo-compose-dialog[data-compact=true] #memo-compose-list{display:none}
+#memo-compose-details:focus-visible,#memo-compose-list:focus-visible{outline:2px solid var(--ed-blue,#3182f6);outline-offset:2px}
+#memo-compose-dialog[data-alarm=false]{--compose-inset:max(12px,calc(var(--compose-height,100dvh) - 540px))}
+#memo-compose-dialog[data-compact=true]{--compose-inset:4px}
+#memo-compose-dialog #memo-compose-content #memo-compose-input{font-size:20px!important;font-weight:650;background:transparent!important;border-radius:0;resize:none}
+#memo-compose-dialog #memo-compose-details{resize:none}
