@@ -50,9 +50,9 @@ const {webkit,chromium}=require('playwright');
   assert.equal(await page.evaluate(()=>dayMemos['2026-10-20']),longMemo);
   assert.equal(await page.evaluate(()=>document.body.style.position),'fixed','parent sheet keeps its own scroll lock');
   assert(await page.locator('#modal-override').evaluate(e=>e.classList.contains('active')));
-  const preview=await page.locator('#memo-compose-open').boundingBox();assert(preview.height<=110);
+  assert.equal(await page.locator('#modal-override').getAttribute('data-design-pane'),'work');
   // Hardware keyboards / missing final viewport events cannot leave an undismissable dialog.
-  await page.locator('#memo-compose-open').tap();await changeViewport(425);await page.locator('#memo-compose-back').tap();
+  await page.evaluate(()=>MemoComposer.enter());await changeViewport(425);await page.locator('#memo-compose-back').tap();
   await page.waitForFunction(()=>!document.querySelector('#memo-compose-dialog').open);
   assert.deepEqual(errors,[]);
   console.log(engine.name(),width,'PASS long memo internal scroll, fixed header, small/panned viewport, one save, keyboard-close lock, cancel preservation and fallback');

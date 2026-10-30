@@ -13,13 +13,13 @@ const assert=require('node:assert/strict'),{webkit,chromium}=require('playwright
   const open=async()=>{await page.locator('.cal-day[data-date="2026-10-20"] .day-num').tap();await page.evaluate(()=>DayEditorDesigns.showPane('memo'));};
   const save=async value=>{await input.fill(value);await page.locator('#memo-compose-save').tap();await page.waitForFunction(()=>!document.querySelector('#memo-compose-dialog').open);assert(await parent.evaluate(e=>e.classList.contains('active')));};
   await open();assert.equal(await page.locator('.memo-entry-row').count(),1);
-  await page.locator('#memo-compose-open').tap();assert.equal(await input.inputValue(),'기존 메모');assert.equal(await page.locator('#memo-compose-details').inputValue(),'문단 유지');await page.locator('#memo-compose-back').tap();
+  await page.locator('#memo-compose-open').tap();assert.equal(await input.inputValue(),'기존 메모');assert.equal(await page.locator('#memo-compose-details').inputValue(),'문단 유지');await page.locator('#memo-compose-list').tap();
   await page.evaluate(()=>setDayOverride('OFF'));
   await page.locator('#memo-compose-add').tap();assert.equal(await input.inputValue(),'');await save('두 번째 메모');
   assert.equal(await page.evaluate(()=>ShiftTools.pending()),undefined);assert.equal(await page.evaluate(()=>overrides['2026-10-20']),'OFF');
   assert.equal(await page.locator('.memo-entry-row').count(),2);assert.equal(await page.evaluate(()=>dayMemos['2026-10-20']),'기존 메모\n\n문단 유지\n\n두 번째 메모');
   await page.locator('.memo-entry-open').nth(1).tap();await save('수정한 두 번째');
-  await page.locator('#memo-compose-add').tap();await input.fill('버릴 초안');await page.locator('#memo-compose-back').tap();assert.equal(await page.locator('.memo-entry-row').count(),2);
+  await page.locator('#memo-compose-add').tap();await input.fill('버릴 초안');await page.locator('#memo-compose-list').tap();assert.equal(await page.locator('.memo-entry-row').count(),2);
   accept=false;await page.locator('.memo-entry-delete').first().tap();assert.equal(await page.locator('.memo-entry-row').count(),2);accept=true;
   // Closing a saved day must not write or sync a second time.
   await page.evaluate(()=>{window.memoWrites=0;const old=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='shift_day_memos')window.memoWrites++;return old.call(this,k,v)};});
@@ -31,7 +31,7 @@ const assert=require('node:assert/strict'),{webkit,chromium}=require('playwright
   await page.evaluate(()=>{const snapshot=AccountDataCore.normalize({shift_day_memos:dayMemos,shift_day_memo_items_v1:JSON.parse(localStorage.getItem('shift_day_memo_items_v1'))});localStorage.setItem('shift_day_memo_items_v1',JSON.stringify(snapshot.shift_day_memo_items_v1));MemoComposer.refresh();});
   assert.equal(await page.locator('.memo-entry-row').count(),2);
   await page.locator('.memo-entry-delete').first().tap();assert.equal(await page.evaluate(()=>dayMemos['2026-10-20']),'수정한 두 번째');
-  await page.locator('#memo-compose-open').tap();await input.fill('보존할 초안');await page.evaluate(()=>{dayMemos['2026-10-20']='동기화된 메모';});await page.locator('#memo-compose-save').tap();assert.equal(await input.inputValue(),'보존할 초안');assert.equal(await page.evaluate(()=>dayMemos['2026-10-20']),'동기화된 메모');await page.locator('#memo-compose-back').tap();
+  await page.locator('#memo-compose-open').tap();await input.fill('보존할 초안');await page.evaluate(()=>{dayMemos['2026-10-20']='동기화된 메모';});await page.locator('#memo-compose-save').tap();assert.equal(await input.inputValue(),'보존할 초안');assert.equal(await page.evaluate(()=>dayMemos['2026-10-20']),'동기화된 메모');await page.locator('#memo-compose-list').tap();
   await page.locator('.memo-entry-delete').first().tap();assert.equal(await page.evaluate(()=>dayMemos['2026-10-20']),undefined);assert.equal(await page.locator('.memo-entry-delete').count(),0);
   assert.deepEqual(errors,[]);console.log(engine.name(),theme,'PASS legacy, multiple notes, edit/delete/cancel, single save, reload/account restore, remote-change guard');await page.close();
  }await browser.close();
