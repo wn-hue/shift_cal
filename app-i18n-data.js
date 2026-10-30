@@ -359,6 +359,7 @@ Apple 계정으로 계속하기|Continue with Apple|使用 Apple 继续|Appleで
 연차 사용|Leave used|年假使用|有休使用
 해당 기간 사용 연차|Leave used in this period|本期已用年假|この期間に使った有休
 근무표 공유|Share schedule|分享班表|勤務表を共有
+메모 포함|Include notes|包含备注|メモを含める
 이미지로 보내기|Share image|以图片分享|画像で送る
 현재 달력을 이미지로 공유해요|Share this calendar as an image|将当前日历作为图片分享|今のカレンダーを画像で共有
 조식|Breakfast|早餐|朝食

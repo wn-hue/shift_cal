@@ -154,6 +154,12 @@ body[data-pref-theme=toss] #view-calendar .calendar-card{padding:5px;margin:0 0 
 #modal-month-stats .stats-leave .stats-row{margin-top:8px;padding-bottom:0;border:0}
 #modal-month-stats .stats-leave strong{font-size:20px}
 #modal-schedule-share .share-sheet{background:var(--ui-card)!important}
+#modal-schedule-share .share-memo-option{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:56px;padding:8px 4px;margin:0 0 12px;color:var(--ui-copy);font-size:14px;font-weight:600;cursor:pointer}
+#share-include-memos{appearance:none;-webkit-appearance:none;flex:none;position:relative;width:44px;height:28px;border:0;border-radius:20px;margin:0;background:var(--ui-line);cursor:pointer}
+#share-include-memos::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0002}
+#share-include-memos:checked{background:var(--ui-blue)}
+#share-include-memos:checked::after{transform:translateX(16px)}
+#share-include-memos:focus-visible{outline:2px solid var(--ui-blue);outline-offset:3px}
 #modal-schedule-share .share-row{display:flex;align-items:center;gap:13px;width:100%;min-height:82px;padding:17px;border:1px solid var(--ui-line);border-radius:17px;background:var(--ui-card);color:var(--ui-copy);text-align:left;margin:0}
 #modal-schedule-share .share-row>span:first-child{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;flex:none;background:var(--ui-blue-soft);color:var(--ui-blue)}
 #modal-schedule-share .share-row svg{width:22px;height:22px}
