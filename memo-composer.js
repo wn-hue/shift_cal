@@ -17,7 +17,7 @@
  const content=document.createElement('div');content.id='memo-compose-content';
  content.append(dialog.querySelector('#memo-compose-input'));dialog.append(content);
  const description=document.createElement('textarea');description.id='memo-compose-details';description.maxLength=16000;description.rows=3;description.placeholder='내용을 더 적어 주세요 (선택)';
- const descriptionLabel=document.createElement('label');descriptionLabel.htmlFor=description.id;descriptionLabel.className='memo-field-label';descriptionLabel.textContent='내용';content.append(descriptionLabel,description);
+ const descriptionLabel=document.createElement('label');descriptionLabel.htmlFor=description.id;descriptionLabel.className='memo-field-label';descriptionLabel.textContent='내용';const bodySection=document.createElement('details');bodySection.id='memo-body-section';const bodySummary=document.createElement('summary');bodySummary.innerHTML='<span>내용 더 쓰기</span><span aria-hidden="true">＋</span>';bodySection.append(bodySummary,descriptionLabel,description);content.append(bodySection);
  const alarm=document.createElement('section');alarm.id='memo-alarm';alarm.innerHTML=`
  <label class="memo-alarm-toggle" for="memo-alarm-enabled"><span><strong>일정 설정</strong><small>날짜 · 시간 · 알림 · 반복</small></span><input id="memo-alarm-enabled" type="checkbox" role="switch"></label>
  <div id="memo-alarm-fields" hidden>
@@ -31,9 +31,11 @@
  <p class="memo-alarm-help">앱 화면이 열려 있을 때 알려드려요. 잠금 화면 알림은 저장 후 휴대폰 캘린더로 내보내 설정해 주세요.</p>
  </div><p id="memo-compose-error" role="alert" hidden></p>`;
  content.append(alarm);document.body.append(dialog);
+ for(const id of ['start','end','location','reminder','repeat']){const control=dialog.querySelector('#memo-alarm-'+id),label=control.previousElementSibling,row=document.createElement('div');row.className='memo-setting-row';label.before(row);row.append(label,control);}
+ bodySection.addEventListener('toggle',()=>{bodySummary.querySelector('span').textContent=tr(description.value.trim()?'상세 내용':'내용 더 쓰기');scheduleFit();});
  const field=id=>dialog.querySelector('#memo-alarm-'+id),error=dialog.querySelector('#memo-compose-error');
  function alarmUI(){
-  dialog.querySelector('#memo-alarm-fields').hidden=!field('enabled').checked;dialog.dataset.alarm=String(field('enabled').checked);
+  dialog.querySelector('#memo-alarm-fields').hidden=!field('enabled').checked;dialog.dataset.alarm=String(field('enabled').checked);dialog.querySelector('#memo-compose-title').textContent=tr(field('enabled').checked?'일정':'메모');
   const allDay=field('all-day').checked;field('reminder').querySelector('[value="0"]').textContent=allDay?'당일 오전 9시':'일정 시작할 때';
   for(const [id,time]of [['start','09:00'],['end','10:00']]){const control=field(id),value=control.value,type=allDay?'date':'datetime-local';if(control.type!==type){if(allDay)control.dataset.time=value.slice(11)||time;control.type=type;control.value=allDay?value.slice(0,10):value.slice(0,10)+'T'+(control.dataset.time||time);}}
   dialog.querySelector('#memo-repeat-until-row').hidden=!field('repeat').value;scheduleFit();
@@ -47,7 +49,7 @@
  function draftSignature(){return JSON.stringify({text:fullText(),schedule:scheduleValue()});}
 
  const input=dialog.querySelector('#memo-compose-input'),viewport=window.visualViewport;
- const savedList=document.createElement('button');savedList.type='button';savedList.id='memo-compose-list';savedList.textContent='저장된 메모 · 일정 보기';dialog.querySelector('#memo-compose-date').after(savedList);savedList.onclick=()=>cancel();
+ const savedList=document.createElement('button');savedList.type='button';savedList.id='memo-compose-list';savedList.textContent='목록 보기';const contextBar=document.createElement('div');contextBar.className='memo-compose-context';dialog.querySelector('.memo-compose-header').after(contextBar);contextBar.append(dialog.querySelector('#memo-compose-date'),savedList);savedList.onclick=()=>cancel();
  let date='',initial='',initialDraft='',entrySource=null,entryVersion='',rendered='',opener=null,closing=false,drag=null,offset=0,returnAnimation=null,entrance=null,suppressClickUntil=0,frame=0,restingHeight=0,restingWidth=0,finishClose=null,closeTimer=0;
  const reduced=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
  function clearDrag(){returnAnimation?.cancel();returnAnimation=null;drag=null;offset=0;dialog.style.removeProperty('--compose-drag');}
@@ -113,14 +115,14 @@
   const state=readState(),event=source?.eventId?state.events[source.date]?.[source.eventId]:null;
   entryVersion=DayEntryCore.signature(state,source);
   initial=source?.memoId?DayEntryCore.notes(state,source.date)[source.memoId]||'':event?DayEntryCore.eventText(state,{date:source.date,...event}):'';
-  const split=initial.indexOf('\n\n');input.value=split<0?initial:initial.slice(0,split);description.value=split<0?'':initial.slice(split+2);input.scrollTop=0;description.scrollTop=0;content.scrollTop=0;opener=document.activeElement;restingHeight=viewport?.height||innerHeight;restingWidth=viewport?.width||innerWidth;
+  const split=initial.indexOf('\n\n');input.value=split<0?initial:initial.slice(0,split);description.value=split<0?'':initial.slice(split+2);bodySection.open=!!description.value;bodySummary.querySelector('span').textContent=tr(description.value.trim()?'상세 내용':'내용 더 쓰기');input.scrollTop=0;description.scrollTop=0;content.scrollTop=0;opener=document.activeElement;restingHeight=viewport?.height||innerHeight;restingWidth=viewport?.width||innerWidth;
   field('enabled').checked=!!event;field('start').type=field('end').type='datetime-local';field('start').value=event?.start||date+'T09:00';field('end').value=event?.end||oneHourAfter(field('start').value);field('start').dataset.time=event?.start.slice(11)||'09:00';field('end').dataset.time=event?.end.slice(11)||'10:00';field('all-day').checked=event?.allDay||false;field('location').value=event?.location||'';field('reminder').value=event?event.reminder===null?'':String(event.reminder):'0';field('repeat').value=event?.repeat?.frequency||'';field('until').value=event?.repeat?.until||'';alarmUI();initialDraft=draftSignature();
   dialog.dataset.design=overlay.dataset.editorDesign;const css=getComputedStyle(overlay);for(const key of ['--ed-card','--ed-text','--ed-sub','--ed-blue','--ed-line'])dialog.style.setProperty(key,css.getPropertyValue(key));
-  dialog.querySelector('#memo-compose-title').textContent=tr('메모');input.placeholder=tr('제목 또는 짧은 메모');
+  dialog.querySelector('#memo-compose-title').textContent=tr(event?'일정':'메모');input.placeholder=tr('어떤 내용을 남길까요?');
   const locale={ko:'ko-KR',en:'en',zh:'zh-CN',ja:'ja'}[localStorage.getItem('shift_display_language')]||'ko-KR';
   dialog.querySelector('#memo-compose-date').textContent=new Intl.DateTimeFormat(locale,{month:'long',day:'numeric',weekday:'long'}).format(new Date((source?.date||date)+'T12:00:00'));
   overlay.dataset.memoComposing='true';document.body.classList.add('memo-composer-open');dialog.showModal();dialog.scrollTop=0;fit();
-  if(!reduced())entrance=dialog.animate([{opacity:.65},{opacity:1}],{duration:180,easing:'cubic-bezier(.2,.7,.2,1)'});
+  if(!reduced())entrance=dialog.animate([{opacity:.7},{opacity:1}],{duration:220,easing:'cubic-bezier(.2,.7,.2,1)'});
   input.focus({preventScroll:true});scheduleFit();
  }
 

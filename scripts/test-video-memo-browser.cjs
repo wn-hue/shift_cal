@@ -1,0 +1,20 @@
+'use strict';
+const assert=require('node:assert/strict'),{webkit,chromium}=require('playwright');
+(async()=>{for(const engine of [webkit,chromium]){const browser=await engine.launch();for(const theme of ['current','test3','test4'])for(const width of [320,390]){
+ const page=await browser.newPage({viewport:{width,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce'});const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
+ await page.addInitScript(({theme,width})=>{localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_display_theme',theme);localStorage.setItem('shift_onboarding_v1','{"status":"existing"}');const v=Object.assign(new EventTarget(),{width,height:844,offsetTop:0,offsetLeft:0,scale:1});Object.defineProperty(window,'visualViewport',{get:()=>v});window.testViewport=v;},{theme,width});
+ await page.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await page.goto(process.env.TEST_URL||'http://127.0.0.1:8772/');
+ await page.evaluate(()=>{const d=new Date('2026-10-20T12:00');openOverrideModal('2026-10-20',d,getActualShift(d,currentGroup));});await page.locator('.design-memo-link').tap();
+ const sheet=page.locator('#memo-compose-dialog'),body=page.locator('#memo-compose-details'),input=page.locator('#memo-compose-input');assert(await body.isHidden());assert(await input.evaluate(e=>e===document.activeElement));
+ const original=(await sheet.boundingBox()).y;
+ await page.evaluate(()=>{testViewport.height=425;testViewport.dispatchEvent(new Event('resize'));});await page.waitForFunction(()=>document.getElementById('memo-compose-dialog').dataset.keyboard==='true');assert.equal((await sheet.boundingBox()).y,original,'keyboard does not lift the sheet header');
+ await input.fill('저녁 약속');await page.locator('#memo-body-section summary').tap();await body.fill('식사 후 산책\n장소는 당일 정하기');await page.locator('#memo-body-section summary').tap();assert(await body.isHidden());
+ await page.locator('#memo-alarm-enabled').check();assert.equal(await page.locator('#memo-compose-title').textContent(),'일정');await page.locator('#memo-alarm-location').fill('안산');await page.locator('#memo-alarm-repeat').selectOption('weekly');
+ assert(await page.locator('#memo-compose-save').isVisible());
+ const overflow=await page.locator('#memo-alarm-fields').evaluate(el=>[...el.querySelectorAll('input,select')].filter(e=>e.offsetWidth).some(e=>e.getBoundingClientRect().right>innerWidth));assert(!overflow);
+ await page.evaluate(()=>{testViewport.height=844;testViewport.dispatchEvent(new Event('resize'));});await page.waitForFunction(()=>document.getElementById('memo-compose-dialog').dataset.keyboard==='false');await page.locator('#memo-compose-content').evaluate(e=>e.scrollTop=0);
+ if(engine===webkit&&width===390)await page.screenshot({path:'/tmp/video-memo-'+theme+'.png'});
+ await page.locator('#memo-compose-save').tap();await page.waitForFunction(()=>!document.getElementById('memo-compose-dialog').open);assert.equal(await page.evaluate(()=>dayMemos['2026-10-20']),'저녁 약속\n\n식사 후 산책\n장소는 당일 정하기');
+ await page.locator('#memo-compose-open').tap();assert(await body.isVisible(),'saved body opens automatically');assert.equal(await body.inputValue(),'식사 후 산책\n장소는 당일 정하기');await page.locator('#memo-alarm-enabled').uncheck();assert.equal(await page.locator('#memo-compose-title').textContent(),'메모');await page.locator('#memo-compose-save').tap();await page.waitForFunction(()=>!document.getElementById('memo-compose-dialog').open);assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_day_events'))),{});
+ assert.deepEqual(errors,[]);console.log(engine.name(),theme,width,'PASS stable keyboard header, optional body preservation, aligned settings, one save, reopen and schedule conversion');await page.close();
+ }await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

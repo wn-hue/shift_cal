@@ -119,3 +119,39 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design][data-de
 #memo-compose-dialog[data-compact=true]{--compose-inset:4px}
 #memo-compose-dialog #memo-compose-content #memo-compose-input{font-size:20px!important;font-weight:650;background:transparent!important;border-radius:0;resize:none}
 #memo-compose-dialog #memo-compose-details{resize:none}
+
+/* Video-inspired writing surface: steady header, lightweight rows, one scroll area. */
+#memo-compose-dialog,#memo-compose-dialog[data-alarm=false]{--compose-inset:12px}
+#memo-compose-dialog[data-compact=true]{--compose-inset:4px}
+#memo-compose-dialog .memo-compose-header{padding-inline:20px;padding-bottom:12px}
+.memo-compose-context{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:none;padding:0 22px 12px;border-bottom:1px solid var(--ed-line,#e9edf1)}
+.memo-compose-context #memo-compose-date{margin:0;font-size:13px}
+.memo-compose-context #memo-compose-list{margin:0;padding:4px 0 4px 12px;min-height:32px;font-size:12px;color:var(--ed-blue,#3182f6)}
+#memo-compose-content{padding-top:14px}
+#memo-compose-content #memo-compose-input,#memo-compose-dialog[data-alarm=true] #memo-compose-input{height:96px;min-height:70px;max-height:160px;padding:6px 0 16px;margin-bottom:0;border-bottom:0;font-weight:500}
+#memo-compose-dialog #memo-compose-content #memo-compose-input{font-size:18px!important;font-weight:500}
+#memo-body-section{border-top:1px solid var(--ed-line,#e9edf1)}
+#memo-body-section summary{list-style:none;display:flex;align-items:center;justify-content:space-between;min-height:56px;gap:12px;color:var(--ed-sub,#6b7684);font-size:14px;cursor:pointer}
+#memo-body-section summary::-webkit-details-marker{display:none}
+#memo-body-section summary>span:last-child{font-size:22px;font-weight:400;transition:transform .18s}
+#memo-body-section[open] summary>span:last-child{transform:rotate(45deg)}
+#memo-body-section .memo-field-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+#memo-compose-dialog #memo-compose-details{height:140px;min-height:100px;margin:0 0 16px;padding:12px 14px;background:var(--ed-bg,#f2f4f6);border:0;border-radius:14px}
+#memo-alarm{padding-top:0}
+.memo-alarm-toggle{min-height:64px}
+#memo-alarm-fields>.memo-setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;border-top:1px solid var(--ed-line,#e9edf1)}
+.memo-setting-row>label{flex:none;margin:0;font-size:14px;color:var(--ed-sub,#6b7684)}
+#memo-alarm-fields .memo-setting-row>input,#memo-alarm-fields .memo-setting-row>select{width:auto;flex:1;max-width:78%;min-width:0;border:0;background-color:transparent;text-align:right;padding-left:0;padding-right:0;border-radius:8px;font-size:16px}
+#memo-alarm-fields .memo-setting-row>select{padding-right:24px;background-position:right 0 center;direction:rtl}
+#memo-alarm-fields .memo-setting-row>select option{direction:ltr}
+#memo-alarm-fields .memo-all-day-row{margin:0;min-height:56px}
+#memo-compose-dialog[data-compact=true] .memo-compose-context{display:none}
+#memo-compose-dialog[data-compact=true] #memo-compose-content #memo-compose-input{height:70px}
+#memo-compose-dialog summary:focus-visible{outline:2px solid var(--ed-blue,#3182f6);outline-offset:2px;border-radius:8px}
+/* Dated notes read as a list instead of a stack of nested cards. */
+#memo-entry-list{gap:0;border-top:1px solid var(--ed-line,#e9edf1)}
+.memo-entry-row{border-radius:0;background:transparent;border-bottom:1px solid var(--ed-line,#e9edf1)}
+#memo-compose-open,.memo-entry-open{padding:16px 4px;min-height:64px}
+.memo-entry-alarm{padding-inline:4px}
+.memo-entry-export{padding-left:4px}
+@media(prefers-reduced-motion:reduce){#memo-body-section summary>span:last-child{transition:none}}
