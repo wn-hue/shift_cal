@@ -26,8 +26,10 @@
  function fit(){
   frame=0;
   // The separate composer owns the viewport, including keyboard dismissal after save.
-  if(overlay.dataset.memoComposing==='true')return;
   const active=overlay.classList.contains('active');
+  // A calendar memo can open both layers in one task, before this observer runs.
+  // Acquire the scroll lock then, but never release it during composer dismissal.
+  if(overlay.dataset.memoComposing==='true'){if(active)lock(true);return;}
   lock(active);
   document.body.classList.toggle('memo-editor-open',active&&overlay.dataset.editorTab==='memo');
   document.body.classList.toggle('work-editor-open',active&&['work','memo','stickers'].includes(overlay.dataset.editorTab));

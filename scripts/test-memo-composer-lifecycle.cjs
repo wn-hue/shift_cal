@@ -14,7 +14,7 @@ const {webkit,chromium}=require('playwright');
   },width);
   await page.route('**/api/**',r=>r.fulfill({json:{configured:false}}));
   await page.goto(process.env.TEST_URL||'http://127.0.0.1:8772/');
-  const changeViewport=async(height,offsetTop=0)=>{await page.evaluate(({height,offsetTop})=>{Object.assign(testViewport,{height,offsetTop});testViewport.dispatchEvent(new Event('resize'));testViewport.dispatchEvent(new Event('scroll'));},{height,offsetTop});await page.waitForFunction(h=>document.querySelector('#memo-compose-dialog').style.getPropertyValue('--compose-height')===h+'px',height);};
+  const changeViewport=async(height,offsetTop=0)=>{await page.evaluate(({height,offsetTop})=>{Object.assign(testViewport,{height,offsetTop});testViewport.dispatchEvent(new Event('resize'));testViewport.dispatchEvent(new Event('scroll'));},{height,offsetTop});await page.waitForFunction(h=>document.querySelector('#memo-compose-dialog').style.getPropertyValue('--compose-height')===h+'px'||document.querySelector('#memo-compose-dialog').dataset.closing==='true'||!document.querySelector('#memo-compose-dialog').open,height);};
   const open=async()=>{await page.locator('.cal-day[data-date="2026-10-20"] .day-num').tap();await page.evaluate(()=>MemoComposer.enter());};
   await open();const input=page.locator('#memo-compose-input');
   const longMemo='한글 메모와 줄바꿈 확인\n'.repeat(300)+'마지막 줄';

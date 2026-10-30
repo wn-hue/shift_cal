@@ -155,3 +155,8 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design][data-de
 .memo-entry-alarm{padding-inline:4px}
 .memo-entry-export{padding-left:4px}
 @media(prefers-reduced-motion:reduce){#memo-body-section summary>span:last-child{transition:none}}
+
+/* Fade the backdrop with the sheet, not after the keyboard's resize sequence. */
+#memo-compose-dialog::backdrop{transition:background-color 220ms ease-out}
+#memo-compose-dialog[data-closing=true]::backdrop{background:transparent}
+@media(prefers-reduced-motion:reduce){#memo-compose-dialog::backdrop{transition:none}}

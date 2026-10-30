@@ -94,6 +94,8 @@
  function fit(){
   frame=0;if(!dialog.open)return;if(viewport&&Math.abs(viewport.scale-1)>.01)return;
   const values={height:viewport?.height||innerHeight,width:viewport?.width||innerWidth,top:viewport?.offsetTop||0,left:viewport?.offsetLeft||0};
+  // Once released, keep the sheet geometry fixed while the keyboard retracts.
+  if(closing){if(finishClose&&(values.height>=restingHeight-80||Math.abs(values.width-restingWidth)>80))finishClose();return;}
   for(const [key,value]of Object.entries(values))dialog.style.setProperty('--compose-'+key,value+'px');
   dialog.dataset.compact=String(values.height<300);
   dialog.dataset.keyboard=String(restingHeight-values.height>120);
@@ -125,15 +127,22 @@
   input.focus({preventScroll:true});scheduleFit();
  }
 
- function close(animated=false,restoreFocus=true,destination='list'){if(closing)return;closing=true;
+ function close(animated=false,restoreFocus=true,destination='list'){if(closing)return;closing=true;dialog.dataset.closing='true';
   // Remove the underlying memo preview before dismissal, so it cannot appear as a smaller popup.
   if(destination==='calendar')overlay.classList.remove('active');
   else if(destination==='work')DayEditorDesigns.showPane('work');
  const css=getComputedStyle(dialog);offset=(css.transform==='none'?0:new DOMMatrixReadOnly(css.transform).m42)+(parseFloat(css.translate.split(/\s+/)[1])||0);entrance?.cancel();entrance=null;returnAnimation?.cancel();returnAnimation=null;dialog.style.setProperty('--compose-drag',offset+'px');dialog.querySelectorAll('input,textarea,select').forEach(el=>el.blur());
-  const finish=()=>{if(animated)suppressClickUntil=performance.now()+400;dialog.close();clearDrag();closing=false;delete overlay.dataset.memoComposing;document.body.classList.remove('memo-composer-open');refresh();if(destination==='calendar'){input.value='';description.value='';document.querySelector('.cal-day[data-date="'+date+'"] .day-num')?.focus({preventScroll:true});}else if(destination==='work'){input.value='';description.value='';const target=overlay.querySelector('.design-memo-link');(target?.getClientRects().length?target:overlay.querySelector('#design-back'))?.focus({preventScroll:true});}else if(restoreFocus&&overlay.classList.contains('active')&&opener?.isConnected)opener.focus({preventScroll:true});else if(restoreFocus&&overlay.classList.contains('active'))button.focus({preventScroll:true});window.dispatchEvent(new Event('resize'));};
-  afterKeyboard(()=>{
-   if(animated&&!reduced()){returnAnimation?.cancel();const animation=dialog.animate([{transform:`translateY(${offset}px)`},{transform:`translateY(${viewport?.height||innerHeight}px)`}],{duration:180,easing:'cubic-bezier(.4,0,1,1)',fill:'forwards'});animation.finished.then(()=>{finish();animation.cancel();},finish);}else finish();
-  });
+  const finish=()=>{if(animated)suppressClickUntil=performance.now()+400;dialog.close();clearDrag();dialog.style.removeProperty('opacity');delete dialog.dataset.closing;closing=false;delete overlay.dataset.memoComposing;document.body.classList.remove('memo-composer-open');refresh();if(destination==='calendar'){input.value='';description.value='';document.querySelector('.cal-day[data-date="'+date+'"] .day-num')?.focus({preventScroll:true});}else if(destination==='work'){input.value='';description.value='';const target=overlay.querySelector('.design-memo-link');(target?.getClientRects().length?target:overlay.querySelector('#design-back'))?.focus({preventScroll:true});}else if(restoreFocus&&overlay.classList.contains('active')&&opener?.isConnected)opener.focus({preventScroll:true});else if(restoreFocus&&overlay.classList.contains('active'))button.focus({preventScroll:true});window.dispatchEvent(new Event('resize'));};
+  // Start the exit now; keyboard cleanup runs alongside it, never before it.
+  // Keep the invisible modal's scroll lock until both operations finish.
+  let animationDone=false,keyboardDone=false,finished=false;
+  const complete=()=>{if(!finished&&animationDone&&keyboardDone){finished=true;finish();}};
+  if(animated&&!reduced()){
+   const distance=Math.max(restingHeight,innerHeight,(viewport?.height||0)+(viewport?.offsetTop||0),offset+1);
+   returnAnimation=dialog.animate([{transform:`translateY(${offset}px)`,opacity:1},{transform:`translateY(${distance}px)`,opacity:0}],{duration:220,easing:'cubic-bezier(.16,.75,.3,1)',fill:'forwards'});
+   returnAnimation.finished.then(()=>{animationDone=true;complete();},()=>{animationDone=true;complete();});
+  }else{dialog.style.opacity='0';animationDone=true;}
+  afterKeyboard(()=>{keyboardDone=true;complete();});
  }
  function cancel(animated=true,destination='work'){if(closing)return;close(animated,true,destination);}
  function save(){
@@ -156,7 +165,7 @@
   if(!drag||e.pointerId!==drag.id)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
   if(Math.abs(dx)>8||Math.abs(dy)>8)drag.moved=true;
   if(Math.abs(dx)>12&&Math.abs(dx)>Math.abs(dy)*1.3||dy< -12){suppressClickUntil=performance.now()+400;settle();return;}
-  if(dy>8&&dy>Math.abs(dx)*1.3){e.preventDefault();offset=Math.min(dy,240);if(!reduced())dialog.style.setProperty('--compose-drag',offset+'px');}
+  if(dy>8&&dy>Math.abs(dx)*1.3){e.preventDefault();offset=dy;if(!reduced())dialog.style.setProperty('--compose-drag',offset+'px');}
  });
  dialog.addEventListener('pointerup',e=>{
   if(!drag||e.pointerId!==drag.id)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y,moved=drag.moved;drag=null;
