@@ -1,6 +1,6 @@
 (function (root) {
     'use strict';
-    const keys = ['shift_salary_config_master','shift_active_group','shift_day_memos','shift_day_stickers','shift_day_events','shift_overrides_A','shift_overrides_B','shift_overrides_C','shift_payroll_sms_reference_v1','shift_bonus_sms_reference_v1'];
+    const keys = ['shift_salary_config_master','shift_active_group','shift_day_memos','shift_day_memo_items_v1','shift_day_stickers','shift_day_events','shift_overrides_A','shift_overrides_B','shift_overrides_C','shift_payroll_sms_reference_v1','shift_bonus_sms_reference_v1'];
     const types = new Set(['DAY','NIGHT','OFF','SPECIAL_DAY','SPECIAL_NIGHT','SPECIAL_DAY_NO_OT','SPECIAL_NIGHT_NO_OT','LEAVE','NO_OT','HALF_PRE','HALF_POST','UNPAID_HALF_PRE','UNPAID_HALF_POST','UNPAID_OFF','FORCED_OFF']);
     const object = x => x !== null && typeof x === 'object' && !Array.isArray(x);
     function dateOK(x) { return typeof x === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(x) && Number.isFinite(Date.parse(x+'T00:00:00Z')) && new Date(x+'T00:00:00Z').toISOString().slice(0,10) === x; }
@@ -43,6 +43,10 @@
                 for (const [date,v] of Object.entries(value)) {
                     if (!dateOK(date)) throw Error('저장할 날짜를 확인하세요.');
                     if (key === 'shift_day_memos') { if (typeof v !== 'string' || v.length > 16000) throw Error('메모가 너무 깁니다.'); }
+                    else if (key === 'shift_day_memo_items_v1') {
+                        if (!object(v) || Object.keys(v).length > 50 || Object.entries(v).some(([id,note]) => !/^[a-z0-9-]{1,80}$/.test(id) || typeof note !== 'string' || !note.trim() || note !== note.trim()) || Object.values(v).join('\n\n').length > 16000) throw Error('메모의 개수와 길이를 확인하세요.');
+                        safe[date] = {...v}; continue;
+                    }
                     else if (key === 'shift_day_stickers') { if (!['soju','beer','kimchi-stew','pork-belly','chicken','gukbap','baeksuk','doenjang-stew','tteokbokki','jajangmyeon','kimchi-rice','gimbap','jjamppong'].includes(v)) throw Error('스티커를 확인하세요.'); }
                     else if (key === 'shift_day_events') {
                         if (!object(v) || Object.keys(v).length > 50) throw Error('하루에 일정을 50개까지 저장할 수 있어요.');

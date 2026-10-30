@@ -50,7 +50,7 @@
  function update(){if(!selectedDateStr)return;const variant=design();
   if(nav.dataset.variant!==variant){nav.dataset.variant=variant;nav.innerHTML=(variant==='kakao'?[['work','근무'],['memo','메모'],['pay','급여']]:[['work','근무'],['attendance','근태 · 휴가'],['memo','메모']]).map(([key,label])=>`<button type="button" data-pane="${key}" aria-pressed="false">${label}</button>`).join('');}overlay.dataset.editorDesign=variant;overlay.dataset.designPane=pane;const d=dateObj(selectedDateStr),base=getBaseShift(d,currentGroup),pending=ShiftTools.pending(),type=pending?(pending.type||base.type):(overrides[selectedDateStr]||base.type),label=labels[type]||getActualShift(d,currentGroup).name;
   text('design-date',dateLabel(d));text('design-base-name',labels[base.type]);text('design-title',variant==='kakao'?'나의 하루':pane==='memo'?'메모 · 일정':pane==='attendance'?'근태 · 휴가':'근무 변경');text('design-change-label',pending?(tr(labels[getActualShift(d,currentGroup).type]||getActualShift(d,currentGroup).name)+' → '+tr(label)):label);text('design-change-status',dirty()?'아직 저장하지 않았어요.':'저장된 근무');text('design-bubble-date',dateLabel(d));text('design-bubble-shift',pending?' → '+tr(label):label);text('design-attendance-value',labels[type]&&!shorts[type]?label:'선택 안 함');text('design-note-value',$('modal-memo-input').value.trim()?'메모가 있어요':'추가할 내용이 있나요?');
-  text('apply-preview',variant==='kakao'?'변경 완료':pending?'변경사항 저장':'완료');$('design-done').disabled=false;pay.hidden=variant==='kakao'?pane!=='pay':!pending;preview.hidden=!pending;payEmpty.hidden=!!pending||variant!=='kakao';if(variant==='kakao'&&pane==='pay')pay.open=true;
+  text('apply-preview',dirty()?'변경사항 저장':'닫기');$('design-done').disabled=false;pay.hidden=variant==='kakao'?pane!=='pay':!pending;preview.hidden=!pending;payEmpty.hidden=!!pending||variant!=='kakao';if(variant==='kakao'&&pane==='pay')pay.open=true;
   text('kakao-date',dateLabel(d));text('kakao-base-label',labels[base.type]);text('kakao-base-badge',shorts[base.type]);$('kakao-base-badge').dataset.shift=base.type;
   daySummary.querySelector('.kakao-selection-bubble').hidden=!pending&&!overrides[selectedDateStr];text('kakao-selection-caption',pending?'변경할 근무':'현재 근무');text('kakao-selection-label',label);text('kakao-selection-badge',shorts[type]||'✓');$('kakao-selection-badge').dataset.shift=type;
   text('kakao-change-copy',pending?tr(labels[base.type])+' → '+tr(label):'');$('kakao-change-copy').hidden=!pending;text('kakao-save-state',dirty()?'아직 저장하지 않았어요.':'저장된 근무');
@@ -64,16 +64,23 @@
  const open=openOverrideModal;openOverrideModal=function(...args){pane='work';overlay.dataset.editorDesign=design();extra.open=design()==='apple'||design()==='kakao';attend.open=design()==='kakao';pay.open=false;opening=true;try{open(...args);}finally{opening=false;}week();update();};
  const choose=setDayOverride;setDayOverride=function(type){choose(type);update();};
  // All presentations save the same pending shift and memo; event forms keep their own save action.
- // Memo completion uses this same transaction, so there is only one save and one exit.
- function save(memoValue){
+ // Memo completion commits once, then returns to the saved day detail.
+ function save(memoValue,options={}){
   if(!$('event-form').hidden){$('event-form').requestSubmit();return false;}
   const pending=ShiftTools.pending();if(pending){const reason=validateDayOverride(selectedDateStr,pending.type);if(reason){alert(reason);return false;}}
+  const val=typeof memoValue==='string'?memoValue.trim():$('modal-memo-input').value.trim();
+  if(options.memoItems&&(!DayMemosCore.valid(options.memoItems)||DayMemosCore.text(options.memoItems)!==val))return false;
+  if(val.length>16000){alert('하루 메모는 총 16,000자까지 저장할 수 있어요.');return false;}
+  if(!options.memoItems&&!pending&&val===(dayMemos[selectedDateStr]||'').trim()){if(!options.keepOpen)closeModalDirect();return true;}
   saving=true;try{
    if(!ShiftTools.commit())return false;
-   const val=typeof memoValue==='string'?memoValue.trim():$('modal-memo-input').value.trim();
+   if(options.memoItems){let items;try{items=JSON.parse(localStorage.getItem(DayMemosCore.key)||'{}')}catch{items={}}
+    if(Object.keys(options.memoItems).length)items[selectedDateStr]=options.memoItems;else delete items[selectedDateStr];
+    localStorage.setItem(DayMemosCore.key,JSON.stringify(items));
+   }
    if(val)dayMemos[selectedDateStr]=val;else delete dayMemos[selectedDateStr];
    localStorage.setItem('shift_day_memos',JSON.stringify(dayMemos));$('modal-memo-input').value=val;
-   window.AccountSync?.changed();window.GoogleSync?.changed(selectedDateStr);renderCalendar();closeModalDirect();return true;
+   window.AccountSync?.changed();window.GoogleSync?.changed(selectedDateStr);renderCalendar();if(options.keepOpen){week();showPane('memo');}else closeModalDirect();return true;
   }finally{saving=false;}
  }
  $('apply-preview').onclick=save;$('design-done').onclick=save;saveMemoDirect=save;

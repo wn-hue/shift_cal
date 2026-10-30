@@ -949,7 +949,7 @@
 <link rel="stylesheet" href="./sheet-interactions.css?v=5">
 <link rel="stylesheet" href="./day-editor-layout.css?v=4">
 <link rel="stylesheet" href="./day-editor-designs.css?v=5">
-<link rel="stylesheet" href="./memo-composer.css?v=3">
+<link rel="stylesheet" href="./memo-composer.css?v=4">
 <link rel="stylesheet" href="./app-currency.css?v=1">
 <link rel="stylesheet" href="./commute-page.css?v=13">
 <link rel="stylesheet" href="./lost-found-page.css?v=3">
@@ -2855,6 +2855,7 @@
                 syncedUnpaidDays = 0; syncedSpecialDayNoOT=0;syncedSpecialNightNoOT=0;
                 localStorage.removeItem('shift_salary_config_master');
                 localStorage.removeItem('shift_day_memos');
+                localStorage.removeItem('shift_day_memo_items_v1');
                 localStorage.removeItem('shift_day_stickers');
                 localStorage.removeItem('shift_day_events');
                 dayMemos = {};
@@ -2944,7 +2945,7 @@
     <script src="./calendar-integration.js?v=6"></script>
     <script src="./schedule-share.js?v=3"></script>
     <script src="./google-sync-core.js?v=6"></script>
-    <script src="./account-data-core.js?v=events-9"></script>
+    <script src="./account-data-core.js?v=memos-10"></script>
     <script src="./app-motion.js?v=1"></script>
     <script src="./calendar-ui.js?v=54"></script>
     <script src="./group-schedule.js?v=4"></script>
@@ -3022,8 +3023,9 @@
 <script src="./day-scheduler-core.js?v=1"></script>
 <script src="./day-scheduler.js?v=4"></script>
 <script src="./sheet-interactions.js?v=6"></script>
-<script src="./day-editor-designs.js?v=4"></script>
-<script src="./memo-composer.js?v=4"></script>
+<script src="./day-memos-core.js?v=1"></script>
+<script src="./day-editor-designs.js?v=5"></script>
+<script src="./memo-composer.js?v=5"></script>
 <script src="./settings-options.js?v=2"></script>
 <script src="./wage-import-ui.js?v=1"></script>
 <script src="./app-i18n-data.js?v=23"></script>
