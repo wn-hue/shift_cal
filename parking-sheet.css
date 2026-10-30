@@ -56,5 +56,3 @@ body[data-pref-theme] .parking-banner button{display:grid;place-items:center;fle
 @media(prefers-reduced-motion:reduce){#parking-dialog .parking-switch,.parking-switch::after{transition:none}}
 
 #parking-dialog .parking-location-rule{margin:12px 4px 0;color:var(--ui-muted,#6b7684);font-size:12px;line-height:1.6}
-#parking-dialog #parking-prompt-toggle{margin-top:12px;min-height:68px}
-#parking-prompt-toggle+.parking-note{margin:8px 4px 0;color:var(--ui-muted,#6b7684);font-size:11px;line-height:1.6}

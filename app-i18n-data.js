@@ -376,10 +376,8 @@ Apple 계정으로 계속하기|Continue with Apple|使用 Apple 继续|Appleで
 통근버스|Shuttle bus|通勤班车|通勤バス
 노선과 정류장 찾기|Find routes & stops|查找路线与站点|路線・停留所を探す
 현재 위치를 확인하고 있어요.|Checking your current location.|正在获取当前位置。|現在地を確認しています。
-주차장 제보 알림|Parking report reminders|停车反馈提醒|駐車状況の報告リマインダー
-항상 알림|Always remind me|始终提醒|常に通知する
-항상 알리지 않음|Never remind me|不再提醒|通知しない
-앱을 사용할 때 출근 시간에 하루 한 번 제보를 안내해요.|Once a day during morning arrival hours, while using the app.|使用应用时，在早班到岗时段每天提醒一次。|アプリ使用中、朝の出勤時間に1日1回ご案内します。
+항상 알림|Always notify me|始终提醒|常に通知する
+항상 알리지 않음|Never notify me|不再提醒|通知しない
 본사·1공장 반경 1km · 제보할 때 위치 확인|Within 1 km of HQ / Factory 1 · Location checked when reporting|总部·1工厂1公里内 · 反馈时确认位置|本社・第1工場から1km以内・報告時に位置を確認
 위치는 제보 가능 여부를 확인할 때만 서버로 보내며 저장하지 않아요. GPS 오차가 300m를 넘으면 다시 확인해 주세요.|Location is sent to the server only to check eligibility and is not stored. Retry if GPS accuracy exceeds 300 m.|位置仅发送至服务器确认反馈资格，不会保存。GPS误差超过300米时请重新定位。|位置情報は報告可否の確認時のみサーバーに送信し、保存しません。GPS誤差が300mを超える場合は再確認してください。
 현재 위치를 확인한 뒤 제보해 주세요.|Confirm your current location before reporting.|请确认当前位置后再反馈。|現在地を確認してから報告してください。
@@ -392,6 +390,7 @@ Apple 계정으로 계속하기|Continue with Apple|使用 Apple 继续|Appleで
 알림 설정을 저장하지 못했어요. 다시 시도해 주세요.|Could not save reminder settings. Please try again.|无法保存提醒设置，请重试。|通知設定を保存できませんでした。もう一度お試しください。
 평일 06:50~07:30에 제보할 수 있습니다.|Reports are open on weekdays from 06:50 to 07:30.|工作日06:50～07:30可反馈。|平日06:50～07:30に報告できます。
 오늘 주간 근무자만 제보할 수 있어요.|Only today's day-shift workers can report.|仅当天白班员工可反馈。|本日の日勤者のみ報告できます。
+주차장 만차 알림|Parking full alerts|停车场满位提醒|駐車場の満車通知
 주차장|Parking|停车场|駐車場
 분실물 · 습득물|Lost & found|失物招领|落とし物・拾い物
 잃어버린 물건 찾기|Find a lost item|寻找遗失物品|落とし物を探す
