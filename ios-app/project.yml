@@ -25,7 +25,7 @@ targets:
       properties:
         CFBundleDisplayName: 교대 루틴 테스트
         NSAlarmKitUsageDescription: 달력에 표시된 주간·야간 근무에 맞춰 설정한 시간에 알람을 울립니다.
-        NSLocationWhenInUseUsageDescription: 내 위치에서 가까운 통근버스 정류장을 찾습니다.
+        NSLocationWhenInUseUsageDescription: 가까운 통근버스 정류장을 찾고, 주차장 제보 시 본사 주변인지 확인합니다.
         NSCameraUsageDescription: 분실물 사진을 촬영해 게시물에 첨부합니다.
         NSPhotoLibraryUsageDescription: 분실물 사진을 선택해 게시물에 첨부합니다.
         UILaunchScreen: {}

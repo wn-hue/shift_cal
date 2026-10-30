@@ -54,3 +54,7 @@ body[data-pref-theme] .parking-banner{gap:12px;padding:14px 12px 14px 16px;borde
 body[data-pref-theme] .parking-banner button{display:grid;place-items:center;flex:none;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--ui-muted,#8b95a1);font-size:24px}
 @media(max-width:360px){#parking-dialog .parking-hours{font-size:10px}#parking-dialog .parking-summary{padding:18px 16px}body[data-pref-theme] #parking-dialog #parking-state{font-size:20px}#parking-dialog .parking-last-detail{display:block}body[data-pref-theme] #parking-dialog .parking-alert-row{padding:16px 14px;gap:10px}.parking-alert-row>svg{padding:8px;width:20px;height:20px}.parking-alert-copy strong{font-size:14px}.parking-alert-copy small{font-size:10px}}
 @media(prefers-reduced-motion:reduce){#parking-dialog .parking-switch,.parking-switch::after{transition:none}}
+
+#parking-dialog .parking-location-rule{margin:12px 4px 0;color:var(--ui-muted,#6b7684);font-size:12px;line-height:1.6}
+#parking-dialog #parking-prompt-toggle{margin-top:12px;min-height:68px}
+#parking-prompt-toggle+.parking-note{margin:8px 4px 0;color:var(--ui-muted,#6b7684);font-size:11px;line-height:1.6}
