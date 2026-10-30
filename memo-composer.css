@@ -24,3 +24,15 @@ body[data-pref-theme] #modal-override#modal-override #modal-memo-input{display:n
 .memo-compose-header,#memo-compose-date{touch-action:none}
 #memo-compose-dialog:has(#memo-compose-dismiss) .memo-compose-header{padding-top:4px}
 @media(prefers-reduced-motion:reduce){#memo-compose-dialog{transform:none}}
+
+/* A stable writing sheet above the keyboard; only the text field scrolls. */
+body.memo-composer-open{overflow:hidden;overscroll-behavior:none}
+#memo-compose-dialog{--compose-inset:12px;top:calc(var(--compose-top,0px) + var(--compose-inset));height:calc(var(--compose-height,100dvh) - var(--compose-inset));border-radius:28px 28px 0 0;overflow-anchor:none}
+#memo-compose-dialog[data-keyboard=true]{padding-bottom:0}
+#memo-compose-dialog .memo-compose-header{border-bottom:0;padding-bottom:8px}
+#memo-compose-back{border:1px solid var(--ed-line,#e9edf1)}
+#memo-compose-input{max-height:100%;-webkit-overflow-scrolling:touch;scroll-padding-block:18px;touch-action:pan-y}
+#memo-compose-dialog[data-compact=true]{--compose-inset:4px;padding-top:0;border-radius:18px 18px 0 0}
+#memo-compose-dialog[data-compact=true] #memo-compose-dismiss{height:16px;min-height:16px}
+#memo-compose-dialog[data-compact=true] #memo-compose-date{margin-top:4px}
+#memo-compose-dialog[data-compact=true] #memo-compose-input{padding-top:10px;padding-bottom:10px}

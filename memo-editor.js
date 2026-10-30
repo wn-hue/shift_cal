@@ -25,6 +25,8 @@
  }
  function fit(){
   frame=0;
+  // The separate composer owns the viewport, including keyboard dismissal after save.
+  if(overlay.dataset.memoComposing==='true')return;
   const active=overlay.classList.contains('active');
   lock(active);
   document.body.classList.toggle('memo-editor-open',active&&overlay.dataset.editorTab==='memo');
