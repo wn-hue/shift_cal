@@ -148,8 +148,8 @@
  function save(){
   if(closing||date!==selectedDateStr)return;
   if(DayEntryCore.signature(readState(),entrySource)!==entryVersion){alert(tr('다른 곳에서 메모가 변경됐어요. 작성한 내용을 복사한 뒤 다시 열어 주세요.'));return;}
-  const value=fullText().trim();if(!value&&!entrySource){close(true,true);return;}
-  if(persist(entrySource,{text:value,date:entrySource?.date||date,schedule:scheduleValue()}))close(true,true);
+  const value=fullText().trim();if(!value&&!entrySource){close(true,true,'calendar');return;}
+  if(persist(entrySource,{text:value,date:entrySource?.date||date,schedule:scheduleValue()}))close(true,true,'calendar');
  }
 
  add.onclick=()=>open(null);dialog.querySelector('#memo-compose-back').onclick=()=>cancel();dialog.querySelector('#memo-compose-dismiss').onclick=()=>cancel(true,'calendar');dialog.querySelector('#memo-compose-save').onclick=save;

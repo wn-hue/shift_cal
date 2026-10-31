@@ -24,7 +24,7 @@
   const end=new Date(candidate+'T12:00');end.setDate(end.getDate()+dayNumber(e.end)-dayNumber(e.start));
   return {...e,start:candidate+e.start.slice(10),end:stamp(end)+e.end.slice(10),occurrenceDate:candidate};
  }
- function onDate(data,date){return entries(data).map(e=>occurrence(e,date)).filter(e=>e&&(e.allDay?e.end.slice(0,10)>=date:new Date(e.end)>new Date(date+'T00:00')));}
+ function onDate(data,date){if(typeof date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(date))return [];return entries(data).map(e=>occurrence(e,date)).filter(e=>e&&(e.allDay?e.end.slice(0,10)>=date:new Date(e.end)>new Date(date+'T00:00')));}
  function due(data,now){
   const today=stamp(new Date(now)),tomorrow=new Date(today+'T12:00'),yesterday=new Date(today+'T12:00');tomorrow.setDate(tomorrow.getDate()+1);yesterday.setDate(yesterday.getDate()-1);
   const found=new Map();

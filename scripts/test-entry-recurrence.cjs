@@ -5,6 +5,8 @@ const data=e=>({[e.start.slice(0,10)]:{repeat:e}});
 const repeat=(frequency,until=null)=>({...base,repeat:{frequency,until}});
 for(const frequency of ['daily','weekly','monthly','yearly'])A.normalize({shift_day_events:data(repeat(frequency))});
 for(const rule of [{frequency:'hourly',until:null},{frequency:'daily',until:'2026-10-19'},{frequency:'daily',until:'2026-02-30'},{frequency:'daily'},{frequency:'daily',until:null,extra:1}])assert.throws(()=>A.normalize({shift_day_events:data({...base,repeat:rule})}));
+assert.deepEqual(C.onDate(data(repeat('weekly')),null),[]);
+assert.deepEqual(C.onDate(data(repeat('weekly')),undefined),[]);
 assert.equal(C.onDate(data(repeat('daily')),'2026-10-21')[0].start,'2026-10-21T09:00');
 assert.equal(C.onDate(data(repeat('weekly')),'2026-10-21').length,0);assert.equal(C.onDate(data(repeat('weekly')),'2026-10-27')[0].date,'2026-10-20','retain series identity for editing');
 assert.equal(C.onDate(data(repeat('monthly')),'2026-11-20').length,1);assert.equal(C.onDate(data(repeat('yearly')),'2027-10-20').length,1);

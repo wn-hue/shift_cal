@@ -11,7 +11,7 @@ const assert=require('node:assert/strict'),{webkit,chromium}=require('playwright
   await page.goto(process.env.TEST_URL||'http://127.0.0.1:8772/');
   const parent=page.locator('#modal-override'),input=page.locator('#memo-compose-input');
   const open=async()=>{await page.locator('.cal-day[data-date="2026-10-20"] .day-num').tap();await page.evaluate(()=>DayEditorDesigns.showPane('memo'));};
-  const save=async value=>{await input.fill(value);await page.locator('#memo-compose-save').tap();await page.waitForFunction(()=>!document.querySelector('#memo-compose-dialog').open);assert(await parent.evaluate(e=>e.classList.contains('active')));};
+  const save=async value=>{await input.fill(value);await page.locator('#memo-compose-save').tap();await page.waitForFunction(()=>!document.querySelector('#memo-compose-dialog').open);assert(!await parent.evaluate(e=>e.classList.contains('active')));await page.evaluate(()=>{const d=new Date(selectedDateStr+'T12:00');openOverrideModal(selectedDateStr,d,getActualShift(d,currentGroup));DayEditorDesigns.showPane('memo')});};
   await open();assert.equal(await page.locator('.memo-entry-row').count(),1);
   await page.locator('#memo-compose-open').tap();assert.equal(await input.inputValue(),'기존 메모');assert.equal(await page.locator('#memo-compose-details').inputValue(),'문단 유지');await page.locator('#memo-compose-list').tap();
   await page.evaluate(()=>setDayOverride('OFF'));
