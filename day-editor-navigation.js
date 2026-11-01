@@ -7,9 +7,7 @@
   const tab=overlay.dataset.editorTab;
   if(direction>0&&tab==='work'){switchEditorTab('memo');return;}
   if(direction<0&&tab==='memo'){switchEditorTab('work');return;}
-  if(window.ShiftTools?.canLeave&&!ShiftTools.canLeave())return;
-  if(window.DayScheduler?.canLeave&&!DayScheduler.canLeave())return;
-  if($('modal-memo-input').value.trim()!==(dayMemos[selectedDateStr]||'').trim()&&!confirm('작성 중인 메모를 저장하지 않고 이동할까요?'))return;
+  if(window.DayEditorDesigns&&!DayEditorDesigns.flush())return;
   const [y,m,d]=selectedDateStr.split('-').map(Number),next=new Date(y,m-1,d+direction,12),key=toDateKey(next.getFullYear(),next.getMonth(),next.getDate());
   currentCalDate=new Date(next.getFullYear(),next.getMonth(),1);renderCalendar();
   openOverrideModal(key,next,getActualShift(next,currentGroup));

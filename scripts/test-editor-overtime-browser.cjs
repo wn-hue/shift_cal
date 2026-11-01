@@ -30,9 +30,9 @@ const assert=require('node:assert/strict'),{webkit,chromium}=require(process.env
   if(width===390&&engine.name()==='webkit'&&['current','test','test3','test4'].includes(theme))await p.screenshot({path:'/tmp/ot-editor-'+theme+'.png'});
   await toggle.click();await save();assert.deepEqual(await read(),{},'ON restores the scheduled shift');
  }
- // Night OT retains the night shift, and cancelling a draft never saves it.
+ // Night OT retains the night shift, and closing a draft saves its final selection.
  await open('2026-10-27');await toggle.click();await save();assert.equal(await p.evaluate(()=>getActualShift(new Date(2026,9,27),currentGroup).origType),'NIGHT');
- await open('2026-10-20');await toggle.click();await close();assert.deepEqual(await read(),{'2026-10-27':'NO_OT'});
+ await open('2026-10-20');await toggle.click();await close();assert.deepEqual(await read(),{'2026-10-27':'NO_OT','2026-10-20':'NO_OT'});
  // Off-day special work stays available, with one switch for both overtime variants.
  await open('2026-10-22');await extra();await p.locator('[data-override="SPECIAL_DAY"]').click();assert.equal(await toggle.getAttribute('aria-checked'),'true');await toggle.click();
  await p.locator('[data-override="SPECIAL_NIGHT"]').click();assert.equal(await toggle.getAttribute('aria-checked'),'false','same-day OT preference follows special shift selection');await save();assert.equal((await read())['2026-10-22'],'SPECIAL_NIGHT_NO_OT');

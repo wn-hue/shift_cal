@@ -46,6 +46,9 @@ O.T (잔업)|Overtime|延时加班|残業
 이 날짜에만 적용돼요|Applies only to this date|仅适用于此日期|この日付のみに適用
 반차(후)는 잔업이 없어요|No overtime with a second-half leave|后半天休假不含延时加班|後半休には残業がありません
 선택한 근무의 잔업 기준을 적용해요|Overtime follows the selected shift|按所选班次确定延时加班|選択した勤務の残業設定を適用
+저장하고 뒤로가기|Save and go back|保存并返回|保存して戻る
+일정 내용을 입력해 주세요.|Enter the event details.|请输入日程内容。|予定の内容を入力してください。
+저장하지 못했어요. 작성한 내용은 그대로 남아 있어요. 다시 시도해 주세요.|Could not save. Your changes are still here. Please try again.|保存失败，已保留编辑内容，请重试。|保存できませんでした。入力内容は保持されています。もう一度お試しください。
 기본근무로 복구|Restore base shift|恢复基本班次|基本勤務に戻す
 주간특근|Extra day shift|白班加班|日勤特別勤務
 야간특근|Extra night shift|夜班加班|夜勤特別勤務

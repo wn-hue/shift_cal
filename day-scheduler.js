@@ -7,7 +7,7 @@
  const agenda=document.createElement('section');agenda.className='day-agenda';agenda.innerHTML='<div class="agenda-heading"><h3>이날의 일정</h3><button type="button" id="event-add">+ 일정 추가</button></div><div id="event-list"></div><p id="event-status" role="status"></p>';
  panel.append(agenda);
  const form=document.createElement('form');form.id='event-form';form.hidden=true;form.innerHTML=`
- <div class="agenda-heading"><h3 id="event-form-title">새 일정</h3><button type="button" id="event-cancel">취소</button></div>
+ <div class="agenda-heading"><h3 id="event-form-title">새 일정</h3><button type="button" id="event-cancel">닫기</button></div>
  <label class="event-title-label" for="event-title">제목</label><input id="event-title" class="event-title-input" placeholder="어떤 일정인가요?" maxlength="120" required>
  <label class="event-allday">하루 종일<input id="event-all-day" type="checkbox" role="switch"></label>
  <div class="event-dates"><div><label for="event-start-date">시작</label><input id="event-start-date" type="date" required><label class="sr-only" for="event-start-time">시작 시간</label><input id="event-start-time" type="time" required></div><div><label for="event-end-date">종료</label><input id="event-end-date" type="date" required><label class="sr-only" for="event-end-time">종료 시간</label><input id="event-end-time" type="time" required></div></div>
@@ -21,11 +21,11 @@
  function begin(){try{data=AccountDataCore.normalize({[C.key]:JSON.parse(localStorage.getItem(C.key)||'null')})[C.key]||{};}catch{data={};}}
  function read(){return {title:$('event-title').value.trim(),allDay:$('event-all-day').checked,start:$('event-start-date').value+'T'+($('event-all-day').checked?'00:00':$('event-start-time').value),end:$('event-end-date').value+'T'+($('event-all-day').checked?'00:00':$('event-end-time').value),location:$('event-location').value.trim(),notes:$('event-notes').value.trim(),reminder:$('event-reminder').value===''?null:Number($('event-reminder').value)};}
  function dirty(){return !form.hidden&&JSON.stringify(read())!==original;}
- function discard(){return !dirty()||confirm('작성 중인 일정을 저장하지 않고 닫을까요?');}
+ function saveDraft(){if(!dirty())return true;if(!form.reportValidity())return false;form.requestSubmit();return form.hidden;}
  function timeFields(){const all=$('event-all-day').checked;for(const id of ['event-start-time','event-end-time']){$(id).hidden=all;$(id).required=!all;} $('event-reminder').options[1].textContent=all?'당일 오전 9시':'일정 시작할 때';$('event-alarm-help').textContent=(all?'종일 일정은 오전 9시를 기준으로 알려드려요. ':'')+'웹 화면이 열려 있을 때 알려드려요. 잠금 화면 알림은 저장 후 휴대폰 캘린더에 추가해 설정해 주세요.';}
  function edit(entry){
   if(window.MemoComposer?.openEvent){window.MemoComposer.openEvent(entry);return;}
-  if(!discard())return;
+  if(!saveDraft())return;
   editing=entry?{id:entry.id,date:entry.date}:null;
   const start=entry?.start||selectedDateStr+'T09:00',end=entry?.end||selectedDateStr+'T10:00';
   $('event-title').value=entry?.title||'';$('event-all-day').checked=entry?.allDay||false;
@@ -56,7 +56,7 @@
   (next[date]??={})[id]=event;persist(next);overview();$('event-status').textContent=date===selectedDateStr?'일정을 저장했어요.':date.replace(/-/g,'. ')+'에 일정을 저장했어요.';
  }catch(error){$('event-error').textContent=error.message;}};
  $('event-delete').onclick=()=>{if(!editing||!confirm('이 일정을 삭제할까요?'))return;try{begin();const next=JSON.parse(JSON.stringify(data));if(next[editing.date]){delete next[editing.date][editing.id];if(!Object.keys(next[editing.date]).length)delete next[editing.date];}persist(next);overview();$('event-status').textContent='일정을 삭제했어요.';}catch(e){$('event-error').textContent=e.message;}};
- $('event-add').onclick=()=>edit(null);$('event-cancel').onclick=()=>{if(discard())overview();};$('event-all-day').onchange=timeFields;
+ $('event-add').onclick=()=>edit(null);$('event-cancel').onclick=()=>{if(saveDraft())overview();};$('event-all-day').onchange=timeFields;
  $('event-start-date').onchange=()=>{if($('event-end-date').value<$('event-start-date').value)$('event-end-date').value=$('event-start-date').value;};
  async function exportEvent(e){
   const report=text=>{const target=document.getElementById('memo-compose-status')||$('event-status');target.textContent=text;target.hidden=false;};
@@ -82,9 +82,9 @@
   try{for(const [k,v]of Object.entries(seen))if(now-v>172800000)delete seen[k];localStorage.setItem('shift_event_reminders_seen',JSON.stringify(seen));}catch{}
   toast.querySelector('p').textContent=due.map(e=>e.title+' · '+(e.allDay?'종일':e.start.slice(11))).join('\n');toast.hidden=false;
  }
- const close=closeModalDirect;closeModalDirect=function(){if(!discard())return;close();};
+ const close=closeModalDirect;closeModalDirect=function(){if(!saveDraft())return;close();};
  window.addEventListener('storage',e=>{if(e.key===C.key||e.key===null){renderCalendar();if(form.hidden)list();}});
  window.addEventListener('shift-account-changed',()=>{form.hidden=true;toast.hidden=true;announced.clear();if(loadedDate)open(selectedDateStr);});
  document.addEventListener('visibilitychange',tick);setInterval(tick,15000);
- window.DayScheduler={begin,open,decorate,tick,exportEvent,canLeave:discard};renderCalendar();tick();
+ window.DayScheduler={begin,open,decorate,tick,exportEvent,canLeave:saveDraft};renderCalendar();tick();
 })();

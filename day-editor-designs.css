@@ -225,3 +225,5 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design=toss] #w
 #modal-override#modal-override[data-editor-design=kakao] #kakao-date{padding:4px 0;background:transparent;font-size:13px}
 #modal-override#modal-override[data-editor-design] .design-extra:has(.design-extra-choices[hidden]){display:none}
 @media(prefers-reduced-motion:reduce){#design-ot-toggle::before,#design-ot-toggle>span{transition:none}}
+
+#modal-override#modal-override[data-editor-design] .design-save-error{color:#b52f46;background:#fff0f2;border-radius:12px;padding:12px;font-size:13px;line-height:1.5;margin:0 0 12px}

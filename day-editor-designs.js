@@ -14,13 +14,14 @@
   UNPAID_HALF_POST:svg('<circle cx="12" cy="12" r="8"/><path d="M12 7v5h4m-8 3h3"/>')
  });
  function make(tag,cls,html){const e=document.createElement(tag);e.className=cls;e.innerHTML=html;return e;}
- const bar=make('div','design-toolbar',`<button type="button" id="design-back" aria-label="근무 변경 닫기">${svg('<path d="m15 5-7 7 7 7"/>')}<span>취소</span></button><strong id="design-title">근무 변경</strong><div class="design-toolbar-actions"><button type="button" id="design-done" aria-label="변경사항 저장">${svg('<path d="m5 12 4 4L19 6"/>')}</button></div>`);
+ const bar=make('div','design-toolbar',`<button type="button" id="design-back" aria-label="근무 변경 닫기">${svg('<path d="m15 5-7 7 7 7"/>')}<span>닫기</span></button><strong id="design-title">근무 변경</strong><div class="design-toolbar-actions"><button type="button" id="design-done" aria-label="변경사항 저장">${svg('<path d="m5 12 4 4L19 6"/>')}</button></div>`);
  sheet.prepend(bar);bar.querySelector('.design-toolbar-actions').prepend($('editor-sticker-preview'));
  bar.prepend($('editor-dismiss'));
  const hero=make('header','design-hero','<p id="design-date"></p><h2 id="design-question">어떤 근무로<br>바꿀까요?</h2><p class="design-base"><span>기본 근무</span> <strong id="design-base-name"></strong></p><div class="design-week" role="group" aria-label="날짜 선택"></div><p class="design-bubble" aria-live="polite"><span id="design-bubble-date"></span><strong id="design-bubble-shift"></strong></p>');
  content.prepend(hero);
  const dateNav=make('div','kakao-date-nav',`<button type="button" id="kakao-prev-day" aria-label="이전 날짜">${svg('<path d="m14 5-7 7 7 7"/>')}</button><strong id="kakao-date"></strong><button type="button" id="kakao-next-day" aria-label="다음 날짜">${svg('<path d="m10 5 7 7-7 7"/>')}</button>`);hero.append(dateNav);
  const nav=make('div','design-tabs','<button type="button" data-pane="work" aria-pressed="true">근무</button><button type="button" data-pane="attendance" aria-pressed="false">근태 · 휴가</button><button type="button" data-pane="memo" aria-pressed="false">메모</button>');hero.after(nav);
+ const saveError=make('p','design-save-error','');saveError.id='design-save-error';saveError.hidden=true;saveError.setAttribute('role','alert');nav.after(saveError);
  const main=work.querySelector('.shift-scroll'),attendance=work.querySelector('.attendance-choices');
  main.classList.add('design-main-choices');
  const daySummary=make('section','kakao-summary','<div class="kakao-base-bubble"><small>기본 근무</small><div class="kakao-summary-shift"><span id="kakao-base-badge" class="kakao-summary-badge" aria-hidden="true"></span><strong id="kakao-base-label"></strong></div></div><div class="kakao-selection-bubble"><small id="kakao-selection-caption"></small><div class="kakao-summary-shift"><span id="kakao-selection-badge" class="kakao-summary-badge" aria-hidden="true"></span><strong id="kakao-selection-label"></strong></div><p id="kakao-change-copy"></p></div><p id="kakao-save-state" aria-live="polite"></p></section>');
@@ -32,7 +33,7 @@
  main.after(extra,attend);attend.append(attendance);
  const memoLink=make('button','design-memo-link',`<span class="design-row-icon">${svg('<path d="M5 3h14v18H5zM9 8h6m-6 4h6m-6 4h3"/>')}</span><span><strong>메모 · 일정</strong><small id="design-note-value">추가할 내용이 있나요?</small></span><span class="design-chevron" aria-hidden="true">›</span>`);memoLink.type='button';memoLink.onclick=()=>window.MemoComposer?MemoComposer.enter(null):switchEditorTab('memo');attend.after(memoLink);
  const reset=$('modal-override').querySelector('.override-reset');reset.classList.add('design-reset');memoLink.after(reset);reset.querySelector('span').textContent='기본근무로 복구';
- const footer=make('footer','design-footer','<button type="button" id="design-cancel">취소</button>');
+ const footer=make('footer','design-footer','<button type="button" id="design-cancel">닫기</button>');
  sheet.append(footer);footer.append($('apply-preview'));
  const preview=$('change-preview');const pay=make('details','design-pay','<summary>예상 급여 변화</summary>');preview.before(pay);pay.append(preview);const payEmpty=make('p','kakao-pay-empty','근무를 선택하면 예상 급여 변화를 확인할 수 있어요.');pay.append(payEmpty);
  // Keep the original buttons, validators and palette hooks; only their visual children change.
@@ -49,7 +50,7 @@
   const animation=detail.animate([{height:from+'px'},{height:to+'px'}],{duration:220,easing:'cubic-bezier(.2,.7,.2,1)',fill:'both'}),state={animation,expand};detailMotion.set(detail,state);
   animation.finished.then(()=>{if(detailMotion.get(detail)!==state)return;detail.open=expand;settleDetails(detail);},()=>{});
  });
- let pane='work',saving=false,opening=false;
+ let pane='work',saving=false,opening=false,saveFailed=false;
  const design=()=>document.body.dataset.prefTheme==='test3'?'apple':document.body.dataset.prefTheme==='test4'?'kakao':'toss';
  const dateObj=key=>new Date(key+'T12:00:00');
  const tr=s=>window.AppI18n?.t(s)||s;
@@ -57,8 +58,10 @@
  const dateLabel=date=>new Intl.DateTimeFormat(locale(),{month:'long',day:'numeric',weekday:'long'}).format(date);
  function text(id,value){const e=$(id);if(e.textContent!==value)e.textContent=value;}
  function memoDirty(){return $('modal-memo-input').value.trim()!==(dayMemos[selectedDateStr]||'').trim();}
- function dirty(){return !!ShiftTools.pending()||memoDirty();}
- function goDate(key){if(key===selectedDateStr)return;if(!ShiftTools.canLeave()||!DayScheduler.canLeave())return;if(memoDirty()&&!confirm('작성 중인 메모를 저장하지 않고 이동할까요?'))return;const d=dateObj(key);currentCalDate=new Date(d.getFullYear(),d.getMonth(),1);renderCalendar();openOverrideModal(key,d,getActualShift(d,currentGroup));}
+ function dirty(){return saveFailed||!!ShiftTools.pending()||memoDirty();}
+ function failSave(message){saveFailed=true;saveError.textContent=tr(message);saveError.hidden=false;saveError.scrollIntoView({block:'nearest'});return false;}
+ function flush(){return save(undefined,{keepOpen:true,stayPane:true});}
+ function goDate(key){if(key===selectedDateStr)return;if(!flush())return;const d=dateObj(key);currentCalDate=new Date(d.getFullYear(),d.getMonth(),1);renderCalendar();openOverrideModal(key,d,getActualShift(d,currentGroup));}
  function week(){const host=hero.querySelector('.design-week');host.replaceChildren();const d=dateObj(selectedDateStr),start=new Date(d);start.setDate(d.getDate()-(design()==='kakao'?(d.getDay()+6)%7:d.getDay()));for(let i=0;i<7;i++){const day=new Date(start);day.setDate(start.getDate()+i);const key=toDateKey(day.getFullYear(),day.getMonth(),day.getDate()),shift=getActualShift(day,currentGroup);const b=make('button','design-week-day','<small></small><strong></strong><span class="design-week-shift"></span>');b.type='button';b.querySelector('small').textContent=new Intl.DateTimeFormat(locale(),{weekday:'short'}).format(day);b.querySelector('strong').textContent=day.getDate();const shownType=regularType(shift.type,getBaseShift(day,currentGroup).type);b.querySelector('span').textContent=shorts[shownType]||shift.name;b.querySelector('span').dataset.shift=shownType;b.setAttribute('aria-label',dateLabel(day));b.setAttribute('aria-pressed',String(key===selectedDateStr));b.dataset.date=key;b.onclick=()=>goDate(key);host.append(b);}}
  // Overtime uses the existing per-date override types, keeping payroll and sync consistent.
  function selectedShift(){const pending=ShiftTools.pending();return pending?ShiftTools.shiftAt(selectedDateStr,{[selectedDateStr]:pending.type}):getActualShift(dateObj(selectedDateStr),currentGroup);}
@@ -88,7 +91,7 @@
  for(const [id,delta]of [['kakao-prev-day',-1],['kakao-next-day',1]])$(id).onclick=()=>{const d=dateObj(selectedDateStr);d.setDate(d.getDate()+delta);goDate(toDateKey(d.getFullYear(),d.getMonth(),d.getDate()));};
  nav.addEventListener('click',e=>{const b=e.target.closest('button');if(b){if(b.dataset.pane==='memo'&&window.MemoComposer)MemoComposer.enter(null);else showPane(b.dataset.pane);}});
  const switchTab=switchEditorTab;switchEditorTab=function(tab){if(!opening&&tab==='work'&&!$('event-form').hidden){if(!DayScheduler.canLeave())return;DayScheduler.open(selectedDateStr);}switchTab(tab);if(tab==='stickers')return;if(tab==='memo')pane='memo';else if(pane==='memo')pane='work';update();};
- const open=openOverrideModal;openOverrideModal=function(...args){pane='work';[extra,attend,pay].forEach(settleDetails);overlay.dataset.editorDesign=design();extra.open=true;attend.open=design()==='kakao';pay.open=false;opening=true;try{open(...args);}finally{opening=false;}week();update();};
+ const open=openOverrideModal;openOverrideModal=function(...args){pane='work';saveFailed=false;saveError.hidden=true;[extra,attend,pay].forEach(settleDetails);overlay.dataset.editorDesign=design();extra.open=true;attend.open=design()==='kakao';pay.open=false;opening=true;try{open(...args);}finally{opening=false;}week();update();};
  const choose=setDayOverride;setDayOverride=function(type){
   const shift=selectedShift(),base=getBaseShift(dateObj(selectedDateStr),currentGroup).type;
   if(['DAY','NIGHT','SPECIAL_DAY','SPECIAL_NIGHT'].includes(type)&&canToggleOT(shift,base)&&shift.hasOt===false)type=withOT(type,false);
@@ -104,33 +107,34 @@
  // All presentations save the same pending shift and memo; event forms keep their own save action.
  // Memo completion commits once, then returns to the saved day detail.
  function save(memoValue,options={}){
-  if(!$('event-form').hidden){$('event-form').requestSubmit();return false;}
-  const pending=ShiftTools.pending();if(pending&&pending.date!==selectedDateStr)return false;if(pending){const reason=validateDayOverride(selectedDateStr,pending.type);if(reason){alert(reason);return false;}}
+  if(!DayScheduler.canLeave())return false;
+  const pending=ShiftTools.pending();if(pending&&pending.date!==selectedDateStr)return false;if(pending){const reason=validateDayOverride(selectedDateStr,pending.type);if(reason)return failSave(reason);}
   const val=typeof memoValue==='string'?memoValue.trim():$('modal-memo-input').value.trim();
-  if(options.bundle){try{AccountDataCore.normalize(options.bundle)}catch(error){alert(error.message);return false;}}
+  if(options.bundle){try{AccountDataCore.normalize(options.bundle)}catch(error){return failSave(error.message);}}
   if(options.memoItems&&(!DayMemosCore.valid(options.memoItems)||DayMemosCore.text(options.memoItems)!==val))return false;
-  if(val.length>16000){alert('하루 메모는 총 16,000자까지 저장할 수 있어요.');return false;}
-  if(!options.bundle&&!options.memoItems&&!pending&&val===(dayMemos[selectedDateStr]||'').trim()){if(!options.keepOpen)closeModalDirect();return true;}
+  if(val.length>16000)return failSave('하루 메모는 총 16,000자까지 저장할 수 있어요.');
+  if(!saveFailed&&!options.bundle&&!options.memoItems&&!pending&&val===(dayMemos[selectedDateStr]||'').trim()){if(!options.keepOpen)closeModalDirect();return true;}
+  const keys=new Set(['shift_overrides_'+currentGroup,'shift_day_memos',...(options.memoItems?[DayMemosCore.key]:[]),...Object.keys(options.bundle||{})]);
+  const previousStorage=Object.fromEntries([...keys].map(key=>[key,localStorage.getItem(key)])),previousMemos=dayMemos,previousOverrides={...overrides};
+  function rollback(){dayMemos=previousMemos;overrides=previousOverrides;for(const [key,value] of Object.entries(previousStorage)){try{value===null?localStorage.removeItem(key):localStorage.setItem(key,value);}catch{}}if(pending&&!ShiftTools.pending())choose(pending.type);}
   saving=true;try{
-   if(options.bundle){const previous=Object.fromEntries(Object.keys(options.bundle).map(k=>[k,localStorage.getItem(k)]));try{for(const [key,value]of Object.entries(options.bundle))localStorage.setItem(key,JSON.stringify(value));}catch(error){for(const [key,value]of Object.entries(previous)){try{value===null?localStorage.removeItem(key):localStorage.setItem(key,value)}catch{}}alert('저장 공간을 확인해 주세요. 작성한 내용은 그대로 남아 있어요.');return false;}
-    dayMemos=options.bundle.shift_day_memos;
-   }
-   if(!ShiftTools.commit())return false;
+   if(options.bundle){for(const [key,value]of Object.entries(options.bundle))localStorage.setItem(key,JSON.stringify(value));dayMemos=options.bundle.shift_day_memos;}
+   if(!ShiftTools.commit()){rollback();return false;}
    if(options.memoItems){let items;try{items=JSON.parse(localStorage.getItem(DayMemosCore.key)||'{}')}catch{items={}}
     if(Object.keys(options.memoItems).length)items[selectedDateStr]=options.memoItems;else delete items[selectedDateStr];
     localStorage.setItem(DayMemosCore.key,JSON.stringify(items));
    }
-   if(val)dayMemos[selectedDateStr]=val;else delete dayMemos[selectedDateStr];
-   localStorage.setItem('shift_day_memos',JSON.stringify(dayMemos));$('modal-memo-input').value=val;
-   window.AccountSync?.changed();window.GoogleSync?.changed(selectedDateStr);renderCalendar();if(options.keepOpen){week();showPane('memo');}else closeModalDirect();return true;
-  }finally{saving=false;}
+   const nextMemos={...dayMemos};if(val)nextMemos[selectedDateStr]=val;else delete nextMemos[selectedDateStr];
+   localStorage.setItem('shift_day_memos',JSON.stringify(nextMemos));dayMemos=nextMemos;$('modal-memo-input').value=val;saveFailed=false;saveError.hidden=true;
+   window.AccountSync?.changed();window.GoogleSync?.changed(selectedDateStr);renderCalendar();if(options.keepOpen){week();if(options.stayPane)update();else showPane('memo');}else closeModalDirect();return true;
+  }catch(error){rollback();return failSave('저장하지 못했어요. 작성한 내용은 그대로 남아 있어요. 다시 시도해 주세요.');}finally{saving=false;}
  }
  $('apply-preview').onclick=save;$('design-done').onclick=save;saveMemoDirect=save;
- const close=closeModalDirect;closeModalDirect=function(){if(!saving&&dirty()&&!confirm('변경사항을 저장하지 않고 닫을까요?'))return;close();};
+ const close=closeModalDirect;closeModalDirect=function(){if($('memo-compose-dialog')?.open)return window.MemoComposer?.saveAndClose('calendar');if(!saving&&!flush())return false;close();return true;};
  $('design-back').onclick=()=>pane!=='work'?showPane('work'):closeModalDirect();$('design-cancel').onclick=()=>closeModalDirect();
  $('modal-memo-input').addEventListener('input',update);
  let lastTheme=document.body.dataset.prefTheme,lastLanguage=document.body.dataset.uiLanguage;
  new MutationObserver(()=>{const theme=document.body.dataset.prefTheme,language=document.body.dataset.uiLanguage;if(theme===lastTheme&&language===lastLanguage)return;const themeChanged=theme!==lastTheme;lastTheme=theme;lastLanguage=language;if(overlay.classList.contains('active')){if(themeChanged){[extra,attend,pay].forEach(settleDetails);extra.open=true;attend.open=design()==='kakao';overlay.dataset.editorDesign=design();WorkEditor.filterOptions(selectedDateStr);}update();week();}}).observe(document.body,{attributes:true,attributeFilter:['data-pref-theme','data-ui-language']});
  new MutationObserver(()=>{overlay.dataset.designEvent=String(!$('event-form').hidden)}).observe($('event-form'),{attributes:true,attributeFilter:['hidden']});
- window.DayEditorDesigns={save,showPane};
+ window.DayEditorDesigns={save,flush,showPane};
 })();
