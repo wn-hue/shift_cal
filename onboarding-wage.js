@@ -13,16 +13,17 @@
  function paint(){
   dialog.dataset.wageStep=stage;
   const importing=stage==='import',editing=stage==='allowances';
-  const titles={base:'기본시급을 알려주세요',ordinary:'통상시급은 얼마인가요?',choice:'추가수당이 있나요?',allowances:'추가수당을 입력해 주세요',import:'급여 문자로 채우기'};
-  const descriptions={base:'급여명세서에 적힌 기본시급을 입력해 주세요.',ordinary:'기본시급과 별도로 적힌 통상시급을 확인해 주세요.',choice:'매월 정해진 금액으로 받는 고정수당이 있나요?',allowances:'받는 수당의 월 금액만 입력하세요. 없으면 0원이에요.',import:'시급·수당과 세금 추정 기준을 가져올 수 있어요. 선택 사항이에요.'};
+  const titles={base:'기본시급을 알려주세요',ordinary:'통상시급은 얼마인가요?',choice:'추가수당이 있나요?',allowances:'고정수당을 알려주세요',import:'급여 문자로 채우기'};
+  const descriptions={base:'급여명세서에 적힌 기본시급을 입력해 주세요.',ordinary:'기본시급과 별도로 적힌 통상시급을 확인해 주세요.',choice:'매월 정해진 금액으로 받는 고정수당이 있나요?',allowances:'수당 종류를 고르고 매월 받는 금액을 입력해 주세요.',import:'시급·수당과 세금 추정 기준을 가져올 수 있어요. 선택 사항이에요.'};
   $('payroll-sms-title').textContent=titles[stage];$('wage-import-intro').textContent=descriptions[stage];
   $('guided-wage-progress').textContent=importing?'문자 가져오기 · 선택':stage==='base'?'시급 설정 1 / 3':stage==='ordinary'?'시급 설정 2 / 3':'시급 설정 3 / 3';
   back.hidden=stage==='base';
   const base=amount('wage-manual-base'),ordinary=amount('wage-manual-ordinary');
   summary.textContent=[stage!=='base'&&base>0?'기본시급 '+money(base):'',(stage==='choice'||editing||importing)&&ordinary>0?'통상시급 '+money(ordinary):''].filter(Boolean).join(' · ');
-  summary.hidden=!summary.textContent;
+  summary.hidden=editing||!summary.textContent;
   only(cards,stage==='base'||stage==='ordinary');only(baseLabel,stage==='base');only(ordinaryLabel,stage==='ordinary');
-  choice.hidden=stage!=='choice';only(heading,editing);only(allowances,editing);only($('wage-legacy-row'),editing);
+  choice.hidden=stage!=='choice';only(heading,false);only(allowances,false);only($('wage-legacy-row'),false);
+  if(editing)OnboardingAllowances.show();else OnboardingAllowances.hide();
   $('wage-legacy-row').hidden=false;
   for(const node of importNodes)only(node,importing);
   optional.hidden=importing;
@@ -50,13 +51,14 @@
   OnboardingFlowMotion.cancel(content);enabled=options?.onboarding===true;busy=false;back.disabled=false;dialog.dataset.guided=String(enabled);
   dialog.querySelectorAll('.guided-offstage').forEach(node=>node.classList.remove('guided-offstage'));
   content.scrollTop=0;
-  top.hidden=optional.hidden=!enabled;summary.hidden=choice.hidden=true;
+  top.hidden=optional.hidden=!enabled;summary.hidden=choice.hidden=true;OnboardingAllowances.hide();
   only($('wage-import-info'),!enabled);
   if(!enabled){
    delete dialog.dataset.wageStep;
    $('payroll-sms-title').textContent='시급 설정';$('wage-import-intro').textContent='시급과 수당을 확인해 주세요. 금액을 직접 입력해도 돼요.';apply.textContent='설정 완료하기';
    $('wage-legacy-row').firstChild.textContent='기존 고정수당 ';return;
   }
+  OnboardingAllowances.refresh();
   hasAllowance=keys.some(key=>amount('wage-'+key)>0)?'yes':null;
   returnStage='base';stage=options?.importFirst?'import':'base';
   $('wage-legacy-row').firstChild.textContent='기타 고정수당 ';paint();
@@ -79,6 +81,7 @@
    if(hasAllowance==='yes'){stop();go('allowances');return;}
    for(const key of keys){$('wage-'+key).value='0';$('wage-'+key).dispatchEvent(new Event('input',{bubbles:true}));}
   }
+  if(stage==='allowances'&&!OnboardingAllowances.validate()){stop();return;}
   // The original save handler validates and commits all amounts exactly once.
  },true);
  choice.addEventListener('click',event=>{
@@ -88,10 +91,10 @@
  });
  optional.addEventListener('click',()=>{returnStage=stage;go('import');});
  back.addEventListener('click',()=>go(stage==='import'?returnStage:stage==='allowances'?'choice':stage==='choice'?'ordinary':'base',-1));
- dialog.addEventListener('wage-draft-imported',()=>{if(enabled&&stage==='import'){const total=keys.reduce((sum,key)=>sum+amount('wage-'+key),0);summary.textContent=[amount('wage-manual-base')>0?'기본시급 '+money(amount('wage-manual-base')):'',amount('wage-manual-ordinary')>0?'통상시급 '+money(amount('wage-manual-ordinary')):'',total>0?'고정수당 '+money(total):''].filter(Boolean).join(' · ');summary.hidden=!summary.textContent;}});
+ dialog.addEventListener('wage-draft-imported',event=>{if(enabled&&stage==='import'){if(event.detail?.ok)OnboardingAllowances.refresh();const total=keys.reduce((sum,key)=>sum+amount('wage-'+key),0);summary.textContent=[amount('wage-manual-base')>0?'기본시급 '+money(amount('wage-manual-base')):'',amount('wage-manual-ordinary')>0?'통상시급 '+money(amount('wage-manual-ordinary')):'',total>0?'고정수당 '+money(total):''].filter(Boolean).join(' · ');summary.hidden=!summary.textContent;}});
  function keepInputVisible(){
   const input=document.activeElement;
-  if(!dialog.open||!content.contains(input)||!input.matches('input,textarea'))return;
+  if(!dialog.open||!content.contains(input)||!input.matches('input,textarea,select'))return;
   const viewport=content.getBoundingClientRect(),label=input.closest('label')?.getBoundingClientRect();
   const field=label&&label.height<viewport.height-16?label:input.getBoundingClientRect();
   if(field.bottom>viewport.bottom-8)content.scrollTop+=field.bottom-viewport.bottom+8;

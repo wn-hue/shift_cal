@@ -1,5 +1,17 @@
 /* UI-only translations. User notes, event names, meals and source documents stay untouched. */
 window.AppTranslations=Object.fromEntries(`
+고정수당을 알려주세요|Tell us your fixed allowances|请填写固定津贴|固定手当を教えてください
+수당 종류를 고르고 매월 받는 금액을 입력해 주세요.|Choose an allowance and enter the amount you receive each month.|选择津贴种类，输入每月领取的金额。|手当の種類を選び、毎月受け取る金額を入力してください。
+수당 선택|Choose allowance|选择津贴|手当を選択
+직접 추가할 수당이 없어요|No allowances to add manually|无需手动添加津贴|手入力する手当はありません
+고정수당 종류|Allowance type|津贴种类|手当の種類
+고정수당 입력|Fixed allowances|填写固定津贴|固定手当の入力
+기타 고정수당|Other allowance|其他固定津贴|その他の固定手当
+기타수당|Other|其他津贴|その他
+＋ 수당 추가|＋ Add allowance|＋ 添加津贴|＋ 手当を追加
+수당 종류를 선택해 주세요.|Choose an allowance type.|请选择津贴种类。|手当の種類を選んでください。
+이미 선택한 수당이에요. 다른 종류를 선택해 주세요.|This allowance is already selected. Choose another type.|已选择此津贴，请选择其他种类。|選択済みの手当です。別の種類を選んでください。
+
 시급과 수당을 확인해 주세요. 금액을 직접 입력해도 돼요.|Review your hourly pay and allowances. You can enter amounts manually.|请确认时薪和津贴，也可以直接输入金额。|時給と手当をご確認ください。金額を直接入力することもできます。
 급여 문자를 복사한 뒤 아래 버튼을 누르면 시급·수당이 자동으로 채워져요.|Copy your pay message, then tap below to fill in your hourly pay and allowances.|复制工资短信后，点击下方按钮即可自动填写时薪和津贴。|給与メッセージをコピーして下のボタンを押すと、時給と手当が自動入力されます。
 입사일 기준 자동 계산|Calculated from your start date|根据入职日期自动计算|入社日をもとに自動計算
@@ -185,7 +197,7 @@ O.T (잔업)|Overtime|延时加班|残業
 테마|Theme|主题|テーマ
 달력 스타일|Calendar style|日历样式|カレンダーのスタイル
 1. 낮밤|1. Day & night|1. 日夜|1. 昼と夜
-2. 따뜻함|2. Warmth|2. 暖意|2. ぬくもり
+2. 베이지|2. Beige|2. 米色|2. ベージュ
 3. 블루컬러|3. Blue|3. 蓝色|3. ブルー
 4. 그레이|4. Gray|4. 灰色|4. グレー
 5. 다크모드|5. Dark|5. 深色|5. ダーク
@@ -193,7 +205,7 @@ O.T (잔업)|Overtime|延时加班|残業
 7. 테스트2|7. Test 2|7. 测试2|7. テスト2
 8. 테스트3|8. Test 3|8. 测试3|8. テスト3
 낮밤|Day & night|日夜|昼と夜
-따뜻함|Warmth|暖意|ぬくもり
+베이지|Beige|米色|ベージュ
 테스트1|Test 1|测试1|テスト1
 테스트2|Test 2|测试2|テスト2
 테스트3|Test 3|测试3|テスト3

@@ -142,6 +142,7 @@
     for(const input of amountInputs){input.addEventListener('input',()=>{input.classList.remove('wage-filled');input.setAttribute('aria-invalid','false');manualStatus.textContent='';importError=false;if(input===manualBase){conversionMonthly=0;el('wage-conversion').hidden=true;}});}
     function readAmount(input,label,positive){const raw=input.value.trim(),n=Number(raw.replace(/,/g,''));if(!/^(?:[0-9]+|[1-9][0-9]{0,2}(?:,[0-9]{3})+)$/.test(raw)||!Number.isSafeInteger(n)||n<(positive?1:0)||n>1000000000){input.setAttribute('aria-invalid','true');input.focus();throw Error(label+'을 '+(positive?'1':'0')+'원 이상 10억 원 이하의 정수로 입력해 주세요.');}return n;}
     api.validateHourly=kind=>{try{return readAmount(kind==='base'?manualBase:manualOrdinary,kind==='base'?'기본시급':'통상시급',true);}catch(error){manualStatus.textContent=error.message;return null;}};
+    api.validateAllowance=(input,label)=>{try{return readAmount(input,label,false);}catch(error){manualStatus.textContent=error.message;return null;}};
     apply.addEventListener('click',()=>{
         const wages={};manualStatus.textContent='';
         try{
