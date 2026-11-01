@@ -1,5 +1,12 @@
 /* UI-only translations. User notes, event names, meals and source documents stay untouched. */
 window.AppTranslations=Object.fromEntries(`
+시급을 확인하면 내 예상 급여를 볼 수 있어요.|Check your hourly rates to see your estimated pay.|确认时薪后即可查看预估工资。|時給を確認すると予想給与がわかります。
+계약직은 현재 입사일을 선택하고, 정규직 전환 후 변경해 주세요. 입사일은 전체 → 연차 설정에서 바꿀 수 있어요.|Contract staff can use their current start date and update it after becoming permanent. You can change it in All → Leave settings.|合同员工请先选择当前入职日期，转正后再修改。可在“全部 → 年假设置”中更改。|契約社員の方は現在の入社日を選び、正社員登用後に変更してください。「全体 → 有休設定」で変更できます。
+3조 2교대 기준이에요. 근무조는 나중에도 바꿀 수 있어요.|Based on 3 teams and 2 shifts. You can change your team later.|以三班两倒为准，之后也可以更改班组。|3組2交替が基準です。勤務組は後から変更できます。
+급여 문자로 간편하게|Use your payslip message|用工资短信轻松填写|給与明細メッセージで簡単に
+복사한 문자를 가져오면 자동으로 채워져요.|Import a copied message to fill the amounts.|导入复制的短信即可自动填写。|コピーしたメッセージから金額を自動入力します。
+문자가 없어도 괜찮아요|No message? No problem|没有短信也没关系|メッセージがなくても大丈夫
+기본시급과 통상시급을 직접 입력해요.|Enter your base and ordinary hourly rates.|直接输入基本时薪和通常时薪。|基本時給と通常時給を直接入力できます。
 문자로 채우고, 숫자를 눌러 바로 수정하세요. 직접 입력해도 돼요.|Fill from a message, then edit the amounts here. You can also enter them yourself.|通过短信填入后，可直接修改金额，也可以手动输入。|メッセージから入力し、その場で金額を修正できます。手入力も可能です。
 복사한 급여 문자로 채우기|Fill from copied payslip|从已复制的工资短信填入|コピーした給与明細から入力
 직접 붙여넣기|Paste manually|手动粘贴|手動で貼り付け
@@ -548,3 +555,9 @@ Apple 계정으로 계속하기|Continue with Apple|使用 Apple 继续|Appleで
 필터|Filters|筛选|絞り込み
 물건·장소 검색|Search items or places|搜索物品或地点|物・場所を検索
 `.trim().split('\n').map(line=>{const [ko,en,zh,ja]=line.split('|');return [ko,{en,zh,ja}]}));
+
+Object.assign(window.AppTranslations, {
+ '입사일을\n알려주세요.': {en:'When did you join?',zh:'请告诉我们\n您的入职日期',ja:'入社日を\n教えてください'},
+ '어느 조에서\n근무하시나요?': {en:'Which team are\nyou on?',zh:'您在哪个\n班组工作？',ja:'どの組で\n働いていますか？'},
+ '시급을 설정하면\n준비가 끝나요': {en:'Set your hourly pay\nand you’re ready',zh:'设置好时薪\n就准备好了',ja:'時給を設定すれば\n準備完了です'}
+});

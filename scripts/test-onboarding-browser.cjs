@@ -7,16 +7,25 @@ const address=process.env.TEST_URL||'http://127.0.0.1:8772/';
   page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());await page.clock.setFixedTime(new Date('2026-10-20T03:00:00Z'));
   await page.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await page.goto(address);
   const wizard=page.locator('#onboarding-dialog'),next=page.locator('#onboarding-next');
+  const checkLayout=async()=>{
+   await page.waitForFunction(()=>{const img=document.querySelector('.onboarding-panel:not([hidden]) .onboarding-art img');return img?.complete&&img.naturalWidth>0});
+   const layout=await page.evaluate(()=>{
+    const q=s=>document.querySelector(s),box=s=>q(s).getBoundingClientRect(),panel=q('.onboarding-panel:not([hidden])'),control=panel.querySelector('input,.onboarding-group-list,.onboarding-import-card').getBoundingClientRect();
+    return {align:getComputedStyle(q('#onboarding-title')).textAlign,heading:box('#onboarding-heading').x,control:control.x,next:box('#onboarding-next').x,width:control.width,nextWidth:box('#onboarding-next').width,artBottom:panel.querySelector('.onboarding-art').getBoundingClientRect().bottom,controlTop:control.top,panelBottom:panel.getBoundingClientRect().bottom,footerTop:box('.onboarding-footer').top,overflow:q('#onboarding-dialog').scrollWidth>innerWidth};
+   });
+   assert.equal(layout.align,'left');assert(Math.abs(layout.heading-layout.control)<1);assert(Math.abs(layout.next-layout.control)<1);assert(Math.abs(layout.width-layout.nextWidth)<1);assert(layout.artBottom<=layout.controlTop+1);assert(layout.panelBottom<=layout.footerTop+1);assert(!layout.overflow);
+  };
+
   assert.equal(await wizard.evaluate(e=>e.open),true);assert.equal(await page.locator('#onboarding-step-label').textContent(),'1 / 3');
-  await next.click();assert.match(await page.locator('#onboarding-error').textContent(),/올바른/);
+  await checkLayout();await next.click();assert.match(await page.locator('#onboarding-error').textContent(),/올바른/);
   await page.locator('#onboarding-date').fill('2027-01-01');await next.click();assert.match(await page.locator('#onboarding-error').textContent(),/올바른/);
-  await page.locator('#onboarding-date').fill('2026-09-16');if(width===390)await page.screenshot({path:'/tmp/onboarding-date-'+engine.name()+'.png'});await next.click();
-  assert.equal(await page.locator('#onboarding-step-label').textContent(),'2 / 3');assert.equal(await next.isDisabled(),true);
+  await page.locator('#onboarding-date').fill('2026-09-16');if(width===390)await page.locator('#onboarding-heading').focus();if(width===390)await page.screenshot({path:'/tmp/onboarding-date-'+engine.name()+'.png'});await next.click();
+  assert.equal(await page.locator('#onboarding-step-label').textContent(),'2 / 3');assert.equal(await next.isDisabled(),true);await checkLayout();
   assert.equal(await page.evaluate(()=>config.hireDate),'2026-09-16');await page.reload();assert.equal(await page.locator('#onboarding-step-label').textContent(),'2 / 3');
   await page.locator('#onboarding-back').click();assert.equal(await page.locator('#onboarding-date').inputValue(),'2026-09-16');await next.click();
   await page.getByRole('button',{name:'B조',exact:true}).click();assert.equal(await page.locator('[data-onboarding-group=B]').getAttribute('aria-pressed'),'true');if(width===390)await page.screenshot({path:'/tmp/onboarding-group-'+engine.name()+'.png'});await next.click();
   assert.equal(await page.locator('#onboarding-step-label').textContent(),'3 / 3');await page.reload();assert.equal(await page.locator('#onboarding-step-label').textContent(),'3 / 3');
-  assert.equal(await page.evaluate(()=>localStorage.getItem('shift_active_group')),'B');
+  assert.equal(await page.evaluate(()=>localStorage.getItem('shift_active_group')),'B');await checkLayout();
   for(const theme of['current','toss','gpt','dark']){await page.evaluate(t=>document.body.dataset.prefTheme=t,theme);assert.equal(await wizard.evaluate(e=>e.scrollWidth<=e.clientWidth),true);assert.equal(await wizard.evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(255, 255, 255)');}
   await page.setViewportSize({width,height:500});const footer=await next.boundingBox();assert(footer.y>=0&&footer.y+footer.height<=501);await page.setViewportSize({width,height:844});
   if(width===390)await page.screenshot({path:'/tmp/onboarding-wage-'+engine.name()+'.png'});

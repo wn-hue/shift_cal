@@ -1,0 +1,19 @@
+{
+  "generator": "Built-in image_gen",
+  "transparent_background": true,
+  "export": "384px WebP, quality 86, alpha quality 95",
+  "assets": [
+    {
+      "file": "hire-v1.webp",
+      "prompt": "Use case: illustration-story. Asset type: a small premium 3D illustration for a Korean shift-work mobile onboarding screen. Original friendly fintech art inspired by the soft approachable material of Toss illustrations, no brand logos. Square canvas, truly transparent background with clean alpha. Isolated centered compact composition filling 80% canvas, soft matte clay and satin plastic, rounded edges, gentle studio light upper left, faint contact shadows only. Palette cobalt/periwinkle blue, milk white, restrained mint accent. Clean simple silhouette legible at 150px, sophisticated minimalism, no text, letters, numbers, watermarks, framing, scenery or decorative confetti. Slight isometric front view, smooth precise geometry. Subject: A softly rounded standing desktop calendar with a cobalt-blue header and two white binder loops. On its white page are a few very subtle pale gray rounded date cells; one highlighted blue cell bears a white checkmark. A small mint-green leaf-like rounded check badge rests beside it. Warm welcoming first-workday feeling. No actual dates or lettering."
+    },
+    {
+      "file": "team-v1.webp",
+      "prompt": "Use case: illustration-story. Asset type: a small premium 3D illustration for a Korean shift-work mobile onboarding screen. Original friendly fintech art inspired by the soft approachable material of Toss illustrations, no brand logos. Square canvas, truly transparent background with clean alpha. Isolated centered compact composition filling 80% canvas, soft matte clay and satin plastic, rounded edges, gentle studio light upper left, faint contact shadows only. Palette cobalt/periwinkle blue, milk white, restrained mint accent. Clean simple silhouette legible at 150px, sophisticated minimalism, no text, letters, numbers, watermarks, framing, scenery or decorative confetti. Slight isometric front view, smooth precise geometry. Subject: Exactly three friendly simple human bust avatars arranged closely in a shallow triangle, front center avatar with blue sweater and neutral warm peach face, behind left avatar with mint sweater and warm brown face, behind right avatar with periwinkle sweater and peach face. Abstract rounded neutral adult faces, minimal black dot eyes and small smiles, diverse understated hairstyles, no logos or lettering. Cohesive team, each head/body separated cleanly. No floating random decorations."
+    },
+    {
+      "file": "wage-v1.webp",
+      "prompt": "Use case: illustration-story. Asset type: a small premium 3D illustration for a Korean shift-work mobile onboarding screen. Original friendly fintech art inspired by the soft approachable material of Toss illustrations, no brand logos. Square canvas, truly transparent background with clean alpha. Isolated centered compact composition filling 80% canvas, soft matte clay and satin plastic, rounded edges, gentle studio light upper left, faint contact shadows only. Palette cobalt/periwinkle blue, milk white, restrained mint accent. Clean simple silhouette legible at 150px, sophisticated minimalism, no text, letters, numbers, watermarks, framing, scenery or decorative confetti. Slight isometric front view, smooth precise geometry. Subject: A rounded cobalt-blue wallet with a small silver clasp, a milk-white payslip emerging behind it with three short pale-blue embossed horizontal lines and a small blue circular checkmark, one small softly rounded mint coin in front, no currency text or numbers. Friendly sense of everything ready. Compact cohesive composition, no huge document."
+    }
+  ]
+}

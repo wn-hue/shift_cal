@@ -932,7 +932,7 @@
 <link rel="stylesheet" href="./bright-menu.css?v=1">
 <link rel="stylesheet" href="./app-surfaces.css?v=6">
 <link rel="stylesheet" href="./screen-refinement.css?v=8">
-<link rel="stylesheet" href="./onboarding.css?v=4">
+<link rel="stylesheet" href="./onboarding.css?v=5">
 <link rel="stylesheet" href="./mobile-surfaces.css?v=11">
 <link rel="stylesheet" href="./test-calendar.css?v=9">
 <link rel="stylesheet" href="./month-picker.css?v=1">
@@ -3018,23 +3018,23 @@
  </header>
  <main class="onboarding-main">
   <p id="onboarding-step-label">1 / 3</p>
-  <div id="onboarding-heading" tabindex="-1" autofocus><h1 id="onboarding-title">입사일을 알려주세요</h1><p id="onboarding-description">내 연차와 예상 급여를 계산하는 기준이에요.</p></div>
+  <div id="onboarding-heading" tabindex="-1" autofocus><h1 id="onboarding-title">입사일을 알려주세요.</h1><p id="onboarding-description">내 연차와 예상 급여를 계산하는 기준이에요.</p></div>
   <section class="onboarding-panel" aria-label="입사일 설정">
-   <div class="onboarding-art" data-onboarding-icon="calendar" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="22" height="22" rx="5"/><path d="M11 4v7m10-7v7M5 15h22m-16 7 3 3 7-7"/></svg></div>
+   <div class="onboarding-art" aria-hidden="true"><img src="./assets/onboarding/hire-v1.webp" alt="" width="384" height="384" decoding="async"></div>
    <label for="onboarding-date">입사년월일 · 정규직 기준</label><input type="date" id="onboarding-date" min="1900-01-01" aria-describedby="onboarding-hire-help">
-   <p class="onboarding-tip" id="onboarding-hire-help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v6m0-10v1"/></svg><span>정규직 입사일을 입력해 주세요. 계약직이라면 현재 입사일을 입력하고, 정규직 전환 후 날짜를 변경해 주세요. 전체 → 연차 설정에서 언제든 바꿀 수 있어요.</span></p>
+   <p class="onboarding-tip" id="onboarding-hire-help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v6m0-10v1"/></svg><span>계약직은 현재 입사일을 선택하고, 정규직 전환 후 변경해 주세요. 입사일은 전체 → 연차 설정에서 바꿀 수 있어요.</span></p>
   </section>
   <section class="onboarding-panel" aria-label="교대조 설정" hidden>
-   <div class="onboarding-art" data-onboarding-icon="group" aria-hidden="true"></div>
+   <div class="onboarding-art" aria-hidden="true"><img src="./assets/onboarding/team-v1.webp" alt="" width="384" height="384" decoding="async"></div>
    <div class="onboarding-group-list" role="group" aria-label="내 근무조">
     <button type="button" data-onboarding-group="A" aria-pressed="false"><span class="onboarding-group-letter" aria-hidden="true">A</span><strong>A조</strong><span class="onboarding-check" aria-hidden="true">✓</span></button>
     <button type="button" data-onboarding-group="B" aria-pressed="false"><span class="onboarding-group-letter" aria-hidden="true">B</span><strong>B조</strong><span class="onboarding-check" aria-hidden="true">✓</span></button>
     <button type="button" data-onboarding-group="C" aria-pressed="false"><span class="onboarding-group-letter" aria-hidden="true">C</span><strong>C조</strong><span class="onboarding-check" aria-hidden="true">✓</span></button>
-   </div><p class="onboarding-tip">3조 2교대 기준이에요. 근무조는 전체 → 내 교대근무에서 변경할 수 있어요.</p>
+   </div><p class="onboarding-tip">3조 2교대 기준이에요. 근무조는 나중에도 바꿀 수 있어요.</p>
   </section>
   <section class="onboarding-panel" aria-label="시급 설정" hidden>
-   <div class="onboarding-art" data-onboarding-icon="wage" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="7" width="26" height="19" rx="5"/><circle cx="16" cy="16.5" r="4"/><path d="M7 15v3m18-3v3"/></svg></div>
-   <div class="onboarding-import-card"><strong>편한 방법으로 시급을 설정해요</strong><p>급여 문자로 가져오거나 기본시급과 통상시급을 직접 입력할 수 있어요.</p><ol><li>문자 설정 또는 직접 입력을 선택해요.</li><li>기본시급과 통상시급을 확인해요.</li><li>저장하면 캘린더가 열려요.</li></ol></div>
+   <div class="onboarding-art" aria-hidden="true"><img src="./assets/onboarding/wage-v1.webp" alt="" width="384" height="384" decoding="async"></div>
+   <div class="onboarding-import-card"><div class="onboarding-method"><span class="onboarding-method-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="8" y="7" width="12" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12"/></svg></span><div><strong>급여 문자로 간편하게</strong><p>복사한 문자를 가져오면 자동으로 채워져요.</p></div></div><div class="onboarding-method"><span class="onboarding-method-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m15 4 5 5M4 20l5-1L20 8a2 2 0 0 0-4-4L5 15l-1 5Z"/></svg></span><div><strong>문자가 없어도 괜찮아요</strong><p>기본시급과 통상시급을 직접 입력해요.</p></div></div></div>
    <p class="onboarding-private-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>문자 원문은 저장하지 않아요. 이름·사번은 제외해 주세요.</p>
    <div id="onboarding-wage-summary" hidden><div><span>기본시급</span><strong id="onboarding-base-wage"></strong></div><div><span>통상시급</span><strong id="onboarding-ordinary-wage"></strong></div></div>
    <button type="button" id="onboarding-import-again" hidden>시급 다시 설정하기</button>
@@ -3042,7 +3042,7 @@
  </main>
  <footer class="onboarding-footer"><p id="onboarding-error" role="status" aria-live="polite"></p><button type="button" id="onboarding-next">다음</button><button type="button" id="onboarding-login">이미 사용 중인가요? 로그인해서 불러오기</button></footer>
 </dialog>
-<script src="./onboarding.js?v=2"></script>
+<script src="./onboarding.js?v=3"></script>
 <script src="./payslip-alert.js?v=3"></script>
 <script src="./memo-editor.js?v=13"></script>
 <script src="./day-editor-navigation.js?v=8"></script>
@@ -3055,7 +3055,7 @@
 <script src="./memo-composer.js?v=12"></script>
 <script src="./settings-options.js?v=2"></script>
 <script src="./wage-import-ui.js?v=2"></script>
-<script src="./app-i18n-data.js?v=29"></script>
+<script src="./app-i18n-data.js?v=30"></script>
 <script src="./app-i18n-zh.js?v=2"></script>
 <script src="./app-i18n.js?v=9"></script>
 <script src="./app-currency.js?v=2"></script>
