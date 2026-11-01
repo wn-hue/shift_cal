@@ -40,6 +40,10 @@ window.AppTranslations=Object.fromEntries(`
 근무를 선택하면 예상 급여 변화를 확인할 수 있어요.|Select a shift to preview the estimated pay change.|选择班次后可查看预计工资变化。|勤務を選択すると給与の変化を確認できます。
 이전 날짜|Previous day|前一天|前の日
 다음 날짜|Next day|后一天|次の日
+특근 설정|Extra shifts|加班设置|特別勤務の設定
+추가 근무 선택|Choose an extra shift|选择加班班次|追加勤務を選択
+O.T (잔업)|Overtime|延时加班|残業
+이 날짜에만 적용돼요|Applies only to this date|仅适用于此日期|この日付のみに適用
 기본근무로 복구|Restore base shift|恢复基本班次|基本勤務に戻す
 주간특근|Extra day shift|白班加班|日勤特別勤務
 야간특근|Extra night shift|夜班加班|夜勤特別勤務

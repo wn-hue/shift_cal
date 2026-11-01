@@ -17,12 +17,13 @@
  }
  function filterOptions(date){
   const base=getBaseShift(new Date(date+'T12:00:00'),currentGroup).type;
-  const guided=document.getElementById('modal-override').dataset.editorDesign==='toss';
   for(const button of document.querySelectorAll('#work-panel .opt-btn')){
    const type=button.dataset.override||null;
-   // Keep the guided editor on the scheduled day/night shift. Stored changes remain untouched.
-   const opposite=guided&&((base==='DAY'&&type==='NIGHT')||(base==='NIGHT'&&type==='DAY'));
-   const unavailable=opposite||!!validateDayOverride(date,type);
+   // Basic choices reflect only the scheduled shift; overtime is controlled separately.
+   // Existing overrides remain readable and are never rewritten by opening this editor.
+   const otherBase=['DAY','NIGHT','OFF'].includes(type)&&type!==base;
+   const overtimeChoice=['NO_OT','SPECIAL_DAY_NO_OT','SPECIAL_NIGHT_NO_OT'].includes(type);
+   const unavailable=otherBase||overtimeChoice||!!validateDayOverride(date,type);
    button.hidden=unavailable;button.disabled=unavailable;
   }
   for(const row of document.querySelectorAll('#work-panel .shift-scroll')){

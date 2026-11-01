@@ -203,3 +203,18 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design=toss] .e
 body[data-pref-theme] #modal-override#modal-override[data-editor-design=toss] #work-panel .design-main-choices .opt-btn{min-height:60px;padding:10px 14px}
 #modal-override#modal-override[data-editor-design=toss] summary,#modal-override#modal-override[data-editor-design=toss] .design-memo-link{min-height:58px;padding:12px 14px}
 #modal-override#modal-override[data-editor-design=toss] .design-footer{padding:10px 16px max(12px,env(safe-area-inset-bottom))}
+
+/* A single, per-date overtime control replaces the repeated no-overtime choices. */
+#modal-override#modal-override[data-editor-design] .design-overtime{display:flex;align-items:center;gap:10px;padding:12px 16px;margin:12px 0 0;border-radius:18px;background:var(--ed-card);color:var(--ed-text)}
+#modal-override#modal-override[data-editor-design] .design-overtime>div{flex:1;min-width:0}
+#modal-override#modal-override[data-editor-design] .design-overtime strong{display:block;font-size:14px;line-height:22px;font-weight:650}
+#modal-override#modal-override[data-editor-design] .design-overtime small{display:block;margin-top:2px;color:var(--ed-sub);font-size:11px;line-height:17px}
+#modal-override#modal-override[data-editor-design] #design-ot-state{color:var(--ed-sub);font-size:11px;font-weight:600}
+#modal-override#modal-override[data-editor-design] #design-ot-toggle{position:relative;flex:none;width:52px;min-height:44px;padding:0;border:0;background:transparent;cursor:pointer;border-radius:14px;-webkit-tap-highlight-color:transparent}
+#design-ot-toggle::before{content:"";position:absolute;inset:7px 0;border-radius:18px;background:var(--ed-line);transition:background-color .16s ease}
+#design-ot-toggle[aria-checked=true]::before{background:var(--ed-blue)}
+#design-ot-toggle>span{position:absolute;top:10px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0002;transition:transform .16s ease}
+#design-ot-toggle[aria-checked=true]>span{transform:translateX(22px)}
+#design-ot-toggle:focus-visible{outline:2px solid var(--ed-blue);outline-offset:2px}
+#modal-override#modal-override[data-editor-design]:not([data-design-pane=work]) .design-overtime{display:none}
+@media(prefers-reduced-motion:reduce){#design-ot-toggle::before,#design-ot-toggle>span{transition:none}}
