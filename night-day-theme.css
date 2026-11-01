@@ -17,5 +17,5 @@ body[data-pref-theme="current"] #view-payroll .hero-label { color:#737373; }
 body[data-pref-theme="current"] #view-payroll .period-tag { background:#f3f3f3;color:#737373; }
 body[data-pref-theme="current"] #leave-settings-dialog .stat-value { color:#303030; }
 body[data-pref-theme="current"] #leave-settings-dialog .leave-remaining .stat-value { color:#2d8069!important; }
-body[data-pref-theme="current"] .cal-day.today { background:#f7f7f7;box-shadow:inset 0 0 0 1.5px #737373;border-radius:14px; }
+body[data-pref-theme="current"] .cal-day.today { background:#f7f7f7;box-shadow:inset 0 0 0 1.5px #3182f6;border-radius:14px; }
 body[data-pref-theme="current"] .cal-day.today .day-num { color:#303030!important; }
