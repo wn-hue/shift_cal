@@ -3,6 +3,7 @@ function openAppPreferences(){window.SettingsPage.open();}
     for (const name of ['adjacent','holidays','memos','shape','theme']) {
         const input = document.getElementById('pref-'+name), key = 'shift_display_'+name;
         if (name === 'theme') input.value = 'current';
+        if (name === 'shape') input.value = 'circle';
         try {
             if (name === 'theme') {
                 const old = localStorage.getItem('shift_display_mode');

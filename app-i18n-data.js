@@ -1,5 +1,13 @@
 /* UI-only translations. User notes, event names, meals and source documents stay untouched. */
 window.AppTranslations=Object.fromEntries(`
+시급과 수당을 확인해 주세요. 금액을 직접 입력해도 돼요.|Review your hourly pay and allowances. You can enter amounts manually.|请确认时薪和津贴，也可以直接输入金额。|時給と手当をご確認ください。金額を直接入力することもできます。
+급여 문자를 복사한 뒤 아래 버튼을 누르면 시급·수당이 자동으로 채워져요.|Copy your pay message, then tap below to fill in your hourly pay and allowances.|复制工资短信后，点击下方按钮即可自动填写时薪和津贴。|給与メッセージをコピーして下のボタンを押すと、時給と手当が自動入力されます。
+입사일 기준 자동 계산|Calculated from your start date|根据入职日期自动计算|入社日をもとに自動計算
+근속수당|Seniority allowance|工龄津贴|勤続手当
+11월 2일 변경 노선 적용 중|November 2 routes are now in effect|11月2日新路线已生效|11月2日の新ルートを適用中
+2026년 11월 2일 변경 노선을 적용 중이에요.|The updated November 2, 2026 routes are in effect.|已启用2026年11月2日更新的路线。|2026年11月2日更新のルートを適用しています。
+선부롯데마트·기사촌·선일초·땟골은 3-1호차에 탑승하세요.|For Seonbu Lotte Mart, Gisachon, Seonil Elementary and Ttaetgol, take bus 3-1.|前往仙府乐天玛特、司机村、仙一小学和땟골，请乘坐3-1号车。|仙府ロッテマート・記事村・仙一小・땟골は3-1号車をご利用ください。
+
 시급을 확인하면 내 예상 급여를 볼 수 있어요.|Check your hourly rates to see your estimated pay.|确认时薪后即可查看预估工资。|時給を確認すると予想給与がわかります。
 계약직은 현재 입사일을 선택하고, 정규직 전환 후 변경해 주세요. 입사일은 전체 → 연차 설정에서 바꿀 수 있어요.|Contract staff can use their current start date and update it after becoming permanent. You can change it in All → Leave settings.|合同员工请先选择当前入职日期，转正后再修改。可在“全部 → 年假设置”中更改。|契約社員の方は現在の入社日を選び、正社員登用後に変更してください。「全体 → 有休設定」で変更できます。
 3조 2교대 기준이에요. 근무조는 나중에도 바꿀 수 있어요.|Based on 3 teams and 2 shifts. You can change your team later.|以三班两倒为准，之后也可以更改班组。|3組2交替が基準です。勤務組は後から変更できます。

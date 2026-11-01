@@ -29,6 +29,8 @@ async function checkKeyboard(p,id,width){
   await next(p);assert.match(await p.locator('#wage-manual-status').textContent(),/통상시급/);await p.locator('#wage-manual-ordinary').fill('14482');await checkKeyboard(p,'#wage-manual-ordinary',width);
   await p.locator('#guided-wage-back').click();await settled(p);assert.equal(await p.locator('#wage-manual-base').inputValue(),'11050');await next(p);await settled(p);assert.equal(await p.locator('#wage-manual-ordinary').inputValue(),'14482');await next(p);await settled(p);
   assert.equal(await stage(p),'choice');assert(await p.locator('#payroll-sms-apply').isDisabled());await p.locator('[data-guided-allowance=yes]').click();await settled(p);
+  assert.equal(await p.locator('#wage-legacy').evaluate(e=>getComputedStyle(e).fontSize),'16px');
+  assert.equal(await p.locator('#wage-seniority').textContent(),'70,000');
   await p.locator('#wage-job').fill('50000');await p.locator('#wage-legacy').fill('20000');await checkKeyboard(p,'#wage-legacy',width);
   if(width===390&&motion==='reduce')await p.screenshot({path:'/tmp/wage-guided-allowances-'+engine.name()+'.png'});
   await next(p);

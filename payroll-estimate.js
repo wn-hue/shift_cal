@@ -1,6 +1,8 @@
 (function (root) {
     'use strict';
-    const rate = 0.18, storageKey = 'shift_payroll_sms_reference_v1', bonusKey = 'shift_bonus_sms_reference_v1';
+    // Default effective deduction ratio from an anonymized regular-pay reference.
+    // Includes tax and insurance; personal imported profiles always take precedence.
+    const rate = 1045860 / 5781870, storageKey = 'shift_payroll_sms_reference_v1', bonusKey = 'shift_bonus_sms_reference_v1';
     // Anonymized reference statement: total deductions / total payments, including other pay.
     // This is an effective estimate (income/local tax and employment insurance), not a statutory tax rate.
     const bonusRate = 29570 / 1224725;
@@ -15,7 +17,7 @@
         if (profile !== null && !validProfile(profile)) throw new RangeError('공제 기준을 확인해주세요.');
         gross = Math.max(0, Math.trunc(gross));
         const p=minimalProfile(profile);
-        const total = p?.model==='monthly-insurance'?Math.min(gross,gross===0?0:p.fixedInsurance+p.otherFixed+Math.trunc(gross*p.taxRate+1e-7)+(p.employmentRate===0.009?Math.trunc((gross*p.employmentRate+1e-7)/10)*10:Math.trunc(gross*p.employmentRate+1e-7))):Math.trunc(gross * (p ? p.rate : rate));
+        const total = p?.model==='monthly-insurance'?Math.min(gross,gross===0?0:p.fixedInsurance+p.otherFixed+Math.trunc(gross*p.taxRate+1e-7)+(p.employmentRate===0.009?Math.trunc((gross*p.employmentRate+1e-7)/10)*10:Math.trunc(gross*p.employmentRate+1e-7))):Math.trunc(gross * (p ? p.rate : rate) + 1e-7);
         return { gross, total, net: gross - total };
     }
     function estimatePayments(parts, profile = null, bonusProfile = null) {
@@ -39,7 +41,7 @@
     let parts = {regular:0,bonus:0,support:0}, profile = null, bonusProfile = null;
     function loadProfile(key) { try {const p=JSON.parse(localStorage.getItem(key));const minimal=minimalProfile(p);if(minimal)localStorage.setItem(key,JSON.stringify(minimal));return minimal;}catch(_){return null;} }
     profile=loadProfile(storageKey);bonusProfile=loadProfile(bonusKey);
-    const basis = (name,p) => name + ': ' + (p ? p.model==='monthly-insurance'?'월 보험료 '+fmt(p.fixedInsurance)+' · 세금 문자 비율 '+(p.taxRate*100).toFixed(2)+'% · 고용 '+(p.employmentRate*100).toFixed(2)+'%'+(p.otherFixed?' · 기타 월 공제 '+fmt(p.otherFixed):''):'적용한 문자 공제율 ' + (100*minimalProfile(p).rate).toFixed(2) + '%' : name==='상여'?'개인 기준 미등록 · 기준 명세서 공제율 '+(bonusRate*100).toFixed(2)+'% 추정 (소득세·지방소득세·고용보험 포함)':'개인 기준 미등록 · 기본 공제율 18% 단순 추정');
+    const basis = (name,p) => name + ': ' + (p ? p.model==='monthly-insurance'?'월 보험료 '+fmt(p.fixedInsurance)+' · 세금 문자 비율 '+(p.taxRate*100).toFixed(2)+'% · 고용 '+(p.employmentRate*100).toFixed(2)+'%'+(p.otherFixed?' · 기타 월 공제 '+fmt(p.otherFixed):''):'적용한 문자 공제율 ' + (100*minimalProfile(p).rate).toFixed(2) + '%' : name==='상여'?'개인 기준 미등록 · 기준 명세서 공제율 '+(bonusRate*100).toFixed(2)+'% 추정 (소득세·지방소득세·고용보험 포함)':'개인 기준 미등록 · 기준 명세서 공제율 '+(rate*100).toFixed(2)+'% 추정 (세금·보험료 포함)');
     function render() {
         panel.hidden = !toggle.checked;
         document.getElementById('payroll-estimate-state').textContent = toggle.checked ? 'ON' : 'OFF';
@@ -91,6 +93,9 @@
         clearDraft();dialog.setAttribute('data-onboarding',String(options?.onboarding===true));
         for(const [input,id] of [[manualBase,'input-base-hourly'],[manualOrdinary,'input-ordinary-hourly']]){const n=Number(el(id).value.replace(/[^0-9]/g,''));input.value=n>0?money(n):'';}
         let current={};try{current=JSON.parse(localStorage.getItem('shift_salary_config_master'))||{};}catch{}
+        const payDate=typeof currentPayDate==='undefined'?new Date():currentPayDate;
+        const seniority=root.ShiftPlannerCore?.seniorityPay((current.hireDate||'').slice(0,7),`${payDate.getFullYear()}-${String(payDate.getMonth()+1).padStart(2,'0')}-15`)||0;
+        el('wage-seniority').textContent=money(seniority);
         const savedParts=current.fixedAllowances,valid=savedParts&&allowanceKeys.every(k=>Number.isSafeInteger(savedParts[k])&&savedParts[k]>=0)&&Object.values(savedParts).reduce((a,b)=>a+b,0)===current.dutyPay;
         for(const key of allowanceKeys)el('wage-'+key).value=money(valid?savedParts[key]:key==='legacy'?current.dutyPay||0:0);
         el('wage-legacy-row').hidden=!(Number(el('wage-legacy').value.replace(/,/g,''))>0);

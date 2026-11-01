@@ -97,7 +97,7 @@ assert.equal(evaluate('config.baseHourly'),10100);assert.match(elem('payroll-sms
 ctx.PayrollEstimate.clearDraft();
 elem('payroll-sms-text').value='another private draft';ctx.PayrollEstimate.open();elem('payroll-sms-dialog').close();assert.equal(elem('payroll-sms-text').value,'');
 evaluate('renderCalendar=()=>{};resetDefaults()');assert.equal(saved.get('shift_payroll_sms_reference_v1'),undefined);assert.equal(saved.get('shift_bonus_sms_reference_v1'),undefined);assert.equal(evaluate('config.baseHourly'),0);assert.match(elem('payroll-estimate-basis').textContent,/상여:.*기준 명세서.*2.41%/);
-assert.match(elem('payroll-estimate-basis').textContent,/18%/);
+assert.match(elem('payroll-estimate-basis').textContent,/18\.09%/);
 assert.equal(/inp-retro-check|disp-retro-status|toggleRetroCheck|근속수당 가산/.test(html),false);
 for(const id of ['input-base-hourly','input-ordinary-hourly','input-duty-pay','input-seniority-pay'])assert.match(html.match(new RegExp('<input[^>]+id="'+id+'"[^>]*>'))[0],/\breadonly\b/);
 assert.equal(/calendar-export|내 변경사항 포함해서 가져오기|하루 일정\(ICS\)|input-base-hours/.test(html),false);
