@@ -1,0 +1,198 @@
+body.commute-page-open{position:fixed;top:var(--commute-scroll-top,0px);left:0;right:0;width:100%;overflow:hidden;overscroll-behavior:none}
+body[data-pref-theme] #commute-dialog.commute-page[hidden]{display:none!important}
+body[data-pref-theme] #commute-dialog.commute-page{position:fixed;inset:0;z-index:220;display:flex;flex-direction:column;width:100%;max-width:none;height:100dvh;max-height:none;margin:0;padding:env(safe-area-inset-top) 0 0!important;box-sizing:border-box;border:0;border-radius:0!important;background:var(--ui-page,#f2f4f6)!important;color:var(--ui-ink,#191f28);box-shadow:none;overflow:hidden}
+#commute-dialog .commute-topbar{display:flex;align-items:center;gap:12px;min-height:64px;flex:none;padding:0 max(16px,calc((100vw - 560px)/2));box-sizing:border-box}
+#commute-back{display:grid;place-items:center;width:44px;height:44px;flex:none;padding:10px;border:0;background:none;color:inherit}
+#commute-back svg{width:24px;height:24px}
+#commute-page-title{font-size:22px;font-weight:700;letter-spacing:-.5px;margin:0;outline:none}
+#commute-dialog .commute-page-body{width:100%;max-width:560px;min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box;padding:12px 20px max(28px,env(safe-area-inset-bottom));margin:0 auto}
+#commute-dialog .bus-search{font-size:16px!important}
+@media(max-width:360px){#commute-dialog .commute-page-body{padding-left:16px;padding-right:16px}}
+.bus-discovery{background:var(--ui-card,#fff);border-radius:22px;padding:20px;margin:16px 0 22px;min-width:0}
+.bus-discovery h2{font-size:20px;letter-spacing:-.6px;line-height:1.5;margin:0 0 16px}
+.bus-gps-button{width:100%;min-height:48px;border:0;border-radius:14px;background:#3182f6;color:white;font:inherit;font-weight:650;margin:0 0 16px}
+.bus-place-form{display:flex;gap:8px;align-items:flex-end}.bus-place-label{flex:1;min-width:0;font-size:12px;color:var(--ui-muted,#6b7684)}
+.bus-place-input{box-sizing:border-box;display:block;width:100%;min-width:0;height:48px;margin-top:7px;border:0;border-radius:12px;padding:10px 12px;background:var(--ui-field,#f2f4f6);color:var(--ui-ink,#191f28);font:inherit;font-size:16px!important}
+.bus-place-submit{flex:none;min-height:48px;padding:0 15px;border:0;border-radius:12px;background:var(--ui-blue-soft,#e8f3ff);color:var(--ui-blue,#3182f6);font:inherit;font-weight:650}
+.bus-location-status{font-size:13px;color:var(--ui-muted,#6b7684);line-height:1.6;margin:12px 0}.bus-location-status:empty{display:none}
+.bus-place-choice{display:flex;flex-direction:column;gap:4px;width:100%;min-height:64px;text-align:left;border:0;border-bottom:1px solid var(--ui-line,#f2f4f6);padding:14px 2px;background:none;color:inherit;font:inherit}
+.bus-place-choice strong{font-size:15px}.bus-place-choice small{font-size:12px;color:var(--ui-muted,#6b7684);overflow-wrap:anywhere}
+.bus-location-selected{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-top:12px}.bus-location-selected strong{font-size:14px;min-width:0;overflow-wrap:anywhere}.bus-location-selected:empty{display:none}
+.bus-location-clear{flex:none;min-height:40px;border:0;border-radius:10px;padding:6px 10px;background:var(--ui-field,#f2f4f6);color:var(--ui-muted,#6b7684);font:inherit;font-size:12px}
+.bus-distance-filters{display:flex;gap:8px;margin-top:12px}.bus-distance-filters[hidden]{display:none}.bus-distance-chip{flex:1;min-height:40px;border:0;border-radius:12px;background:var(--ui-field,#f2f4f6);color:var(--ui-muted,#6b7684);font:inherit;font-size:13px}.bus-distance-chip[aria-pressed=true]{background:var(--ui-blue-soft,#e8f3ff);color:var(--ui-blue,#3182f6);font-weight:650}
+.bus-distance-note,.bus-location-guide{font-size:11px;line-height:1.7;color:var(--ui-muted,#6b7684);margin:12px 0 0}.bus-location-guide summary{cursor:pointer;min-height:28px;line-height:28px}.bus-location-guide a{display:block;color:var(--ui-blue,#3182f6);margin-top:8px}
+.bus-nearby-result{display:grid;gap:5px;border-radius:14px;background:var(--ui-blue-soft,#e8f3ff);padding:14px;margin:12px 0;color:var(--ui-blue,#3182f6)}.bus-nearby-result strong{font-size:14px}.bus-nearby-result span{font-size:13px}.bus-nearby-result small{font-size:11px;color:var(--ui-muted,#6b7684)}
+#commute-dialog .bus-stop-nearby .bus-stop-name{color:var(--ui-blue,#3182f6);font-weight:700}
+.bus-discovery button:disabled{opacity:.55}.bus-discovery button{cursor:pointer;touch-action:manipulation}
+@media(max-width:350px){.bus-discovery{padding:16px}.bus-discovery h2{font-size:18px}.bus-place-submit{padding:0 12px}}
+
+.bus-start-methods{display:flex;gap:8px;margin-bottom:12px}.bus-start-methods .bus-gps-button{flex:1;width:auto;margin:0}.bus-manual-button{flex:1;min-height:48px;border:0;border-radius:14px;background:var(--ui-field,#f2f4f6);color:var(--ui-muted,#6b7684);font:inherit;font-size:14px;font-weight:600}.bus-place-form[hidden]{display:none}
+
+.bus-pin-link{font-size:12px;line-height:1.6;color:var(--ui-blue,#3182f6);padding-top:4px;text-decoration:none}
+
+/* Finding methods have explicit selection state; generic button styles must not mask it. */
+body[data-pref-theme] #commute-dialog .bus-start-methods button{flex:1;width:auto;margin:0;border:0!important;box-shadow:none!important;min-height:48px;border-radius:14px;font-size:14px;font-weight:650;background:var(--ui-field,#f2f4f6)!important;color:var(--ui-muted,#6b7684)!important}
+body[data-pref-theme] #commute-dialog .bus-start-methods button[aria-pressed="true"]{background:#3182f6!important;color:#fff!important}
+body[data-pref-theme] #commute-dialog .bus-place-form[hidden]{display:none!important}
+/* Search-first booking: one compact card, results only after an explicit query. */
+#commute-dialog .bus-booking-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:8px 0 20px}
+#commute-dialog .bus-booking-heading h2{font-size:23px;letter-spacing:-.8px;margin:0;font-weight:700}
+#commute-dialog .bus-follow-shift{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;padding:0 0 14px;border-bottom:1px solid var(--ui-line,#f2f4f6)}
+#commute-dialog .bus-follow-copy{display:flex;flex-direction:column;gap:5px;min-width:0}
+#commute-dialog .bus-follow-copy strong{font-size:15px;font-weight:650;line-height:1.4}
+#commute-dialog .bus-follow-copy small{font-size:12px;line-height:1.5;color:var(--ui-muted,#8b95a1);overflow-wrap:anywhere}
+body[data-pref-theme] #commute-dialog .bus-shift-switch{position:relative;flex:none;width:52px;height:44px;min-height:44px;padding:0;background:none!important;border:0!important;box-shadow:none!important;cursor:pointer}
+#commute-dialog .bus-shift-switch::before{content:'';position:absolute;inset:9px 3px;border-radius:20px;background:#c5cbd3;transition:background .18s}
+#commute-dialog .bus-shift-switch::after{content:'';position:absolute;top:12px;left:6px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #191f2820;transition:transform .18s}
+#commute-dialog .bus-shift-switch[aria-checked=true]::before{background:#3182f6}
+#commute-dialog .bus-shift-switch[aria-checked=true]::after{transform:translateX(20px)}
+@media(prefers-reduced-motion:reduce){#commute-dialog .bus-shift-switch::before,#commute-dialog .bus-shift-switch::after{transition:none}}
+#commute-dialog .bus-direction-tabs{display:flex;gap:24px;margin:0 4px 20px}
+body[data-pref-theme] #commute-dialog .bus-direction-tabs button{position:relative;min-height:44px;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:4px 0 12px;color:var(--ui-muted,#8b95a1)!important;font:inherit;font-size:18px;font-weight:650}
+body[data-pref-theme] #commute-dialog .bus-direction-tabs button[aria-pressed=true]{color:var(--ui-ink,#191f28)!important}
+#commute-dialog .bus-direction-tabs button[aria-pressed=true]::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:2px;background:currentColor}
+#commute-dialog .bus-booking-card{margin:0;padding:22px;background:var(--ui-card,#fff);border:0;border-radius:24px;box-shadow:0 4px 18px #191f2803}
+#commute-dialog .bus-booking-card h3{margin:0 0 10px;font-size:20px;font-weight:700;letter-spacing:-.7px;line-height:1.5}
+#commute-dialog .bus-booking-row{min-width:0;display:flex;align-items:center;gap:14px;min-height:79px;border-bottom:1px solid var(--ui-line,#f2f4f6);margin:0;padding:0}
+#commute-dialog .bus-field-icon{display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;flex:none;color:var(--ui-muted,#6b7684)}
+#commute-dialog .bus-field-icon svg{width:23px;height:23px}
+#commute-dialog .bus-field-copy{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1}
+#commute-dialog .bus-field-copy small{font-size:12px;font-weight:500;color:var(--ui-muted,#8b95a1);line-height:1.4}
+#commute-dialog .bus-field-copy strong{font-size:17px;font-weight:650;letter-spacing:-.4px;text-align:left;overflow-wrap:anywhere;line-height:1.4}
+#commute-dialog .bus-field-copy .bus-field-placeholder{color:var(--ui-muted,#8b95a1);font-weight:550}
+body[data-pref-theme] #commute-dialog .bus-location-open{display:flex;align-items:center;gap:14px;flex:1;min-width:0;min-height:79px;text-align:left;padding:12px 0;background:transparent!important;color:inherit!important;border:0!important;box-shadow:none!important;border-radius:0!important;font:inherit}
+#commute-dialog .bus-location-open:disabled{opacity:1;cursor:default}
+body[data-pref-theme] #commute-dialog .bus-use-gps{display:flex;align-items:center;justify-content:center;flex:none;width:44px;height:44px;padding:10px;border:0!important;background:var(--ui-field,#f2f4f6)!important;color:var(--ui-muted,#6b7684)!important;box-shadow:none!important;border-radius:50%!important}
+#commute-dialog .bus-use-gps[hidden]{display:none!important}
+#commute-dialog .bus-select-row{position:relative;cursor:pointer}
+body[data-pref-theme] #commute-dialog .bus-select-row select{appearance:none;-webkit-appearance:none;display:block;border:0!important;box-shadow:none!important;background:transparent!important;color:var(--ui-ink,#191f28)!important;font:inherit;font-size:17px;font-weight:650;letter-spacing:-.4px;width:100%;height:27px;min-width:0;max-width:100%;padding:0 24px 0 0;margin:0;border-radius:0!important}
+#commute-dialog .bus-select-row select:focus{outline:none}
+#commute-dialog .bus-field-chevron{position:absolute;right:0;bottom:20px;pointer-events:none;color:var(--ui-muted,#8b95a1);font-size:20px}
+body[data-pref-theme] #commute-dialog .bus-query-button{display:block;width:100%;min-height:52px;border:0!important;box-shadow:none!important;border-radius:15px!important;background:#3182f6!important;color:#fff!important;font:inherit;font-weight:650;font-size:17px;margin:20px 0 0;padding:13px}
+#commute-dialog .bus-booking-status{font-size:13px;line-height:1.6;color:var(--ui-muted,#6b7684);margin:12px 0 0}
+#commute-dialog .bus-booking-status:empty{display:none}
+#commute-dialog .bus-shuttle-hint{font-size:12px;line-height:1.7;color:var(--ui-muted,#6b7684);margin:12px 0 0}
+#commute-dialog .bus-shuttle-hint[hidden]{display:none!important}
+body[data-pref-theme] #commute-dialog .bus-browse-all{display:flex;align-items:center;justify-content:flex-start;gap:5px;margin:0 4px 8px;min-height:36px;padding:0;background:none!important;color:var(--ui-muted,#6b7684)!important;border:0!important;border-radius:0!important;box-shadow:none!important;font:inherit;font-size:12px;text-align:left}
+#commute-dialog .bus-browse-marker{font-size:9px;line-height:1}
+#commute-dialog .bus-search-results[hidden],#commute-dialog .bus-search-label[hidden],#commute-dialog .bus-result-ranges[hidden],#commute-dialog .bus-result-distance-note[hidden]{display:none!important}
+#commute-dialog .bus-results-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px}
+#commute-dialog .bus-result-count{font-size:16px;font-weight:650;color:var(--ui-ink,#191f28);margin:0}
+#commute-dialog .bus-favorite-filter{color:var(--ui-muted,#6b7684);font-size:12px}
+#commute-dialog .bus-result-ranges{display:flex;gap:8px;margin-top:12px}
+body[data-pref-theme] #commute-dialog .bus-result-ranges button{flex:1;min-height:38px;border:0!important;background:var(--ui-card,#fff)!important;color:var(--ui-muted,#6b7684)!important;border-radius:12px;font:inherit;font-size:13px;padding:8px}
+body[data-pref-theme] #commute-dialog .bus-result-ranges button[aria-pressed=true]{background:var(--ui-blue-soft,#e8f3ff)!important;color:var(--ui-blue,#3182f6)!important;font-weight:650}
+#commute-dialog .bus-result-distance-note{font-size:11px;line-height:1.7;color:var(--ui-muted,#6b7684);margin:10px 0}
+#commute-dialog .bus-guidance{font-size:12px;color:var(--ui-muted,#6b7684);margin:14px 4px 0;line-height:1.8}
+#commute-dialog .bus-guidance summary{min-height:36px;cursor:pointer}
+#commute-dialog .bus-guidance a{color:var(--ui-blue,#3182f6)}
+#commute-dialog .bus-walk-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+#commute-dialog .bus-walk-link{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:4px 10px;box-sizing:border-box;border-radius:10px;background:var(--ui-card,#fff);color:var(--ui-blue,#3182f6);font-size:12px;font-weight:600;text-decoration:none;line-height:1.5}
+#commute-dialog .bus-nearby-result{padding:14px;margin-top:8px}
+#commute-dialog .bus-route-heading strong{font-size:16px}
+body[data-pref-theme] #bus-location-picker{width:100%;max-width:560px}
+#bus-location-picker .bus-discovery-picker{margin:0;padding:0;background:none;border-radius:0;box-shadow:none}
+#bus-location-picker .bus-discovery-picker h2{font-size:20px;margin:0 0 20px;line-height:1.5}
+#bus-location-picker .bus-distance-filters,#bus-location-picker .bus-distance-note,#bus-location-picker .bus-location-guide{display:none!important}
+#bus-location-picker .bus-start-methods{display:flex;gap:8px;margin-bottom:18px}
+body[data-pref-theme] #bus-location-picker .bus-start-methods button{flex:1;min-height:44px;width:auto;margin:0;border:0!important;border-radius:12px!important;box-shadow:none!important;font:inherit;font-size:13px;font-weight:650;background:var(--ui-field,#f2f4f6)!important;color:var(--ui-muted,#6b7684)!important}
+body[data-pref-theme] #bus-location-picker .bus-start-methods button[aria-pressed=true]{background:var(--ui-blue-soft,#e8f3ff)!important;color:var(--ui-blue,#3182f6)!important}
+#bus-location-picker .bus-place-form[hidden]{display:none!important}
+#bus-location-picker .bus-location-selected{padding-bottom:12px}
+#bus-location-picker .bus-place-choice{cursor:pointer}
+@media(max-width:350px){#commute-dialog .bus-booking-card{padding:18px}#commute-dialog .bus-field-copy strong,#commute-dialog .bus-select-row select{font-size:16px!important}#commute-dialog .bus-booking-heading h2{font-size:21px}}
+
+#commute-dialog .bus-route-search{display:flex;align-items:flex-end;gap:8px;margin:0 0 20px;min-width:0}
+#commute-dialog .bus-route-search .bus-search-label{flex:1;min-width:0;margin:0;font-size:12px;color:var(--ui-muted,#6b7684)}
+#commute-dialog .bus-route-search .bus-search{border:0;border-radius:13px;background:var(--ui-card,#fff);color:var(--ui-ink,#191f28);min-height:48px;margin:0;padding:12px;font-size:16px!important}
+body[data-pref-theme] #commute-dialog .bus-route-search-submit{min-height:48px;flex:none;padding:0 15px;border:0!important;border-radius:13px!important;box-shadow:none!important;background:var(--ui-blue-soft,#e8f3ff)!important;color:var(--ui-blue,#3182f6)!important;font:inherit;font-size:14px;font-weight:650}
+#commute-dialog .bus-route-search-context{font-size:12px;line-height:1.6;color:var(--ui-muted,#6b7684);margin:8px 0 12px}
+#commute-dialog .bus-route-search-context[hidden]{display:none!important}
+/* Single search entry; the booking location is a read-only summary, not another input. */
+#commute-dialog .bus-location-row[hidden]{display:none!important}
+#commute-dialog .bus-location-open{cursor:pointer}
+body[data-pref-theme] #commute-dialog .bus-unified-search-page{position:absolute;inset:auto 0 0;top:var(--bus-search-top,0px);bottom:auto;height:var(--bus-search-height,100%);max-height:100%;z-index:3;display:flex;flex-direction:column;box-sizing:border-box;padding:env(safe-area-inset-top) 0 max(12px,env(safe-area-inset-bottom));background:var(--ui-card,#fff);color:var(--ui-ink,#191f28);overflow:hidden}
+#commute-dialog .bus-unified-search-page[hidden]{display:none!important}
+#commute-dialog .bus-unified-search-page:focus{outline:0}
+#commute-dialog .bus-unified-topbar{display:flex;align-items:center;flex:none;min-height:64px;gap:10px;padding:0 16px}
+#commute-dialog .bus-unified-topbar h2{margin:0;font-size:18px;font-weight:650;letter-spacing:-.4px}
+body[data-pref-theme] #commute-dialog .bus-unified-back{display:flex;align-items:center;justify-content:center;flex:none;width:44px;height:44px;padding:10px;background:none!important;color:inherit!important;border:0!important;box-shadow:none!important;border-radius:0!important}
+#commute-dialog .bus-unified-back svg{width:24px;height:24px}
+#commute-dialog .bus-unified-form{display:flex;align-items:center;gap:8px;flex:none;margin:6px 20px 12px;min-width:0}
+#commute-dialog .bus-unified-label{font-size:0;display:block;flex:1;min-width:0}
+body[data-pref-theme] #commute-dialog .bus-unified-input{display:block;appearance:none;-webkit-appearance:none;width:100%;min-width:0;min-height:50px;padding:12px 14px;margin:0;box-sizing:border-box;border:0!important;border-radius:16px!important;background:var(--ui-field,#f2f4f6)!important;box-shadow:none!important;color:var(--ui-ink,#191f28)!important;font:inherit;font-size:16px!important}
+body[data-pref-theme] #commute-dialog .bus-unified-submit{min-height:48px;padding:10px 6px;border:0!important;box-shadow:none!important;background:none!important;color:var(--ui-blue,#3182f6)!important;font:inherit;font-weight:650;font-size:14px}
+#commute-dialog .bus-unified-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:none;padding:0 20px 10px}
+body[data-pref-theme] #commute-dialog .bus-unified-gps{background:none!important;border:0!important;box-shadow:none!important;padding:6px 0;min-height:36px;color:var(--ui-blue,#3182f6)!important;font:inherit;font-size:13px;font-weight:600}
+#commute-dialog .bus-unified-gps[hidden]{display:none!important}
+#commute-dialog .bus-unified-context{font-size:11px;color:var(--ui-muted,#8b95a1);line-height:1.5}
+#commute-dialog .bus-search-regions{display:flex;gap:8px;padding:12px 20px;border-top:1px solid var(--ui-line,#f2f4f6);border-bottom:1px solid var(--ui-line,#f2f4f6);flex:none;overflow-x:auto}
+body[data-pref-theme] #commute-dialog .bus-search-regions button{min-height:34px;padding:7px 16px;background:var(--ui-card,#fff)!important;color:var(--ui-muted,#6b7684)!important;border:1px solid var(--ui-line,#e5e8eb)!important;border-radius:20px!important;box-shadow:none!important;white-space:nowrap;font:inherit;font-size:13px}
+body[data-pref-theme] #commute-dialog .bus-search-regions button[aria-pressed=true]{background:var(--ui-ink,#333d4b)!important;color:var(--ui-card,#fff)!important;border-color:transparent!important}
+#commute-dialog .bus-unified-status{flex:none;line-height:1.6;font-size:12px;color:var(--ui-muted,#6b7684);padding:8px 20px;margin:0}
+#commute-dialog .bus-unified-status:empty{display:none}
+#commute-dialog .bus-unified-results{flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;padding:0 20px 20px}
+#commute-dialog .bus-unified-section{font-size:12px;font-weight:550;color:var(--ui-muted,#8b95a1);margin:18px 0 4px}
+#commute-dialog .bus-unified-place-row{display:flex;align-items:center;gap:8px;min-width:0;border-bottom:1px solid var(--ui-line,#f2f4f6)}
+body[data-pref-theme] #commute-dialog :is(.bus-unified-place,.bus-unified-route){display:flex;flex-direction:column;justify-content:center;gap:6px;min-width:0;min-height:76px;flex:1;width:100%;padding:14px 0;background:none!important;color:inherit!important;border:0!important;border-radius:0!important;box-shadow:none!important;text-align:left;font:inherit}
+#commute-dialog :is(.bus-unified-place,.bus-unified-route) strong{font-size:15px;font-weight:600;letter-spacing:-.3px;line-height:1.5;overflow-wrap:anywhere}
+#commute-dialog :is(.bus-unified-place,.bus-unified-route) small{font-size:12px;line-height:1.5;color:var(--ui-muted,#8b95a1);overflow-wrap:anywhere}
+#commute-dialog .bus-unified-route{border-bottom:1px solid var(--ui-line,#f2f4f6)!important}
+#commute-dialog .bus-unified-map{display:flex;align-items:center;justify-content:center;flex:none;width:38px;height:38px;box-sizing:border-box;border:1px solid var(--ui-line,#e5e8eb);border-radius:50%;color:var(--ui-muted,#8b95a1);text-decoration:none}
+#commute-dialog .bus-unified-map svg{width:19px;height:19px}
+body[data-pref-theme] #commute-dialog .bus-unified-query-all{display:block;width:100%;padding:14px 0;min-height:44px;border:0!important;border-radius:0!important;background:none!important;color:var(--ui-blue,#3182f6)!important;box-shadow:none!important;font:inherit;font-size:13px;font-weight:600;text-align:left}
+#commute-dialog .bus-unified-empty{font-size:14px;color:var(--ui-muted,#8b95a1);line-height:1.8;margin:26px 0}
+#commute-dialog :is(.bus-unified-topbar,.bus-unified-actions,.bus-search-regions,.bus-unified-status,.bus-unified-results){width:100%;max-width:560px;box-sizing:border-box;margin-left:auto;margin-right:auto}
+#commute-dialog .bus-unified-form{width:calc(100% - 40px);max-width:520px;margin-left:auto;margin-right:auto}
+/* Keep the full-screen cover stable while only the content area follows the keyboard. */
+body[data-pref-theme] #commute-dialog .bus-unified-search-page{inset:0;height:100%;max-height:100%;padding:0;display:block}
+#commute-dialog .bus-unified-surface{position:relative;top:var(--bus-search-top,0px);height:var(--bus-search-height,100%);max-height:100%;display:flex;flex-direction:column;box-sizing:border-box;padding:env(safe-area-inset-top) 0 max(12px,env(safe-area-inset-bottom));overflow:hidden}
+
+/* The departure/destination row is the only search entry on the booking screen. */
+body[data-pref-theme] #commute-dialog .bus-location-row .bus-search-open{flex:1;width:auto;margin:0;padding:12px 0;min-height:79px;background:transparent!important;color:inherit!important;border:0!important;box-shadow:none!important;border-radius:0!important;text-align:left}
+
+/* Time-first result screen, sharing the route data and one search entry. */
+#commute-dialog .commute-page-body{overflow-x:hidden}
+#commute-dialog.bus-results-mode .commute-page-body>:not(.bus-search-results){display:none!important}
+#commute-dialog.bus-results-mode .commute-page-body{padding-top:0}
+#commute-dialog .bus-result-journey[hidden],#commute-dialog #commute-page-title[hidden]{display:none!important}
+body[data-pref-theme] #commute-dialog .bus-result-journey{display:flex;align-items:center;justify-content:center;gap:7px;flex:1;min-width:0;min-height:44px;margin-right:44px;padding:6px 0;background:none!important;color:var(--ui-ink,#191f28)!important;border:0!important;box-shadow:none!important;font:inherit;font-size:15px;font-weight:650;letter-spacing:-.4px}
+#commute-dialog .bus-result-journey span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#commute-dialog .bus-result-journey .bus-journey-arrow{flex:none;color:var(--ui-muted,#8b95a1)}
+#commute-dialog .bus-result-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 -20px 16px;padding:0 20px 16px;background:var(--ui-page,#f2f4f6)}
+#commute-dialog .bus-result-date{font-size:13px;font-weight:550;color:var(--ui-muted,#6b7684);white-space:nowrap}
+body[data-pref-theme] #commute-dialog .bus-result-conditions{min-height:40px;padding:8px 13px;border:0!important;box-shadow:none!important;border-radius:20px!important;background:var(--ui-card,#fff)!important;color:var(--ui-blue,#3182f6)!important;font:inherit;font-size:12px;font-weight:600}
+#commute-dialog .bus-search-results .bus-results-heading{margin-top:0;margin-bottom:12px}
+#commute-dialog .bus-search-results .bus-result-count{font-size:13px;font-weight:550;color:var(--ui-muted,#6b7684);outline:0}
+#commute-dialog.bus-results-mode .bus-route-search-context{display:none}
+#commute-dialog .bus-search-results .bus-route{padding:16px 18px;border:0;border-radius:18px;background:var(--ui-card,#fff);box-shadow:none;margin:10px 0}
+#commute-dialog .bus-search-results .bus-route-heading{display:flex;align-items:center;gap:10px;min-height:30px}
+#commute-dialog .bus-search-results .bus-route-heading strong{flex:1;min-width:0;font-size:14px;font-weight:600;line-height:1.5;color:var(--ui-muted,#6b7684)}
+#commute-dialog .bus-search-results .bus-star{flex:none;width:36px;min-height:36px;padding:4px;font-size:22px}
+#commute-dialog .bus-search-results .bus-details{margin:0;border:0;padding:0}
+#commute-dialog .bus-search-results .bus-details summary{display:flex;align-items:center;justify-content:space-between;gap:16px;list-style:none;padding:5px 0 0;min-height:70px;cursor:pointer}
+#commute-dialog .bus-search-results .bus-details summary::-webkit-details-marker{display:none}
+#commute-dialog .bus-result-main{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
+#commute-dialog .bus-result-time-row{display:flex;align-items:baseline;gap:8px;min-width:0}
+#commute-dialog .bus-departure-time{font-size:25px;font-weight:750;letter-spacing:-.7px;line-height:1.2;color:var(--ui-ink,#191f28)}
+#commute-dialog .bus-result-time-label{font-size:11px;color:var(--ui-muted,#8b95a1);white-space:nowrap}
+#commute-dialog .bus-result-stop{font-size:13px;line-height:1.5;color:var(--ui-muted,#6b7684);overflow-wrap:anywhere}
+#commute-dialog .bus-result-distance{font-size:11px;line-height:1.4;color:var(--ui-muted,#8b95a1)}
+#commute-dialog .bus-search-results .bus-details summary .bus-result-action{display:block;flex:none;min-width:58px;box-sizing:border-box;padding:8px 10px;border:1px solid var(--ui-line,#e5e8eb);border-radius:10px;font-size:12px;font-weight:550;color:var(--ui-muted,#6b7684);text-align:center}
+#commute-dialog .bus-search-results .bus-details summary .bus-result-action::after{content:' ›';color:inherit}
+#commute-dialog .bus-search-results .bus-details[open] summary .bus-result-action::after{content:' ⌃'}
+#commute-dialog .bus-search-results .bus-details[open] summary{padding-bottom:14px}
+@media(max-width:350px){#commute-dialog .bus-result-journey{font-size:14px;margin-right:32px}#commute-dialog .bus-search-results .bus-route{padding:14px}#commute-dialog .bus-departure-time{font-size:23px}}
+
+#commute-dialog .bus-search-results .bus-route-heading strong{order:0}
+#commute-dialog .bus-search-results .bus-star{order:1;margin-left:auto}
+
+#commute-dialog.bus-results-mode .commute-topbar{background:var(--ui-card,#fff)}
+#commute-dialog .bus-result-toolbar{background:var(--ui-card,#fff)}
+body[data-pref-theme] #commute-dialog .bus-result-conditions{background:var(--ui-field,#f2f4f6)!important}
+
+/* A compact dated notice keeps the current timetable distinct from the upcoming change. */
+#commute-dialog .bus-schedule-update{margin:18px 0 12px;padding:0 14px;border-radius:16px;background:var(--ui-blue-soft,#eaf3ff);color:var(--ui-blue,#3182f6);font-size:13px}
+.bus-schedule-update>summary{min-height:46px;line-height:1.6;padding:12px 0;box-sizing:border-box;font-weight:550;cursor:pointer}
+#commute-dialog .bus-schedule-update .bus-tip{font-size:12px;line-height:1.8;margin:0 0 12px;color:var(--ui-copy,#4e5968)}
+#commute-dialog.bus-results-mode .bus-schedule-update{display:none}

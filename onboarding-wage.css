@@ -1,0 +1,42 @@
+/* A steady sheet frame: only its question and fields move between steps. */
+.guided-offstage{display:none!important}
+body[data-pref-theme] #payroll-sms-dialog[data-guided=true][open]{display:flex!important;flex-direction:column;height:min(460px,var(--sheet-limit,88dvh))!important;overflow:hidden!important;padding:6px 24px max(16px,env(safe-area-inset-bottom))!important;background:#fff!important;color:#191f28!important;color-scheme:light;--ui-card:#fff;--ui-field:#f7f8fa;--ui-ink:#191f28;--ui-copy:#4e5968;--ui-muted:#8b95a1;--ui-blue:#3182f6;--ui-blue-soft:#eaf3ff;--ui-line:#e5e8eb}
+#payroll-sms-dialog[data-guided=true] .guided-wage-content{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scroll-padding-block:12px}
+#payroll-sms-dialog[data-guided=true] .guided-wage-top{display:flex;align-items:center;gap:8px;min-height:28px;margin-bottom:10px;font-size:12px;color:#8b95a1}
+#payroll-sms-dialog .guided-wage-top[hidden]{display:none}
+#payroll-sms-dialog[data-guided=true] .guided-wage-top button{height:32px;width:32px;min-height:32px;margin-left:-8px;padding:4px;border:0;background:transparent;color:#4e5968;font:inherit;font-size:18px;cursor:pointer}
+#payroll-sms-dialog[data-guided=true] .guided-wage-top button[hidden]{display:block!important;visibility:hidden}
+#payroll-sms-dialog[data-guided=true] .sms-dialog-header{display:block;margin:0 0 18px}
+body[data-pref-theme] #payroll-sms-dialog[data-guided=true] .wage-import-title h2{font-size:22px;line-height:1.4;letter-spacing:-.6px;outline:none}
+#payroll-sms-dialog[data-guided=true] .guided-wage-description{font-size:13px;line-height:1.6;margin:8px 0 0;color:#6b7684;word-break:keep-all}
+#payroll-sms-dialog[data-guided=true] .guided-wage-summary{font-size:12px;line-height:1.7;color:#6b7684;background:#f7f8fa;border-radius:12px;padding:10px 12px;margin:0 0 14px;word-break:keep-all}
+#payroll-sms-dialog[data-guided=true] .wage-main-cards{display:block}
+#payroll-sms-dialog[data-guided=true] .wage-main-cards>label{gap:5px;padding:12px 0 10px;border:0;border-bottom:2px solid #e5e8eb;border-radius:0;background:transparent;color:#3182f6;font-size:12px}
+#payroll-sms-dialog[data-guided=true] .wage-main-cards>label:has(input:focus){border-bottom-color:#3182f6;outline:none;box-shadow:none}
+body[data-pref-theme] #payroll-sms-dialog[data-guided=true] .wage-main-cards input{font-size:30px!important;font-weight:600;min-height:44px}
+#payroll-sms-dialog[data-guided=true] .wage-main-cards .wage-value small{font-size:17px;color:#4e5968}
+#payroll-sms-dialog[data-guided=true] .guided-wage-import{display:block;width:100%;min-height:44px;margin:16px 0 0;padding:10px 0;border:0;background:transparent;color:#6b7684;text-align:left;font:inherit;font-size:12px;cursor:pointer}
+#payroll-sms-dialog[data-guided=true] .guided-wage-import span{color:#8b95a1;margin-left:4px;font-size:11px}
+#payroll-sms-dialog[data-guided=true] .guided-wage-choice{display:grid;gap:8px}
+#payroll-sms-dialog[data-guided=true] .guided-wage-choice button{display:grid;grid-template-columns:1fr 24px;gap:5px 12px;align-items:center;width:100%;min-height:66px;padding:12px 16px;border:1px solid #e5e8eb;border-radius:16px;background:#fff;color:#191f28;font:inherit;text-align:left;cursor:pointer}
+#payroll-sms-dialog[data-guided=true] .guided-wage-choice strong{font-size:15px;font-weight:600}
+#payroll-sms-dialog[data-guided=true] .guided-wage-choice span{grid-row:2;font-size:12px;color:#8b95a1}
+#payroll-sms-dialog[data-guided=true] .guided-wage-choice i{display:grid;place-items:center;grid-column:2;grid-row:1/3;font-size:13px;width:22px;height:22px;border:1px solid #d1d6db;border-radius:50%;color:transparent;font-style:normal}
+#payroll-sms-dialog[data-guided=true] .guided-wage-choice button[aria-pressed=true]{border-color:#3182f6;background:#f2f7ff}
+#payroll-sms-dialog[data-guided=true] .guided-wage-choice button[aria-pressed=true] i{background:#3182f6;border-color:#3182f6;color:#fff}
+#payroll-sms-dialog[data-guided=true] .wage-mini-cards{grid-template-columns:1fr;margin-bottom:8px}
+#payroll-sms-dialog[data-guided=true] .wage-mini-card{flex-direction:row;align-items:center;padding:5px 12px;min-height:50px}
+#payroll-sms-dialog[data-guided=true] .wage-mini-card input{text-align:right!important}
+#payroll-sms-dialog[data-guided=true] .wage-allowance-heading{margin-top:0}
+#payroll-sms-dialog[data-guided=true] .wage-legacy-row{margin:0;background:#f7f8fa;border:0;grid-template-columns:1fr minmax(80px,45%);min-height:50px;padding:5px 12px}
+#payroll-sms-dialog[data-guided=true] .wage-legacy-row>small{display:none}
+#payroll-sms-dialog[data-guided=true] .sms-actions{flex:none;position:relative;padding-top:14px;background:#fff}
+body[data-pref-theme] #payroll-sms-dialog[data-guided=true] #payroll-sms-apply{background:#3182f6;color:#fff;border:0}
+#payroll-sms-dialog[data-guided=true] #payroll-sms-apply:disabled{background:#eaf3ff;color:#8db7ef;opacity:1}
+#payroll-sms-dialog[data-guided=true] :is(button,input):focus-visible{outline:2px solid #3182f6;outline-offset:2px}
+#payroll-sms-dialog[data-guided=true]::backdrop{animation:onboarding-backdrop-in 240ms ease-out}
+body[data-pref-theme] #payroll-sms-dialog[data-wage-moving=true] #payroll-sms-apply:disabled{background:#3182f6!important;color:#fff!important;opacity:1}
+#payroll-sms-dialog[data-guided=true].sheet-closing::backdrop{animation:sheet-backdrop-out 240ms ease-out forwards}
+@keyframes onboarding-backdrop-in{from{background:#0000}to{background:#0006}}
+@media(max-height:600px){#payroll-sms-dialog[data-guided=true] .guided-wage-top{margin-bottom:4px}#payroll-sms-dialog[data-guided=true] .sms-dialog-header{margin-bottom:10px}#payroll-sms-dialog[data-guided=true] .guided-wage-description{margin-top:4px}}
+@media(prefers-reduced-motion:reduce){#payroll-sms-dialog[data-guided=true]::backdrop{animation:none}}

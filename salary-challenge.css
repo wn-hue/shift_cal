@@ -1,0 +1,16 @@
+.challenge-dialog{background:var(--card-bg);color:var(--text-main)}
+.challenge-note{font-size:12px;color:var(--text-sub);line-height:1.65;margin:12px 0}
+.challenge-badge{display:inline-block;color:var(--primary);font-size:11px;font-weight:700;margin-bottom:8px}
+.challenge-dialog input{width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--card-bg);color:var(--text-main);font:inherit;margin-top:8px}
+.challenge-emojis{display:flex;gap:8px;overflow-x:auto;padding:12px 0}
+.challenge-emojis button{flex:0 0 44px;height:44px;font-size:24px;border:1px solid var(--border);border-radius:50%;background:var(--card-bg)}
+.challenge-emojis button[aria-pressed=true]{border:2px solid var(--primary);background:color-mix(in srgb,var(--primary) 10%,var(--card-bg))}
+.challenge-dialog .sms-primary-btn{background:var(--primary);color:white}
+.challenge-summary{margin:20px 0;padding:20px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.challenge-summary h3{font-size:32px;color:var(--primary);margin:10px 0}
+.challenge-list{list-style:none;padding:0;margin:12px 0}
+.challenge-row{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);font-size:14px}
+.challenge-own{color:var(--primary);font-weight:700}
+.challenge-row strong{font-size:12px}
+.challenge-dialog button:focus-visible{outline:3px solid var(--primary);outline-offset:3px}
+.challenge-dialog .sms-clear-btn{background:var(--card-bg);border:1px solid var(--border)}

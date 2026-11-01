@@ -1,0 +1,48 @@
+/* Leave a visible strip of the underlying screen above every sheet. */
+body[data-pref-theme] #modal-override.active[data-editor-tab]{padding:max(56px,8dvh,env(safe-area-inset-top)) 0 0!important;align-items:stretch}
+@media(max-height:420px){body[data-pref-theme] #modal-override.active[data-editor-tab]{padding-top:24px!important}}
+body[data-pref-theme] dialog.app-bottom-sheet{position:fixed!important;inset:auto!important;left:var(--sheet-left,0px)!important;bottom:var(--sheet-bottom,0px)!important;top:auto!important;width:var(--sheet-width,100vw)!important;max-width:560px!important;max-height:var(--sheet-limit,88dvh)!important;margin:0!important;padding:8px 20px max(24px,env(safe-area-inset-bottom))!important;border:0!important;border-radius:28px 28px 0 0!important;box-sizing:border-box;transform:translateY(var(--sheet-drag,0px))!important;overflow-y:auto;overscroll-behavior:contain;background:var(--ui-card,#fff);color:var(--ui-ink,#191f28)}
+body[data-pref-theme] dialog.app-bottom-sheet:not([open]){display:none!important}
+dialog.app-bottom-sheet::backdrop{background:#0006}
+body[data-pref-theme] .modal-overlay:not(#modal-override){box-sizing:border-box;padding-top:max(56px,8dvh,env(safe-area-inset-top));align-items:flex-end}
+body[data-pref-theme] .modal-overlay .app-overlay-sheet{max-height:calc(100dvh - max(56px,8dvh))!important;border-radius:28px 28px 0 0!important;margin:0!important;transform:translateY(var(--sheet-drag,0px));overflow-y:auto}
+.sheet-original-close{display:none!important}
+body[data-pref-theme] .sheet-dismiss-handle{position:relative;display:flex;align-items:center;justify-content:center;flex:0 0 auto;width:100%;height:32px;min-height:32px;padding:0;margin:0 0 8px;border:0;border-radius:0;background:transparent;box-shadow:none;touch-action:none;cursor:pointer;color:inherit}
+.sheet-dismiss-handle>span{display:block;width:36px;height:4px;border-radius:8px;background:#b8bec7}
+
+/* Replaced by the functional handle above. */
+.app-bottom-sheet::before,.app-bottom-sheet .login-sheet-handle,.app-bottom-sheet .group-dialog-handle{display:none!important}
+#settings-options h2{font-size:18px;line-height:1.5;margin:4px 4px 12px;outline:none}
+.settings-radio-row{display:flex;align-items:center;gap:16px;min-height:60px;line-height:1.5;padding:8px 4px;box-sizing:border-box;font-size:17px;cursor:pointer}
+.settings-radio-row input{appearance:none;width:22px;height:22px;border:2px solid #aeb5bf;border-radius:50%;margin:0;flex:none;box-sizing:border-box;background:transparent}
+.settings-radio-row input:checked{border-color:#3182f6;background:radial-gradient(circle,#3182f6 0 5px,transparent 6px)}
+.settings-radio-row input:focus-visible{outline:2px solid #3182f6;outline-offset:4px}
+.settings-confirm-copy{font-size:15px;line-height:1.8;color:var(--ui-muted,#6b7684)}
+.settings-confirm-action{width:100%;min-height:48px;border:0;border-radius:14px;background:#3182f6;color:white;font:inherit;font-weight:650;margin-top:16px}
+body[data-pref-theme] #sticker-dialog #sticker-dialog-title:focus{outline:none!important}
+
+/* Neutral handles stay neutral during taps, focus and dragging. */
+body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss),body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss):is(:hover,:active,:focus){background:transparent!important;color:#aeb5bf!important;box-shadow:none!important;-webkit-tap-highlight-color:transparent;outline:none!important}
+body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss)>span{background:#b8bec7!important}
+body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss):focus-visible{outline:none!important;border:0!important}
+/* The bar itself indicates keyboard focus, never a box around the touch target. */
+html[data-input-method=keyboard] body[data-pref-theme] :is(.sheet-dismiss-handle,#editor-dismiss):focus-visible>span{background:#6b7684!important}
+html[data-input-method=pointer] body[data-pref-theme] :focus{outline:none!important}
+html[data-input-method=pointer] #editor-swipe-space:focus{box-shadow:none!important}
+body[data-pref-theme] :is(.app-bottom-sheet,.app-overlay-sheet) [tabindex="-1"]:focus{outline:none!important}
+body[data-pref-theme] #modal-override[data-editor-tab]>.override-sheet{transform:translateY(var(--sheet-drag,0px))}
+
+/* One stable exit from the current drag position, with the backdrop retained. */
+body[data-pref-theme] :is(dialog,.modal-sheet).sheet-closing{
+ position:fixed!important;top:var(--sheet-close-top)!important;left:var(--sheet-close-left)!important;right:auto!important;bottom:auto!important;
+ width:var(--sheet-close-width)!important;height:var(--sheet-close-height)!important;max-height:none!important;min-height:0!important;margin:0!important;
+ animation:none!important;transition:transform 240ms cubic-bezier(.32,0,.67,0)!important;transform:translate3d(0,var(--sheet-drag,0px),0)!important;will-change:transform;pointer-events:none;
+}
+body[data-pref-theme] :is(dialog,.modal-sheet).sheet-returning:not(.sheet-closing){transition:transform 180ms ease-out!important}
+@media(prefers-reduced-motion:reduce){body[data-pref-theme] :is(dialog,.modal-sheet).sheet-returning:not(.sheet-closing){transition:none!important}}
+dialog.sheet-closing::backdrop{animation:sheet-backdrop-out 240ms ease-out forwards}
+.modal-overlay[data-sheet-closing=true]{transition:background-color 240ms ease-out;background-color:transparent}
+@keyframes sheet-backdrop-out{to{background-color:transparent}}
+
+/* A single opening animation owns the sheet; legacy slideUp used a competing transform. */
+body[data-pref-theme] :is(dialog.app-bottom-sheet,.app-overlay-sheet,#modal-override .override-sheet){animation:none!important}

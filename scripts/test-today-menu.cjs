@@ -50,6 +50,8 @@ async function main() {
         for(const f of page.Fills){f.x*=1.2;f.w*=1.2;f.y=f.y*1.2+2;f.h*=1.2;}
     }
     assert.deepEqual(extractToday(shifted,new Date('2026-10-02T00:00:00Z')).meals,result.meals,'Page position and scale must not change extracted day');
+    assert.equal(extractToday(copy(),new Date('2026-10-02T13:55:00Z'),'2026-10-03').date,'2026-10-03');
+    assert.equal(extractToday(copy(),new Date('2026-10-02T13:55:00Z'),'2026-10-03').status,'ok');
     const missing=extractToday(copy(),new Date('2026-10-12T00:00:00Z'));
     assert.equal(missing.status,'not_published'); assert.deepEqual(missing.meals,[],'Missing date never substitutes another day');
     assert.equal(extractToday(copy(),new Date('2037-10-02T00:00:00Z')).status,'not_published','Old PDFs cannot reappear when weekdays repeat years later');
@@ -66,16 +68,34 @@ async function main() {
     const handler=require('../api/today-menu.js');
     const response={headers:{},setHeader(k,v){this.headers[k]=v;},status(n){this.code=n;return this;},json(data){this.data=data;return this;}};
     await handler({method:'POST'},response);assert.equal(response.code,405);assert.equal(response.headers.Allow,'GET');
+    for (const date of ['2026-02-30','invalid',['2026-10-21'],'2037-01-01']) {await handler({method:'GET',query:{date}},response);assert.equal(response.code,400);}
+    // Exercise the API against parsed fixture data without touching shared vote storage.
+    let persisted=0;
+    class FakeParser {
+        constructor(){this.handlers={};}
+        once(name,callback){this.handlers[name]=callback;}
+        parseBuffer(){this.handlers.pdfParser_dataReady(copy());}
+        destroy(){}
+    }
+    const apiContext={module:{exports:{}},Buffer,AbortSignal,Date,Number,Array,setTimeout,clearTimeout,
+        fetch:async()=>new Response('%PDF-fixture'),
+        require:name=>name==='pdf2json'?FakeParser:name==='../lib/today-menu.cjs'?{SOURCE_URL,extractToday,menuDate:()=> '2026-10-02'}:name==='@vercel/functions'?{waitUntil(){}}:{saveMenu:async()=>{persisted++;}}};
+    vm.createContext(apiContext);vm.runInContext(fs.readFileSync(require.resolve('../api/today-menu.js'),'utf8'),apiContext);
+    await apiContext.module.exports({method:'GET',query:{date:'2026-10-03'}},response);
+    assert.equal(response.code,200);assert.equal(response.data.date,'2026-10-03');assert.equal(response.data.meals.length,4);
+    assert.equal(persisted,0,'Tomorrow browsing must not advance or clear the current shared votes');
+    await apiContext.module.exports({method:'GET',query:{date:'2026-10-02'}},response);
+    assert.equal(persisted,1,'Today still saves menus for weekly rankings');
     console.log('PASS: Korean date rollover, year/weekday checks, 14 date columns, spatial meal sections, merged/split cells, missing/stale/invalid PDFs, fixed upstream URL and payload limits.');
 
     const elements=new Map();
-    function el(){return {textContent:'',children:[],hidden:false,disabled:false,attributes:{},handlers:{},setAttribute(k,v){this.attributes[k]=v},appendChild(c){this.children.push(c)},replaceChildren(){this.children=[]},addEventListener(n,f){this.handlers[n]=f}};}
+    function el(){return {style:{},textContent:'',children:[],hidden:false,disabled:false,attributes:{},handlers:{},setAttribute(k,v){this.attributes[k]=v},appendChild(c){this.children.push(c)},replaceChildren(){this.children=[]},addEventListener(n,f){this.handlers[n]=f}};}
     for(const id of ['today-menu-date','today-menu-refresh','today-menu-status','today-menu-panel','today-menu-cards','today-menu-empty','today-menu-note','today-menu-checked'])elements.set(id,el());
     let instant=new Date('2026-10-02T13:00:00Z'), requests=0, reply={...result,checkedAt:instant.toISOString()};
     class Clock extends Date{constructor(...args){super(...(args.length?args:[instant]));}static now(){return instant.getTime();}}
     const stored=new Map();
     const storage={getItem:k=>stored.get(k)||null,setItem:(k,v)=>stored.set(k,v),removeItem:k=>stored.delete(k)};
-    const ctx={localStorage:storage,window:null,Intl,Date:Clock,AbortSignal,document:{body:{dataset:{view:'menu'}},getElementById:id=>elements.get(id),createElement:el,addEventListener(){},hidden:false},setInterval(){},fetch:async()=>{requests++;return {ok:true,json:async()=>reply};}};
+    const ctx={localStorage:storage,window:null,Intl,Date:Clock,AbortSignal,AbortController,document:{body:{dataset:{view:'menu'}},getElementById:id=>elements.get(id),createElement:el,addEventListener(){},hidden:false},setInterval(){},fetch:async()=>{requests++;return {ok:true,json:async()=>reply};}};
     ctx.window=ctx;vm.createContext(ctx);vm.runInContext(fs.readFileSync(require.resolve('../today-menu.js'),'utf8'),ctx);
     await ctx.TodayMenu.load();assert.equal(elements.get('today-menu-cards').children.length,4);assert.equal(elements.get('today-menu-refresh').disabled,false);
     await ctx.TodayMenu.load();assert.equal(requests,1,'Repeated tab visits use the current-day cache');
@@ -86,7 +106,7 @@ async function main() {
     assert.equal(elements.get('today-menu-cards').children.length,4);
     reply=structuredClone(reply);reply.meals[0].groups[0].items[0]='<img src=x onerror=alert(1)>';
     await ctx.TodayMenu.load(true);assert.equal(requests,2,'Explicit refresh bypasses the saved cache');
-    assert.equal(elements.get('today-menu-cards').children[0].children[1].children[0].textContent,'<img src=x onerror=alert(1)>','PDF text must never become HTML');
+    assert.equal(elements.get('today-menu-cards').children[0].children[1].children[0].children[1].children[0].textContent,'<img src=x onerror=alert(1)>','PDF text must never become HTML');
     instant=new Date('2026-10-02T15:00:00Z');
     await ctx.TodayMenu.load();assert.equal(elements.get('today-menu-cards').children.length,4,'Midnight retains the previous meal day');
     instant=new Date('2026-10-02T17:40:00Z');
@@ -100,9 +120,9 @@ async function main() {
     await ctx.TodayMenu.load(true);assert.equal(elements.get('today-menu-empty').textContent,'오늘 식단 미등록');
     ctx.fetch=async()=>{throw new Error('Failed to fetch');};
     await ctx.TodayMenu.load(true);assert.match(elements.get('today-menu-empty').textContent,/인터넷 연결/);assert.equal(elements.get('today-menu-panel').attributes['aria-busy'],'false');
-    assert.equal(stored.has('shift_today_menu_cache_v1'),false,'Expired meals are removed from persistent cache');
+    assert.ok(JSON.parse(stored.get('shift_today_menu_cache_v2'))['2026-10-02'],'Previous dates remain cached for revisits');
     instant=new Date('2026-10-02T13:00:00Z');reply={...result,checkedAt:instant.toISOString()};
-    stored.set('shift_today_menu_cache_v1','invalid JSON');
+    stored.set('shift_today_menu_cache_v2','invalid JSON');
     ctx.fetch=async()=>{requests++;return {ok:true,json:async()=>reply};};
     vm.runInContext(fs.readFileSync(require.resolve('../today-menu.js'),'utf8'),ctx);
     await ctx.TodayMenu.load();assert.equal(elements.get('today-menu-cards').children.length,4,'Invalid saved cache falls back to the API');

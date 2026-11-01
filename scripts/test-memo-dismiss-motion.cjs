@@ -1,0 +1,21 @@
+'use strict';
+const assert=require('node:assert/strict'),{webkit,chromium}=require('playwright');
+(async()=>{for(const engine of [webkit,chromium]){const browser=await engine.launch();for(const theme of ['current','test3','test4']){
+ const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'no-preference'});page.setDefaultTimeout(10000);const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',()=>{throw Error('Unexpected confirmation')});
+ await page.addInitScript(theme=>{localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_display_theme',theme);localStorage.setItem('shift_onboarding_v1','{"status":"existing"}');const v=Object.assign(new EventTarget(),{width:390,height:844,offsetTop:0,offsetLeft:0,scale:1});Object.defineProperty(window,'visualViewport',{get:()=>v});window.testViewport=v;},theme);
+ await page.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await page.goto(process.env.TEST_URL||'http://127.0.0.1:8772/');await page.evaluate(()=>{const d=new Date('2026-10-20T12:00');openOverrideModal('2026-10-20',d,getActualShift(d,currentGroup));MemoComposer.enter(null)});await page.waitForTimeout(250);await page.locator('#memo-compose-input').fill('버릴 메모');
+ await page.evaluate(()=>{testViewport.height=425;testViewport.offsetTop=60;testViewport.dispatchEvent(new Event('resize'))});await page.waitForFunction(()=>document.getElementById('memo-compose-dialog').dataset.keyboard==='true');
+ const start=await page.evaluate(()=>{
+  const el=document.getElementById('memo-compose-dialog'),target=document.getElementById('memo-compose-title'),r=target.getBoundingClientRect(),base={bubbles:true,cancelable:true,pointerId:1,pointerType:'touch',isPrimary:true,button:0,clientX:r.x+10};
+  for(const [type,dy]of [['pointerdown',0],['pointermove',310]])target.dispatchEvent(new PointerEvent(type,{...base,clientY:r.y+dy}));
+  const dragged=el.getBoundingClientRect();target.dispatchEvent(new PointerEvent('pointerup',{...base,clientY:r.y+310}));
+  const a=el.getAnimations().find(a=>a.effect.getTiming().duration===220&&a.effect.getKeyframes().some(k=>k.transform));if(!a)return {immediate:false};a.pause();a.currentTime=0;window.exitAnimation=a;
+  return {immediate:true,dragged:dragged.top,top:el.getBoundingClientRect().top,height:el.getBoundingClientRect().height};
+ });assert(start.immediate,'exit must start before keyboard resize');assert(Math.abs(start.top-start.dragged)<1,'release continues from the finger, including drags beyond 240px');
+ const sample=()=>page.locator('#memo-compose-dialog').evaluate(el=>({top:el.getBoundingClientRect().top,height:el.getBoundingClientRect().height,opacity:getComputedStyle(el).opacity,open:el.open}));
+ await page.evaluate(()=>exitAnimation.currentTime=60);const moving=await sample();assert(moving.top>start.top+30,'no pause at release');
+ await page.evaluate(()=>{testViewport.height=650;testViewport.offsetTop=20;testViewport.dispatchEvent(new Event('resize'));testViewport.dispatchEvent(new Event('scroll'))});await page.waitForTimeout(40);const resized=await sample();assert(Math.abs(resized.top-moving.top)<1,'keyboard resize cannot restart or reposition the exit');assert.equal(resized.height,start.height);
+ await page.evaluate(()=>{exitAnimation.finish()});await page.waitForTimeout(40);const gone=await sample();assert.equal(gone.opacity,'0');assert(gone.open,'lock remains until keyboard cleanup');assert.equal(await page.evaluate(()=>document.body.style.position),'fixed');assert(!await page.locator('#modal-override').evaluate(e=>e.classList.contains('active')));
+ await page.evaluate(()=>{testViewport.height=844;testViewport.offsetTop=0;testViewport.dispatchEvent(new Event('resize'))});await page.waitForFunction(()=>!document.getElementById('memo-compose-dialog').open&&document.body.style.position!=='fixed');assert.equal(await page.evaluate(()=>dayMemos['2026-10-20']),undefined);assert.deepEqual(errors,[]);
+ console.log(engine.name(),theme,'PASS immediate continuous exit, unbounded finger tracking, frozen geometry through keyboard resize, invisible cleanup and draft discard');await page.close();
+ }await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

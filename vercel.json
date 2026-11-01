@@ -5,9 +5,48 @@
     },
     "api/today-menu.js": {
       "maxDuration": 60
+    },
+    "api/live-schedule.js": {
+      "maxDuration": 30
+    },
+    "api/account.js": {
+      "maxDuration": 60
+    },
+    "api/apple-account.js": {
+      "maxDuration": 60
+    },
+    "api/native-account.js": {
+      "maxDuration": 60
+    },
+    "api/parking.js": {
+      "maxDuration": 60
+    },
+    "api/lost-found.js": {
+      "maxDuration": 30
+    },
+    "api/bus-places.js": {
+      "maxDuration": 20
     }
   },
   "headers": [
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
     {
       "source": "/api/(.*)",
       "headers": [

@@ -1,0 +1,154 @@
+/* Experimental calendar design systems. Stable keys: test1=Toss, test3=Apple, test4=Kakao. */
+body[data-pref-theme=test1] {
+ --test-page:#f2f4f6; --test-surface:#fff; --test-field:#f3f5f7; --test-line:#edf0f3;
+ --test-ink:#191f28; --test-copy:#4e5968; --test-muted:#6b7684;
+ --test-accent:#2271e9; --test-accent-soft:#eaf2ff; --nav-tap:#dbeaff;
+ --test-day-fill:#e8f1ff; --test-day-ink:#2266c5; --test-night-fill:#34445b; --test-night-ink:#fff;
+ --test-special-day:#267b9a; --test-special-night:#6961a8; --test-off:#6b7684;
+ --test-holiday:#c14b5e; --test-saturday:#4276ad;
+ --test-today:#f3f7ff; --test-today-edge:#9ec4ff; --test-today-soft:#eaf2ff; --test-badge-shadow:none;
+ --theme-badge-radius:12px; --theme-week-rule:#edf0f3; --theme-card-radius:28px;
+ --theme-press:#eaf2ff;
+}
+body[data-pref-theme=test3] {
+ --test-page:#f5f5f7; --test-surface:#fff; --test-field:#f1f1f4; --test-line:#e6e6eb;
+ --test-ink:#1c1c1e; --test-copy:#48484a; --test-muted:#76767d;
+ --test-accent:#d93632; --test-accent-soft:#fff0ee; --nav-tap:#fbe5e3;
+ --test-day-fill:#fff3d7; --test-day-ink:#886323; --test-night-fill:#414957; --test-night-ink:#fff;
+ --test-special-day:#367c70; --test-special-night:#72638f; --test-off:#73737b;
+ --test-holiday:#cf4845; --test-saturday:#4e7496;
+ --test-today:#fff8f7; --test-today-edge:#e9b3ae; --test-today-soft:#fff0ee; --test-badge-shadow:none;
+ --theme-badge-radius:10px; --theme-week-rule:#ededf1; --theme-card-radius:22px;
+ --theme-press:#f2f2f7;
+}
+body[data-pref-theme=test4] {
+ --test-page:#f6f5f1; --test-surface:#fffefa; --test-field:#f0eeea; --test-line:#eae7e1;
+ --test-ink:#302a29; --test-copy:#5b514d; --test-muted:#796f68;
+ --test-accent:#594538; --test-accent-soft:#fff2ab; --nav-tap:#ffed91;
+ --test-day-fill:#fee879; --test-day-ink:#55412c; --test-night-fill:#514647; --test-night-ink:#fff;
+ --test-special-day:#4a827a; --test-special-night:#80708d; --test-off:#7e7067;
+ --test-holiday:#ad5662; --test-saturday:#4b7291;
+ --test-today:#fff8d9; --test-today-edge:#dbc066; --test-today-soft:#fff3bd; --test-badge-shadow:none;
+ --theme-badge-radius:13px 13px 13px 5px; --theme-week-rule:transparent; --theme-card-radius:30px;
+ --theme-press:#fff2bc;
+}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) { --nav-active-ink:var(--test-accent); }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]):is([data-view=calendar],[data-view=groups]) .container { padding:16px 16px 0; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]):is([data-view=calendar],[data-view=groups]) .reference-header { min-height:84px; padding:4px 2px 8px; gap:8px; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .reference-header .month-title-btn { color:var(--test-ink); font-variant-numeric:tabular-nums; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) :is(#cal-month-title-text,#group-month-title-text) { display:flex; flex-direction:column; align-items:flex-start; gap:1px; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .theme-year { color:var(--test-muted); font-size:13px; font-weight:550; line-height:20px; letter-spacing:0; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .theme-month { font-size:32px; font-weight:750; line-height:42px; letter-spacing:-1.2px; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions { gap:2px; align-items:center; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions .icon-button:not(.weather-trigger) { width:44px; min-width:44px; height:44px; padding:11px; border:0; border-radius:16px; background:transparent; color:var(--test-copy); }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions .icon-button:not(.weather-trigger) svg { width:22px; height:22px; stroke-width:1.7; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions .weather-trigger { min-width:48px; min-height:44px; height:auto; padding:5px; color:var(--test-copy); }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #weather-temperature { font-size:15px; font-weight:550; font-variant-numeric:tabular-nums; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #weather-icon { font-size:19px; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #weather-alert { max-width:100px; white-space:normal; overflow-wrap:anywhere; font-size:9px; line-height:12px; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-view=calendar] #view-calendar .calendar-card { margin:10px 0 12px; padding:0 8px 12px; background:var(--test-surface); border:1px solid #ffffffb3; border-radius:var(--theme-card-radius); box-shadow:0 4px 18px #25304904; overflow:hidden; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-weekdays { padding:16px 0 12px; font-size:12px; font-weight:550; line-height:18px; color:var(--test-muted); }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid { gap:0; background:transparent; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-grid .cal-day { padding:7px 3px 8px; min-height:96px; gap:0; border:0; border-bottom:1px solid var(--theme-week-rule); border-radius:0; background:transparent; box-shadow:none; overflow:hidden; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-day:nth-last-child(-n+7) { border-bottom:0; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-grid .cal-day.other-month { opacity:.36; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .day-meta { width:100%; height:28px; min-height:28px; display:flex; flex-direction:row; align-items:center; gap:2px; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .cal-day .day-num { font-size:14px; font-weight:550; width:24px; min-width:24px; height:24px; line-height:24px; justify-content:center; letter-spacing:-.3px; font-variant-numeric:tabular-nums; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .cal-day.sunday .day-num { color:var(--test-holiday)!important; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .cal-day.saturday:not(.holiday) .day-num { color:var(--test-saturday)!important; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .holiday-bar { font-size:8px; line-height:18px; min-height:18px; height:18px; letter-spacing:-.4px; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) :is(.cal-grid,#modal-override) .shift-badge { width:32px; min-width:32px; height:32px; min-height:32px; flex-basis:32px; margin:3px 0 3px; border-radius:var(--theme-badge-radius); box-shadow:none; font-size:14px; font-weight:600; letter-spacing:-.4px; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .shift-badge.special { width:auto; min-width:32px; max-width:100%; padding:0 3px; border-radius:var(--theme-badge-radius); font-size:11px; white-space:nowrap; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-pref-shape=circle] :is(.cal-grid,#modal-override) .shift-badge { border-radius:50%; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .shift-badge.off { font-size:13px; font-weight:450; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .attendance-pill { height:27px; min-height:27px; line-height:27px; margin:3px 0 4px; padding:0 3px; border-radius:8px; background:var(--test-field); color:var(--test-copy); font-size:10px; font-weight:550; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .sub-tag { height:15px; min-height:15px; line-height:15px; font-size:8px; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .calendar-sticker { width:22px; height:22px; flex-basis:22px; margin:2px 0 3px; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .memo-tag { min-height:28px; max-height:28px; padding:2px 3px; margin:2px 0 0; border-radius:5px; font-size:10px; line-height:12px; font-weight:400; letter-spacing:-.2px; color:var(--test-copy); }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-grid .cal-day.today { background:var(--test-today); border-radius:14px; box-shadow:none; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-grid .cal-day.today .day-num { width:24px; min-width:24px; height:24px; line-height:24px; border-radius:50%; background:var(--test-accent)!important; color:#fff!important; font-weight:650; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-grid .cal-day.today::after { border-color:var(--test-today-edge); }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav { padding:6px 16px calc(10px + env(safe-area-inset-bottom)); }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .nav-capsule { padding:5px; background:var(--test-surface); border:1px solid #fff; box-shadow:0 4px 20px #23304408; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item, body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item .nav-visual { min-height:58px; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item .nav-visual { padding:7px 2px; gap:5px; color:var(--test-muted)!important; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item.active .nav-visual { background:var(--test-accent-soft)!important; color:var(--test-accent)!important; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item svg { width:24px; height:24px; stroke-width:1.75; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-visual>span { font-size:11px; font-weight:500; letter-spacing:-.25px; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item.active .nav-visual>span { font-weight:650; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav .nav-item:active .nav-visual { background:var(--nav-tap)!important; color:var(--test-accent)!important; }
+/* Give inline holiday names the space otherwise reserved for a two-digit date. */
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .cal-day.holiday:not(.today) .day-num { width:auto; min-width:14px; justify-content:flex-start; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .holiday-bar { font-size:7.5px; letter-spacing:-.5px; }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .memo-tag { word-break:keep-all; overflow-wrap:anywhere; }
+/* Test 1: a strong month anchor, quiet rows, and useful blue feedback. */
+body[data-pref-theme=test1] .theme-month { font-weight:800; }
+body[data-pref-theme=test1] .header-calendar-actions .icon-button:not(.weather-trigger) { background:#fff; border-radius:15px; }
+body[data-pref-theme=test1] .header-calendar-actions { gap:4px; }
+body[data-pref-theme=test1] .cal-grid .memo-tag { background:#f2f5f9; }
+body[data-pref-theme=test1] .nav-capsule { border-radius:26px; }
+body[data-pref-theme=test1] .bottom-nav .nav-item.active .nav-visual { border-radius:20px; }
+/* Test 2: system typography, hairline week rules, and translucent controls. */
+body[data-pref-theme=test3] .theme-year { color:var(--test-accent); font-weight:500; }
+body[data-pref-theme=test3] .theme-month { font-size:34px; font-weight:700; letter-spacing:-1.5px; }
+body[data-pref-theme=test3] .header-calendar-actions { padding:2px; border:1px solid #e4e4e9; border-radius:26px; background:#ffffffb3; }
+body[data-pref-theme=test3] .header-calendar-actions .icon-button:not(.weather-trigger) { color:var(--test-accent); border-radius:50%; }
+body[data-pref-theme=test3][data-view=calendar] #view-calendar .calendar-card { border-color:#e7e7ec; box-shadow:0 2px 8px #1c1c1e03; }
+body[data-pref-theme=test3] .cal-grid .day-meta { justify-content:center; }
+body[data-pref-theme=test3] .cal-grid .cal-day.holiday .day-meta { justify-content:flex-start; }
+body[data-pref-theme=test3] .cal-grid .cal-day .day-num { font-size:15px; font-weight:400; }
+body[data-pref-theme=test3] .cal-grid .memo-tag { padding-left:4px; border-left:2px solid #d4a09b; border-radius:2px; }
+body[data-pref-theme=test3] .nav-capsule { background:#ffffffdb; border-color:#ffffffed; border-radius:34px; box-shadow:0 0 0 .5px #d1d1d980,0 8px 24px #2424330c; -webkit-backdrop-filter:blur(20px) saturate(1.3); backdrop-filter:blur(20px) saturate(1.3); }
+body[data-pref-theme=test3] .bottom-nav .nav-item.active .nav-visual { background:#ededf2b3!important; border-radius:27px; }
+body[data-pref-theme=test3] .bottom-nav .nav-item svg { stroke-width:1.65; }
+/* Test 3: a warm paper surface and compact, friendly message-like details. */
+body[data-pref-theme=test4] .theme-month { background:linear-gradient(transparent 76%,#fee785 76%,#fee785 94%,transparent 94%); }
+body[data-pref-theme=test4] .header-calendar-actions .icon-button:not(.weather-trigger) { background:#fffefa; border:1px solid #ede8df; border-radius:50%; }
+body[data-pref-theme=test4][data-view=calendar] #view-calendar .calendar-card { padding-top:8px; border-color:#ebe7df; box-shadow:0 5px 16px #5b473408; }
+body[data-pref-theme=test4] #view-calendar .cal-weekdays { padding:9px 0; margin:0 0 5px; border-radius:20px; background:#f4f1e9; }
+body[data-pref-theme=test4] #view-calendar .cal-grid .cal-day { border-bottom:0; }
+body[data-pref-theme=test4] .cal-grid .day-meta { justify-content:center; }
+body[data-pref-theme=test4] .cal-grid .cal-day.holiday .day-meta { justify-content:flex-start; }
+body[data-pref-theme=test4] .cal-grid .memo-tag { border-radius:7px 7px 7px 2px; background:#f7efdc; color:#776044; }
+body[data-pref-theme=test4] #view-calendar .cal-grid .cal-day.today .day-num { background:#fee879!important; color:#594538!important; }
+body[data-pref-theme=test4] .nav-capsule { border-radius:34px; border-color:#e9e3d8; box-shadow:0 6px 20px #5b47340a; }
+body[data-pref-theme=test4] .bottom-nav .nav-item.active .nav-visual { background:#ffed91!important; border-radius:24px 24px 24px 9px; }
+@media(max-width:360px) {
+ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-ui-language=en] .bottom-nav .nav-visual>span { font-size:9px; }
+}
+/* Only paint changes on hover/press: the grid never moves under the finger. */
+@media (hover:hover) and (pointer:fine) {
+ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-day:not(.other-month):hover { background:var(--theme-press); }
+ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions .icon-button:hover { background:var(--theme-press); }
+}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-day:not(.other-month):active { background:var(--theme-press); }
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) :is(.month-title-btn,.header-calendar-actions .icon-button,.nav-item):focus-visible { outline:2px solid var(--test-accent); outline-offset:2px; }
+@media (prefers-reduced-motion:no-preference) {
+ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-day, body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions .icon-button { transition:background-color .14s ease; }
+}
+@media (max-width:360px) {
+ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]):is([data-view=calendar],[data-view=groups]) .container { padding-left:12px; padding-right:12px; }
+ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .theme-month { font-size:29px; line-height:39px; }
+ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-view=calendar] #view-calendar .calendar-card { padding-left:4px; padding-right:4px; }
+ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-grid .cal-day { padding-left:2px; padding-right:2px; }
+ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .bottom-nav { padding-left:12px; padding-right:12px; }
+ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .holiday-bar { font-size:7px; }
+}
+/* Let the title and weather/actions keep their intrinsic width, rather than overlap. Warmth shares this sizing contract. */
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]):is([data-view=calendar],[data-view=groups]) .reference-header{flex-wrap:wrap;column-gap:8px;row-gap:4px;overflow:visible}
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-title-area{flex:1 0 max-content;min-width:0;max-width:100%;padding:3px 4px;box-sizing:border-box;overflow:visible}
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .reference-header .month-title-btn{max-width:100%;min-height:44px;padding:4px 2px;box-sizing:border-box;line-height:1.35;border-radius:10px;white-space:normal;overflow:visible;text-align:left}
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .reference-header .month-title-btn:focus-visible{outline:2px solid var(--test-accent);outline-offset:2px}
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .header-calendar-actions{flex:0 0 auto;min-width:0;max-width:100%;margin-left:auto;flex-wrap:wrap;row-gap:4px}
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid{min-height:clamp(352px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 182px - var(--theme-header-height,68px)),740px)}
+
+/* Leave room for the entire rounded toolbar below the native/browser safe area. */
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]):is([data-view=calendar],[data-view=groups]) .container{padding-top:16px}
+body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]):is([data-view=calendar],[data-view=groups]) .reference-header{margin-top:0}
+
+/* Available space is measured from the real toolbar and bottom navigation, including safe areas. */
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid { min-height:clamp(352px,var(--theme-calendar-room,560px),740px); }
+
+@media(prefers-reduced-transparency:reduce) {
+ body[data-pref-theme=test3] .nav-capsule { background:#fff; -webkit-backdrop-filter:none; backdrop-filter:none; }
+}

@@ -1,4 +1,5 @@
 /* Monthly calendar and personal settings. */
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 :root { --primary:#187fcc; --primary-dark:#1466a4; --cal-line:#e9edf1; }
 .container { max-width:760px; }
 .reference-header { border:0; box-shadow:none; border-radius:0; min-height:60px; margin-bottom:8px; padding:4px 0; gap:8px; }
@@ -19,13 +20,13 @@
 .calendar-month-controls .gcal-nav-group { gap:2px; }
 .calendar-month-controls .nav-arrow-btn { width:32px; height:32px; font-size:18px; }
 .calendar-today { border:0; background:none; color:#666b72; min-height:32px; padding:0 9px; font-size:12px; cursor:pointer; }
-body[data-view="calendar"] .container { padding-top:0; padding-bottom:0; }
-body[data-view="calendar"] .reference-header { margin-bottom:0; }
+body:is([data-view=calendar],[data-view=groups]) .container { padding-top:0; padding-bottom:0; }
+body:is([data-view=calendar],[data-view=groups]) .reference-header { margin-bottom:0; }
 #view-calendar .calendar-card { margin:0 -12px 12px; border:0; border-radius:0; box-shadow:none; overflow:visible; }
 .cal-weekdays { padding:10px 0; font-size:13px; font-weight:500; color:#54595f; }
 .cal-weekdays > :first-child { color:#f05a65; }
 .cal-weekdays > :last-child { color:#0788f8; }
-.cal-grid { height:clamp(440px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 200px),680px); grid-auto-rows:minmax(88px,1fr); }
+.cal-grid { height:auto; min-height:clamp(440px,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 200px),680px); grid-auto-rows:minmax(88px,1fr); transition:none; }
 .cal-day { min-height:88px; min-width:0; padding:4px 3px; align-items:center; }
 .cal-day.other-month { background:white; opacity:.23; cursor:default; }
 .cal-day.today { background:#f0f7fc; box-shadow:inset 0 3px 0 var(--primary); z-index:1; }
@@ -47,7 +48,10 @@ body[data-view="calendar"] .reference-header { margin-bottom:0; }
 .shift-badge.no-ot.day { background:#ffdf67; color:#33383e; border:0; }
 .shift-badge.no-ot.night { background:#354355; color:white; border:0; }
 .sub-tag { font-size:9px; line-height:1.35; font-weight:500; margin-top:0; color:#8d6970; }
-.memo-tag { background:none; border:0; border-radius:0; padding:1px; font-size:10px; line-height:1.4; color:#686d75; text-align:left; font-weight:400; letter-spacing:0; width:100%; }
+.memo-tag { background:none; border:0; border-radius:0; padding:1px; font-size:10px; line-height:1.4; color:#686d75; text-align:left; font-weight:400; letter-spacing:0; width:100%; min-width:0; flex-shrink:0; white-space:pre-wrap; overflow-wrap:anywhere; word-break:normal; text-overflow:clip; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; }
+.month-swipe-surface { touch-action:pan-y pinch-zoom; }
+.month-swipe-active { user-select:none; -webkit-user-select:none; }
+.salary-month-viewport { overflow:hidden; }
 .bottom-nav { max-width:760px; margin:0 auto; padding:4px 12px calc(6px + env(safe-area-inset-bottom)); border:1px solid #ededed; border-bottom:0; border-radius:24px 24px 0 0; box-shadow:0 -3px 14px #00000004; }
 .nav-item { font-size:11px; font-weight:500; color:#424242; min-height:56px; padding:0; transition:none; -webkit-tap-highlight-color:transparent; }
 .nav-item.active { color:#202020; font-weight:600; }
@@ -80,21 +84,21 @@ body[data-view="calendar"] .reference-header { margin-bottom:0; }
 .drawer-action .drawer-value { margin-left:auto; color:#969ca3; font-size:12px; }
 .drawer-footer { margin-top:auto; border-top:1px solid #edf0f2; padding-top:18px; }
 .drawer-footer a { color:#8a9099; font-size:12px; text-decoration:none; }
-#view-leave .card { border:1px solid #ededed; background:#fafafa; box-shadow:none; border-radius:20px; padding:20px; margin-bottom:16px; }
-#view-leave .leave-overview { background:#f8fcfa; border-color:#dceee5; }
-#view-leave .wage-settings-card { background:#fafbff; border-color:#e4e9f7; }
-#view-leave .card-header { margin-bottom:16px; padding-bottom:0; border-bottom:0; font-size:17px; font-weight:650; color:#202020; }
-#view-leave .card-header > span:first-child::before { content:''; display:inline-block; width:5px; height:14px; margin-right:8px; border-radius:3px; background:#258568; vertical-align:-1px; }
-#view-leave .wage-settings-card .card-header > span:first-child::before { background:#6a82c0; }
+#leave-settings-dialog .card { border:1px solid #ededed; background:#fafafa; box-shadow:none; border-radius:20px; padding:20px; margin-bottom:16px; }
+#leave-settings-dialog .leave-overview { background:#f8fcfa; border-color:#dceee5; }
+#view-payroll .wage-settings-card { background:#fafbff; border-color:#e4e9f7; }
+#leave-settings-dialog .card-header { margin-bottom:16px; padding-bottom:0; border-bottom:0; font-size:17px; font-weight:650; color:#202020; }
+#leave-settings-dialog .card-header > span:first-child::before { content:''; display:inline-block; width:5px; height:14px; margin-right:8px; border-radius:3px; background:#258568; vertical-align:-1px; }
+#view-payroll .wage-settings-card .card-header > span:first-child::before { background:#6a82c0; }
 .settings-year { font-size:12px; font-weight:500; color:#486da0; background:#eaf1fa; border-radius:6px; padding:4px 8px; }
-#view-leave .leave-stat-grid { gap:0; margin:0 0 12px; }
-#view-leave .leave-stat-box { background:none; border:0; padding:12px 4px; border-radius:0; }
-#view-leave .leave-stat-box + .leave-stat-box { border-left:1px solid #e8e8e8; }
-#view-leave .leave-stat-box .stat-label { font-size:12px; font-weight:500; color:#777; }
-#view-leave .leave-stat-box .stat-value { font-size:25px; font-weight:650; color:#292929; }
-#view-leave .leave-stat-box:first-child .stat-value { color:#477fbd; }
-#view-leave .leave-stat-box:nth-child(2) .stat-value { color:#a86c37; }
-#view-leave .leave-remaining .stat-value { font-weight:750; color:#198266; }
+#leave-settings-dialog .leave-stat-grid { gap:0; margin:0 0 12px; }
+#leave-settings-dialog .leave-stat-box { background:none; border:0; padding:12px 4px; border-radius:0; }
+#leave-settings-dialog .leave-stat-box + .leave-stat-box { border-left:1px solid #e8e8e8; }
+#leave-settings-dialog .leave-stat-box .stat-label { font-size:12px; font-weight:500; color:#777; }
+#leave-settings-dialog .leave-stat-box .stat-value { font-size:25px; font-weight:650; color:#292929; }
+#leave-settings-dialog .leave-stat-box:first-child .stat-value { color:#477fbd; }
+#leave-settings-dialog .leave-stat-box:nth-child(2) .stat-value { color:#a86c37; }
+#leave-settings-dialog .leave-remaining .stat-value { font-weight:750; color:#198266; }
 .leave-money-summary { display:flex; flex-direction:column; gap:14px; padding:16px 0 20px; border-top:1px solid #e8e8e8; }
 .leave-money-unit, .leave-money-total { display:flex; justify-content:space-between; align-items:baseline; gap:16px; width:100%; min-width:0; }
 .leave-money-unit > span, .leave-money-total > span:first-child { color:#777; font-size:13px; }
@@ -104,24 +108,24 @@ body[data-view="calendar"] .reference-header { margin-bottom:0; }
 .leave-edit-settings h3 { color:#555; font-size:13px; font-weight:600; margin:0 0 12px; }
 .leave-edit-settings .two-cols { margin:0; }
 .number-unit-field { position:relative; min-width:0; margin-top:auto; }
-#view-leave .input-group .number-unit-field input { padding-right:32px; }
+#leave-settings-dialog .input-group .number-unit-field input { padding-right:32px; }
 .number-unit-field span { position:absolute; top:50%; right:12px; transform:translateY(-50%); font-size:14px; color:#737f79; pointer-events:none; }
 .number-unit-field input::-webkit-inner-spin-button, .number-unit-field input::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
 .number-unit-field input { -moz-appearance:textfield; }
-#view-leave .input-group { min-width:0; }
-#view-leave .input-group label { color:#777; font-size:12px; font-weight:500; }
-#view-leave .input-group input { min-width:0; border-color:#e4e4e4; border-radius:10px; font-size:14px; color:#292929; padding:11px 10px; background:#fff; }
-#view-leave .input-group input[readonly] { border:0; border-radius:0; font-size:15px; font-weight:600; background:transparent; text-align:right; padding:11px 0; }
-#view-leave .wage-settings-card .two-cols { display:flex; flex-direction:column; gap:0; margin:0; }
-#view-leave .wage-settings-card .input-group { display:grid; grid-template-columns:minmax(0,1fr) minmax(100px,1fr); align-items:center; border-bottom:1px solid #e8e8e8; }
-#view-leave .wage-settings-card .input-group label { font-size:13px; margin:0; }
-#view-leave .wage-settings-card .sms-open-btn { color:#386598; background:#eaf0fb; padding:8px 12px; min-height:40px; border-radius:999px; font-weight:500; }
-#view-leave .account-hint { font-size:11px; margin:12px 0 18px; color:#848484; }
-#view-leave .btn-action-group { grid-template-columns:1fr auto; gap:10px; margin-top:0; padding-top:0; border-top:0; }
-#view-leave .btn-save, #view-leave .btn-reset-data { border-radius:999px; min-height:44px; font-size:13px; font-weight:600; padding:10px 20px; }
-#view-leave .btn-save { background:#198266; }
-#view-leave .btn-save:active { background:#12634c; }
-#view-leave .btn-reset-data { background:#eee; border:0; color:#666; }
+#leave-settings-dialog .input-group { min-width:0; }
+#leave-settings-dialog .input-group label { color:#777; font-size:12px; font-weight:500; }
+#leave-settings-dialog .input-group input { min-width:0; border-color:#e4e4e4; border-radius:10px; font-size:14px; color:#292929; padding:11px 10px; background:#fff; }
+#leave-settings-dialog .input-group input[readonly] { border:0; border-radius:0; font-size:15px; font-weight:600; background:transparent; text-align:right; padding:11px 0; }
+#view-payroll .wage-settings-card .two-cols { display:flex; flex-direction:column; gap:0; margin:0; }
+#view-payroll .wage-settings-card .input-group { display:grid; grid-template-columns:minmax(0,1fr) minmax(100px,1fr); align-items:center; border-bottom:1px solid #e8e8e8; }
+#view-payroll .wage-settings-card .input-group label { font-size:13px; margin:0; }
+#view-payroll .wage-settings-card .sms-open-btn { color:#386598; background:#eaf0fb; padding:8px 12px; min-height:40px; border-radius:999px; font-weight:500; }
+#leave-settings-dialog .account-hint { font-size:11px; margin:12px 0 18px; color:#848484; }
+#leave-settings-dialog .btn-action-group { grid-template-columns:1fr auto; gap:10px; margin-top:0; padding-top:0; border-top:0; }
+#leave-settings-dialog .btn-save, #leave-settings-dialog .btn-reset-data { border-radius:999px; min-height:44px; font-size:13px; font-weight:600; padding:10px 20px; }
+#leave-settings-dialog .btn-save { background:#198266; }
+#leave-settings-dialog .btn-save:active { background:#12634c; }
+#leave-settings-dialog .btn-reset-data { background:#eee; border:0; color:#666; }
 input[type="number"], #disp-ot-hours, #disp-unpaid-days, #disp-unpaid-deduction { text-align:right; }
 .two-cols > .input-group { display:flex; flex-direction:column; }
 .two-cols > .input-group input { margin-top:auto; }
@@ -264,8 +268,8 @@ input[type="number"], input[readonly], .num, .stat-value, .hero-amount, .sub-val
 
 /* Minimal home calendar. */
 body[data-view="calendar"] { background:#fff; --primary:#303030; --primary-dark:#202020; --cal-line:#ededed; }
-body[data-view="calendar"] .reference-header .month-title-btn { color:#202020; font-weight:700; }
-body[data-view="calendar"] .reference-header .account-menu-button, body[data-view="calendar"] .icon-button { color:#303030; }
+body:is([data-view=calendar],[data-view=groups]) .reference-header .month-title-btn { color:#202020; font-weight:700; }
+body:is([data-view=calendar],[data-view=groups]) .reference-header .account-menu-button, body:is([data-view=calendar],[data-view=groups]) .icon-button { color:#303030; }
 body[data-view="calendar"] .icon-button:hover, body[data-view="calendar"] .account-menu-button:hover { background:#f4f4f4; }
 .calendar-group-caption, .calendar-group-caption strong { color:#626262; }
 .calendar-group-caption strong { background:#f2f2f2; }
@@ -312,33 +316,33 @@ body { background:#fff; }
 .nav-item { color:#858585; }
 .nav-item.active { color:#252525; }
 .nav-item.active .nav-visual { background:#f3f3f3; border-radius:18px; }
-#view-payroll .card, #view-payroll .salary-hero, #view-leave .card { background:#fff; border:1px solid #e5e5e5; border-radius:20px; box-shadow:none; padding:20px; }
-#view-payroll .salary-hero, #view-leave .leave-overview { background:#f7f7f7; border-color:#ebebeb; }
+#view-payroll .card, #view-payroll .salary-hero, #leave-settings-dialog .card { background:#fff; border:1px solid #e5e5e5; border-radius:20px; box-shadow:none; padding:20px; }
+#view-payroll .salary-hero, #leave-settings-dialog .leave-overview { background:#f7f7f7; border-color:#ebebeb; }
 #view-payroll .hero-label, #view-payroll .estimate-caption { color:#737373; }
 #view-payroll .hero-amount, #view-payroll #hero-regular-pay, #view-payroll #hero-bonus-pay, #view-payroll .estimate-net, #view-payroll #estimate-net { color:#252525 !important; }
 #view-payroll .hero-amount { letter-spacing:-.7px; }
 #view-payroll .hero-subgrid { border-color:#e4e4e4; }
-#view-payroll .period-tag, #view-leave .settings-year, #bonus-badge { background:#ededed; color:#616161; border:0; border-radius:8px; }
-#view-payroll .card-header, #view-leave .card-header { color:#303030; font-size:16px; font-weight:600; }
-#view-payroll .card-header > span:first-child::before, #view-leave .card-header > span:first-child::before { display:none; }
-#view-payroll .input-group input, #view-leave .input-group input { border-color:#e5e5e5; border-radius:12px; font-size:16px; background:#fff; color:#303030; min-height:44px; }
+#view-payroll .period-tag, #leave-settings-dialog .settings-year, #bonus-badge { background:#ededed; color:#616161; border:0; border-radius:8px; }
+#view-payroll .card-header, #leave-settings-dialog .card-header { color:#303030; font-size:16px; font-weight:600; }
+#view-payroll .card-header > span:first-child::before, #leave-settings-dialog .card-header > span:first-child::before { display:none; }
+#view-payroll .input-group input, #leave-settings-dialog .input-group input { border-color:#e5e5e5; border-radius:12px; font-size:16px; background:#fff; color:#303030; min-height:44px; }
 #view-payroll .input-group input[readonly] { background:#f5f5f5 !important; color:#616161 !important; border-color:#e5e5e5 !important; }
 #view-payroll .toggle-box { background:#f7f7f7; border-color:#e8e8e8; }
 #view-payroll .toggle-box label { color:#616161; }
-#view-payroll .btn-save, #view-leave .btn-save, .settings-dialog .btn-save, #payroll-sms-dialog .sms-primary-btn { background:#252525; color:#fff; border:0; border-radius:999px; min-height:44px; }
-#view-payroll .btn-save:active, #view-leave .btn-save:active, .settings-dialog .btn-save:active { background:#444; }
-#view-payroll .btn-reset-data, #view-leave .btn-reset-data, #payroll-sms-dialog .sms-clear-btn { background:#f1f1f1; border:0; color:#616161; border-radius:999px; min-height:44px; }
+#view-payroll .btn-save, #leave-settings-dialog .btn-save, .settings-dialog .btn-save, #payroll-sms-dialog .sms-primary-btn { background:#252525; color:#fff; border:0; border-radius:999px; min-height:44px; }
+#view-payroll .btn-save:active, #leave-settings-dialog .btn-save:active, .settings-dialog .btn-save:active { background:#444; }
+#view-payroll .btn-reset-data, #leave-settings-dialog .btn-reset-data, #payroll-sms-dialog .sms-clear-btn { background:#f1f1f1; border:0; color:#616161; border-radius:999px; min-height:44px; }
 #view-payroll .today-btn { border-color:#e2e2e2; color:#616161; }
 #view-payroll .payroll-disclosure { background:#fff; }
 .payroll-detail-content { border-color:#e8e8e8; }
 #view-payroll .pay-table tr.total-row, #view-payroll .pay-table .bonus-row { background:#f5f5f5; border-color:#e5e5e5; }
 #view-payroll #row-gross-pay { color:#252525 !important; }
 #view-payroll #row-estimated-deduction, #view-payroll #tr-attendance-deduction .num { color:#616161; }
-#view-leave .leave-stat-box .stat-value, #view-leave .leave-stat-box:first-child .stat-value, #view-leave .leave-stat-box:nth-child(2) .stat-value, #view-leave .leave-remaining .stat-value, #view-leave .leave-money-total #val-total-leave-pay { color:#252525; }
-#view-leave .leave-remaining .stat-value { font-weight:750; }
-#view-leave .wage-settings-card .input-group { border-color:#ededed; }
-#view-leave .wage-settings-card input[readonly] { background:transparent; }
-#view-leave .account-hint { color:#737373; font-size:12px; line-height:1.7; }
+#leave-settings-dialog .leave-stat-box .stat-value, #leave-settings-dialog .leave-stat-box:first-child .stat-value, #leave-settings-dialog .leave-stat-box:nth-child(2) .stat-value, #leave-settings-dialog .leave-remaining .stat-value, #leave-settings-dialog .leave-money-total #val-total-leave-pay { color:#252525; }
+#leave-settings-dialog .leave-remaining .stat-value { font-weight:750; }
+#view-payroll .wage-settings-card .input-group { border-color:#ededed; }
+#view-payroll .wage-settings-card input[readonly] { background:transparent; }
+#leave-settings-dialog .account-hint { color:#737373; font-size:12px; line-height:1.7; }
 .menu-leave-summary { background:#f5f5f5; color:#616161; border:1px solid #ededed; }
 .menu-leave-summary > :first-child, .menu-leave-summary strong, .settings-dialog h3 { color:#303030; }
 .settings-dialog .input-group input { border:1px solid #e5e5e5; border-radius:12px; background:#fafafa; }
@@ -433,4 +437,320 @@ body[data-view="all"] #first-use-guide { display:none; }
 @media(max-width:380px) { .reference-header .month-title-btn { font-size:26px; } .header-calendar-actions { gap:0; } .header-calendar-actions .icon-button { width:36px; } }
 
 /* Lower only the month label without changing the header or calendar geometry. */
-body[data-view="calendar"] .reference-header .month-title-btn { transform:translateY(6px); }
+body:is([data-view=calendar],[data-view=groups]) .reference-header .month-title-btn { transform:translateY(6px); }
+
+
+/* One continuous track for the outgoing and incoming month. */
+.month-swipe-track{position:relative;overflow:hidden;width:100%;isolation:isolate}
+
+/* Strong shift colors on quiet, unchanged surfaces. */
+:root { --shift-day:#ffd600; --shift-night:#424242; --shift-special-day:#47d6dc; --shift-special-night:#5485ee; --shift-leave:#24724b; --shift-off:#e8687f; --primary:#424242; --primary-dark:#303030; }
+body[data-view="calendar"] { --primary:#424242; --primary-dark:#303030; }
+.shift-badge.day, .shift-badge.no-ot.day { background:var(--shift-day); color:#424242; }
+.shift-badge.night, .shift-badge.no-ot.night { background:var(--shift-night); color:#fff; }
+.shift-badge.special-day { background:var(--shift-special-day); color:#fff; }
+.shift-badge.special-night { background:var(--shift-special-night); color:#fff; }
+.shift-badge.leave, .shift-badge.half { background:var(--shift-leave); color:#fff; }
+.shift-badge.unpaid, .shift-badge.unpaid-half { background:#805345; color:#fff; }
+.shift-badge.off { color:var(--shift-off) !important; }
+#modal-pill-day { background:var(--shift-day); color:#424242 !important; }
+#modal-pill-night { background:var(--shift-night); color:#fff !important; }
+#modal-pill-special { color:var(--shift-special-day) !important; }
+#modal-pill-leave { color:var(--shift-leave) !important; }
+.nav-item.active { color:var(--shift-night); }
+.all-topline { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:24px; }
+.all-topline .all-page-title { margin:0; font-size:20px; }
+.all-topline .google-login-image { width:135px; height:30px; }
+.all-account-card { padding:0; background:none; border:0; border-radius:0; margin:24px 0; }
+.all-account-card > summary { font-size:13px; color:var(--text-sub); cursor:pointer; padding:10px 0; }
+.all-settings-card { border-radius:12px; }
+#first-use-guide button:first-child { display:none; }
+body .bottom-nav .nav-item.active { color:var(--shift-night); }
+.all-shortcut-icon.mint { color:var(--shift-leave); }
+.all-shortcut-icon.lavender { color:var(--shift-night); }
+.all-shortcut-icon.sky { color:var(--shift-special-day); }
+#modal-override .opt-btn.day-sp { border-left:3px solid var(--shift-special-day); color:var(--shift-special-day); }
+#modal-override .opt-btn.night-sp { border-left:3px solid var(--shift-special-night); color:var(--shift-special-night); }
+#modal-override .opt-btn.leave, #modal-override .opt-btn.half { border-left:3px solid var(--shift-leave); color:var(--shift-leave); }
+#modal-override .btn-save, #view-payroll .btn-save, #leave-settings-dialog .btn-save, .settings-dialog .btn-save, #payroll-sms-dialog .sms-primary-btn { background:var(--shift-night); }
+
+/* Compact attendance choices and schedule sharing. */
+#modal-override .opt-btn { min-height:44px; padding:10px 12px; border-radius:10px; justify-content:center; }
+#modal-override .override-header { margin-bottom:18px; }
+#modal-override .override-section { margin-bottom:16px; padding-bottom:16px; }
+#modal-override .override-memo textarea { min-height:72px; border-radius:10px; }
+.share-sheet { background:#fff; padding:24px; border-radius:22px 22px 0 0; }
+.share-row { display:flex; align-items:center; gap:16px; min-height:72px; width:100%; border:0; border-bottom:1px solid #eee; background:#fff; color:#424242; text-align:left; font:inherit; cursor:pointer; }
+.share-row strong { flex:1; font-size:16px; font-weight:500; }
+.share-row > span { font-size:24px; }
+#share-status { font-size:12px; color:#737373; margin:12px 0 0; }
+
+.editor-tabs { display:flex; gap:24px; margin-bottom:20px; }
+.editor-tabs button { border:0; border-bottom:2px solid transparent; background:none; padding:8px 0; font:inherit; color:#888; cursor:pointer; }
+.editor-tabs button[aria-selected="true"] { color:#424242; border-bottom-color:#424242; font-weight:600; }
+#modal-override [hidden] { display:none !important; }
+.shift-scroll { display:flex; overflow-x:auto; gap:8px; padding:3px 0 14px; margin-bottom:12px; scroll-snap-type:x proximity; }
+#modal-override .shift-scroll .opt-btn { flex:0 0 auto; min-width:78px; align-items:center; text-align:center; scroll-snap-align:start; }
+#modal-override .opt-btn.reset { width:100%; margin-top:4px; }
+#modal-override .override-sheet { min-height:0; height:auto; }
+
+/* Keep tabs visible and the editor stable while switching to memos. */
+#modal-override .editor-tabs { display:flex; gap:4px; padding:4px; background:#f1f2f4; border-radius:12px; position:sticky; top:0; z-index:2; }
+#modal-override .editor-tabs button { flex:1; min-height:44px; padding:10px; font-size:16px; font-weight:600; color:#656970; border:0; border-radius:9px; }
+#modal-override .editor-tabs button[aria-selected="true"] { background:#fff; color:#242424; box-shadow:0 1px 4px #00000012; }
+#modal-override .override-sheet { min-height:min(540px,85dvh); }
+#modal-override #memo-panel textarea { min-height:240px; height:32dvh; max-height:45dvh; }
+.all-settings-section { margin-bottom:20px; }
+.all-settings-section > h2, .all-settings-card .all-company { display:none; }
+.all-settings-card { display:flex; align-items:center; gap:12px; padding:10px 12px; background:#f7f8fa; border-radius:10px; flex-wrap:wrap; }
+.all-settings-card .drawer-section-label { flex:1; margin:0; font-size:13px; white-space:nowrap; }
+.all-settings-card .drawer-section-label svg { width:18px; height:18px; }
+.all-settings-card .group-select-wrapper { width:86px; }
+.all-settings-card .group-select { min-height:36px; padding:6px 24px 6px 10px; font-size:14px; border-radius:8px; }
+.all-settings-card .group-selection-status { flex-basis:100%; margin:0; font-size:11px; }
+.all-settings-card .group-selection-status[data-state="ready"] { display:none; }
+
+.all-settings-card .group-selection-status { display:none; }
+
+/* Attendance choices use exactly the calendar badge palette. */
+#modal-override .opt-btn.day-sp { background:var(--shift-special-day); color:#fff; border-color:var(--shift-special-day); }
+#modal-override .opt-btn.night-sp { background:var(--shift-special-night); color:#fff; border-color:var(--shift-special-night); }
+#modal-override .opt-btn.leave, #modal-override .opt-btn.half { background:var(--shift-leave); color:#fff; border-color:var(--shift-leave); }
+#modal-override .opt-btn.unpaid, #modal-override .opt-btn.unpaid-half { background:#805345; color:#fff; border-color:#805345; }
+#modal-override[data-base="DAY"] .opt-btn.no-ot { background:var(--shift-day); color:#424242; border-color:var(--shift-day); }
+#modal-override[data-base="NIGHT"] .opt-btn.no-ot { background:var(--shift-night); color:#fff; border-color:var(--shift-night); }
+
+/* Restrained functional accents; shift colors remain independent. */
+:root { --accent:#2874e8; --accent-soft:#edf4ff; --primary:#2874e8; --primary-dark:#1c5fc7; }
+body[data-view="calendar"] { --primary:#2874e8; --primary-dark:#1c5fc7; }
+body .bottom-nav .nav-item.active { color:var(--accent); }
+body .bottom-nav .nav-item.active .nav-visual { background:var(--accent-soft); border-radius:14px; }
+.header-calendar-actions .icon-button:first-child { color:var(--accent); }
+#modal-override .btn-save, #view-payroll .btn-save, #leave-settings-dialog .btn-save, .settings-dialog .btn-save, #payroll-sms-dialog .sms-primary-btn { background:var(--accent); }
+#modal-override .editor-tabs button[aria-selected="true"] { background:var(--accent); color:#fff; box-shadow:none; }
+#modal-override .editor-tabs { background:#edf1f6; }
+.all-shortcut-icon.mint { background:#eaf7f0; color:#15966a; }
+.all-shortcut-icon.lavender { background:#fff3e3; color:#df8c25; }
+.all-shortcut-icon.sky { background:var(--accent-soft); color:var(--accent); }
+.all-settings-card { background:#f1f5fa; }
+.all-settings-card .drawer-section-label svg { color:var(--accent); }
+.share-row > span:first-child { color:var(--accent); background:var(--accent-soft); width:40px; height:40px; display:grid; place-items:center; border-radius:12px; }
+.all-info-list a:first-child { color:var(--accent); }
+button:focus-visible, a:focus-visible, select:focus-visible { outline-color:var(--accent); }
+
+/* Monthly summary in the app's own palette. */
+#modal-month-stats .stats-sheet { padding:24px; background:#fff; border-radius:24px 24px 0 0; }
+.stats-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; }
+.stats-header h2 { font-size:28px; margin:0; letter-spacing:-.6px; }
+.stats-header p,.stats-section p { color:#737b88; font-size:11px; margin:6px 0 16px; }
+.stats-section { padding:0 0 18px; margin-bottom:18px; border-bottom:1px solid #edf0f4; }
+.stats-section:last-child { border:0; padding:0; margin:0; }
+.stats-section h3 { font-size:14px; margin:0; font-weight:600; }
+.stats-section-heading,.stats-row { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.stats-section-heading button { border:0; background:none; color:var(--accent); font-size:12px; cursor:pointer; }
+.stats-row { padding:10px 0; font-size:14px; color:#616b78; }
+.stats-row strong { color:#333d4b; font-size:15px; }
+.stats-total { margin-top:6px; background:var(--accent-soft); border-radius:12px; padding:14px 12px; }
+.stats-total strong { color:var(--accent); font-size:18px; }
+.stats-shifts { display:flex; gap:12px; flex-wrap:wrap; margin:8px 0 14px; }
+.stats-shifts > div { display:flex; gap:5px; align-items:center; font-size:12px; }
+.stats-badge { display:grid; place-items:center; border-radius:9px; width:30px; height:30px; font-size:11px; }
+.stats-badge.day { background:var(--shift-day);color:#424242; }
+.stats-badge.night { background:var(--shift-night);color:#fff; }
+.stats-badge.off { color:var(--shift-off);background:#fff4f6; }
+.stats-badge.day-sp { background:var(--shift-special-day);color:#fff; }
+.stats-badge.night-sp { background:var(--shift-special-night);color:#fff; }
+#modal-month-stats [id^="modal-pill-"] { background:none; padding:0; color:#333d4b !important; font-size:13px; }
+
+/* Personal work menu and a separate, compact preferences page. */
+.all-topline { gap:10px; }
+.all-topline .all-page-title { flex:1; }
+.all-topline .google-login-image { width:120px;height:auto; }
+.menu-preferences { width:36px;height:36px;color:#626d7b; }
+.menu-environment-link { display:flex;align-items:center;justify-content:space-between;width:100%;padding:18px 0;border:0;border-top:1px solid #edf0f4;background:#fff;color:#626d7b;font:inherit;font-size:13px;cursor:pointer; }
+.app-preferences { border:0;border-radius:22px;max-width:480px;width:calc(100% - 28px);max-height:85dvh;padding:24px;background:#f4f6f9;color:#333d4b; }
+.app-preferences::backdrop { background:#0006; }
+.preferences-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:20px; }
+.preferences-header h2 { font-size:20px;margin:0; }
+.preferences-card,.app-preferences .all-info-section { background:#fff;border-radius:16px;padding:16px;margin:0 0 18px; }
+.preferences-card h3 { margin:0 0 10px;font-size:13px;color:#626d7b; }
+.preferences-card label { display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;border-bottom:1px solid #f2f3f6;font-size:14px; }
+.preferences-card label:last-child { border:0; }
+.preferences-card input { width:20px;height:20px;accent-color:var(--accent); }
+.preferences-card select { border:0;background:#edf4ff;color:var(--accent);padding:8px;border-radius:8px; }
+body[data-pref-adjacent="false"] .cal-day.other-month > * { visibility:hidden; }
+body[data-pref-holidays="false"] .holiday-bar { display:none; }
+body[data-pref-memos="false"] .memo-tag { display:none; }
+body[data-pref-shape="circle"] .shift-badge { border-radius:50%; }
+
+.app-preferences { position:fixed;inset:0;margin:auto;overflow:auto; }
+
+/* Circular work badges and separate attendance annotations. */
+body[data-pref-shape="circle"] .cal-day .shift-badge { width:32px;height:32px;min-width:32px;min-height:32px;padding:0;flex:0 0 32px;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1;box-sizing:border-box; }
+body[data-pref-shape="circle"] .cal-day .shift-badge.special { font-size:10px; }
+.attendance-pill { width:100%;max-width:72px;align-self:center;min-height:18px;padding:2px 3px;border-radius:6px;color:white;font-size:10px;line-height:14px;text-align:center;box-sizing:border-box; }
+.attendance-pill.leave { background:#c35b18; }
+.attendance-pill.half { background:#8056b5; }
+.attendance-pill.unpaid { background:#a95264; }
+#modal-override .opt-btn.leave { background:#c35b18;border-color:#c35b18;color:#fff; }
+#modal-override .opt-btn.half { background:#8056b5;border-color:#8056b5;color:#fff; }
+#modal-override .opt-btn.unpaid,#modal-override .opt-btn.unpaid-half { background:#a95264;border-color:#a95264;color:#fff; }
+
+/* Quiet attendance choices; calendar annotations share one red. */
+.attendance-pill.leave,.attendance-pill.half,.attendance-pill.unpaid { background:#c64b58; }
+#modal-override .opt-btn.leave,#modal-override .opt-btn.half,#modal-override .opt-btn.unpaid,#modal-override .opt-btn.unpaid-half,
+#modal-override[data-base] .opt-btn.no-ot { background:#edf1f5;color:#46566a;border:1px solid #dce3eb;box-shadow:none; }
+
+/* Three saved calendar themes, with coordinated work and attendance palettes. */
+body[data-pref-theme="current"] { --attendance:#c64b58; --choice-bg:#edf1f5;--choice-ink:#46566a;--work-ink:#fff; }
+body[data-pref-theme="gpt"] { --accent:#212121;--accent-soft:#f3f3f3;--primary:#212121;--shift-day:#ddd9d0;--shift-night:#343434;--shift-special-day:#555555;--shift-special-night:#212121;--shift-off:#777777;--attendance:#b55b61;--choice-bg:#f3f3f3;--choice-ink:#444444;--work-ink:#fff; }
+body[data-pref-theme="toss"] { --accent:#2874e8;--accent-soft:#edf4ff;--primary:#2874e8;--shift-day:#e8f2ff;--shift-night:#2453a6;--shift-special-day:#3182f6;--shift-special-night:#1b64da;--shift-off:#d95769;--attendance:#c94d61;--choice-bg:#f0f3f8;--choice-ink:#4b5e78;--work-ink:#fff; }
+body[data-pref-theme="toss"] .cal-grid { background:#fff;border:1px solid #edf1f5;border-radius:18px;overflow:hidden; }
+body[data-pref-theme="toss"] .cal-day { border-color:#f0f3f7; }
+body[data-pref-theme="toss"] .cal-day.today { background:#eff5ff;box-shadow:inset 0 0 0 1px #bfd6fb; }
+body[data-pref-theme="gpt"] .cal-grid { background:#fff;border:1px solid #eeeeee;border-radius:12px;overflow:hidden; }
+body[data-pref-theme] .shift-badge.night,body[data-pref-theme] .shift-badge.special-day,body[data-pref-theme] .shift-badge.special-night { color:var(--work-ink); }
+body[data-pref-theme] #modal-override .opt-btn.day-sp,body[data-pref-theme] #modal-override .opt-btn.night-sp { color:var(--work-ink); }
+body[data-pref-theme] .attendance-pill { background:var(--attendance); }
+body[data-pref-theme] #modal-override .opt-btn.leave,body[data-pref-theme] #modal-override .opt-btn.half,body[data-pref-theme] #modal-override .opt-btn.unpaid,body[data-pref-theme] #modal-override .opt-btn.unpaid-half,body[data-pref-theme] #modal-override .opt-btn.no-ot { background:var(--choice-bg);color:var(--choice-ink); }
+body[data-pref-theme] .stats-badge.night,body[data-pref-theme] .stats-badge.day-sp,body[data-pref-theme] .stats-badge.night-sp { color:var(--work-ink); }
+
+/* Coordinated editor shapes and complete neutral/blue surfaces. */
+body[data-pref-shape="circle"] #modal-override .opt-btn:not(.reset) { width:58px;min-width:58px;height:58px;min-height:58px;padding:0 2px;border-radius:50%;flex:0 0 58px;box-sizing:border-box;white-space:normal;font-size:11px; }
+body[data-pref-theme="toss"] { background:#f5f7fa;color:#191f28; }
+body[data-pref-theme="toss"] .shift-badge.night,body[data-pref-theme="toss"] .stats-badge.night { color:#fff; }
+body[data-pref-theme="toss"] .shift-badge.day { color:#1959b8; }
+body[data-pref-theme="gpt"] { background:#fff;color:#212121; }
+body[data-pref-theme="gpt"] .cal-day.today { background:#f5f5f5;box-shadow:inset 0 0 0 1px #aaa; }
+body[data-pref-theme="gpt"] .cal-day { border-color:#efefef; }
+body[data-pref-theme="gpt"] .app-preferences,body[data-pref-theme="gpt"] .all-panel { background:#fafafa; }
+body[data-pref-theme="gpt"] #modal-override .override-tab.active { background:#212121; }
+body[data-view="calendar"][data-pref-theme="toss"] { background:#f5f7fa; }
+body[data-view="calendar"][data-pref-theme="gpt"] { background:#fff; }
+
+/* Theme surfaces are shared by every page and the personal-work drawer. */
+body[data-pref-theme="current"] { --page-bg:#fff;--surface:#fff;--surface-soft:#f1f5fa;--theme-text:#333d4b;--theme-line:#e5e9ef; }
+body[data-pref-theme="toss"] { --page-bg:#f5f7fa;--surface:#fff;--surface-soft:#edf4ff;--theme-text:#191f28;--theme-line:#e8eef6; }
+body[data-pref-theme="gpt"] { --page-bg:#fff;--surface:#fff;--surface-soft:#f4f4f4;--theme-text:#212121;--theme-line:#e7e7e7; }
+body[data-pref-theme] { background:var(--page-bg);color:var(--theme-text); }
+body[data-pref-theme] .view-page,body[data-pref-theme] .account-drawer { color:var(--theme-text); }
+body[data-pref-theme] .account-drawer,body[data-pref-theme] .bottom-nav,body[data-pref-theme] .card,body[data-pref-theme] .meal-date-card,body[data-pref-theme] .all-account-card,body[data-pref-theme] .all-info-list { background:var(--surface);border-color:var(--theme-line); }
+body[data-pref-theme] #view-payroll .salary-hero,body[data-pref-theme] #leave-settings-dialog .leave-overview,body[data-pref-theme] .all-settings-card,body[data-pref-theme] .leave-money-summary,body[data-pref-theme] .account-drawer .group-select,body[data-pref-theme] .preferences-card select { background:var(--surface-soft);border-color:var(--theme-line); }
+body[data-pref-theme] .salary-hero .hero-amount,body[data-pref-theme] .leave-money-summary strong,body[data-pref-theme] .all-shortcut-icon,body[data-pref-theme] .account-drawer .drawer-action svg { color:var(--accent); }
+body[data-pref-theme] .all-shortcut-icon { background:var(--accent-soft); }
+body[data-pref-theme] .btn-primary,body[data-pref-theme] .btn-save { background:var(--accent);color:#fff; }
+body[data-pref-theme] .app-preferences { background:var(--page-bg); }
+body[data-pref-shape="circle"] #modal-override .opt-btn.reset { width:100%;height:44px;min-width:0;min-height:44px;border-radius:12px;flex:none;padding:10px 16px;font-size:13px; }
+/* Complete theme mapping for payroll and hourly-rate/leave pages. */
+body[data-pref-theme="current"] { --accent:#424242;--accent-soft:#ededed;--primary:#424242;--primary-dark:#303030; }
+body[data-pref-theme] #view-payroll .salary-hero .sub-val { color:var(--accent) !important; }
+body[data-pref-theme] #view-payroll .salary-hero .hero-amount,
+body[data-pref-theme] #view-payroll #row-gross-pay,
+body[data-pref-theme] #view-payroll #estimate-net,
+body[data-pref-theme] #leave-settings-dialog .leave-remaining .stat-value,
+body[data-pref-theme] #leave-settings-dialog #val-total-leave-pay { color:var(--accent) !important; }
+body[data-pref-theme] #view-payroll .pay-table tr.total-row,
+body[data-pref-theme] #view-payroll .pay-table .bonus-row,
+body[data-pref-theme] #view-payroll .toggle-box,
+body[data-pref-theme] #view-payroll .estimate-net,
+body[data-pref-theme] #leave-settings-dialog .leave-money-summary { background:var(--surface-soft);border-color:var(--theme-line); }
+body[data-pref-theme] #view-payroll .input-group input,
+body[data-pref-theme] #leave-settings-dialog .input-group input { background:var(--surface);color:var(--theme-text);border-color:var(--theme-line); }
+body[data-pref-theme] #view-payroll .input-group input[readonly],
+body[data-pref-theme] #leave-settings-dialog .input-group input[readonly] { background:var(--surface-soft) !important;color:var(--theme-text) !important;border-color:var(--theme-line) !important; }
+body[data-pref-theme] #view-payroll input[type="checkbox"] { accent-color:var(--accent); }
+body[data-pref-theme] #view-payroll .btn-save,
+body[data-pref-theme] #leave-settings-dialog .btn-save { background:var(--accent); }
+body[data-pref-theme] #view-payroll .nav-arrow-btn,
+body[data-pref-theme] #view-payroll .today-btn { color:var(--accent);border-color:var(--theme-line); }
+body[data-pref-theme="toss"] #view-payroll .card,
+body[data-pref-theme="toss"] #leave-settings-dialog .card { border-radius:20px;border-color:#edf1f6; }
+body[data-pref-theme="gpt"] #view-payroll .card,
+body[data-pref-theme="gpt"] #view-payroll .salary-hero,
+body[data-pref-theme="gpt"] #leave-settings-dialog .card { border-radius:12px;border-color:#e7e7e7; }
+body[data-pref-theme="gpt"] #view-payroll .btn-save,
+body[data-pref-theme="gpt"] #leave-settings-dialog .btn-save { border-radius:12px; }
+body[data-pref-theme] #view-payroll #hero-regular-pay,body[data-pref-theme] #view-payroll #hero-bonus-pay { color:var(--accent) !important; }
+body[data-pref-theme] #first-use-guide { background:var(--surface-soft);border-color:var(--theme-line); }
+body[data-pref-theme] #first-use-guide strong,body[data-pref-theme] #first-use-guide button { color:var(--accent); }
+body[data-pref-theme] #first-use-guide button { background:var(--surface);border-color:var(--theme-line); }
+body[data-pref-theme] #first-use-guide p { color:var(--theme-text); }
+
+body[data-pref-theme] #view-payroll .wage-settings-card input[readonly] { background:transparent !important;border-color:transparent !important;box-shadow:none; }
+body[data-pref-theme="current"] { --accent:#356c87;--accent-soft:#edf5f8;--surface-soft:#f5f8fa; }
+body[data-pref-theme="current"] #leave-settings-dialog .leave-remaining .stat-value { color:#2d8069 !important; }
+.planning-card h3 { margin:0 0 8px;font-size:17px; }.planning-card p,.planning-preview p,.live-share-tools p { font-size:12px;line-height:1.6;color:#737b88; }.planning-card label { display:flex;align-items:center;gap:12px;margin:12px 0; }.planning-card input { min-width:0;width:100%;padding:10px;border:1px solid var(--theme-line);border-radius:10px; }.planning-card select { padding:8px;background:var(--surface);color:var(--accent);border:1px solid var(--theme-line);border-radius:8px; }.planning-card .btn-save,.planning-preview .btn-save { padding:12px 18px;border:0;border-radius:12px; }.planning-preview { margin-top:14px;padding:14px;background:var(--accent-soft);border-radius:14px; }.planning-preview[hidden] { display:none; }.vacation-result { padding:16px 0;border-top:1px solid var(--theme-line);margin-top:12px; }.vacation-result button,.live-share-tools button { padding:12px;border:1px solid var(--theme-line);border-radius:12px;background:var(--surface);color:var(--accent); }.live-share-tools { padding-top:16px;border-top:1px solid var(--theme-line); }.live-share-tools input { width:100%;padding:12px;margin:12px 0; }.compare-day { display:block;padding:8px;font-size:12px;border-bottom:1px solid var(--theme-line); }.compare-day.common-rest { background:var(--accent-soft);color:var(--accent); }
+
+/* Persistent selection feedback, independent of work colors and badge shape. */
+#modal-override #work-panel .shift-scroll { padding:6px 5px; }
+#modal-override #work-panel .opt-btn { position:relative; }
+#modal-override #work-panel .opt-btn[aria-pressed="true"] { outline:2px solid var(--accent);outline-offset:-2px; }
+#modal-override .selection-check { display:none;position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:var(--accent);color:#fff;pointer-events:none; }
+#modal-override .selection-check svg { display:block;width:16px;height:16px; }
+#modal-override .opt-btn[aria-pressed="true"] .selection-check { display:block; }
+#modal-override .opt-btn.reset .selection-check { right:12px;top:50%;transform:translateY(-50%); }
+
+/* Dedicated fourth theme: dark surfaces with independent readable work colors. */
+body[data-pref-theme="dark"]{color-scheme:dark;--page-bg:#12161d;--bg-main:#12161d;--surface:#1c222c;--card-bg:#1c222c;--surface-soft:#242e3a;--theme-text:#e6edf5;--text-main:#e6edf5;--text-sub:#a6b3c3;--theme-line:#354151;--border:#354151;--cal-line:#303b49;--accent:#83bce0;--accent-soft:#223747;--primary:#83bce0;--primary-dark:#a7d1ed;--choice-bg:#2b3644;--choice-ink:#d4deeb;--attendance:#ee9aaa;--work-ink:#15202b;--shift-day:#f5ce68;--shift-night:#b6adff;--shift-special-day:#6cd4c4;--shift-special-night:#7daaff;--shift-off:#ff9aa9;background:var(--page-bg);color:var(--theme-text)}
+body[data-pref-theme="dark"] :is(.cal-grid,.cal-day.other-month,.calendar-card,.card,.modal-sheet,.sms-dialog,.app-preferences,.preferences-card,.account-drawer,.all-panel,.all-info-list,.all-account-card,.meal-date-card,.meal-card,.meal-table,.identity-card,.external-calendars,.bottom-nav,.app-header,.reference-header,.payslip-modal,.picker-sheet){background:var(--surface)!important;color:var(--theme-text);border-color:var(--theme-line)!important;box-shadow:none}
+body[data-pref-theme="dark"] :is(.cal-day,.cal-weekdays,.stats-section,.stats-row,.pay-table td,.pay-table th,.all-shortcut,.input-group,.preferences-card label){border-color:var(--theme-line)}
+body[data-pref-theme="dark"] :is(h1,h2,h3,h4,.month-title-btn,.header-view-title,.account-menu-button,.icon-button,.day-num,.cal-weekdays,.stats-row,.pay-table,.input-group label,.all-shortcut strong,.preferences-card label,.sms-input-label,.hero-label,.sub-label,.stat-label,.nav-item,.override-date){color:var(--theme-text)}
+body[data-pref-theme="dark"] :is(.sms-privacy,.sms-help,.sms-status,.stats-header p,.stats-section p,.challenge-note,.calendar-group-caption,.estimate-caption,.estimate-note,.estimate-disclaimer,.all-info-section p){color:var(--text-sub)}
+body[data-pref-theme="dark"] :is(.cal-day.today,.override-tab-bar,.override-tabs,.all-settings-card,.salary-hero,.leave-overview,.leave-money-summary,.toggle-box,.estimate-net,.pay-table tr.total-row,.pay-table .bonus-row,.planning-preview,.account-choices button,.account-hint,.google-sync-section,.meal-table th){background:var(--surface-soft)!important;color:var(--theme-text);border-color:var(--theme-line)!important}
+body[data-pref-theme="dark"] :is(input:not([type="checkbox"]),select,textarea,.sms-textarea,.memo-input,.sms-clear-btn,.override-close,.sms-close-btn,.calendar-link-entry,.nav-arrow-btn,.today-btn,.picker-year-btn){background:var(--surface)!important;color:var(--theme-text)!important;border-color:var(--theme-line)!important}
+body[data-pref-theme="dark"] #modal-override .opt-btn.reset{background:var(--surface)!important;color:var(--theme-text)!important;border-color:var(--theme-line)!important}
+body[data-pref-theme="dark"] #modal-override .override-tab.active,body[data-pref-theme="dark"] :is(.btn-primary,.btn-save,.sms-primary-btn){background:var(--accent)!important;color:#12161d!important}
+body[data-pref-theme="dark"] :is(.nav-item.active,.all-shortcut-icon,.salary-hero .hero-amount){color:var(--accent)!important}
+body[data-pref-theme="dark"] .nav-item.active{background:var(--accent-soft)}
+body[data-pref-theme="dark"] .cal-day.today .day-num{color:#12161d}
+body[data-pref-theme="dark"] :is(.cal-day.sunday .day-num,.cal-day.holiday .day-num,.cal-weekdays>:first-child,.holiday-bar){color:#ff8b98}
+body[data-pref-theme="dark"] :is(.cal-day.saturday:not(.holiday) .day-num,.cal-weekdays>:last-child){color:#8ab9ff}
+body[data-pref-theme="dark"] :is(.stats-badge.day,.shift-badge.day){color:#283746!important}
+body[data-pref-theme="dark"] :is(.shift-badge.off,.stats-badge.off){color:#ff8b98!important}
+body[data-pref-theme="dark"] .cal-day.other-month{opacity:.4}
+body[data-pref-theme="dark"] .icon-button:hover,body[data-pref-theme="dark"] .account-menu-button:hover{background:var(--surface-soft)}
+body[data-pref-theme="dark"] :is(.hero-amount,.sub-val,#hero-regular-pay,#hero-bonus-pay,#estimate-net,#val-total-leave-pay){color:var(--accent)!important}
+body[data-pref-theme="dark"] :is(.cal-day,.cal-weekdays){background:var(--surface)!important}
+body[data-pref-theme="dark"] .cal-day.today{background:var(--surface-soft)!important}
+body[data-pref-theme="dark"] .reference-header .month-title-btn,body[data-pref-theme="dark"] .cal-day.today .day-num{color:var(--theme-text)!important}
+body[data-pref-theme="dark"] .month-title-nav{background:var(--surface)!important;border-color:var(--theme-line)}
+body[data-pref-theme="dark"] :is(.hero-label,.period-tag,.estimate-title,.all-settings-label,.group-caption,.all-shortcut-copy,.leave-overview p){color:var(--text-sub)!important}
+body[data-pref-theme="dark"] .period-tag{background:var(--surface)!important}
+body[data-pref-theme="dark"] .sync-feedback{background:var(--surface-soft)!important;color:var(--text-sub)!important}body[data-pref-theme="dark"] :is(.shift-badge.day,.stats-badge.day,#modal-override .opt-btn.day){background:var(--shift-day)!important;color:var(--work-ink)!important}
+body[data-pref-theme="dark"] :is(.shift-badge.night,.stats-badge.night,#modal-override .opt-btn.night){background:var(--shift-night)!important;color:var(--work-ink)!important}
+body[data-pref-theme="dark"] :is(.shift-badge.special-day,.stats-badge.day-sp,#modal-override .opt-btn.day-sp){background:var(--shift-special-day)!important;color:var(--work-ink)!important}
+body[data-pref-theme="dark"] :is(.shift-badge.special-night,.stats-badge.night-sp,#modal-override .opt-btn.night-sp){background:var(--shift-special-night)!important;color:var(--work-ink)!important}
+body[data-pref-theme="dark"] .attendance-pill{background:var(--attendance)!important;color:#15202b!important}
+body[data-pref-theme="dark"] :is(.stats-badge.off,.shift-badge.off){background:transparent!important;color:var(--shift-off)!important}
+body[data-pref-theme="dark"] #modal-override :is(.opt-btn.leave,.opt-btn.half,.opt-btn.unpaid,.opt-btn.unpaid-half,.opt-btn.no-ot){background:#303f50!important;color:#e8f0fa!important;border-color:#61758b!important}
+body[data-pref-theme="dark"] #modal-override .opt-btn[aria-pressed="true"]{outline:3px solid #f2f7fc;outline-offset:2px}
+body[data-pref-theme="dark"] :is(.override-tabs,.override-tab-bar){background:var(--surface-soft)!important}
+body[data-pref-theme="dark"] #modal-override .override-tab:not(.active){color:#c3d0de!important}
+body[data-pref-theme="dark"] :is(.stat-value,.stat-number,.stat-label,.account-hint,.override-base,.override-subtitle,.stats-header p,.sms-help){color:var(--text-main)!important}
+body[data-pref-theme="dark"] .hero-subgrid{border-color:var(--theme-line)!important}
+body[data-pref-theme="dark"] .all-settings-card :is(span,strong,label){color:var(--theme-text)!important}
+body[data-pref-theme="dark"] :is(.stats-row strong,.stats-shifts strong,.stats-header h2){color:var(--text-main)!important}
+body[data-pref-theme="dark"] #modal-override .selection-check{background:#f2f7fc;color:#15202b}
+body[data-pref-theme="dark"] :is(#view-payroll,#leave-settings-dialog) :is(h2,h3,h4,label,summary,caption,small,.dropdown-arrow,.when-closed,.when-open,.estimate-caption){color:var(--text-main)!important}
+body[data-pref-theme="dark"] :is(#view-payroll,#leave-settings-dialog) .input-group label{color:var(--text-main)!important}
+body[data-pref-theme="dark"] #leave-settings-dialog .leave-money-summary span{color:var(--text-main)!important}
+body[data-pref-theme="dark"] #view-all .all-info-list a{color:var(--accent)!important}
+.special-no-ot span{font-size:11px;line-height:1.4}
+body[data-pref-theme="dark"] #modal-override :is(.editor-tabs,.override-section){background:var(--surface)!important;color:var(--text-main)!important}
+body[data-pref-theme="dark"] #modal-override .editor-tabs{background:#2b394a!important}
+body[data-pref-theme="dark"] #modal-override .editor-tabs button{background:transparent!important;color:#dce8f5!important;border-color:#536b83!important}
+body[data-pref-theme="dark"] #modal-override .editor-tabs button[aria-selected="true"]{background:#a4cef0!important;color:#101c29!important}
+body[data-pref-theme="dark"] #modal-override :is(h3,.override-section-title,.sub-tag,.override-base,.override-date,.base-tag){color:#e6edf5!important}
+body[data-pref-theme="dark"] #modal-override .base-tag{background:#2b394a!important}
+body[data-pref-theme="dark"] .sub-tag{color:#e6edf5!important;background:#303f50!important}
+body[data-pref-theme="dark"] #modal-override .override-base{background:#303f50!important;color:#dce8f5!important;border-color:#536b83!important}
+body[data-pref-theme="dark"] #modal-date-text{color:#bac9db!important}
+
+/* Neutral work choices; retain theme-specific selection outlines and checks. */
+
+
+/* SMS inputs must stay at the readable size Safari expects on focus. */
+#payroll-sms-dialog .sms-textarea { font-size:16px; }
+
+/* Give the first calendar screen breathing room below its toolbar. */
+body[data-view="calendar"] #view-calendar .calendar-card { margin-top:24px; }

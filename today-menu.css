@@ -22,7 +22,7 @@ body[data-view="menu"] #first-use-guide { display:none; }
 .meal-extras .meal-items { font-size:12px; }
 .meal-extras .meal-items li:first-child { font-weight:400; font-size:12px; margin:0; }
 .meal-empty { border:1px dashed #ddd; border-radius:20px; padding:36px 22px; text-align:center; color:#737373; line-height:1.8; font-size:14px; }
-.meal-footer { display:flex; align-items:center; justify-content:flex-end; gap:12px; margin-top:20px; color:#999; font-size:11px; }
+.meal-footer { display:flex; align-items:center; justify-content:flex-start; gap:12px; margin-top:14px; color:#999; font-size:11px; }
 .meal-note { margin:14px 0 0; color:#999; font-size:11px; line-height:1.7; }
 .meal-refresh:focus-visible, .meal-extras summary:focus-visible { outline:2px solid #555; outline-offset:3px; }
 @media (max-width:560px) {
@@ -37,3 +37,30 @@ body[data-view="menu"] #first-use-guide { display:none; }
     .nav-item svg { width:23px; height:23px; }
 }
 @media (prefers-reduced-motion:reduce) { .meal-refresh[aria-busy="true"]::before { animation:none; } }
+body[data-pref-theme="dark"] :is(.meal-date-card,.meal-card,.meal-empty){background:#1c222c!important;border-color:#42566c!important;color:#e6edf5!important}
+body[data-pref-theme="dark"] :is(.meal-date-row h1,.meal-card h2,.meal-items,.meal-items li,.meal-extras h3){color:#e6edf5!important}
+body[data-pref-theme="dark"] :is(.meal-eyebrow,.meal-status,.meal-extras summary,.meal-footer,.meal-note){color:#bac9db!important}
+body[data-pref-theme="dark"] .meal-category{background:#303f50!important;color:#d9e8fa!important}
+body[data-pref-theme="dark"] .meal-refresh{background:#303f50!important;color:#e6edf5!important;border-color:#607993!important}
+body[data-pref-theme="dark"] .meal-extras{border-color:#42566c!important}
+body[data-pref-theme="dark"] .meal-footer a{color:#a4cef0!important}
+
+#view-menu .meal-navigation { display:flex; align-items:center; gap:8px; margin-top:16px; min-width:0; }
+#view-menu .meal-navigation button { display:grid; place-items:center; min-width:44px; height:44px; padding:0 12px; border:0; border-radius:14px; background:var(--ui-card,#f2f4f6); color:var(--ui-text,#333d4b); font:inherit; cursor:pointer; }
+#view-menu .meal-navigation :is(#today-menu-prev,#today-menu-next) { font-size:28px; line-height:1; }
+#view-menu .meal-navigation #today-menu-today { font-size:13px; font-weight:600; }
+#view-menu .meal-navigation button:disabled { opacity:.35; cursor:default; }
+#view-menu .meal-navigation button:focus-visible { outline:2px solid #3182f6; outline-offset:2px; }
+#view-menu #today-menu-relative { flex:1; text-align:right; font-size:13px; font-weight:600; color:var(--ui-muted,#6b7684); }
+#view-menu #today-menu-panel { min-width:0; }
+#view-menu { overflow-x:clip; }
+/* Keep the four meal slots stable while another date is being fetched. */
+.meal-placeholder{box-sizing:border-box;border-radius:24px;background:var(--ui-card,#fff);padding:24px;margin-bottom:14px;overflow:hidden}
+.meal-placeholder span{display:block;height:12px;border-radius:6px;background:var(--ui-field,#f2f4f6);width:62%;margin:20px 0}
+.meal-placeholder span:first-child{height:20px;width:36%;margin:0 0 32px}
+.meal-placeholder span:last-child{width:42%}
+
+/* Keep footer guidance and its final checked-at line on one left edge. */
+#view-menu #today-menu-panel > .meal-rating-note,
+#view-menu > #today-menu-note,
+#view-menu > .meal-footer { text-align:left; margin-left:0; margin-right:0; padding-left:0; padding-right:0; }

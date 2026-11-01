@@ -1,0 +1,6 @@
+.currency-reference[hidden]{display:none!important}
+#hero-currency-pay{font-size:17px;line-height:1.5;font-weight:600;color:var(--ui-blue,#3182f6);margin:2px 0 12px;overflow-wrap:anywhere}
+#estimate-currency-net{font-size:14px;text-align:right;color:var(--ui-blue,#3182f6);margin:4px 0 0;overflow-wrap:anywhere}
+#currency-rate-note{font-size:11px;line-height:1.6;color:var(--ui-muted,#8b95a1);margin:14px 0 0;overflow-wrap:anywhere}
+#currency-rate-note a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+#currency-rate-note button{border:0;background:transparent;color:var(--ui-blue,#3182f6);font:inherit;min-height:36px;padding:4px 0}

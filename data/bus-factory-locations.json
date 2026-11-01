@@ -1,0 +1,61 @@
+{
+  "source": "https://kcg.co.kr/location",
+  "checkedAt": "2026-10-27",
+  "headOfficeFactoryId": "1",
+  "headOfficeConfirmation": "공식 위치 안내의 본사(1공장) 표기 및 사용자의 본사=1공장 확인",
+  "points": [
+    {
+      "id": "1",
+      "name": "1공장 · 본사",
+      "aliases": [
+        "1공장",
+        "본사",
+        "1공장·본사"
+      ],
+      "address": "경기도 안산시 단원구 강촌로139번길 9",
+      "lat": 37.31804984038408,
+      "lon": 126.76420026245084,
+      "source": "https://kcg.co.kr/location",
+      "mapSource": "https://place.map.kakao.com/506787614",
+      "coordinateEvidence": "http://staticmap.kakao.com/staticmap/og?type=place&srs=wgs84&size=400x200&service=placeweb&m=126.76420026245084%2C37.31804984038408",
+      "precision": "reference",
+      "provider": "official-factory",
+      "boardingConfirmed": false,
+      "note": "공식 주소와 카카오맵 등록 공장 위치를 대조한 기준점. 실제 승차장·출입구 위치는 별도 안내 확인."
+    },
+    {
+      "id": "2",
+      "name": "2공장",
+      "aliases": [
+        "2공장"
+      ],
+      "address": "경기도 안산시 단원구 강촌로 25",
+      "lat": 37.32024563719862,
+      "lon": 126.7522841802108,
+      "source": "https://kcg.co.kr/location",
+      "mapSource": "https://place.map.kakao.com/24633611",
+      "coordinateEvidence": "http://staticmap.kakao.com/staticmap/og?type=place&srs=wgs84&size=400x200&service=placeweb&m=126.7522841802108%2C37.32024563719862",
+      "precision": "reference",
+      "provider": "official-factory",
+      "boardingConfirmed": false,
+      "note": "공식 주소와 카카오맵 등록 공장 위치를 대조한 기준점. 실제 승차장·출입구 위치는 별도 안내 확인."
+    },
+    {
+      "id": "4",
+      "name": "4공장",
+      "aliases": [
+        "4공장"
+      ],
+      "address": "경기도 안산시 단원구 장자골로 12",
+      "lat": 37.30828643743777,
+      "lon": 126.76429392394725,
+      "source": "https://kcg.co.kr/location",
+      "mapSource": "https://place.map.kakao.com/1912216803",
+      "coordinateEvidence": "http://staticmap.kakao.com/staticmap/og?type=place&srs=wgs84&size=400x200&service=placeweb&m=126.76429392394725%2C37.30828643743777",
+      "precision": "reference",
+      "provider": "official-factory",
+      "boardingConfirmed": false,
+      "note": "공식 주소와 카카오맵 등록 공장 위치를 대조한 기준점. 실제 승차장·출입구 위치는 별도 안내 확인."
+    }
+  ]
+}

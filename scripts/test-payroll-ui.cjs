@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const html=fs.readFileSync(require.resolve('../index.html'),'utf8'),elements=new Map(),saved=new Map();
 function elem(id){
-    if(!elements.has(id))elements.set(id,{value:'',checked:false,hidden:false,open:false,style:{},handlers:{},_text:'',
+    if(!elements.has(id))elements.set(id,{value:'',checked:false,hidden:false,open:false,style:{},handlers:{},attributes:{},setAttribute(k,v){this.attributes[k]=String(v)},_text:'',
         get innerText(){return this._text},set innerText(v){this._text=String(v)},get textContent(){return this._text},set textContent(v){this._text=String(v)},
         classList:{add(){},remove(){},toggle(){}},addEventListener(k,f){(this.handlers[k]||=[]).push(f)},focus(){},showModal(){this.open=true},close(){this.open=false;for(const f of this.handlers.close||[])f()}});
     return elements.get(id);
@@ -12,7 +12,7 @@ for(const match of html.matchAll(/<[^>]*\bid="([^"]+)"[^>]*>/g)){
 const ctx={document:{getElementById:elem,querySelector:()=>null},localStorage:{getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(k,String(v)),removeItem:k=>saved.delete(k)},TextEncoder,URLSearchParams,Date,alert:()=>{},confirm:()=>true,setTimeout:()=>0};
 ctx.window=ctx;vm.createContext(ctx);
 for(const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))if(match[1].trim())vm.runInContext(match[1],ctx);
-ctx.PayrollSMS=require('../payroll-sms.js');
+ctx.PayrollSMS=require('../payroll-sms.js');ctx.ShiftPlannerCore=require('../planner-core.js');
 vm.runInContext(fs.readFileSync(require.resolve('../payroll-estimate.js'),'utf8'),ctx);
 const evaluate=code=>vm.runInContext(code,ctx),click=id=>{for(const f of elem(id).handlers.click||[])f()};
 evaluate(`currentPayDate=new Date(2026,9,1);currentCalDate=new Date(2026,9,1);config={hireDate:'2017-01-01',totalLeave:0,leaveByYear:{},baseHourly:10000,ordinaryHourly:12000,baseHours:209,dutyPay:0,seniorityPay:0,holidayBonus:0,applyRetroPay:false};`);
@@ -32,15 +32,15 @@ evaluate('applyPayrollStatement({dutyPay:70000,seniorityPay:0})');
 assert.equal(elem('wage-allowance-settings').hidden,false);assert.equal(elem('duty-pay-setting').hidden,false);assert.equal(elem('seniority-pay-setting').hidden,true);
 assert.equal(elem('tr-duty-pay').hidden,false);assert.equal(elem('tr-seniority-pay').hidden,true);
 evaluate('applyPayrollStatement({dutyPay:0,seniorityPay:70000})');
-assert.equal(elem('duty-pay-setting').hidden,true);assert.equal(elem('seniority-pay-setting').hidden,false);
-assert.equal(elem('tr-duty-pay').hidden,true);assert.equal(elem('tr-seniority-pay').hidden,false);
+assert.equal(elem('duty-pay-setting').hidden,true);assert.equal(elem('seniority-pay-setting').hidden,true);
+assert.equal(elem('tr-duty-pay').hidden,true);assert.equal(elem('tr-seniority-pay').hidden,true);
 evaluate(`syncedUnpaidDays=1;config.hireDate='2017-01-01';calculatePayrollFromInputs()`);
 elem('inp-bonus-check').checked=true;evaluate('calculatePayrollFromInputs()');
 const payAmount=id=>Number(elem(id).innerText.replace(/[−,]/g,''));
 const itemSum=['row-base-pay','row-duty-pay','row-seniority-pay','row-ot-pay','row-night-pay','row-hol-pay','row-hol-ot-pay','row-hol-night-pay','row-other-pay','row-holiday-bonus','row-bonus-pay','row-entry-bonus'].reduce((sum,id)=>sum+payAmount(id),0);
 assert.equal(itemSum-payAmount('row-attendance-deduction'),payAmount('row-gross-pay'),'SMS-style gross items minus attendance deduction must reconcile to the total, including bonus deductions');
 assert.equal(elem('tr-attendance-deduction').hidden,false);
-evaluate('syncedUnpaidDays=0');elem('inp-bonus-check').checked=false;
+evaluate("syncedUnpaidDays=0;config.hireDate=''");elem('inp-bonus-check').checked=false;
 evaluate('applyPayrollStatement({dutyPay:0,seniorityPay:0})');assert.equal(elem('wage-allowance-settings').hidden,true);
 const gross=Number(elem('row-gross-pay').innerText.replace(/,/g,''));
 elem('payroll-estimate-toggle').checked=true;for(const f of elem('payroll-estimate-toggle').handlers.change)f();
@@ -54,8 +54,9 @@ elem('payroll-estimate-toggle').checked=false;for(const f of elem('payroll-estim
 assert.equal(elem('row-gross-pay').innerText,gross.toLocaleString('ko-KR'));assert.equal(elem('tr-estimated-deduction').hidden,true);
 assert.equal(elem('tr-payment-subtotal').hidden,true);
 evaluate('applyPayrollStatement({dutyPay:30000,seniorityPay:40000})');
+ctx.PayrollEstimate.open();
 elem('payroll-sms-text').value='성명 합성테스트\n사번 123456\n기본시급 10,100\n통상시급 12,100\n지급내역\n소계(ⓐ) 2,000,000\n공제내역\n소계(ⓑ) 300,000';
-for(const f of elem('payroll-sms-text').handlers.input||[])f();
+for(const f of elem('payroll-sms-text').handlers.input||[])f({});
 assert.equal(/직책|근속/.test(elem('payroll-sms-preview').textContent),false,'Absent allowances must also be omitted from the SMS preview');
 click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),10100);assert.equal(evaluate('config.ordinaryHourly'),12100);
@@ -67,45 +68,110 @@ for(const id of ['tr-duty-pay','tr-seniority-pay','duty-pay-setting','seniority-
 assert.equal(elem('payroll-sms-text').value,'');assert.ok(![...saved.values()].join('').includes('합성테스트'));assert.ok(![...saved.values()].join('').includes('123456'));
 elem('payroll-estimate-toggle').checked=true;for(const f of elem('payroll-estimate-toggle').handlers.change)f();
 assert.match(elem('payroll-estimate-basis').textContent,/15.00%/);
+// Missing personal bonus reference uses the default without storing another person's profile.
+elem('inp-bonus-check').checked=true;evaluate('calculatePayrollFromInputs()');
+assert.match(elem('payroll-estimate-basis').textContent,/상여:.*기준 명세서.*2.41%/);
+const defaultBonusGross=payAmount('row-bonus-pay');
+assert.equal(elem('hero-bonus-pay').innerText,(defaultBonusGross-Math.trunc(defaultBonusGross*(29570/1224725))).toLocaleString('ko-KR')+' 원');
+assert.equal(saved.get('shift_bonus_sms_reference_v1'),undefined);
 // Independent bonus reference, one-step import, and invalid drafts do not overwrite salary settings.
+ctx.PayrollEstimate.open();
 elem('payroll-bonus-sms-text').value='성명 비공개상여테스트\n기본시급 999,999\n지급내역\n상여 1,000,000\n소계(ⓐ) 1,000,000\n공제내역\n소계(ⓑ) 50,000';
-for(const f of elem('payroll-bonus-sms-text').handlers.input||[])f();click('payroll-sms-apply');
+for(const f of elem('payroll-bonus-sms-text').handlers.input||[])f({});click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),10100);assert.equal(evaluate('config.ordinaryHourly'),12100);
-assert.deepEqual(JSON.parse(saved.get('shift_bonus_sms_reference_v1')),{gross:1000000,total:50000});
+assert.deepEqual(JSON.parse(saved.get('shift_bonus_sms_reference_v1')),{rate:0.05});
 assert.equal(elem('payroll-bonus-sms-text').value,'');assert.ok(![...saved.values()].join('').includes('비공개상여테스트'));
 elem('inp-bonus-check').checked=true;evaluate('calculatePayrollFromInputs()');
 assert.match(elem('payroll-estimate-basis').textContent,/상여:.*5.00%/);
 const bonusGross=payAmount('row-bonus-pay'),regularGross=payAmount('row-payment-subtotal')-bonusGross;
-assert.equal(elem('hero-bonus-pay').innerText,(bonusGross-Math.round(bonusGross*.05)).toLocaleString('ko-KR')+' 원');
-assert.equal(payAmount('row-gross-pay'),regularGross-Math.round(regularGross*.15)+bonusGross-Math.round(bonusGross*.05));
+assert.equal(elem('hero-bonus-pay').innerText,(bonusGross-Math.trunc(bonusGross*.05)).toLocaleString('ko-KR')+' 원');
+assert.equal(payAmount('row-gross-pay'),regularGross-Math.trunc(regularGross*.15)+bonusGross-Math.trunc(bonusGross*.05));
 const before=saved.get('shift_payroll_sms_reference_v1');
-elem('payroll-sms-text').value='기본시급 22,000';elem('payroll-bonus-sms-text').value='상여 읽을 수 없음';click('payroll-sms-apply');
+ctx.PayrollEstimate.open();
+ctx.PayrollEstimate.importText('salary','기본시급 22,000');ctx.PayrollEstimate.importText('bonus','상여 읽을 수 없음');click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),10100);assert.equal(saved.get('shift_payroll_sms_reference_v1'),before);
-assert.match(elem('payroll-sms-status').textContent,/인식/);
-ctx.PayrollEstimate.clearDraft();
-elem('payroll-sms-text').value='기본시급 22,000';elem('payroll-bonus-sms-text').value='통상시급 12,000';click('payroll-sms-apply');
+assert.match(elem('wage-manual-status').textContent,/인식/);
+ctx.PayrollEstimate.open();
+ctx.PayrollEstimate.importText('salary','기본시급 22,000');ctx.PayrollEstimate.importText('bonus','통상시급 12,000');click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),10100);assert.match(elem('payroll-sms-status').textContent,/상여 문자/);
 ctx.PayrollEstimate.clearDraft();
 elem('payroll-sms-text').value='another private draft';ctx.PayrollEstimate.open();elem('payroll-sms-dialog').close();assert.equal(elem('payroll-sms-text').value,'');
-evaluate('renderCalendar=()=>{};resetDefaults()');assert.equal(saved.get('shift_payroll_sms_reference_v1'),undefined);assert.equal(saved.get('shift_bonus_sms_reference_v1'),undefined);assert.equal(evaluate('config.baseHourly'),0);
+evaluate('renderCalendar=()=>{};resetDefaults()');assert.equal(saved.get('shift_payroll_sms_reference_v1'),undefined);assert.equal(saved.get('shift_bonus_sms_reference_v1'),undefined);assert.equal(evaluate('config.baseHourly'),0);assert.match(elem('payroll-estimate-basis').textContent,/상여:.*기준 명세서.*2.41%/);
 assert.match(elem('payroll-estimate-basis').textContent,/18%/);
 assert.equal(/inp-retro-check|disp-retro-status|toggleRetroCheck|근속수당 가산/.test(html),false);
 for(const id of ['input-base-hourly','input-ordinary-hourly','input-duty-pay','input-seniority-pay'])assert.match(html.match(new RegExp('<input[^>]+id="'+id+'"[^>]*>'))[0],/\breadonly\b/);
 assert.equal(/calendar-export|내 변경사항 포함해서 가져오기|하루 일정\(ICS\)|input-base-hours/.test(html),false);
-assert.ok(!html.slice(html.indexOf('<section id="view-leave"'),html.indexOf('</section>',html.indexOf('<section id="view-leave"'))).includes('account-email'));
+assert.ok(!html.slice(html.indexOf('<dialog id="leave-settings-dialog"'),html.indexOf('</dialog>',html.indexOf('<dialog id="leave-settings-dialog"'))).includes('account-email'));
 assert.ok(html.includes('aria-controls="view-all"'));
 vm.runInContext(fs.readFileSync(require.resolve('../calendar-integration.js'),'utf8'),ctx);
 ctx.document.getElementById=id=>elements.get(id)||null;
 evaluate('openCalendarIntegration();closeCalendarIntegration()');
 assert.equal(typeof ctx.exportPersonalCalendar,'undefined');assert.equal(typeof ctx.exportSelectedCalendarDay,'undefined');
-const leaveMarkup=html.slice(html.indexOf('<section id="view-leave"'),html.indexOf('</section>',html.indexOf('<section id="view-leave"')));
-assert.equal(/회계연도|1일 연차 단가|매년 1월 1일|근속수당은/.test(leaveMarkup),false);
+const leaveMarkup=html.slice(html.indexOf('<dialog id="leave-settings-dialog"'),html.indexOf('</dialog>',html.indexOf('<dialog id="leave-settings-dialog"')));
+assert.equal(/1일 연차 단가|매년 1월 1일|근속수당은/.test(leaveMarkup),false);
+assert.match(leaveMarkup,/1년 미만은 매월 개근 시 1일씩 최대 11일/);
 assert.ok(leaveMarkup.includes('<span>1일 연차수당</span>'));
-assert.equal(/<details\b|<summary\b/.test(leaveMarkup),false,'Leave settings stay visible without an extra disclosure step');
-assert.ok(html.includes('입사년월일 (연차, 신입판정)'));
+const leaveFormMarkup=leaveMarkup.replace(/<details class="leave-policy">[\s\S]*?<\/details>/,'');
+assert.equal(/<details\b|<summary\b/.test(leaveFormMarkup),false,'Leave balance and editable settings stay visible; only policy explanation may collapse');
+assert.ok(html.includes('정규직 전환일 (연차, 지원금 판정)'));
 assert.equal(elem('leave-year-label').textContent,'2026년');
 const detailLabels=[...html.slice(html.indexOf('<table class="pay-table">'),html.indexOf('</table>',html.indexOf('<table class="pay-table">'))).matchAll(/<tr[^>]*>\s*<td[^>]*>([^<]+)<\/td>/g)].map(m=>m[1]);
-assert.deepEqual(detailLabels.slice(0,9),['기본','직책','근속','연장','야간','휴근','휴연','휴야','상여']);
+assert.deepEqual(detailLabels.slice(0,9),['기본','고정수당','근속','연장','야간','휴근','휴연','휴야','상여금']);
 console.log('PASS: automatic other pay thresholds/visibility, SMS-only wages and conditional read-only allowances, preserved hidden base hours, net/gross recalculation, private draft clearing, compact account placement, ICS removal and calendar dialog opening.');
 
 assert.equal(html.includes('id="payroll-sms-read"'),false);assert.equal(html.includes('app-brand-summary'),false);
+
+// The date already entered in leave settings determines seniority.
+evaluate("config.hireDate='2017-12-20';currentPayDate=new Date(2018,10,1);calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'0');
+evaluate("currentPayDate=new Date(2018,11,1);calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'10,000');
+evaluate("currentPayDate=new Date(2026,9,1);calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'70,000');
+evaluate("config.hireDate='2018-01-20';calculatePayrollFromInputs()");assert.equal(elem('row-seniority-pay').innerText,'0');
+
+// Manual wage changes preserve allowances, employment date and SMS deduction references.
+evaluate("applyPayrollStatement({dutyPay:70000})");
+saved.set('shift_payroll_sms_reference_v1',JSON.stringify({rate:.15}));
+saved.set('shift_bonus_sms_reference_v1',JSON.stringify({rate:.05}));
+ctx.PayrollEstimate.reloadReference();ctx.PayrollEstimate.open();
+const preserved=evaluate('JSON.stringify(config)');
+for(const value of ['', '0','-1','12.5','1,23','1000000001','1e4']){
+ elem('wage-manual-base').value=value;elem('wage-manual-ordinary').value='14,482';click('payroll-sms-apply');
+ assert.equal(evaluate('JSON.stringify(config)'),preserved);assert.match(elem('wage-manual-status').textContent,/기본시급/);
+}
+elem('wage-manual-base').value='11,050';elem('wage-manual-ordinary').value='';click('payroll-sms-apply');
+assert.equal(evaluate('JSON.stringify(config)'),preserved);assert.match(elem('wage-manual-status').textContent,/통상시급/);
+elem('wage-manual-ordinary').value='14482';click('payroll-sms-apply');
+assert.equal(evaluate('config.baseHourly'),11050);assert.equal(evaluate('config.ordinaryHourly'),14482);
+const manualExpected=JSON.parse(preserved);manualExpected.baseHourly=11050;manualExpected.ordinaryHourly=14482;manualExpected.fixedAllowances={qualification:0,job:0,family:0,duty:0,legacy:70000};
+assert.deepEqual(JSON.parse(evaluate('JSON.stringify(config)')),manualExpected);
+assert.equal(saved.get('shift_payroll_sms_reference_v1'),JSON.stringify({rate:.15}));assert.equal(saved.get('shift_bonus_sms_reference_v1'),JSON.stringify({rate:.05}));
+assert.equal(elem('payroll-sms-dialog').open,false);assert.equal(elem('wage-manual-base').value,'');
+ctx.PayrollEstimate.open();assert.equal(elem('wage-manual-base').value,'11,050');
+elem('wage-manual-base').value='22000';elem('payroll-sms-dialog').close();
+assert.equal(evaluate('config.baseHourly'),11050);assert.equal(elem('wage-manual-base').value,'');
+console.log('PASS manual wage modes, integer validation, preserved allowances/date/deductions, cancellation and private draft clearing');
+
+// One form retains individual amounts and changes only fields present in a partial import.
+ctx.PayrollEstimate.open();ctx.PayrollEstimate.importText('salary','자격 10,000\n직무 20,000\n가족 0\n직책 0');
+assert.equal(elem('wage-legacy').value,'0');assert.equal(elem('payroll-sms-text').value,'');
+elem('wage-job').value='25000';click('payroll-sms-apply');assert.equal(evaluate('config.dutyPay'),35000);
+ctx.PayrollEstimate.open();ctx.PayrollEstimate.importText('salary','직무 30,000');click('payroll-sms-apply');assert.equal(evaluate('config.dutyPay'),40000);
+ctx.PayrollEstimate.open();ctx.PayrollEstimate.importText('salary','기본급 2,156,880');
+click('payroll-sms-apply');assert.match(elem('wage-manual-status').textContent,/환산/);assert.equal(evaluate('config.baseHourly'),11050);
+assert.match(elem('wage-conversion-result').textContent,/10,320/);click('wage-conversion-use');click('payroll-sms-apply');assert.equal(evaluate('config.baseHourly'),10320);assert.equal(evaluate('config.ordinaryHourly'),14482);
+ctx.PayrollEstimate.open();ctx.PayrollEstimate.importText('salary','기본시급 11,050\n기본급 2,156,880');assert.equal(elem('wage-conversion').hidden,true);elem('payroll-sms-dialog').close();
+console.log('PASS unified import, immediate raw clearing, individual allowance persistence, partial merging and explicit monthly conversion');
+
+// Summary lists paid allowance items, never attributes an old total to unknown categories.
+assert.equal(elem('allowance-qualification-setting').hidden,false);
+assert.equal(elem('display-allowance-qualification').value,'10,000원');
+assert.equal(elem('allowance-job-setting').hidden,false);
+assert.equal(elem('display-allowance-job').value,'30,000원');
+assert.equal(elem('allowance-family-setting').hidden,true);
+assert.equal(elem('allowance-duty-setting').hidden,true);
+assert.equal(elem('duty-pay-setting').hidden,true);
+evaluate('applyPayrollStatement({dutyPay:70000})');
+assert.equal(elem('duty-pay-setting').hidden,false);
+for(const k of ['qualification','job','family','duty','legacy'])assert.equal(elem('allowance-'+k+'-setting').hidden,true);
+evaluate('applyPayrollStatement({dutyPay:0})');
+assert.equal(elem('duty-pay-setting').hidden,true);
+console.log('PASS only paid allowance names and amounts, neutral legacy total and zero allowance hiding');

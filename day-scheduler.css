@@ -1,0 +1,53 @@
+/* The content scrolls inside one consistent card, including with a mobile keyboard. */
+body[data-pref-theme] #modal-override [hidden]{display:none!important}
+body[data-pref-theme] #modal-override[data-memo-compact=true] .override-header{padding:14px 20px 8px}
+body[data-pref-theme] #modal-override[data-memo-compact=true] .editor-day-summary,body[data-pref-theme] #modal-override[data-memo-compact=true] #override-title{display:none}
+body[data-pref-theme] #modal-override[data-memo-compact=true] #modal-date-text{font-size:18px;margin:4px 0}
+body[data-pref-theme] #modal-override[data-memo-compact=true] .editor-content{padding-top:8px}
+body[data-pref-theme] #modal-override[data-memo-compact=true] .editor-tabs{position:static;margin-bottom:10px!important}
+#memo-panel .day-agenda{padding-bottom:24px;border-bottom:1px solid var(--theme-line,#edf0f3);margin-bottom:24px}
+#memo-panel .agenda-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 0 12px}
+#memo-panel .agenda-heading h3{font-size:15px;line-height:1.4;margin:0;color:var(--theme-text,#333d4b)}
+#memo-panel button{font:inherit;cursor:pointer}
+#memo-panel .agenda-heading button{border:0;border-radius:12px;background:var(--accent-soft,#eaf3ff);color:var(--accent,#3182f6);min-height:44px;padding:10px 12px;font-size:13px;font-weight:600}
+#memo-panel .event-empty{font-size:14px;color:var(--text-sub,#6b7684);margin:18px 0}
+#memo-panel .event-card{background:var(--surface-soft,#f2f4f6);border-radius:16px;margin-top:10px;padding:6px 14px 10px;min-width:0}
+#memo-panel .event-open{width:100%;text-align:left;display:flex;flex-direction:column;gap:6px;background:none;border:0;padding:10px 0;color:var(--theme-text,#333d4b);overflow-wrap:anywhere}
+#memo-panel .event-open strong{font-size:16px;font-weight:650}
+#memo-panel .event-open span{font-size:13px;color:var(--text-sub,#6b7684);line-height:1.5}
+#memo-panel .event-open small{font-size:11px;color:var(--text-sub,#6b7684)}
+#memo-panel .event-export{background:none;border:0;color:var(--accent,#3182f6);min-height:44px;padding:8px 0;font-size:12px}
+#memo-panel #event-status,#memo-panel .event-help{color:var(--text-sub,#6b7684);font-size:12px;line-height:1.65;overflow-wrap:anywhere;margin:10px 0 0}
+#memo-panel #event-status:empty{display:none}
+#memo-panel #day-note>label{font-size:15px;color:var(--theme-text,#333d4b)}
+#event-form{min-width:0}
+#event-form label{display:block;font-size:13px;color:var(--text-sub,#6b7684);margin:20px 0 8px}
+#event-form :is(input:not([type=checkbox]),select,textarea){appearance:none;display:block;box-sizing:border-box;min-width:0;max-width:100%;width:100%;min-height:48px;background:var(--surface-soft,#f2f4f6);color:var(--theme-text,#333d4b);border:1px solid transparent;border-radius:12px;padding:12px;font:inherit;font-size:16px;line-height:1.5}
+#event-form input::-webkit-date-and-time-value{text-align:left;min-height:1.5em}
+#event-form select{padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='m4 6 4 4 4-4' stroke='%238b95a1' fill='none'/%3E%3C/svg%3E");background-position:right 12px center;background-repeat:no-repeat}
+#event-form .event-title-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+#event-form #event-title{font-size:21px;font-weight:600;background:transparent;border-radius:0;border-bottom:1px solid var(--theme-line,#edf0f3);padding:12px 0 18px}
+#event-form .event-allday{display:flex;align-items:center;justify-content:space-between;font-size:15px;color:var(--theme-text,#333d4b);margin:18px 0 8px;min-height:44px;cursor:pointer}
+#event-form #event-all-day{appearance:none;width:48px;height:28px;margin:0;border-radius:20px;background:#cdd2d8;position:relative;cursor:pointer;flex:none}
+#event-form #event-all-day::before{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0002;transition:transform .15s}
+#event-form #event-all-day:checked{background:#3182f6}
+#event-form #event-all-day:checked::before{transform:translateX(20px)}
+#event-form .event-dates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#event-form .event-dates>div{min-width:0}
+#event-form .event-dates input{padding:10px 8px;margin-top:6px;font-size:16px}
+#event-form .event-dates label{margin-top:6px}
+#event-form .event-more{margin-top:20px;color:var(--text-sub,#6b7684);font-size:14px}
+#event-form summary{cursor:pointer;min-height:44px;line-height:44px}
+#event-form textarea{min-height:100px;resize:vertical}
+#event-form #event-error{color:#e5484d;font-size:13px;line-height:1.5}
+#event-form #event-delete{display:block;width:100%;min-height:44px;border:0;background:none;color:#e5484d;margin:12px 0 0}
+#event-form :is(input,textarea,select,button):focus-visible,#memo-panel button:focus-visible{outline:2px solid #3182f6;outline-offset:2px}
+.cal-day .day-event-tag{display:block;max-width:100%;flex:none;color:var(--accent,#3182f6);background:var(--accent-soft,#eaf3ff);border-radius:4px;font-size:10px;line-height:16px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 3px;margin-top:2px;box-sizing:border-box;cursor:pointer}
+#schedule-reminder{position:fixed;z-index:20000;top:max(16px,env(safe-area-inset-top));left:16px;right:16px;max-width:480px;margin:auto;border:1px solid var(--theme-line,#e5e8eb);border-radius:20px;padding:20px;background:var(--surface,#fff);color:var(--theme-text,#333d4b);box-shadow:0 12px 40px #0003}
+#schedule-reminder[hidden]{display:none}
+#schedule-reminder strong{color:var(--accent,#3182f6)}
+#schedule-reminder p{white-space:pre-line;font-size:15px;line-height:1.6;overflow-wrap:anywhere;max-height:30vh;overflow:auto}
+#schedule-reminder button{background:#3182f6;color:#fff;border:0;border-radius:10px;min-height:44px;padding:10px 24px;font:inherit}
+#event-form .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip-path:inset(50%);white-space:nowrap;border:0!important}
+body[data-pref-theme] #modal-override #event-form #event-title{font-size:21px!important;font-weight:650!important;background:transparent!important;border:0!important;border-bottom:1px solid var(--theme-line,#edf0f3)!important;border-radius:0!important;padding:12px 0 18px!important}
+.cal-day.has-day-event .day-num::after{content:'';display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--accent,#3182f6);vertical-align:top;margin:2px 0 0 2px}

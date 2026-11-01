@@ -25,6 +25,8 @@
     function dateValue(key) { return key.replace(/-/g, ''); }
     function makeEvent(key, group, shift, memo = '', kind = 'personal') {
         let label = shift.name;
+        if (shift.type === 'SPECIAL_DAY_NO_OT') label = '주특 잔업X';
+        if (shift.type === 'SPECIAL_NIGHT_NO_OT') label = '야특 잔업X';
         if (shift.type === 'SPECIAL_DAY') label = '주간 특근';
         if (shift.type === 'SPECIAL_NIGHT') label = '야간 특근';
         if (shift.type === 'UNPAID_OFF') label = '무급 휴무';
@@ -58,13 +60,15 @@
 
 /* These handlers access the existing app's schedule; payroll rules are unchanged. */
 function openCalendarIntegration() {
+    const preferences=document.getElementById('app-preferences-dialog');
+    if(preferences?.open)preferences.close();
     document.getElementById('calendar-link-group').textContent = `${currentGroup}조`;
     document.getElementById('modal-calendar-link').classList.add('active');
     if(window.GoogleSync){GoogleSync.render();GoogleSync.refreshStatus();}
 }
 function closeCalendarIntegration(event) {
     if (!event || event.target.id === 'modal-calendar-link') {
-        document.getElementById('modal-calendar-link').classList.remove('active');
+        closeAppOverlay('modal-calendar-link');
     }
 }
 function validCalendarDate(key) {

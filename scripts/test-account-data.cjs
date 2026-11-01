@@ -10,16 +10,27 @@ assert.throws(()=>C.normalize({oauth_token:'secret'}));
 assert.throws(()=>C.normalize({shift_day_memos:{'2026-02-30':'bad'}}));
 assert.throws(()=>C.normalize({shift_salary_config_master:{unknown:1}}));
 assert.throws(()=>C.normalize({shift_payroll_sms_reference_v1:{gross:100,total:101}}));
-assert.throws(()=>C.normalize({shift_overrides_C:{'2026-10-01':'DAY'}}));
+for(const type of ['DAY','NIGHT','OFF'])assert.equal(C.normalize({shift_overrides_C:{'2026-10-01':type}}).shift_overrides_C['2026-10-01'],type);
+assert.throws(()=>C.normalize({shift_overrides_C:{'2026-10-01':'INVALID'}}));
 assert.throws(()=>C.normalize({shift_day_memos:{'2026-10-01':'x'.repeat(16001)}}));
 assert.throws(()=>C.normalize(JSON.parse('{"__proto__":{"polluted":true}}')));
 assert.equal(C.normalize({shift_overrides_C:{'2026-10-01':'HALF_LEAVE'}}).shift_overrides_C['2026-10-01'],'HALF_POST');
 assert.ok(C.meaningful(C.normalize({shift_salary_config_master:{leaveByYear:{2026:12}}})));
 assert.equal(C.meaningful(C.normalize({shift_salary_config_master:{baseHours:209,baseHourly:0}})),false);
+const allowanceParts={qualification:10000,job:20000,family:0,duty:0,legacy:5000};
+assert.deepEqual(C.normalize({shift_salary_config_master:{dutyPay:35000,fixedAllowances:allowanceParts}}).shift_salary_config_master.fixedAllowances,allowanceParts);
+for(const bad of [{...allowanceParts,job:-1},{...allowanceParts,other:1},{...allowanceParts,legacy:0},{...allowanceParts,qualification:0.5}])assert.throws(()=>C.normalize({shift_salary_config_master:{dutyPay:35000,fixedAllowances:bad}}));
 let merged=C.merge(blank,data({'2026-10-01':'a'}),data({'2026-10-02':'b'}));
 assert.deepEqual(merged.conflicts,[]);assert.deepEqual(merged.data.shift_day_memos,{'2026-10-01':'a','2026-10-02':'b'});
 assert.equal(C.merge(data({'2026-10-01':'base'}),data({'2026-10-01':'local'}),data({'2026-10-01':'remote'})).conflicts.length,1);
 assert.deepEqual(C.merge(data({'2026-10-01':'a','2026-10-02':'b'}),data({'2026-10-02':'b'}),data({'2026-10-01':'a','2026-10-02':'c'})).data.shift_day_memos,{'2026-10-02':'c'});
+
+// Independently changed allowances cannot produce a breakdown inconsistent with its total.
+const salary=parts=>C.normalize({shift_salary_config_master:{dutyPay:Object.values(parts).reduce((a,b)=>a+b,0),fixedAllowances:parts}});
+const initial=salary({qualification:0,job:0,family:0,duty:0,legacy:0}),left=salary({...allowanceParts,legacy:0}),right=salary({...allowanceParts,qualification:0,job:0,family:30000,legacy:0});
+const salaryMerge=C.merge(initial,left,right);assert.equal(salaryMerge.conflicts.length,1);assert.deepEqual(C.normalize(salaryMerge.data).shift_salary_config_master,left.shift_salary_config_master);
+const onlyDate=JSON.parse(JSON.stringify(initial));onlyDate.shift_salary_config_master.hireDate='2020-01-01';
+const disjoint=C.merge(initial,left,onlyDate);assert.equal(disjoint.conflicts.length,0);assert.equal(C.normalize(disjoint.data).shift_salary_config_master.hireDate,'2020-01-01');
 
 const fetchOriginal=global.fetch, stores=new Map();let calls=[],gate=null,disabled=false,paginated=false,grantDrive=false;
 function store(token){if(!stores.has(token))stores.set(token,[]);return stores.get(token);}
@@ -108,5 +119,17 @@ async function run(){try{
 }finally{global.fetch=fetchOriginal;for(const k of keys){if(oldEnv[k]===undefined)delete process.env[k];else process.env[k]=oldEnv[k];}}}
 run().catch(e=>{console.error(e);process.exit(1);});
 
-assert.deepEqual(C.normalize({shift_bonus_sms_reference_v1:{gross:1000000,total:50000}}).shift_bonus_sms_reference_v1,{gross:1000000,total:50000});
+assert.deepEqual(C.normalize({shift_bonus_sms_reference_v1:{gross:1000000,total:50000}}).shift_bonus_sms_reference_v1,{rate:0.05});
 assert.throws(()=>C.normalize({shift_bonus_sms_reference_v1:{gross:100,total:101}}));
+
+const manualLeave={shift_salary_config_master:{hireDate:'2026-06-16',leaveByYear:{2026:0},leaveManualYears:{2026:true}}};
+assert.deepEqual(C.normalize(manualLeave).shift_salary_config_master,manualLeave.shift_salary_config_master);
+for(const leaveManualYears of [{2026:false},{2026:1},{invalid:true}])assert.throws(()=>C.normalize({shift_salary_config_master:{leaveManualYears}}));
+
+// Stickers participate in account snapshots and per-date three-way merging.
+const stickers=value=>C.normalize({shift_day_stickers:value});
+assert.equal(C.normalize({}).shift_day_stickers,null);
+for(const id of ['soju','beer','kimchi-stew','pork-belly','chicken','gukbap'])assert.equal(stickers({'2026-10-03':id}).shift_day_stickers['2026-10-03'],id);
+assert.throws(()=>stickers({'2026-02-30':'soju'}));assert.throws(()=>stickers({'2026-10-03':'<script>'}));assert.throws(()=>stickers({'2026-10-03':['beer']}));
+assert.deepEqual(C.merge(stickers({}),stickers({'2026-10-03':'soju'}),stickers({'2026-10-04':'beer'})).data.shift_day_stickers,{'2026-10-03':'soju','2026-10-04':'beer'});
+assert.deepEqual(C.merge(stickers({'2026-10-03':'soju'}),stickers({}),stickers({'2026-10-03':'soju','2026-10-04':'beer'})).data.shift_day_stickers,{'2026-10-04':'beer'});

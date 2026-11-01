@@ -1,0 +1,8 @@
+body[data-ui-language]:not([data-ui-language=ko]) .nav-visual>span{font-size:10px!important;letter-spacing:-.3px;white-space:nowrap}
+body[data-ui-language]:not([data-ui-language=ko]) #modal-override .opt-btn:not(.reset){font-size:10px!important;overflow-wrap:anywhere;word-break:normal}
+body[data-ui-language]:not([data-ui-language=ko]) #modal-override #modal-date-text{font-size:20px!important;letter-spacing:-.5px}
+body[data-ui-language]:not([data-ui-language=ko]) .cal-day .shift-badge{font-size:11px}
+body[data-ui-language]:not([data-ui-language=ko]) .sticker-options button{font-size:11px;line-height:1.35;overflow-wrap:anywhere}
+body[data-ui-language]:not([data-ui-language=ko]) #view-payroll :is(label,small,.input-label){overflow-wrap:anywhere}
+body[data-ui-language]:not([data-ui-language=ko]) .all-shortcut small{white-space:normal}
+body[data-ui-language]:not([data-ui-language=ko]) .preferences-card label{align-items:flex-start}

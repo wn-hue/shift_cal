@@ -1,0 +1,14 @@
+/* Stickers follow the work/attendance label, before the personal memo. */
+.cal-day .calendar-sticker{position:static;display:block;align-self:center;width:24px;height:24px;flex:0 0 24px;object-fit:contain;pointer-events:none;margin:2px 0}
+.cal-day.has-calendar-sticker{overflow:hidden}
+#sticker-dialog #stickers-panel{padding:0;margin:0;border:0}
+.sticker-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.sticker-options button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-width:0;min-height:92px;padding:10px 4px;background:var(--surface-soft,#f2f4f6);border:2px solid transparent;border-radius:16px;color:var(--theme-text,#333d4b);font:inherit;font-size:12px;cursor:pointer}
+.sticker-options img{width:48px;height:48px}
+.sticker-options button[aria-pressed=true]{border-color:var(--accent,#3182f6);background:var(--accent-soft,#eaf3ff);font-weight:650}
+.sticker-options button:focus-visible{outline:2px solid var(--accent,#3182f6);outline-offset:2px}
+.sticker-status{min-height:18px;margin:12px 0;font-size:12px;line-height:1.5;color:var(--text-sub,#6b7684)}
+.sticker-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sticker-actions button{min-height:44px;margin:0;border:0;border-radius:12px;padding:10px;font:inherit;font-size:14px;cursor:pointer}
+.sticker-actions #calendar-sticker-clear{background:var(--surface-soft,#f2f4f6);color:var(--theme-text,#333d4b)}
+.sticker-actions button:disabled{opacity:.4;cursor:default}

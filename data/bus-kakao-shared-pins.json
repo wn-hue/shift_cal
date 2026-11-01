@@ -1,0 +1,181 @@
+{
+  "groupTitle": "정류장",
+  "groupId": "13307711",
+  "groupUrl": "https://kko.to/5XKMWV55nC",
+  "webUrl": "https://map.kakao.com/?target=other&folderid=13307711",
+  "checkedAt": "2026-10-26",
+  "coordinateConversion": {
+    "input": "WCONGNAMUL",
+    "projection": "EPSG:5181 scaled by 2.5",
+    "output": "EPSG:4326",
+    "validation": "Kakao SDK toLatLng documented sample (400207.5,-11710) matches within 1e-7 degrees",
+    "documentation": "https://apis.map.kakao.com/web/documentation/#Coords_toLatLng"
+  },
+  "pins": [
+    {
+      "name": "상록수역",
+      "address": "경기 안산시 상록구 본오동 875-2",
+      "source": "https://kko.to/hkRR77B-wO",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=470187&urlY=1056492",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 470187.0,
+      "y": 1056492.0,
+      "lat": 37.30253393,
+      "lon": 126.86549181
+    },
+    {
+      "name": "중앙주유소",
+      "address": "경기 안산시 단원구 와동 855",
+      "source": "https://kko.to/-eWTQsxCZK",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=460777&urlY=1064980",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 460777.0,
+      "y": 1064980.0,
+      "lat": 37.33306983,
+      "lon": 126.82296486
+    },
+    {
+      "name": "동명APT",
+      "address": "경기 안산시 단원구 선부동 1082-3",
+      "source": "https://kko.to/lc2cyfMMRd",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=458047&urlY=1066115",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 458047.0,
+      "y": 1066115.0,
+      "lat": 37.33714141,
+      "lon": 126.81063265
+    },
+    {
+      "name": "경찰서민원실",
+      "address": "경기 안산시 단원구 고잔동 543",
+      "source": "https://kko.to/R8EbrwEteX",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=461972&urlY=1061725",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 461972.0,
+      "y": 1061725.0,
+      "lat": 37.32134638,
+      "lon": 126.82838522
+    },
+    {
+      "name": "헤리움2차 횡단보도",
+      "address": "경기도 시흥시 서울대학로264번길 74",
+      "source": "https://kko.to/cUL-BJBqiN",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=439835&urlY=1074310",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 439835.0,
+      "y": 1074310.0,
+      "lat": 37.36651667,
+      "lon": 126.72832167
+    },
+    {
+      "name": "선일초",
+      "address": "경기도 안산시 단원구 선이로3길 40",
+      "source": "https://kko.to/wWJlkn9HBd",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=455547&urlY=1066802",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 455547.0,
+      "y": 1066802.0,
+      "lat": 37.33959883,
+      "lon": 126.79934163
+    },
+    {
+      "name": "디미고정류장",
+      "address": "경기 안산시 단원구 와동 268",
+      "source": "https://kko.to/kom8iHRCpr",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=461755&urlY=1066907",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 461755.0,
+      "y": 1066907.0,
+      "lat": 37.34002147,
+      "lon": 126.8273632
+    },
+    {
+      "name": "롯데리아앞",
+      "address": "경기 안산시 상록구 월피동 445-30",
+      "source": "https://kko.to/Kecf1qTexW",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=466352&urlY=1063545",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 466352.0,
+      "y": 1063545.0,
+      "lat": 37.3279329,
+      "lon": 126.84813825
+    },
+    {
+      "name": "문화고(본오주민센터)",
+      "address": "경기 안산시 상록구 본오동 828-43",
+      "source": "https://kko.to/QeYlZHU6va",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=471812&urlY=1054655",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 471812.0,
+      "y": 1054655.0,
+      "lat": 37.29592124,
+      "lon": 126.8728345
+    },
+    {
+      "name": "본오(롯데마트)",
+      "address": "경기 안산시 상록구 본오동 881-17",
+      "source": "https://kko.to/5B3QFnDt3z",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=469862&urlY=1054917",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 469862.0,
+      "y": 1054917.0,
+      "lat": 37.29685574,
+      "lon": 126.86403572
+    },
+    {
+      "name": "하늘빛교회",
+      "address": "경기 안산시 단원구 신길동 1433",
+      "source": "https://kko.to/wTQr3R1WjB",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=447177&urlY=1065877",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 447177.0,
+      "y": 1065877.0,
+      "lat": 37.33619493,
+      "lon": 126.76157073
+    },
+    {
+      "name": "시화병원(구)",
+      "address": "경기 시흥시 정왕동 1902",
+      "source": "https://kko.to/ZIEwzDX_oW",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=438877&urlY=1070897",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 438877.0,
+      "y": 1070897.0,
+      "lat": 37.35420597,
+      "lon": 126.72404085
+    },
+    {
+      "name": "안산역",
+      "address": "경기 안산시 단원구 원곡동 993-7",
+      "source": "https://kko.to/Ye3rOQJpxC",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=453867&urlY=1063295",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 453867.0,
+      "y": 1063295.0,
+      "lat": 37.32694613,
+      "lon": 126.79179313
+    },
+    {
+      "name": "롯데시네마정류장",
+      "address": "경기 시흥시 정왕동 876-681",
+      "source": "https://kko.to/NrowWKG3-o",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=442972&urlY=1069927",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 442972.0,
+      "y": 1069927.0,
+      "lat": 37.3507517,
+      "lon": 126.74254079
+    },
+    {
+      "name": "시화공고 건너 한아름부동산",
+      "address": "경기 시흥시 정왕동 1457",
+      "source": "https://kko.to/zZ6xMJIqJd",
+      "mapUrl": "https://map.kakao.com/?map_type=TYPE_MAP&urlLevel=3&urlX=444902&urlY=1067635",
+      "coordinateSystem": "WCONGNAMUL",
+      "x": 444902.0,
+      "y": 1067635.0,
+      "lat": 37.34250978,
+      "lon": 126.75128116
+    }
+  ]
+}
