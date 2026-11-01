@@ -28,7 +28,7 @@ window.AppTranslations=Object.fromEntries(`
 상여 공제 기준을 가져왔어요|Bonus deduction basis imported|已导入奖金扣除规则|賞与の控除基準を読み取りました
 급여 공제 기준을 가져왔어요|Salary deduction basis imported|已导入工资扣除规则|給与の控除基準を読み取りました
 월 기본급을 인식했어요. 환산 기준을 확인해 주세요.|Monthly base pay found. Check the conversion hours.|已识别月基本工资，请确认折算基准。|月額基本給を読み取りました。換算基準を確認してください。
-오늘의 조별 근무|Today's team shifts|今日各组班次|今日のグループ勤務
+오늘 근무|Today's shifts|今日班次|今日の勤務
 월간 근무표|Monthly schedule|月度班表|月間勤務表
 내 조|My team|我的组|自分の組
 조별 근무 오늘로 이동|Go to today's team shifts|查看今日各组班次|今日のグループ勤務へ移動

@@ -20,8 +20,8 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 .calendar-month-controls .gcal-nav-group { gap:2px; }
 .calendar-month-controls .nav-arrow-btn { width:32px; height:32px; font-size:18px; }
 .calendar-today { border:0; background:none; color:#666b72; min-height:32px; padding:0 9px; font-size:12px; cursor:pointer; }
-body[data-view="calendar"] .container { padding-top:0; padding-bottom:0; }
-body[data-view="calendar"] .reference-header { margin-bottom:0; }
+body:is([data-view=calendar],[data-view=groups]) .container { padding-top:0; padding-bottom:0; }
+body:is([data-view=calendar],[data-view=groups]) .reference-header { margin-bottom:0; }
 #view-calendar .calendar-card { margin:0 -12px 12px; border:0; border-radius:0; box-shadow:none; overflow:visible; }
 .cal-weekdays { padding:10px 0; font-size:13px; font-weight:500; color:#54595f; }
 .cal-weekdays > :first-child { color:#f05a65; }
@@ -268,8 +268,8 @@ input[type="number"], input[readonly], .num, .stat-value, .hero-amount, .sub-val
 
 /* Minimal home calendar. */
 body[data-view="calendar"] { background:#fff; --primary:#303030; --primary-dark:#202020; --cal-line:#ededed; }
-body[data-view="calendar"] .reference-header .month-title-btn { color:#202020; font-weight:700; }
-body[data-view="calendar"] .reference-header .account-menu-button, body[data-view="calendar"] .icon-button { color:#303030; }
+body:is([data-view=calendar],[data-view=groups]) .reference-header .month-title-btn { color:#202020; font-weight:700; }
+body:is([data-view=calendar],[data-view=groups]) .reference-header .account-menu-button, body:is([data-view=calendar],[data-view=groups]) .icon-button { color:#303030; }
 body[data-view="calendar"] .icon-button:hover, body[data-view="calendar"] .account-menu-button:hover { background:#f4f4f4; }
 .calendar-group-caption, .calendar-group-caption strong { color:#626262; }
 .calendar-group-caption strong { background:#f2f2f2; }
@@ -437,7 +437,7 @@ body[data-view="all"] #first-use-guide { display:none; }
 @media(max-width:380px) { .reference-header .month-title-btn { font-size:26px; } .header-calendar-actions { gap:0; } .header-calendar-actions .icon-button { width:36px; } }
 
 /* Lower only the month label without changing the header or calendar geometry. */
-body[data-view="calendar"] .reference-header .month-title-btn { transform:translateY(6px); }
+body:is([data-view=calendar],[data-view=groups]) .reference-header .month-title-btn { transform:translateY(6px); }
 
 
 /* One continuous track for the outgoing and incoming month. */

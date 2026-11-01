@@ -60,7 +60,9 @@
   if(document.body.dataset.view!=='groups')return;
   const year=currentCalDate.getFullYear(),month=currentCalDate.getMonth(),start=new Date(year,month,1),count=new Date(year,month+1,0).getDate(),rows=Math.ceil((start.getDay()+count)/7),all=changes(),now=key(new Date());
   renderedToday=now;renderOverview(now,all);
-  $('group-month-title').textContent=year+'. '+String(month+1).padStart(2,'0')+' ⌄';
+  const monthTitle=$('group-month-title-text');
+  if(['test1','test3','test4'].includes(document.body.dataset.prefTheme))monthTitle.innerHTML=`<span class="theme-year">${year}년</span> <span class="theme-month">${month+1}월</span>`;
+  else monthTitle.textContent=year+'. '+String(month+1).padStart(2,'0');
   $('group-month-title').setAttribute('aria-label',`${year}년 ${month+1}월 조별 근무 연도와 월 선택`);
   const fragment=document.createDocumentFragment();
   for(let week=0;week<rows;week++){

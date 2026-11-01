@@ -1,11 +1,11 @@
 /* Warmth and the remaining experimental themes share palette and calendar primitives. */
 body[data-pref-theme=test]{
- --test-page:#eeeae4;--test-surface:#faf9f6;--test-field:#e9e4dd;--test-line:#ded8d0;
- --test-ink:#302f2c;--test-copy:#605b54;--test-muted:#746b61;--test-accent:#896b45;--test-accent-soft:#eee1ce;
- --test-day-fill:#ffebcc;--test-day-ink:#8c5b22;--test-night-fill:#3e3e52;--test-night-ink:#fff;
- --test-special-day:#527970;--test-special-night:#65717e;--test-off:#877373;--test-holiday:#ae5864;--test-saturday:#527b99;
- --test-today:#fffefa;--test-today-edge:#b69a75;--test-today-soft:#f5ece0;--test-badge-shadow:none;
- --test-attendance:#e8dce0;--test-day-no-ot:#cfdfda;--test-night-no-ot:#d5dce5;
+ --test-page:#f5f3f2;--test-surface:#fffefd;--test-field:#eeeae8;--test-line:#e4dedb;
+ --test-ink:#34312f;--test-copy:#665e59;--test-muted:#7b706a;--test-accent:#a15d47;--test-accent-soft:#f6e5dc;
+ --test-day-fill:#fbe2d2;--test-day-ink:#8d513b;--test-night-fill:#454656;--test-night-ink:#fff;
+ --test-special-day:#5c7d73;--test-special-night:#687686;--test-off:#8b6c72;--test-holiday:#b35d69;--test-saturday:#567e9c;
+ --test-today:#fffefd;--test-today-edge:#bd826a;--test-today-soft:#fbede6;--test-badge-shadow:none;
+ --test-attendance:#efdee2;--test-day-no-ot:#dbe6df;--test-night-no-ot:#e0e3eb;
 }
 
 body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]){
@@ -24,7 +24,7 @@ body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[
 }
 body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .reference-header{background:transparent!important}
 body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .reference-header .month-title-btn{color:var(--test-ink);font-weight:750}
-body[data-pref-theme=test][data-view=calendar] .reference-header{min-height:52px;margin-left:-6px;margin-right:-6px;padding:8px;border:1px solid #ffffffc9;border-radius:16px;background:#ffffffbf!important;box-shadow:0 6px 18px #3030300d;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+body[data-pref-theme=test]:is([data-view=calendar],[data-view=groups]) .reference-header{min-height:52px;margin-left:-6px;margin-right:-6px;padding:8px;border:1px solid #ffffffc9;border-radius:16px;background:#ffffffbf!important;box-shadow:0 6px 18px #3030300d;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
 body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-view=calendar] #view-calendar .calendar-card{padding:0;margin:20px 0 12px;border:0;overflow:visible;background:transparent;box-shadow:none;border-radius:0}
 body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-weekdays{padding:10px 0 12px;background:transparent;border:0;font-size:12px;font-weight:550;color:var(--test-muted)}
 body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) #view-calendar .cal-weekdays>:first-child{color:var(--test-holiday)!important}
@@ -81,8 +81,8 @@ body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[
 body:is([data-pref-theme=test],[data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4]) .cal-grid .cal-day.today .day-num{width:22px;min-width:22px;height:22px;line-height:22px;justify-content:center;border-radius:50%;background:var(--test-accent)!important;color:#fff!important;font-weight:650}
 
 /* Reference 1's floating toolbar, open weekday row and soft individual date cards. */
-body[data-pref-theme=test][data-view=calendar] .container{padding-top:8px}
-body[data-pref-theme=test][data-view=calendar] .reference-header .month-title-btn{font-size:clamp(25px,7.2vw,30px);font-weight:800;letter-spacing:-1px;line-height:1.2}
+body[data-pref-theme=test]:is([data-view=calendar],[data-view=groups]) .container{padding-top:8px}
+body[data-pref-theme=test]:is([data-view=calendar],[data-view=groups]) .reference-header .month-title-btn{font-size:clamp(25px,7.2vw,30px);font-weight:800;letter-spacing:-1px;line-height:1.2}
 body[data-pref-theme=test] .header-calendar-actions{gap:4px}
 body[data-pref-theme=test] .header-calendar-actions .icon-button:not(.weather-trigger){width:30px;min-width:30px;height:34px;padding:4px;border:0;border-radius:12px;background:transparent;color:var(--test-copy)}
 body[data-pref-theme=test] .header-calendar-actions .icon-button:not(.weather-trigger) svg{width:22px;height:22px}

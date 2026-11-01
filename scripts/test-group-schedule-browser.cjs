@@ -14,14 +14,14 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
  }
  const saved=await page.evaluate(()=>({group:currentGroup,overrides:JSON.stringify(overrides),storage:['A','B','C'].map(g=>localStorage.getItem('shift_overrides_'+g)),config:localStorage.getItem('shift_salary_config_master')}));
  assert.deepEqual(await page.locator('.nav-capsule>button').evaluateAll(els=>els.map(e=>e.id)),['bnav-cal','bnav-groups','bnav-pay','bnav-menu','account-menu-button']);
- await page.getByRole('button',{name:'조별 근무',exact:true}).click();assert.equal(await page.locator('#bnav-groups').getAttribute('aria-current'),'page');assert.equal(await page.locator('#header-view-title').textContent(),'조별 근무');assert.equal(await page.locator('#group-weeks table').count(),5);
+ await page.getByRole('button',{name:'조별 근무',exact:true}).click();assert.equal(await page.locator('#bnav-groups').getAttribute('aria-current'),'page');assert.equal(await page.locator('#header-view-title').isVisible(),false);assert.equal(await page.locator('#group-month-title').isVisible(),true);assert.equal(await page.locator('#group-weeks table').count(),5);
  assert.equal(await page.locator('#group-prev,#group-next,#group-mine-label').count(),0);
  assert.equal(await page.locator('#group-today').isVisible(),true);assert.equal(await page.locator('.group-mine-label').count(),5);assert.equal(await page.locator('.group-week-heading h2').first().textContent(),'1주차');assert.equal(await page.locator('#group-overview-teams>div').count(),3);
  assert.equal(await page.locator('#group-weeks .selected-date[data-date="2026-10-26"]').count(),4);
  assert.equal(await page.locator('thead [aria-current=date]').count(),1);
  // Drag from a date's button, not only from gaps between dates.
- await swipe(-100);assert.match(await page.locator('#group-month-title').textContent(),/2026\. 11/);
- await swipe(100);assert.match(await page.locator('#group-month-title').textContent(),/2026\. 10/);
+ await swipe(-100);assert.match(await page.locator('#group-month-title').getAttribute('aria-label'),/2026년 11월/);
+ await swipe(100);assert.match(await page.locator('#group-month-title').getAttribute('aria-label'),/2026년 10월/);
  for(const theme of ['current','toss','gpt','dark','test','test1','test3','test4']){
   await page.evaluate(t=>{const s=document.getElementById('pref-theme');s.value=t;s.dispatchEvent(new Event('change'))},theme);
   assert.equal(await page.locator('#group-weeks table').count(),5);
@@ -51,9 +51,9 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
  await page.locator('#group-month-title').click();await page.getByRole('button',{name:'2026년 2월',exact:true}).click();assert.equal(await page.locator('#group-weeks table').count(),4);assert.equal(await page.locator('body').getAttribute('data-view'),'groups');
  await page.evaluate(()=>{currentCalDate=new Date(2026,4,1);renderCalendar()});assert.equal(await page.locator('#group-weeks table').count(),6);
  await page.evaluate(()=>{currentCalDate=new Date(2024,1,1);renderCalendar()});assert.equal(await page.locator('thead th[data-date="2024-02-29"]').count(),1);
- await page.evaluate(()=>{currentCalDate=new Date(2026,11,1);renderCalendar()});await swipe(-100);assert.match(await page.locator('#group-month-title').textContent(),/2027\. 01/);await swipe(100);assert.match(await page.locator('#group-month-title').textContent(),/2026\. 12/);
+ await page.evaluate(()=>{currentCalDate=new Date(2026,11,1);renderCalendar()});await swipe(-100);assert.match(await page.locator('#group-month-title').getAttribute('aria-label'),/2027년 1월/);await swipe(100);assert.match(await page.locator('#group-month-title').getAttribute('aria-label'),/2026년 12월/);
  await page.locator('#group-month-title').click();await page.getByRole('button',{name:'이번 달로 이동',exact:true}).click();assert.equal(await page.locator('body').getAttribute('data-view'),'groups');
- assert.match(await page.locator('#group-month-title').textContent(),/2026\. 10/);assert.equal(await page.locator('thead .today').getAttribute('data-date'),'2026-10-26');
+ assert.match(await page.locator('#group-month-title').getAttribute('aria-label'),/2026년 10월/);assert.equal(await page.locator('thead .today').getAttribute('data-date'),'2026-10-26');
  // Reuse the same pure shift calculation for every displayed date, including holidays and saved changes.
  assert(await page.evaluate(()=>[...document.querySelectorAll('#group-weeks tbody td')].every(td=>{const g=td.parentElement.dataset.group,[y,m,d]=td.dataset.date.split('-').map(Number),changes=JSON.parse(localStorage.getItem('shift_overrides_'+g)||'{}');return td.dataset.shift===getActualShift(new Date(y,m-1,d),g,changes).type})));
  assert.deepEqual(await page.evaluate(()=>({group:currentGroup,overrides:JSON.stringify(overrides),storage:['A','B','C'].map(g=>localStorage.getItem('shift_overrides_'+g)),config:localStorage.getItem('shift_salary_config_master')})),saved);

@@ -4,7 +4,8 @@
     function showView(view) {
         document.body.dataset.view=view;
         $('cal-month-title-btn').hidden=view!=='calendar';
-        $('header-view-title').hidden=view==='calendar';
+        $('group-month-title').hidden=view!=='groups';
+        $('header-view-title').hidden=view==='calendar'||view==='groups';
         $('header-view-title').textContent=view==='all'?'전체':view==='payroll'?'급여 계산기':view==='menu'?'오늘 메뉴':view==='groups'?'조별 근무':'시급 · 연차';
         $('header-calendar-actions').hidden=view!=='calendar';
         $('header-group-actions').hidden=view!=='groups';
