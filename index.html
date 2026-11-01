@@ -932,7 +932,8 @@
 <link rel="stylesheet" href="./bright-menu.css?v=1">
 <link rel="stylesheet" href="./app-surfaces.css?v=6">
 <link rel="stylesheet" href="./screen-refinement.css?v=8">
-<link rel="stylesheet" href="./onboarding.css?v=7">
+<link rel="stylesheet" href="./onboarding.css?v=8">
+<link rel="stylesheet" href="./onboarding-wage.css?v=1">
 <link rel="preload" as="image" href="./assets/onboarding/hire-v2.webp" fetchpriority="high">
 <link rel="stylesheet" href="./mobile-surfaces.css?v=11">
 <link rel="stylesheet" href="./test-calendar.css?v=9">
@@ -955,7 +956,7 @@
 <link rel="stylesheet" href="./commute-page.css?v=13">
 <link rel="stylesheet" href="./lost-found-page.css?v=3">
 <link rel="stylesheet" href="./parking-sheet.css?v=5">
-<link rel="stylesheet" href="./wage-import.css?v=2">
+<link rel="stylesheet" href="./wage-import.css?v=3">
 <link rel="stylesheet" href="./test-theme-palette.css?v=11">
 <link rel="stylesheet" href="./experimental-themes.css?v=5">
 </head>
@@ -1430,11 +1431,15 @@
     </dialog>
 
     <dialog id="payroll-sms-dialog" class="sms-dialog" aria-labelledby="payroll-sms-title">
+        <div class="guided-wage-content">
+        <div class="guided-wage-top" hidden><button type="button" id="guided-wage-back" aria-label="이전 입력">〈</button><span id="guided-wage-progress"></span></div>
         <div class="sms-dialog-header">
-            <div><div class="wage-import-title"><h2 id="payroll-sms-title">시급 설정</h2><button type="button" id="wage-import-info" aria-label="시급 설정 안내" aria-expanded="false" aria-controls="wage-import-help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v7M12 6v2"/></svg></button></div><p id="wage-import-intro">문자로 채우고, 숫자를 눌러 바로 수정하세요. 직접 입력해도 돼요.</p></div>
+            <div><div class="wage-import-title"><h2 id="payroll-sms-title">시급 설정</h2><button type="button" id="wage-import-info" aria-label="시급 설정 안내" aria-expanded="false" aria-controls="wage-import-help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v7M12 6v2"/></svg></button></div><p id="wage-import-intro" class="guided-wage-description">문자로 채우고, 숫자를 눌러 바로 수정하세요. 직접 입력해도 돼요.</p></div>
             <button type="button" id="payroll-sms-close" class="sms-close-btn" aria-label="시급 설정 닫기">×</button>
         </div>
         <div class="wage-unified-body">
+        <p id="guided-wage-summary" class="guided-wage-summary" hidden></p>
+        <div id="guided-wage-choice" class="guided-wage-choice" role="group" aria-label="추가수당 여부" hidden><button type="button" data-guided-allowance="yes" aria-pressed="false"><strong>있음</strong><span>수당 금액을 직접 입력할게요</span><i aria-hidden="true">✓</i></button><button type="button" data-guided-allowance="no" aria-pressed="false"><strong>없음</strong><span>시급만으로 계산할게요</span><i aria-hidden="true">✓</i></button></div>
         <button type="button" id="wage-fill" class="wage-fill" data-wage-paste="payroll-sms-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="8" y="7" width="12" height="14" rx="2"/><path d="M16 7V4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h3"/></svg><span>복사한 급여 문자로 채우기</span></button>
         <details id="wage-paste-fallback" class="wage-paste-fallback"><summary>직접 붙여넣기</summary><label for="payroll-sms-text">급여 문자</label><textarea id="payroll-sms-text" rows="2" maxlength="30000" placeholder="여기를 길게 눌러 붙여넣어 주세요" aria-describedby="payroll-sms-status"></textarea></details>
         <p id="payroll-sms-recognized" role="status" hidden></p>
@@ -1450,6 +1455,8 @@
         <details id="wage-bonus-input" class="wage-bonus-input"><summary><span>상여금 공제 기준</span><small>선택</small></summary><div class="wage-bonus-body"><p class="sms-privacy">미등록 시 기준 공제율 약 2.41%로 추정해요. 본인 문자를 등록하면 개인 공제율을 사용해요.</p><button type="button" class="wage-paste-button" data-wage-paste="payroll-bonus-sms-text">복사한 상여 문자로 채우기</button><label for="payroll-bonus-sms-text">상여 문자 직접 붙여넣기</label><textarea id="payroll-bonus-sms-text" rows="2" maxlength="30000" placeholder="여기를 길게 눌러 붙여넣어 주세요"></textarea><p id="wage-bonus-status" role="status"></p></div></details>
         <details id="wage-import-review" class="wage-import-review" hidden><summary>공제 기준과 인식 안내</summary><div id="payroll-sms-preview" class="sms-preview"></div></details>
             <details id="wage-import-help" class="sms-help wage-import-help"><summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span><strong>문자 원문은 저장하지 않아요</strong><small>인식 후 바로 비워져요. 상세 안내</small></span></summary><div class="wage-help-body"><p>이름·사번·계좌번호는 제외해 주세요. 원문은 기기에서만 인식하고 인식 시 입력창을 바로 비웁니다. 저장 항목은 시급·통상시급·수당별 금액과 합계·공제 기준입니다. 급여 법정요율 항목이 인식되면 월 보험료·기타 월 공제액과 세금·고용 비율을 저장합니다. 지급·공제 합계는 저장하지 않습니다. 로그인하여 동기화를 연결하면 저장 항목도 본인 계정에 전송됩니다. <a href="./privacy.html">저장 안내</a></p><h3>어떤 항목이 적용되나요?</h3><p>급여문자 확인에서 시급과 자격·직무·가족·직책 줄을 붙여넣으세요. 인식한 네 수당의 합계를 고정수당으로 적용합니다. 인식한 금액은 입력 카드에서 바로 수정할 수 있습니다. 일부 수당만 붙여넣으면 나머지는 유지됩니다. 공제율은 선택 사항이며 지급 합계·공제 합계 두 줄로 계산합니다. 월 기본급만 인식되면 환산 기준시간을 확인해 기본시급으로 나눌 수 있습니다. 통상시급은 별도로 확인해 주세요. 상여 문자에서는 상여금 공제율만 적용하며 시급·수당은 바꾸지 않습니다. 문자에서 인식하지 않은 시급은 현재 입력값을 유지합니다. 급여의 연금·건강·고용에 법정요율이 표시되고 세금 내역이 있으면, 연금·건강(별도 요양 포함)은 문자 월액으로 유지하고 고용은 문자와 일치하는 0.9% 또는 문자 비율로 추정합니다. 소득세·지방소득세는 문자 비율로 추정합니다. 기타 공제는 문자 월액으로 유지합니다. 해당 내역이 없으면 공제 합계 ÷ 지급 합계로 추정합니다. 상여금은 본인의 상여 문자 공제율을 우선 사용하며, 미등록 시 기준 명세서 공제율 약 2.41%를 적용합니다. 소득세·지방소득세·고용보험을 포함한 비율이며 급여 월 보험료를 다시 차감하지 않습니다. 보험료 정산·비과세·가족 수 변경 시 새 문자를 적용하세요. 비워둔 문자 칸의 기존 공제율은 변경하지 않습니다. 저장된 공제율이 없으면 월 급여는 기본 공제율 18%, 상여금은 기준 명세서 공제율 약 2.41%로 세후 금액을 추정합니다. 이는 개인별 세금·보험료를 정확히 계산한 값이 아닙니다. 상여 문자만으로 급여 공제율을 추정하지 않습니다. 상여 지급액·근무일수 계산은 기존 규칙을 유지하며 추정 공제액은 실제 세액과 다를 수 있습니다.</p></div></details>
+        </div>
+        <button type="button" id="guided-wage-import" class="guided-wage-import" hidden>급여 문자로 채우기 <span>선택</span></button>
         </div>
         <div class="sms-actions"><p id="wage-manual-status" class="sms-status" role="alert"></p><button type="button" id="payroll-sms-apply" class="sms-primary-btn">설정 완료하기</button></div>
     </dialog>
@@ -2968,7 +2975,7 @@
         };
     </script>
     <script src="./payroll-sms.js?v=unified-monthly-4"></script>
-    <script src="./payroll-estimate.js?v=unified-wage-16"></script>
+    <script src="./payroll-estimate.js?v=unified-wage-17"></script>
     <script src="./calendar-integration.js?v=6"></script>
     <script src="./schedule-share.js?v=3"></script>
     <script src="./google-sync-core.js?v=6"></script>
@@ -3018,13 +3025,13 @@
   <div class="onboarding-progress" aria-hidden="true"><span></span><span></span><span></span></div>
  </header>
  <main class="onboarding-main">
-  <p id="onboarding-step-label">1 / 3</p>
-  <div id="onboarding-heading" tabindex="-1" autofocus><h1 id="onboarding-title">입사일을 알려주세요.</h1><p id="onboarding-description">내 연차와 예상 급여를 계산하는 기준이에요.</p></div>
+  <p id="onboarding-step-label" class="onboarding-step-label">1 / 3</p>
+  <div id="onboarding-heading" class="onboarding-heading" tabindex="-1" autofocus><h1 id="onboarding-title" class="onboarding-title">입사일을 알려주세요.</h1><p id="onboarding-description" class="onboarding-description">내 연차와 예상 급여를 계산하는 기준이에요.</p></div>
   <section class="onboarding-panel" aria-label="입사일 설정">
    <div class="onboarding-art" aria-hidden="true"><img src="./assets/onboarding/hire-v2.webp" alt="" width="384" height="384" decoding="sync" fetchpriority="high"></div>
    <label id="onboarding-date-label" for="onboarding-date-open">입사년월일 · 정규직 기준</label>
    <input type="hidden" id="onboarding-date">
-   <button type="button" id="onboarding-date-open" aria-haspopup="dialog" aria-controls="onboarding-date-picker" aria-labelledby="onboarding-date-label onboarding-date-value" aria-describedby="onboarding-hire-help"><span id="onboarding-date-value">입사일을 선택해 주세요</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></button>
+   <button type="button" id="onboarding-date-open" class="onboarding-date-open" aria-haspopup="dialog" aria-controls="onboarding-date-picker" aria-labelledby="onboarding-date-label onboarding-date-value" aria-describedby="onboarding-hire-help"><span id="onboarding-date-value">입사일을 선택해 주세요</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></button>
    <p class="onboarding-tip" id="onboarding-hire-help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v6m0-10v1"/></svg><span>계약직은 현재 입사일을 선택하고, 정규직 전환 후 변경해 주세요. 입사일은 전체 → 연차 설정에서 바꿀 수 있어요.</span></p>
   </section>
   <section class="onboarding-panel" aria-label="교대조 설정" hidden>
@@ -3037,10 +3044,10 @@
   </section>
   <section class="onboarding-panel" aria-label="시급 설정" hidden>
    <div class="onboarding-art" aria-hidden="true"><img src="./assets/onboarding/wage-v2.webp" alt="" width="384" height="384" decoding="async"></div>
-   <div class="onboarding-import-card"><div class="onboarding-method"><span class="onboarding-method-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="8" y="7" width="12" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12"/></svg></span><div><strong>급여 문자로 간편하게</strong><p>복사한 문자를 가져오면 자동으로 채워져요.</p></div></div><div class="onboarding-method"><span class="onboarding-method-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m15 4 5 5M4 20l5-1L20 8a2 2 0 0 0-4-4L5 15l-1 5Z"/></svg></span><div><strong>문자가 없어도 괜찮아요</strong><p>기본시급과 통상시급을 직접 입력해요.</p></div></div></div>
-   <p class="onboarding-private-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>문자 원문은 저장하지 않아요. 이름·사번은 제외해 주세요.</p>
-   <div id="onboarding-wage-summary" hidden><div><span>기본시급</span><strong id="onboarding-base-wage"></strong></div><div><span>통상시급</span><strong id="onboarding-ordinary-wage"></strong></div></div>
-   <button type="button" id="onboarding-import-again" hidden>시급 다시 설정하기</button>
+   <div class="onboarding-import-card onboarding-wage-plan"><strong>하나씩 입력하면 돼요</strong><p>기본시급 → 통상시급 → 추가수당</p><small>추가수당이 있는 경우에만 금액을 입력해요.</small></div>
+   <button type="button" id="onboarding-wage-import" class="onboarding-optional-import">급여 문자로 가져오기 <span>선택</span></button>
+   <div id="onboarding-wage-summary" class="onboarding-wage-summary" hidden><div><span>기본시급</span><strong id="onboarding-base-wage" class="onboarding-base-wage"></strong></div><div><span>통상시급</span><strong id="onboarding-ordinary-wage" class="onboarding-ordinary-wage"></strong></div></div>
+   <button type="button" id="onboarding-import-again" class="onboarding-import-again" hidden>시급 다시 설정하기</button>
   </section>
  </main>
  <footer class="onboarding-footer"><p id="onboarding-error" role="status" aria-live="polite"></p><button type="button" id="onboarding-next">다음</button><button type="button" id="onboarding-login">이미 사용 중인가요? 로그인해서 불러오기</button></footer>
@@ -3057,19 +3064,21 @@
  <button type="button" id="onboarding-date-confirm">선택하기</button>
 </dialog>
 <script src="./onboarding-date-picker.js?v=1"></script>
-<script src="./onboarding.js?v=5"></script>
+<script src="./onboarding-flow-motion.js?v=1"></script>
+<script src="./onboarding-wage.js?v=1"></script>
+<script src="./onboarding.js?v=6"></script>
 <script src="./payslip-alert.js?v=3"></script>
 <script src="./memo-editor.js?v=13"></script>
 <script src="./day-editor-navigation.js?v=8"></script>
 <script src="./day-scheduler-core.js?v=3"></script>
 <script src="./day-scheduler.js?v=7"></script>
-<script src="./sheet-interactions.js?v=8"></script>
+<script src="./sheet-interactions.js?v=9"></script>
 <script src="./day-memos-core.js?v=1"></script>
 <script src="./day-entry-core.js?v=1"></script>
 <script src="./day-editor-designs.js?v=10"></script>
 <script src="./memo-composer.js?v=12"></script>
 <script src="./settings-options.js?v=2"></script>
-<script src="./wage-import-ui.js?v=2"></script>
+<script src="./wage-import-ui.js?v=3"></script>
 <script src="./app-i18n-data.js?v=31"></script>
 <script src="./app-i18n-zh.js?v=2"></script>
 <script src="./app-i18n.js?v=9"></script>

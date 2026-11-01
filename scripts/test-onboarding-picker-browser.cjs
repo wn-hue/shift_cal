@@ -51,11 +51,11 @@ async function swipe(page,selector){await page.locator(selector).evaluate(el=>{
  await open();await p.touchscreen.tap(195,40);await closed();assert.equal(await input.inputValue(),'2025-01-15');
  // Step motion is a single compositor transition. Back/next leaves no stale transforms.
  await p.locator('#onboarding-next').click();
- const animations=await p.locator('.onboarding-main').evaluate(e=>e.getAnimations().map(a=>a.effect.getKeyframes()));
+ const animations=await p.locator('.onboarding-main:not(.onboarding-scene-copy)').evaluate(e=>e.getAnimations().map(a=>a.effect.getKeyframes()));
  assert.equal(animations.length,motion==='reduce'?0:1);
  if(motion!=='reduce')assert(animations[0].every(frame=>!('height'in frame)&&!('top'in frame)));
  for(let i=0;i<3;i++){await p.locator('#onboarding-back').click();await p.locator('#onboarding-next').click();}
- await p.waitForTimeout(250);assert.equal(await p.locator('.onboarding-main').evaluate(e=>e.getAnimations().length),0);assert.equal(await p.locator('.onboarding-main').evaluate(e=>getComputedStyle(e).transform),'none');
+ await p.waitForTimeout(360);assert.equal(await p.locator('.onboarding-main:not(.onboarding-scene-copy)').evaluate(e=>e.getAnimations().length),0);assert.equal(await p.locator('.onboarding-main:not(.onboarding-scene-copy)').evaluate(e=>getComputedStyle(e).transform),'none');
  assert.equal(await p.locator('.sheet-closing,.sheet-returning').count(),0);assert.deepEqual(errors,[]);
  console.log('PASS',engine.name(),motion,'date wheel bounds, leap years, pending scroll, cancellation, swipe separation, responsive fit, step animation cleanup');await p.close();
  }await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

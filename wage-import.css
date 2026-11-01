@@ -71,5 +71,4 @@ body[data-pref-theme] #payroll-sms-dialog .wage-paste-button{display:inline-flex
 #payroll-sms-dialog .sms-actions{position:sticky;bottom:0;display:block;padding:12px 0 2px;margin:0;background:var(--ui-card,#fff);z-index:1}
 body[data-pref-theme] #payroll-sms-dialog #payroll-sms-apply{display:block;width:100%;min-height:52px;font-size:16px;font-weight:600;margin:0;border-radius:15px}
 #payroll-sms-dialog [hidden]{display:none!important}
-#payroll-sms-dialog[data-onboarding=true] #wage-bonus-input{display:none}
 @media(max-width:360px){body[data-pref-theme] #payroll-sms-dialog .wage-value input{font-size:21px!important}body[data-pref-theme] #payroll-sms-dialog .wage-mini-card input{font-size:16px!important}#payroll-sms-dialog .wage-main-cards>label{padding:14px 11px}.wage-mini-card .wage-value small{display:none}#payroll-sms-dialog .wage-mini-card{flex-direction:column;align-items:stretch;gap:3px}body[data-pref-theme] #payroll-sms-dialog .wage-mini-card input{text-align:left}body[data-pref-theme] #payroll-sms-dialog .wage-fill{font-size:14px}}

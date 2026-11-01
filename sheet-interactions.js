@@ -7,7 +7,8 @@
  function enter(sheet){
   if(reduced()||!sheet.animate)return;
   openings.get(sheet)?.cancel();cancelReturn(sheet);
-  const a=sheet.animate([{translate:'0 28px',opacity:.65},{translate:'0 0',opacity:1}],{duration:220,easing:'cubic-bezier(.2,.7,.2,1)'});openings.set(sheet,a);
+  const guided=sheet.dataset.guided==='true';
+  const a=sheet.animate([{translate:guided?'0 '+(sheet.getBoundingClientRect().height+24)+'px':'0 28px',opacity:guided?1:.65},{translate:'0 0',opacity:1}],{duration:guided?340:220,easing:'cubic-bezier(.22,1,.36,1)'});openings.set(sheet,a);
   a.finished.then(()=>{if(openings.get(sheet)===a)openings.delete(sheet);},()=>{});
  }
  const reduced=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;

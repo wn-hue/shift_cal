@@ -93,7 +93,8 @@
         let current={};try{current=JSON.parse(localStorage.getItem('shift_salary_config_master'))||{};}catch{}
         const savedParts=current.fixedAllowances,valid=savedParts&&allowanceKeys.every(k=>Number.isSafeInteger(savedParts[k])&&savedParts[k]>=0)&&Object.values(savedParts).reduce((a,b)=>a+b,0)===current.dutyPay;
         for(const key of allowanceKeys)el('wage-'+key).value=money(valid?savedParts[key]:key==='legacy'?current.dutyPay||0:0);
-        el('wage-legacy-row').hidden=!(Number(el('wage-legacy').value.replace(/,/g,''))>0);dialog.showModal();
+        el('wage-legacy-row').hidden=!(Number(el('wage-legacy').value.replace(/,/g,''))>0);
+        root.OnboardingWage?.prepare(options);dialog.showModal();root.OnboardingWage?.focus();
     };
     el('payroll-sms-open').addEventListener('click',()=>api.open());el('payroll-sms-close').addEventListener('click',()=>dialog.close());
     dialog.addEventListener('close',()=>{if(dialog.open)return;clearDraft();el('payroll-sms-open')?.focus();});
@@ -126,7 +127,7 @@
             preview.textContent=[draftSalary?basis('급여',draftSalary):'',draftBonus?basis('상여',draftBonus):'',...parsed.warnings].filter(Boolean).join('\n');el('wage-import-review').hidden=!preview.textContent;
             status.textContent=parsed.warnings.join(' ');el('wage-paste-fallback').open=false;importError=false;return true;
         }catch(error){status.textContent=error.message;importError=true;return false;}
-        finally{text.value='';bonusText.value='';}
+        finally{text.value='';bonusText.value='';if(typeof root.CustomEvent==='function')dialog.dispatchEvent(new CustomEvent('wage-draft-imported',{detail:{ok:!importError}}));}
     };
     for(const [input,kind] of [[text,'salary'],[bonusText,'bonus']]){
         input.addEventListener('paste',event=>{if(!event.clipboardData)return;event.preventDefault();api.importText(kind,event.clipboardData.getData('text'));});
@@ -135,6 +136,7 @@
     }
     for(const input of amountInputs){input.addEventListener('input',()=>{input.classList.remove('wage-filled');input.setAttribute('aria-invalid','false');manualStatus.textContent='';importError=false;if(input===manualBase){conversionMonthly=0;el('wage-conversion').hidden=true;}});}
     function readAmount(input,label,positive){const raw=input.value.trim(),n=Number(raw.replace(/,/g,''));if(!/^(?:[0-9]+|[1-9][0-9]{0,2}(?:,[0-9]{3})+)$/.test(raw)||!Number.isSafeInteger(n)||n<(positive?1:0)||n>1000000000){input.setAttribute('aria-invalid','true');input.focus();throw Error(label+'을 '+(positive?'1':'0')+'원 이상 10억 원 이하의 정수로 입력해 주세요.');}return n;}
+    api.validateHourly=kind=>{try{return readAmount(kind==='base'?manualBase:manualOrdinary,kind==='base'?'기본시급':'통상시급',true);}catch(error){manualStatus.textContent=error.message;return null;}};
     apply.addEventListener('click',()=>{
         const wages={};manualStatus.textContent='';
         try{
@@ -147,8 +149,9 @@
         const previous=[storageKey,bonusKey,'shift_salary_config_master'].map(key=>[key,localStorage.getItem(key)]);
         try{if(draftSalary)localStorage.setItem(storageKey,JSON.stringify(draftSalary));if(draftBonus)localStorage.setItem(bonusKey,JSON.stringify(draftBonus));root.applyPayrollStatement(wages);}
         catch(_){for(const [key,value]of previous)try{value===null?localStorage.removeItem(key):localStorage.setItem(key,value);}catch{}manualStatus.textContent='저장하지 못했습니다. 작성한 내용을 확인하고 다시 시도해 주세요.';return;}
-        api.reloadReference();root.calculatePayrollFromInputs();root.AccountSync?.changed();el('payroll-sms-applied').textContent='설정 적용됨';dialog.close();
-        if(typeof root.CustomEvent==='function')root.dispatchEvent(new CustomEvent('shift-payroll-applied'));
+        api.reloadReference();root.calculatePayrollFromInputs();root.AccountSync?.changed();el('payroll-sms-applied').textContent='설정 적용됨';
+        // Keep the onboarding backdrop in place until the sheet has fully left.
+        dialog.addEventListener('close',()=>{if(typeof root.CustomEvent==='function')root.dispatchEvent(new CustomEvent('shift-payroll-applied'));},{once:true});dialog.close();
     });
     render();
 })(typeof globalThis !== 'undefined' ? globalThis : this);
