@@ -933,8 +933,8 @@
 <link rel="stylesheet" href="./app-surfaces.css?v=6">
 <link rel="stylesheet" href="./screen-refinement.css?v=8">
 <link rel="stylesheet" href="./onboarding.css?v=8">
+<link rel="stylesheet" href="./onboarding-story.css?v=1">
 <link rel="stylesheet" href="./onboarding-wage.css?v=3">
-<link rel="preload" as="image" href="./assets/onboarding/hire-v2.webp" fetchpriority="high">
 <link rel="stylesheet" href="./mobile-surfaces.css?v=12">
 <link rel="stylesheet" href="./test-calendar.css?v=9">
 <link rel="stylesheet" href="./month-picker.css?v=1">
@@ -3036,14 +3036,14 @@
   <p id="onboarding-step-label" class="onboarding-step-label">1 / 3</p>
   <div id="onboarding-heading" class="onboarding-heading" tabindex="-1" autofocus><h1 id="onboarding-title" class="onboarding-title">입사일을 알려주세요.</h1><p id="onboarding-description" class="onboarding-description">내 연차와 예상 급여를 계산하는 기준이에요.</p></div>
   <section class="onboarding-panel" aria-label="입사일 설정">
-   <div class="onboarding-art" aria-hidden="true"><img src="./assets/onboarding/hire-v2.webp" alt="" width="384" height="384" decoding="sync" fetchpriority="high"></div>
+   <div class="onboarding-art" aria-hidden="true"></div>
    <label id="onboarding-date-label" for="onboarding-date-open">입사년월일 · 정규직 기준</label>
    <input type="hidden" id="onboarding-date">
    <button type="button" id="onboarding-date-open" class="onboarding-date-open" aria-haspopup="dialog" aria-controls="onboarding-date-picker" aria-labelledby="onboarding-date-label onboarding-date-value" aria-describedby="onboarding-hire-help"><span id="onboarding-date-value">입사일을 선택해 주세요</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></button>
    <p class="onboarding-tip" id="onboarding-hire-help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v6m0-10v1"/></svg><span>계약직은 현재 입사일을 선택하고, 정규직 전환 후 변경해 주세요. 입사일은 전체 → 연차 설정에서 바꿀 수 있어요.</span></p>
   </section>
   <section class="onboarding-panel" aria-label="교대조 설정" hidden>
-   <div class="onboarding-art" aria-hidden="true"><img src="./assets/onboarding/team-v2.webp" alt="" width="384" height="384" decoding="async"></div>
+   <div class="onboarding-art" aria-hidden="true"></div>
    <div class="onboarding-group-list" role="group" aria-label="내 근무조">
     <button type="button" data-onboarding-group="A" aria-pressed="false"><span class="onboarding-group-letter" aria-hidden="true">A</span><strong>A조</strong><span class="onboarding-check" aria-hidden="true">✓</span></button>
     <button type="button" data-onboarding-group="B" aria-pressed="false"><span class="onboarding-group-letter" aria-hidden="true">B</span><strong>B조</strong><span class="onboarding-check" aria-hidden="true">✓</span></button>
@@ -3051,7 +3051,7 @@
    </div><p class="onboarding-tip">3조 2교대 기준이에요. 근무조는 나중에도 바꿀 수 있어요.</p>
   </section>
   <section class="onboarding-panel" aria-label="시급 설정" hidden>
-   <div class="onboarding-art" aria-hidden="true"><img src="./assets/onboarding/wage-v2.webp" alt="" width="384" height="384" decoding="async"></div>
+   <div class="onboarding-art" aria-hidden="true"></div>
    <div class="onboarding-import-card onboarding-wage-plan"><strong>하나씩 입력하면 돼요</strong><p>기본시급 → 통상시급 → 추가수당</p><small>추가수당이 있는 경우에만 금액을 입력해요.</small></div>
    <button type="button" id="onboarding-wage-import" class="onboarding-optional-import">급여 문자로 가져오기 <span>선택</span></button>
    <div id="onboarding-wage-summary" class="onboarding-wage-summary" hidden><div><span>기본시급</span><strong id="onboarding-base-wage" class="onboarding-base-wage"></strong></div><div><span>통상시급</span><strong id="onboarding-ordinary-wage" class="onboarding-ordinary-wage"></strong></div></div>
@@ -3072,10 +3072,11 @@
  <button type="button" id="onboarding-date-confirm">선택하기</button>
 </dialog>
 <script src="./onboarding-date-picker.js?v=1"></script>
-<script src="./onboarding-flow-motion.js?v=1"></script>
+<script src="./onboarding-flow-motion.js?v=2"></script>
+<script src="./onboarding-story.js?v=1"></script>
 <script src="./onboarding-allowances.js?v=1"></script>
 <script src="./onboarding-wage.js?v=4"></script>
-<script src="./onboarding.js?v=6"></script>
+<script src="./onboarding.js?v=7"></script>
 <script src="./payslip-alert.js?v=3"></script>
 <script src="./memo-editor.js?v=13"></script>
 <script src="./day-editor-navigation.js?v=8"></script>

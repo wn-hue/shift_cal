@@ -8,7 +8,7 @@ const address=process.env.TEST_URL||'http://127.0.0.1:8772/';
   await page.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await page.goto(address);
   const wizard=page.locator('#onboarding-dialog'),next=page.locator('#onboarding-next');
   const checkLayout=async()=>{
-   await page.waitForFunction(()=>{const img=document.querySelector('.onboarding-panel:not([hidden]) .onboarding-art img');return img?.complete&&img.naturalWidth>0});
+   await page.waitForFunction(()=>{const art=document.querySelector('.onboarding-panel:not([hidden]) .onboarding-art[data-story-ready=true] .onboarding-story');return art?.getBoundingClientRect().width>0});
    const layout=await page.evaluate(()=>{
     const q=s=>document.querySelector(s),box=s=>q(s).getBoundingClientRect(),panel=q('.onboarding-panel:not([hidden])'),control=panel.querySelector('#onboarding-date-open,.onboarding-group-list,.onboarding-import-card').getBoundingClientRect();
     return {align:getComputedStyle(q('#onboarding-title')).textAlign,heading:box('#onboarding-heading').x,control:control.x,next:box('#onboarding-next').x,width:control.width,nextWidth:box('#onboarding-next').width,artBottom:panel.querySelector('.onboarding-art').getBoundingClientRect().bottom,controlTop:control.top,panelBottom:panel.getBoundingClientRect().bottom,footerTop:box('.onboarding-footer').top,overflow:q('#onboarding-dialog').scrollWidth>innerWidth};

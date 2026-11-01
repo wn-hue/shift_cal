@@ -1,0 +1,78 @@
+/* Original illustrated objects, animated with transforms and opacity only. */
+#onboarding-dialog .onboarding-story{position:relative;width:clamp(220px,calc(var(--visible-height,100dvh) - 616px),280px);max-width:100%;aspect-ratio:16/11;flex:none;pointer-events:none;isolation:isolate}
+.story-scene{position:absolute;width:320px;height:220px;left:50%;top:50%;transform:translate(-50%,-50%) scale(var(--story-scale,.75));transform-origin:center;font-family:inherit;perspective:700px;color:#333d4b;text-align:left}
+.story-scene *{box-sizing:border-box}
+.story-ground{position:absolute;width:178px;height:17px;left:71px;bottom:12px;border-radius:50%;background:#3f69a417;filter:blur(7px)}
+.story-calendar{position:absolute;top:18px;left:64px;width:176px;height:166px;transform:rotate(-5deg);filter:drop-shadow(0 12px 10px #31558918);perspective:600px}
+.story-calendar-edge{position:absolute;inset:8px -5px -5px 5px;border-radius:20px;background:linear-gradient(135deg,#b8d9ff,#6ba8f3)}
+.story-calendar-cover{position:absolute;inset:0 0 auto;height:44px;background:linear-gradient(130deg,#7fc5ff,#3182f6 75%,#2268d4);border-radius:18px 18px 0 0;box-shadow:inset 0 2px 2px #ffffff70}
+.story-calendar-cover>span{position:absolute;top:-9px;width:13px;height:26px;border-radius:8px;background:linear-gradient(90deg,#bbc7d8,#fff 60%,#d9e3ef);box-shadow:1px 2px 3px #163c741c}
+.story-calendar-cover>span:first-child{left:35px}.story-calendar-cover>span:last-child{right:35px}
+.story-calendar-face{position:absolute;top:39px;left:0;right:0;bottom:0;border-radius:0 0 18px 18px;background:linear-gradient(120deg,#fff 50%,#edf3fa);padding:16px 14px;box-shadow:inset 0 -3px 2px #dbe5f5}
+.story-calendar-caption{font-size:15px;font-weight:650;color:#6b7684;margin:0 0 13px}
+.story-date-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:9px 6px}
+.story-date-grid>span{height:17px;display:grid;place-items:center;border-radius:5px;background:#e8eef7}
+.story-date-grid>.story-date-selected{background:linear-gradient(130deg,#6aafff,#2474ed);box-shadow:0 3px 6px #3182f633;transform:scale(1.25)}
+.story-date-number{font-size:12px;line-height:17px;font-weight:700;color:white}
+.story-calendar-flip{position:absolute;inset:0;border-radius:0 0 18px 18px;background:linear-gradient(120deg,#fff,#edf3fa);padding:18px 14px;transform-origin:center top;opacity:0;backface-visibility:hidden}
+.story-calendar-flip>span{display:block;width:65%;height:10px;border-radius:6px;background:#e1e8f1;margin:0 0 18px}
+.story-calendar-flip>div{height:10px;background:repeating-linear-gradient(90deg,#e4ebf5 0 13px,transparent 13px 21px);margin:12px 0}
+.story-date-tap{position:absolute;top:110px;left:103px;width:45px;height:45px;border:2px solid #80b6fc;border-radius:50%;opacity:0;transform:scale(1.1)}
+.story-result{position:absolute;display:flex;align-items:center;gap:8px;border:1px solid #f2f5f9;border-radius:15px;background:linear-gradient(135deg,#fff,#f4f8fe);padding:12px 14px;box-shadow:0 7px 18px #31558914;white-space:nowrap;font-size:15px;font-weight:650}
+.story-result i{width:23px;height:23px;border-radius:50%;background:#e0f5ee;color:#16a879;display:grid;place-items:center}
+.story-result svg{width:16px;height:16px}.story-hire-result{right:12px;bottom:15px}
+.story-team-cards{position:absolute;inset:20px 0 auto;height:95px;display:flex;align-items:center;justify-content:center;gap:14px}
+.story-team-card{position:relative;width:72px;height:89px;border:1px solid #e9edf3;border-radius:18px;background:linear-gradient(135deg,#fff,#eef2f8);box-shadow:0 5px 0 #e0e7f0,0 9px 13px #31558912;display:flex;flex-direction:column;align-items:center;padding:12px 10px 7px}
+.story-team-card:first-child{transform:rotate(-7deg)}.story-team-card:last-child{transform:rotate(7deg)}
+.story-team-card.is-selected{border-color:#82b5fa;background:linear-gradient(135deg,#edf6ff,#cee4ff);box-shadow:0 5px 0 #90baf2,0 10px 15px #3182f626}
+.story-team-card>b{font-size:16px;font-weight:700;color:#6b7684;margin-top:7px}.story-team-card.is-selected>b{color:#2272df}
+.story-person{position:relative;width:39px;height:42px}
+.story-person>i{position:absolute;width:21px;height:21px;left:9px;top:0;border-radius:50%;background:radial-gradient(circle at 32% 25%,#b1cff4,#7295c4 85%)}
+.story-person>span{position:absolute;bottom:0;left:0;width:39px;height:21px;border-radius:18px 18px 9px 9px;background:linear-gradient(125deg,#aac8ef,#6e92c2);box-shadow:inset 0 2px 2px #ffffff50}
+.is-selected .story-person>i{background:radial-gradient(circle at 30% 25%,#88c8ff,#3182f6 85%)}.is-selected .story-person>span{background:linear-gradient(125deg,#7ebeff,#2d7ded)}
+.story-team-tick{position:absolute;right:-5px;top:-5px;width:23px;height:23px;border:2px solid white;border-radius:50%;background:#3182f6;color:white;display:none;place-items:center}.is-selected .story-team-tick{display:grid}.story-team-tick svg{width:14px;height:14px}
+.story-roster{position:absolute;left:31px;right:31px;top:137px;padding:13px 16px 15px;border:1px solid #edf2f8;border-radius:18px;background:linear-gradient(135deg,#fff,#f6f8fc);box-shadow:0 6px 16px #31558912}
+.story-roster-title{font-size:13px;font-weight:650;color:#6b7684;margin:0 0 10px}
+.story-roster-days{display:flex;justify-content:space-between;gap:8px}
+.story-roster-days>span{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:650}
+.story-work-day{background:#e4efff;color:#3182f6}.story-work-night{background:#38465b;color:white}.story-work-off{color:#a3aab6;background:#f1f3f6}
+.story-payslip{position:absolute;top:17px;left:119px;width:162px;height:179px;border-radius:18px;background:linear-gradient(120deg,#fff,#eff4fb);border:1px solid #e5edf8;box-shadow:4px 6px 0 #d7e4f4,0 13px 22px #31558918;transform:rotate(6deg);padding:22px 18px 15px}
+.story-payslip>strong{font-size:17px;font-weight:700;color:#4e5968;display:block;margin-bottom:19px}
+.story-paper-fold{position:absolute;top:0;right:0;border:12px solid transparent;border-right-color:#d7e5f7;border-top-color:#e3edf9;border-radius:0 16px 0 10px}
+.story-pay-line{display:flex;align-items:center;gap:12px;margin:13px 0;font-size:12px;color:#8b95a1}.story-pay-line>i{width:62px;height:7px;border-radius:5px;background:#d3e2f6;transform-origin:left}.story-pay-line:nth-of-type(2)>i{width:46px;background:#b0d3ff}
+.story-pay-total{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #e0e8f3;margin-top:17px;padding-top:12px;color:#3182f6;font-size:13px;font-weight:650}.story-pay-total>b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#e4f0ff}.story-pay-total svg{width:17px;height:17px}
+.story-coin{position:absolute;left:16px;top:80px;width:103px;height:103px;border-radius:50%;background:linear-gradient(135deg,#6ebcff,#3a73d9);box-shadow:5px 5px 0 #2762c6,9px 13px 15px #2b73db26;transform:rotate(-12deg)}
+.story-coin-face{position:absolute;inset:3px 4px 5px 3px;border-radius:50%;background:radial-gradient(circle at 30% 22%,#9bd8ff 0,#58aafa 28%,#3182f6 65%,#326ad3 100%);box-shadow:inset 1px 2px 4px #c6ecff,inset -2px -4px 6px #215dc34d;display:grid;place-items:center;color:white;font-size:57px;font-weight:700;line-height:1;text-shadow:0 2px 3px #215dc333}
+.story-pay-spark{position:absolute;left:60px;top:27px;font-size:31px;color:#9ac8ff;transform:rotate(14deg)}
+/* Each story tells its sequence once (under 5 seconds), then rests on the result. */
+.onboarding-story[data-animated] .story-motion{animation-duration:4.6s;animation-fill-mode:both;animation-timing-function:cubic-bezier(.22,1,.36,1);animation-play-state:paused}
+.onboarding-story[data-playing=true] .story-motion{animation-play-state:running}
+[data-animated] .story-calendar{animation-name:story-calendar-arrive}
+[data-animated] .story-calendar-flip{animation-name:story-page-turn}
+[data-animated] .story-date-selected{animation-name:story-date-pick}
+[data-animated] .story-date-tap{animation-name:story-tap}
+[data-animated] .story-hire-result{animation-name:story-date-result}
+[data-animated] .story-team-card{animation-name:story-person-arrive;animation-delay:calc(var(--order)*80ms)}
+[data-animated] .story-roster{animation-name:story-roster-arrive}
+[data-animated] .story-roster-days>span{animation-name:story-shift-arrive;animation-delay:calc(var(--order)*40ms)}
+[data-animated] .story-payslip{animation-name:story-payslip-arrive}
+[data-animated] .story-coin{animation-name:story-coin-arrive}
+[data-animated] .story-pay-line>i{animation-name:story-amount-fill}
+[data-animated] .story-pay-total{animation-name:story-pay-ready}
+[data-animated] .story-pay-spark{animation-name:story-pay-spark}
+@keyframes story-calendar-arrive{0%{opacity:0;transform:translateY(18px) rotate(-13deg) scale(.92)}20%,100%{opacity:1;transform:rotate(-5deg)}}
+@keyframes story-page-turn{0%,15%{opacity:1;transform:rotateX(0)}44%,100%{opacity:0;transform:rotateX(155deg)}}
+@keyframes story-date-pick{0%,27%{opacity:0;transform:scale(.55)}42%{opacity:1;transform:scale(1.4)}50%,100%{opacity:1;transform:scale(1.25)}}
+@keyframes story-tap{0%,28%{opacity:0;transform:scale(.55)}34%{opacity:.8}48%,100%{opacity:0;transform:scale(1.35)}}
+@keyframes story-date-result{0%,41%{opacity:0;transform:translateY(12px) scale(.94)}59%,100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes story-person-arrive{0%{opacity:0;translate:0 16px;scale:.9}22%,100%{opacity:1;translate:0 0;scale:1}}
+@keyframes story-roster-arrive{0%,24%{opacity:0;transform:translateY(14px)}42%,100%{opacity:1;transform:translateY(0)}}
+@keyframes story-shift-arrive{0%,35%{opacity:0;transform:translateY(8px) scale(.7)}53%,100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes story-payslip-arrive{0%{opacity:0;transform:translate(20px,12px) rotate(13deg)}23%,100%{opacity:1;transform:rotate(6deg)}}
+@keyframes story-coin-arrive{0%{opacity:0;transform:translate(-16px,12px) rotateY(-110deg) rotate(-16deg)}32%{opacity:1;transform:translateY(-6px) rotateY(0) rotate(-8deg)}48%,100%{opacity:1;transform:translateY(0) rotate(-12deg)}}
+@keyframes story-amount-fill{0%,30%{transform:scaleX(0)}52%,100%{transform:scaleX(1)}}
+@keyframes story-pay-ready{0%,49%{opacity:0;transform:translateY(8px)}66%,100%{opacity:1;transform:translateY(0)}}
+@keyframes story-pay-spark{0%,30%{opacity:0;transform:scale(.5) rotate(-25deg)}48%{opacity:1;transform:scale(1.15) rotate(14deg)}62%,100%{opacity:1;transform:scale(1) rotate(14deg)}}
+.onboarding-scene-copy .story-motion{animation:none!important}
+@media(prefers-reduced-motion:reduce){.onboarding-story .story-motion{animation:none!important}}
+@media(max-height:720px){#onboarding-dialog .onboarding-story{width:220px}}

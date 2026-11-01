@@ -9,6 +9,7 @@
   const copy=element.cloneNode(true);copy.removeAttribute('id');copy.classList.add('onboarding-scene-copy');copy.setAttribute('aria-hidden','true');copy.inert=true;
   for(const node of copy.querySelectorAll('[id]'))node.removeAttribute('id');
   for(const node of copy.querySelectorAll('[autofocus]'))node.removeAttribute('autofocus');
+  window.OnboardingStory?.freeze(element,copy);
   Object.assign(copy.style,{position:'absolute',left:(bounds.left-parent.left)+'px',top:(bounds.top-parent.top)+'px',width:bounds.width+'px',height:bounds.height+'px',maxHeight:'none',margin:'0',pointerEvents:'none',zIndex:'2'});
   element.after(copy);copy.scrollTop=element.scrollTop;
   try{update();}catch(error){copy.remove();throw error;}

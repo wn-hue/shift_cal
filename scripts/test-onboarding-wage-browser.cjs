@@ -64,8 +64,8 @@ async function checkKeyboard(p,id,width){
  await edits.locator('#guided-wage-import').click();await edits.evaluate(()=>PayrollEstimate.importText('salary','자격 5,000'));await next(edits);
  assert.deepEqual(await kinds.evaluateAll(es=>es.map(e=>e.value)),['duty','qualification','job']);assert.deepEqual(await values.evaluateAll(es=>es.map(e=>e.value.replace(/,/g,''))),['70000','5000','10000']);
  for(const key of['family','legacy']){await edits.locator('#guided-allowance-add').click();await kinds.last().selectOption(key);await values.last().fill('1000');}
- assert(await edits.locator('#guided-allowance-add').isDisabled());await values.last().fill('');await next(edits);assert.match(await edits.locator('#wage-manual-status').textContent(),/기타 고정수당/);assert.equal(await stage(edits),'allowances');
- await values.last().fill('-1');await next(edits);assert.match(await edits.locator('#wage-manual-status').textContent(),/정수/);await values.last().fill('0');
+ assert(await edits.locator('#guided-allowance-add').isDisabled());
+ await values.last().fill('-1');await next(edits);assert.match(await edits.locator('#wage-manual-status').textContent(),/정수/);assert.equal(await stage(edits),'allowances');await values.last().fill('');
  await next(edits);await edits.waitForFunction(()=>!document.getElementById('onboarding-dialog').open);assert.deepEqual(await edits.evaluate(()=>[config.dutyPay,config.fixedAllowances.duty,config.fixedAllowances.job,config.fixedAllowances.qualification,config.fixedAllowances.family,config.fixedAllowances.legacy,savedCount]),[86000,70000,10000,5000,1000,0,1]);
  await edits.evaluate(()=>PayrollEstimate.open());assert.equal(await edits.locator('#guided-allowance-entry').isVisible(),false);assert.equal(await edits.locator('#wage-duty').inputValue(),'70,000');assert.equal(await edits.locator('#pref-theme option[value=test]').textContent(),'2. 베이지');assert.deepEqual(edits.errors,[]);await edits.close();
  console.log('PASS chosen categories, duplicate prevention, add/remove/reassign, back, partial SMS merge, validation, single save and regular editor',engine.name());

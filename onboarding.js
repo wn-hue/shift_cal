@@ -19,8 +19,6 @@
   saved?.status==='complete'||saved?.status==='existing'?saved:{status:legacy()?'existing':'in_progress',step:0};
  let step=state.step||0, selected='', manual=false, active=false, saving=false, navigating=false, paintedStep=-1, entrance=null;
  const main=dialog.querySelector('.onboarding-main');
- // Warm the image decoder for all three steps, not only the currently visible one.
- for(const image of dialog.querySelectorAll('.onboarding-art img'))image.decode?.().catch(()=>{});
  function reveal(){
   const current=entrance?.playState==='running'?getComputedStyle(main):null;
   const from=current?{opacity:current.opacity,transform:current.transform}:{opacity:0,transform:'translateY(8px)'};
