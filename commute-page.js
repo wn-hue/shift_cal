@@ -12,6 +12,7 @@
  }
  function open(){if(active)return;history.pushState({...history.state,shiftCommute:true,shiftBusSearch:false,shiftBusResults:false},'','#commute');show();}
  document.getElementById('commute-back').onclick=()=>{if(history.state?.shiftCommute)history.back();else{history.replaceState({...history.state,shiftCommute:false},'',location.pathname+location.search);hide();}};
+ AppMotion.bindSwipeDismiss(page,()=>document.getElementById('commute-back').onclick(),{header:'.commute-topbar',canStart:()=>showing&&!window.BusUnifiedSearch?.isOpen});
  window.addEventListener('popstate',()=>{if(history.state?.shiftCommute)show();else hide();window.ShiftBusBrowser?.syncHistory();window.BusUnifiedSearch?.syncHistory();});
  if(location.hash==='#commute'){history.replaceState({...history.state,shiftCommute:true,shiftBusSearch:false,shiftBusResults:false},'');show();}
  window.CommutePage={open};

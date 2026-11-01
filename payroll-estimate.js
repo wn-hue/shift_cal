@@ -91,7 +91,7 @@
     }
     api.open=options=>{
         clearDraft();dialog.setAttribute('data-onboarding',String(options?.onboarding===true));
-        for(const [input,id] of [[manualBase,'input-base-hourly'],[manualOrdinary,'input-ordinary-hourly']]){const n=Number(el(id).value.replace(/[^0-9]/g,''));input.value=n>0?money(n):'';}
+        for(const [input,id] of [[manualBase,'input-base-hourly'],[manualOrdinary,'input-ordinary-hourly']]){const n=Number(el(id).value.replace(/[^0-9]/g,''));input.value=options?.onboarding&&n===0?'':money(n);}
         let current={};try{current=JSON.parse(localStorage.getItem('shift_salary_config_master'))||{};}catch{}
         const payDate=typeof currentPayDate==='undefined'?new Date():currentPayDate;
         const seniority=root.ShiftPlannerCore?.seniorityPay((current.hireDate||'').slice(0,7),`${payDate.getFullYear()}-${String(payDate.getMonth()+1).padStart(2,'0')}-15`)||0;
@@ -140,7 +140,7 @@
         input.addEventListener('compositionend',()=>{if(input.value)api.importText(kind,input.value);});
     }
     for(const input of amountInputs){input.addEventListener('input',()=>{input.classList.remove('wage-filled');input.setAttribute('aria-invalid','false');manualStatus.textContent='';importError=false;if(input===manualBase){conversionMonthly=0;el('wage-conversion').hidden=true;}});}
-    function readAmount(input,label,positive){const raw=input.value.trim(),n=Number(raw.replace(/,/g,''));if(!/^(?:[0-9]+|[1-9][0-9]{0,2}(?:,[0-9]{3})+)$/.test(raw)||!Number.isSafeInteger(n)||n<(positive?1:0)||n>1000000000){input.setAttribute('aria-invalid','true');input.focus();throw Error(label+'을 '+(positive?'1':'0')+'원 이상 10억 원 이하의 정수로 입력해 주세요.');}return n;}
+    function readAmount(input,label,positive){const raw=input.value.trim()||(positive?'':'0'),n=Number(raw.replace(/,/g,''));if(!/^(?:[0-9]+|[1-9][0-9]{0,2}(?:,[0-9]{3})+)$/.test(raw)||!Number.isSafeInteger(n)||n<(positive?1:0)||n>1000000000){input.setAttribute('aria-invalid','true');input.focus();throw Error(label+'을 '+(positive?'1':'0')+'원 이상 10억 원 이하의 정수로 입력해 주세요.');}return n;}
     api.validateHourly=kind=>{try{return readAmount(kind==='base'?manualBase:manualOrdinary,kind==='base'?'기본시급':'통상시급',true);}catch(error){manualStatus.textContent=error.message;return null;}};
     api.validateAllowance=(input,label)=>{try{return readAmount(input,label,false);}catch(error){manualStatus.textContent=error.message;return null;}};
     apply.addEventListener('click',()=>{
@@ -148,7 +148,7 @@
         try{
             if(importError)throw Error('문자 인식 결과를 확인해 주세요. 다시 붙여넣거나 금액을 직접 수정할 수 있어요.');
             if(conversionMonthly)throw Error('기본급 환산 금액을 확인하거나 기본시급을 직접 입력해 주세요.');
-            if(manualBase.value.trim()||manualOrdinary.value.trim()||!(draftBonus||draftSalary)){wages.baseHourly=readAmount(manualBase,'기본시급',true);wages.ordinaryHourly=readAmount(manualOrdinary,'통상시급',true);}
+            wages.baseHourly=readAmount(manualBase,'기본시급',false);wages.ordinaryHourly=readAmount(manualOrdinary,'통상시급',false);
             const parts={};for(const key of allowanceKeys)parts[key]=readAmount(el('wage-'+key),allowanceLabels[key],false);
             wages.dutyPay=Object.values(parts).reduce((a,b)=>a+b,0);if(wages.dutyPay>1000000000)throw Error('고정수당 합계는 10억 원 이하여야 합니다.');wages.fixedAllowances=parts;
         }catch(error){manualStatus.textContent=error.message;return;}

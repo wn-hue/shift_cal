@@ -67,6 +67,7 @@
  function open(initial=''){configuration?.cancel();if(history.state?.shiftBusSearch){show({initial});return;}history.pushState({...history.state,shiftCommute:true,shiftBusSearch:true},'',location.href);show({initial});}
  function close(options={}){hide();if(history.state?.shiftBusSearch){if(options.results&&!history.state.shiftBusResults){history.replaceState({...history.state,shiftBusSearch:false,shiftBusResults:true},'',location.href);window.ShiftBusBrowser.syncHistory();}else history.back();}}
  back.onclick=close;gps.onclick=async()=>{abort();status.textContent='현재 위치를 확인하고 있어요.';const current=++token;gps.disabled=true;const ok=await configuration?.onGPS();if(current!==token||!showing)return;gps.disabled=false;if(ok)close();};
+ window.AppMotion.bindSwipeDismiss(view,()=>close(),{header:'.bus-unified-topbar',canStart:()=>showing&&!closing});
  input.addEventListener('compositionstart',()=>{composing=true;abort();});input.addEventListener('compositionend',()=>{composing=false;update();});
  function update(){abort();remote=[];status.textContent='';if(!composing){render();results.scrollTop=0;}}
  input.addEventListener('input',update);view.addEventListener('keydown',e=>{if(e.key==='Escape'&&!composing){e.preventDefault();e.stopPropagation();close();}});
