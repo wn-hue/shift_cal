@@ -77,18 +77,18 @@ body:has(#group-day-dialog[open]){overflow:hidden}
 #group-weeks{touch-action:pan-y pinch-zoom;outline:none}
 #group-weeks:focus-visible{outline:2px solid #3182f6;outline-offset:3px;border-radius:18px}
 
-/* Match the calendar's today stroke; keep team and date emphasis free of colored fills. */
-body[data-pref-theme=current] #view-groups { --group-outline:#737373; --group-outline-width:1.5px; --group-blue:#555; --group-today-accent:#555; }
-body[data-pref-theme=toss] #view-groups { --group-outline:#dbe9fc; --group-outline-width:1px; }
-body[data-pref-theme=gpt] #view-groups { --group-outline:#aaa; --group-outline-width:1px; --group-blue:#666; --group-today-accent:#666; }
-body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week :is(.my-group>*,.selected-date,th.today,td.today) { background:transparent; }
-body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week :is(th,td) { position:relative; }
-body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week .my-group>*::before { content:''; position:absolute; inset:1px 0; border-top:var(--group-outline-width) solid var(--group-outline); border-bottom:var(--group-outline-width) solid var(--group-outline); pointer-events:none; }
-body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week .my-group>:first-child::before { left:1px; border-left:var(--group-outline-width) solid var(--group-outline); border-radius:12px 0 0 12px; }
-body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week .my-group>:last-child::before { right:1px; border-right:var(--group-outline-width) solid var(--group-outline); border-radius:0 12px 12px 0; }
-body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week :is(th,td).today::after { content:''; position:absolute; inset:0 1px; border-left:var(--group-outline-width) solid var(--group-outline); border-right:var(--group-outline-width) solid var(--group-outline); pointer-events:none; }
-body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week thead th.today::after { top:1px; border-top:var(--group-outline-width) solid var(--group-outline); border-radius:12px 12px 0 0; }
-body:is([data-pref-theme=current],[data-pref-theme=toss],[data-pref-theme=gpt]) #view-groups .group-week tbody tr:last-child td.today::after { bottom:1px; border-bottom:var(--group-outline-width) solid var(--group-outline); border-radius:0 0 12px 12px; }
+/* Gray marks my team across the week; sky blue marks today's date down the column. */
+body[data-pref-theme][data-view=groups] #view-groups{--group-row-mark:#eceef1;--group-date-mark:#def2ff;--group-cross-mark:#cee7f5;--group-today-accent:#2a86c6;--group-today-ink:#fff;--group-date-ink:#2777ad}
+body[data-pref-theme=test][data-view=groups] #view-groups{--group-row-mark:#e9e7e3}
+body[data-pref-theme=dark][data-view=groups] #view-groups{--group-row-mark:#363b43;--group-date-mark:#264b64;--group-cross-mark:#315b73;--group-today-accent:#93cfff;--group-today-ink:#142535;--group-date-ink:#a6d9ff}
+body[data-pref-theme] #view-groups .group-week .selected-date{background:transparent}
+body[data-pref-theme] #view-groups .group-week .my-group>*{background:var(--group-row-mark)}
+body[data-pref-theme] #view-groups .group-week .my-group .group-column{color:var(--group-ink)}
+body[data-pref-theme] #view-groups .group-week .my-group>:first-child{border-radius:8px 0 0 8px}
+body[data-pref-theme] #view-groups .group-week .my-group>:last-child{border-radius:0 8px 8px 0}
+body[data-pref-theme] #view-groups .group-week :is(th,td).today{background:var(--group-date-mark)}
+body[data-pref-theme] #view-groups .group-week .my-group>td.today{background:var(--group-cross-mark)}
+body[data-pref-theme] #view-groups .group-date small.group-today-label{color:var(--group-date-ink)}
 
 /* A shared weekly structure, with surfaces and emphasis drawn from each calendar theme. */
 body[data-view=groups]{--group-page:#f2f4f6;--group-hero:#30343c;--group-hero-ink:#fff;--group-hero-muted:#c6cbd3;--group-hero-day:#eee0c3;--group-hero-night:#c6d2e6;--group-hero-off:#f1bdc7;--group-hero-rule:#ffffff26;--group-action:#555;--group-action-bg:#e9ecef;--group-radius:22px;background:var(--group-page)}
@@ -100,7 +100,7 @@ body[data-pref-theme=test1][data-view=groups]{--group-page:var(--test-page);--gr
 body[data-pref-theme=test3][data-view=groups]{--group-page:var(--test-page);--group-hero:#fff;--group-hero-ink:#1c1c1e;--group-hero-muted:#73737b;--group-hero-day:#8c6726;--group-hero-night:#414957;--group-hero-off:#b14a4a;--group-hero-rule:#e6e6eb;--group-action:var(--test-accent);--group-action-bg:var(--test-accent-soft);--group-radius:24px}
 body[data-pref-theme=test4][data-view=groups]{--group-page:var(--test-page);--group-hero:#fff2b0;--group-hero-ink:#4c3c29;--group-hero-muted:#796747;--group-hero-day:#886021;--group-hero-night:#514647;--group-hero-off:#9a5a5a;--group-hero-rule:#59453824;--group-action:var(--test-accent);--group-action-bg:var(--test-accent-soft);--group-radius:26px}
 body[data-view=groups] .container{padding-top:4px}
-body[data-pref-theme][data-view=groups] .reference-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:18;min-height:66px;box-sizing:border-box;padding:12px 2px 10px;margin:0 0 14px;background:var(--group-page)!important;border:0;border-radius:0;gap:8px;flex-wrap:wrap}
+body[data-pref-theme][data-view=groups] .reference-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:18;min-height:66px;box-sizing:border-box;padding:12px 2px 10px;margin:0 0 10px;background:var(--group-page)!important;border:0;border-radius:0;gap:8px;flex-wrap:wrap}
 body[data-view=groups] .header-title-area{min-width:0;flex:1 1 auto}
 body[data-view=groups] .header-view-title{font-size:25px;line-height:1.4;letter-spacing:-.8px;color:var(--theme-text,#191f28)}
 .header-group-actions{display:flex;align-items:center;gap:7px;flex:none}
@@ -108,33 +108,33 @@ body[data-view=groups] .header-view-title{font-size:25px;line-height:1.4;letter-
 body[data-pref-theme] #group-month-title{display:inline-flex;align-items:center;justify-content:center;min-height:44px;max-width:100%;margin:0;padding:6px 3px;border:0;border-radius:12px;background:transparent;color:var(--theme-text,#191f28);font:inherit;font-size:16px;font-weight:650;letter-spacing:-.3px;white-space:nowrap;font-variant-numeric:tabular-nums;cursor:pointer}
 body[data-pref-theme] #group-today{min-height:44px;min-width:48px;padding:8px 12px;border:0;border-radius:15px;background:var(--group-action-bg);color:var(--group-action);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
 #view-groups{padding-bottom:24px}
-#view-groups .group-overview{margin:0 0 20px;padding:18px 18px 14px;border:1px solid var(--group-hero-rule);border-radius:var(--group-radius);background:var(--group-hero);color:var(--group-hero-ink);box-shadow:0 4px 12px #18233807}
-.group-overview-heading{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;margin-bottom:15px}
+#view-groups .group-overview{margin:0 0 14px;padding:13px 16px 11px;border:1px solid var(--group-hero-rule);border-radius:var(--group-radius);background:var(--group-hero);color:var(--group-hero-ink);box-shadow:0 4px 12px #18233807}
+.group-overview-heading{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;margin-bottom:9px}
 #group-overview-title{margin:0;font-size:13px;font-weight:550;line-height:1.5;color:var(--group-hero-muted)}
 #group-overview-date{font-size:12px;font-variant-numeric:tabular-nums;color:var(--group-hero-muted)}
 .group-overview-teams{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
-.group-overview-team{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;min-width:0;padding:0 8px;box-sizing:border-box;text-align:center}
+.group-overview-team{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;min-width:0;padding:0 8px;box-sizing:border-box;text-align:center}
 .group-overview-team+.group-overview-team{border-left:1px solid var(--group-hero-rule)}
 .group-overview-shift{font-size:12px;font-weight:550;line-height:1.45;overflow-wrap:anywhere;color:var(--group-hero-ink)}
-.group-overview-team strong{font-size:23px;font-weight:700;letter-spacing:-.6px;line-height:1.25;color:var(--group-hero-ink)}
+.group-overview-team strong{font-size:21px;font-weight:700;letter-spacing:-.6px;line-height:1.25;color:var(--group-hero-ink)}
 .group-overview-team[data-kind=day] .group-overview-shift{color:var(--group-hero-day)}
 .group-overview-team[data-kind=night] .group-overview-shift{color:var(--group-hero-night)}
 .group-overview-team:is([data-kind=off],[data-kind=leave]) .group-overview-shift{color:var(--group-hero-off)}
 .group-overview-mine{min-height:14px;font-size:10px;line-height:14px;color:var(--group-hero-muted)}
-#view-groups .group-view-caption{margin:0 4px 12px;font-size:14px;font-weight:650;color:var(--group-ink);flex-wrap:wrap}
+#view-groups .group-view-caption{margin:0 4px 9px;font-size:14px;font-weight:650;color:var(--group-ink);flex-wrap:wrap}
 .group-view-caption small{font-size:10px;font-weight:400;color:var(--group-muted)}
-#group-weeks{gap:16px}
+#group-weeks{gap:12px}
 #view-groups .group-week-card{border:1px solid var(--group-line);border-radius:var(--group-radius);background:var(--group-surface);overflow:hidden;box-shadow:0 3px 12px #18233805;scroll-margin-top:90px}
-.group-week-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:14px 14px 6px}
-#view-groups .group-week-heading h2{margin:0;font-size:16px;font-weight:650;line-height:1.4;color:var(--group-ink)}
+.group-week-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:9px 12px 3px}
+#view-groups .group-week-heading h2{margin:0;font-size:15px;font-weight:650;line-height:1.4;color:var(--group-ink)}
 .group-week-range{font-size:11px;color:var(--group-muted);font-variant-numeric:tabular-nums}
 #view-groups .group-week{width:calc(100% - 12px);margin:0 6px 7px;border:0;border-radius:0;box-shadow:none}
 #view-groups .group-week .group-column{width:44px;font-size:12px}
 #view-groups .group-week tbody .group-column{color:var(--group-ink)}
 #view-groups .group-week tbody .group-column strong{display:block;font-size:12px;font-weight:600;line-height:17px}
 #view-groups .group-week .group-mine-label{display:block;font-size:9px;font-weight:450;line-height:12px;color:var(--group-muted)}
-#view-groups .group-week tbody .group-cell{height:46px}
-#view-groups .group-week .group-shift{width:29px;height:29px;font-size:12px}
+#view-groups .group-week tbody .group-cell{height:36px;min-height:36px}
+#view-groups .group-week .group-shift{width:26px;height:26px;font-size:11px}
 #view-groups .group-week .group-shift:is(.leave,.special-day,.special-night){font-size:10px}
 .group-weekday{font-size:10px;line-height:14px}
 .group-date strong{font-size:14px;font-weight:600}
@@ -144,8 +144,12 @@ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])
 body[data-pref-theme=dark] #view-groups .group-week-card{box-shadow:none}
 body[data-view=groups] :is(#group-month-title,#group-today):focus-visible{outline:2px solid var(--group-action);outline-offset:2px}
 body[data-view=groups] :is(#group-month-title,#group-today):active{opacity:.7}
-@media(max-width:360px){body[data-view=groups] .header-view-title{font-size:22px}body[data-pref-theme] #group-month-title{font-size:14px}.header-group-actions{gap:3px}body[data-pref-theme] #group-today{padding:8px 10px}#view-groups .group-overview{padding:15px 12px 12px}.group-overview-team{padding:0 5px}.group-overview-shift{font-size:11px}.group-overview-team strong{font-size:21px}#view-groups .group-week .group-column{width:37px}#view-groups .group-week .group-shift{width:26px;height:26px;font-size:11px}#view-groups .group-week tbody .group-cell{height:44px}.group-week-heading{padding:12px 12px 6px}}
-@media(min-width:600px){#view-groups .group-overview{padding:20px 24px 16px}.group-overview-heading{margin-bottom:18px}.group-overview-team strong{font-size:26px}#view-groups .group-week tbody .group-cell{height:50px}#view-groups .group-week .group-shift{width:32px;height:32px}}
+@media(max-width:360px){body[data-view=groups] .header-view-title{font-size:22px}body[data-pref-theme] #group-month-title{font-size:14px}.header-group-actions{gap:3px}body[data-pref-theme] #group-today{padding:8px 10px}#view-groups .group-overview{padding:12px 12px 10px}.group-overview-team{padding:0 5px}.group-overview-shift{font-size:11px}.group-overview-team strong{font-size:21px}#view-groups .group-week .group-column{width:37px}#view-groups .group-week .group-shift{width:26px;height:26px;font-size:11px}#view-groups .group-week tbody .group-cell{height:36px}.group-week-heading{padding:9px 12px 3px}}
+@media(min-width:600px){#view-groups .group-overview{padding:14px 20px 12px}.group-overview-heading{margin-bottom:10px}.group-overview-team strong{font-size:23px}#view-groups .group-week tbody .group-cell{height:40px}#view-groups .group-week .group-shift{width:28px;height:28px}}
 
 #view-groups .group-week thead th.today{border-radius:12px 12px 0 0}
 #view-groups .group-week tbody tr:last-child td.today{border-radius:0 0 12px 12px}
+
+#view-groups .group-week thead th{height:46px}
+#view-groups .group-date{min-height:46px;gap:0}
+#view-groups .group-week .today .group-date strong{min-width:24px;width:24px;height:24px;font-size:13px}
