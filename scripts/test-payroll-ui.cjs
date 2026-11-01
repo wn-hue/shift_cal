@@ -160,3 +160,18 @@ click('payroll-sms-apply');assert.match(elem('wage-manual-status').textContent,/
 assert.match(elem('wage-conversion-result').textContent,/10,320/);click('wage-conversion-use');click('payroll-sms-apply');assert.equal(evaluate('config.baseHourly'),10320);assert.equal(evaluate('config.ordinaryHourly'),14482);
 ctx.PayrollEstimate.open();ctx.PayrollEstimate.importText('salary','기본시급 11,050\n기본급 2,156,880');assert.equal(elem('wage-conversion').hidden,true);elem('payroll-sms-dialog').close();
 console.log('PASS unified import, immediate raw clearing, individual allowance persistence, partial merging and explicit monthly conversion');
+
+// Summary lists paid allowance items, never attributes an old total to unknown categories.
+assert.equal(elem('allowance-qualification-setting').hidden,false);
+assert.equal(elem('display-allowance-qualification').value,'10,000원');
+assert.equal(elem('allowance-job-setting').hidden,false);
+assert.equal(elem('display-allowance-job').value,'30,000원');
+assert.equal(elem('allowance-family-setting').hidden,true);
+assert.equal(elem('allowance-duty-setting').hidden,true);
+assert.equal(elem('duty-pay-setting').hidden,true);
+evaluate('applyPayrollStatement({dutyPay:70000})');
+assert.equal(elem('duty-pay-setting').hidden,false);
+for(const k of ['qualification','job','family','duty','legacy'])assert.equal(elem('allowance-'+k+'-setting').hidden,true);
+evaluate('applyPayrollStatement({dutyPay:0})');
+assert.equal(elem('duty-pay-setting').hidden,true);
+console.log('PASS only paid allowance names and amounts, neutral legacy total and zero allowance hiding');

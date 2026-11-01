@@ -933,7 +933,7 @@
 <link rel="stylesheet" href="./app-surfaces.css?v=6">
 <link rel="stylesheet" href="./screen-refinement.css?v=8">
 <link rel="stylesheet" href="./onboarding.css?v=4">
-<link rel="stylesheet" href="./mobile-surfaces.css?v=10">
+<link rel="stylesheet" href="./mobile-surfaces.css?v=11">
 <link rel="stylesheet" href="./test-calendar.css?v=9">
 <link rel="stylesheet" href="./month-picker.css?v=1">
 <link rel="stylesheet" href="./memo-editor.css?v=3">
@@ -1083,11 +1083,31 @@
                 </div>
                 <div id="wage-allowance-settings" class="two-cols" hidden>
                     <div id="duty-pay-setting" class="input-group" hidden>
-                        <label for="input-duty-pay">자격·직무·가족·직책 (고정수당)</label>
+                        <label for="input-duty-pay">고정수당</label>
                         <input type="text" id="input-duty-pay" value="0원" readonly aria-describedby="wage-sms-hint">
                     </div>
+                    <div id="allowance-qualification-setting" class="input-group" hidden>
+                        <label for="display-allowance-qualification">자격수당</label>
+                        <input type="text" id="display-allowance-qualification" value="0원" readonly aria-describedby="wage-sms-hint">
+                    </div>
+                    <div id="allowance-job-setting" class="input-group" hidden>
+                        <label for="display-allowance-job">직무수당</label>
+                        <input type="text" id="display-allowance-job" value="0원" readonly aria-describedby="wage-sms-hint">
+                    </div>
+                    <div id="allowance-family-setting" class="input-group" hidden>
+                        <label for="display-allowance-family">가족수당</label>
+                        <input type="text" id="display-allowance-family" value="0원" readonly aria-describedby="wage-sms-hint">
+                    </div>
+                    <div id="allowance-duty-setting" class="input-group" hidden>
+                        <label for="display-allowance-duty">직책수당</label>
+                        <input type="text" id="display-allowance-duty" value="0원" readonly aria-describedby="wage-sms-hint">
+                    </div>
+                    <div id="allowance-legacy-setting" class="input-group" hidden>
+                        <label for="display-allowance-legacy">고정수당</label>
+                        <input type="text" id="display-allowance-legacy" value="0원" readonly aria-describedby="wage-sms-hint">
+                    </div>
                     <div id="seniority-pay-setting" class="input-group" hidden>
-                        <label for="input-seniority-pay">근속수당 (원)</label>
+                        <label for="input-seniority-pay">근속수당</label>
                         <input type="text" id="input-seniority-pay" value="0원" readonly aria-describedby="wage-sms-hint">
                     </div>
                 </div>
@@ -2801,7 +2821,18 @@
             document.getElementById('input-ordinary-hourly').value = fmt(config.ordinaryHourly) + '원';
             document.getElementById('input-duty-pay').value = fmt(config.dutyPay) + '원';
             document.getElementById('input-seniority-pay').value = fmt(config.seniorityPay) + '원';
-            document.getElementById('duty-pay-setting').hidden = !(config.dutyPay > 0);
+            const allowanceKeys = ['qualification', 'job', 'family', 'duty', 'legacy'];
+            const allowanceParts = config.fixedAllowances;
+            const hasAllowanceParts = allowanceParts && allowanceKeys.every(key =>
+                Number.isSafeInteger(allowanceParts[key]) && allowanceParts[key] >= 0) &&
+                allowanceKeys.reduce((sum, key) => sum + allowanceParts[key], 0) === config.dutyPay;
+            // Show only paid items. Old totals without a breakdown keep a neutral label.
+            for (const key of allowanceKeys) {
+                const amount = hasAllowanceParts ? allowanceParts[key] : 0;
+                document.getElementById('allowance-' + key + '-setting').hidden = !(amount > 0);
+                document.getElementById('display-allowance-' + key).value = fmt(amount) + '원';
+            }
+            document.getElementById('duty-pay-setting').hidden = hasAllowanceParts || !(config.dutyPay > 0);
             document.getElementById('seniority-pay-setting').hidden = !(config.seniorityPay > 0);
             document.getElementById('wage-allowance-settings').hidden = !(config.dutyPay > 0 || config.seniorityPay > 0);
             document.getElementById('wage-settings-title').textContent = (config.dutyPay > 0 || config.seniorityPay > 0) ? '시급 · 수당' : '시급';
