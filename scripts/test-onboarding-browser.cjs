@@ -13,7 +13,7 @@ const address=process.env.TEST_URL||'http://127.0.0.1:8772/';
     const q=s=>document.querySelector(s),box=s=>q(s).getBoundingClientRect(),panel=q('.onboarding-panel:not([hidden])'),control=panel.querySelector('input,.onboarding-group-list,.onboarding-import-card').getBoundingClientRect();
     return {align:getComputedStyle(q('#onboarding-title')).textAlign,heading:box('#onboarding-heading').x,control:control.x,next:box('#onboarding-next').x,width:control.width,nextWidth:box('#onboarding-next').width,artBottom:panel.querySelector('.onboarding-art').getBoundingClientRect().bottom,controlTop:control.top,panelBottom:panel.getBoundingClientRect().bottom,footerTop:box('.onboarding-footer').top,overflow:q('#onboarding-dialog').scrollWidth>innerWidth};
    });
-   assert.equal(layout.align,'left');assert(Math.abs(layout.heading-layout.control)<1);assert(Math.abs(layout.next-layout.control)<1);assert(Math.abs(layout.width-layout.nextWidth)<1);assert(layout.artBottom<=layout.controlTop+1);assert(layout.panelBottom<=layout.footerTop+1);assert(!layout.overflow);
+   assert.equal(layout.align,'center');assert(Math.abs(layout.heading-layout.control)<1);assert(Math.abs(layout.next-layout.control)<1);assert(Math.abs(layout.width-layout.nextWidth)<1);assert(layout.artBottom<=layout.controlTop+1);assert(layout.panelBottom<=layout.footerTop+1);assert(!layout.overflow);
   };
 
   assert.equal(await wizard.evaluate(e=>e.open),true);assert.equal(await page.locator('#onboarding-step-label').textContent(),'1 / 3');

@@ -561,3 +561,9 @@ Object.assign(window.AppTranslations, {
  '어느 조에서\n근무하시나요?': {en:'Which team are\nyou on?',zh:'您在哪个\n班组工作？',ja:'どの組で\n働いていますか？'},
  '시급을 설정하면\n준비가 끝나요': {en:'Set your hourly pay\nand you’re ready',zh:'设置好时薪\n就准备好了',ja:'時給を設定すれば\n準備完了です'}
 });
+
+Object.assign(window.AppTranslations, {
+ '내 연차와 예상 급여를\n계산하는 기준이에요.': {en:'This is used to estimate\nyour leave and pay.',zh:'用于计算您的\n年假和预估工资。',ja:'有休と予想給与の\n計算基準になります。'},
+ '선택한 조에 맞춰\n내 근무표를 만들어요.': {en:'We’ll create your schedule\nfor the team you choose.',zh:'根据您选择的班组\n生成您的排班表。',ja:'選んだ勤務組に合わせて\n勤務表を作成します。'},
+ '시급을 확인하면\n내 예상 급여를 볼 수 있어요.': {en:'Check your hourly rates\nto see your estimated pay.',zh:'确认时薪后\n即可查看预估工资。',ja:'時給を確認すると\n予想給与がわかります。'}
+});

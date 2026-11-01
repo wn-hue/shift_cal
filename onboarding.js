@@ -42,7 +42,7 @@
   for(const [i,bar] of [...dialog.querySelectorAll('.onboarding-progress span')].entries())bar.dataset.filled=String(i<=step);
   for(const [i,panel] of [...dialog.querySelectorAll('.onboarding-panel')].entries())panel.hidden=i!==step;
   const titles=['입사일을\n알려주세요.','어느 조에서\n근무하시나요?','시급을 설정하면\n준비가 끝나요'];
-  const copies=['내 연차와 예상 급여를 계산하는 기준이에요.','선택한 조에 맞춰 내 근무표를 만들어요.','시급을 확인하면 내 예상 급여를 볼 수 있어요.'];
+  const copies=['내 연차와 예상 급여를\n계산하는 기준이에요.','선택한 조에 맞춰\n내 근무표를 만들어요.','시급을 확인하면\n내 예상 급여를 볼 수 있어요.'];
   $('onboarding-title').textContent=titles[step];$('onboarding-description').textContent=copies[step];
   $('onboarding-date').max=today();$('onboarding-date').value=config.hireDate||'';
   selected=['A','B','C'].includes(text('shift_active_group'))?text('shift_active_group'):'';
