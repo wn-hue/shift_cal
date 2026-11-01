@@ -1,5 +1,33 @@
 /* UI-only translations. User notes, event names, meals and source documents stay untouched. */
 window.AppTranslations=Object.fromEntries(`
+문자로 채우고, 숫자를 눌러 바로 수정하세요. 직접 입력해도 돼요.|Fill from a message, then edit the amounts here. You can also enter them yourself.|通过短信填入后，可直接修改金额，也可以手动输入。|メッセージから入力し、その場で金額を修正できます。手入力も可能です。
+복사한 급여 문자로 채우기|Fill from copied payslip|从已复制的工资短信填入|コピーした給与明細から入力
+직접 붙여넣기|Paste manually|手动粘贴|手動で貼り付け
+급여 문자|Payslip message|工资短信|給与明細メッセージ
+여기를 길게 눌러 붙여넣어 주세요|Touch and hold here to paste|请长按此处粘贴|ここを長押しして貼り付け
+아래 입력칸을 길게 눌러 붙여넣어 주세요.|Touch and hold the field below to paste.|请长按下方输入框进行粘贴。|下の入力欄を長押しして貼り付けてください。
+금액 입력|Amount|输入金额|金額を入力
+월 고정수당|Monthly allowances|每月固定津贴|毎月の固定手当
+없으면 0원|Enter 0 if none|无则填0|ない場合は0
+자격수당|Qualification|资格津贴|資格手当
+직무수당|Job allowance|职务津贴|職務手当
+가족수당|Family allowance|家庭津贴|家族手当
+직책수당|Position allowance|职位津贴|役職手当
+기존 고정수당|Previous allowances|原有固定津贴|従来の固定手当
+기존에 합계만 저장된 금액이에요. 수당을 나누어 입력한다면 이 금액도 조정해 주세요.|Previously saved as a total. Adjust this amount if you enter separate allowances.|这是之前仅保存合计的金额。如分项输入津贴，请同时调整此金额。|以前は合計のみ保存していました。手当を分けて入力する場合はこの金額も調整してください。
+상여금 공제 기준|Bonus deductions|奖金扣除规则|賞与の控除基準
+복사한 상여 문자로 채우기|Fill from copied bonus message|从已复制的奖金短信填入|コピーした賞与明細から入力
+상여 문자 직접 붙여넣기|Paste bonus message|手动粘贴奖金短信|賞与明細を貼り付け
+공제 기준과 인식 안내|Deductions and recognition details|扣除规则及识别说明|控除基準と読み取り結果
+인식 후 바로 비워져요. 상세 안내|Cleared after reading. Details|识别后立即清空。详细说明|読み取り後に消去します。詳細
+설정 완료하기|Save settings|保存设置|設定を保存
+월 기본급만 인식했어요. 환산 금액을 확인해 주세요.|Monthly base pay found. Check the hourly conversion.|已识别月基本工资，请确认折算金额。|月額基本給を読み取りました。換算金額を確認してください。
+환산 기준시간|Hours for conversion|折算基准工时|換算基準時間
+확인하고 기본시급에 넣기|Confirm and fill base hourly pay|确认并填入基本时薪|確認して基本時給に入力
+회사 기준시간을 확인해 주세요. 통상시급은 별도로 입력해요.|Check your company's hours. Enter ordinary hourly pay separately.|请确认公司的基准工时。通常时薪需单独输入。|会社の基準時間を確認してください。通常時給は別途入力します。
+상여 공제 기준을 가져왔어요|Bonus deduction basis imported|已导入奖金扣除规则|賞与の控除基準を読み取りました
+급여 공제 기준을 가져왔어요|Salary deduction basis imported|已导入工资扣除规则|給与の控除基準を読み取りました
+월 기본급을 인식했어요. 환산 기준을 확인해 주세요.|Monthly base pay found. Check the conversion hours.|已识别月基本工资，请确认折算基准。|月額基本給を読み取りました。換算基準を確認してください。
 나의 하루|My day|我的一天|私の一日
 근무 고르기|Choose a shift|选择班次|勤務を選択
 오늘의 메모 남기기|Add a note for today|添加今日备注|今日のメモを追加

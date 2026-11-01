@@ -17,10 +17,20 @@ assert.throws(()=>C.normalize(JSON.parse('{"__proto__":{"polluted":true}}')));
 assert.equal(C.normalize({shift_overrides_C:{'2026-10-01':'HALF_LEAVE'}}).shift_overrides_C['2026-10-01'],'HALF_POST');
 assert.ok(C.meaningful(C.normalize({shift_salary_config_master:{leaveByYear:{2026:12}}})));
 assert.equal(C.meaningful(C.normalize({shift_salary_config_master:{baseHours:209,baseHourly:0}})),false);
+const allowanceParts={qualification:10000,job:20000,family:0,duty:0,legacy:5000};
+assert.deepEqual(C.normalize({shift_salary_config_master:{dutyPay:35000,fixedAllowances:allowanceParts}}).shift_salary_config_master.fixedAllowances,allowanceParts);
+for(const bad of [{...allowanceParts,job:-1},{...allowanceParts,other:1},{...allowanceParts,legacy:0},{...allowanceParts,qualification:0.5}])assert.throws(()=>C.normalize({shift_salary_config_master:{dutyPay:35000,fixedAllowances:bad}}));
 let merged=C.merge(blank,data({'2026-10-01':'a'}),data({'2026-10-02':'b'}));
 assert.deepEqual(merged.conflicts,[]);assert.deepEqual(merged.data.shift_day_memos,{'2026-10-01':'a','2026-10-02':'b'});
 assert.equal(C.merge(data({'2026-10-01':'base'}),data({'2026-10-01':'local'}),data({'2026-10-01':'remote'})).conflicts.length,1);
 assert.deepEqual(C.merge(data({'2026-10-01':'a','2026-10-02':'b'}),data({'2026-10-02':'b'}),data({'2026-10-01':'a','2026-10-02':'c'})).data.shift_day_memos,{'2026-10-02':'c'});
+
+// Independently changed allowances cannot produce a breakdown inconsistent with its total.
+const salary=parts=>C.normalize({shift_salary_config_master:{dutyPay:Object.values(parts).reduce((a,b)=>a+b,0),fixedAllowances:parts}});
+const initial=salary({qualification:0,job:0,family:0,duty:0,legacy:0}),left=salary({...allowanceParts,legacy:0}),right=salary({...allowanceParts,qualification:0,job:0,family:30000,legacy:0});
+const salaryMerge=C.merge(initial,left,right);assert.equal(salaryMerge.conflicts.length,1);assert.deepEqual(C.normalize(salaryMerge.data).shift_salary_config_master,left.shift_salary_config_master);
+const onlyDate=JSON.parse(JSON.stringify(initial));onlyDate.shift_salary_config_master.hireDate='2020-01-01';
+const disjoint=C.merge(initial,left,onlyDate);assert.equal(disjoint.conflicts.length,0);assert.equal(C.normalize(disjoint.data).shift_salary_config_master.hireDate,'2020-01-01');
 
 const fetchOriginal=global.fetch, stores=new Map();let calls=[],gate=null,disabled=false,paginated=false,grantDrive=false;
 function store(token){if(!stores.has(token))stores.set(token,[]);return stores.get(token);}

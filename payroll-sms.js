@@ -3,12 +3,14 @@
     const deductionKeys = ['income', 'local', 'pension', 'health', 'employment', 'care'];
     function parse(text, options = {}) {
         if (typeof text !== 'string' || text.length > 30000) throw new Error('문자는 30,000자 이내로 붙여넣어주세요.');
+        const references = {};
         const wages = {}, deductions = {}, warnings = [], fixedAllowances = {};
-        let section = '', gross, statedTotal, hasPaySection = false;
+        let section = '', gross, statedTotal, hasPaySection = false, unreadableAllowance = false;
         const seenAllowances = new Set(), statutory = new Set();
         const definitions = [
             ['baseHourly', /^(?:기본시급|기준 기본시급)/, 'wage'],
             ['ordinaryHourly', /^(?:통상시급|통상임금\(시급\))/, 'wage'],
+            ['baseMonthly', /^(?:기본급|기본)(?=\s|:|$)/, 'reference'],
             ['duty', /^(?:직책수당|직책)/, 'fixed'],
             ['qualification', /^(?:자격수당|자격)/, 'fixed'],
             ['job', /^(?:직무수당|직무)/, 'fixed'],
@@ -44,11 +46,12 @@
             }
             for (const [key, pattern, kind] of definitions) {
                 const m = line.match(pattern);
-                if (!m || (['pay','fixed'].includes(kind) && section === 'deduct')) continue;
+                if (!m || (['pay','fixed','reference'].includes(kind) && section === 'deduct')) continue;
                 if (kind === 'fixed') seenAllowances.add('dutyPay');
                 const rest = line.slice(m[0].length).replace(/^\s*[:：]\s*/, '');
                 const value = amount(rest.trim() ? rest : (lines[i + 1] || ''));
-                if (value !== null) { assign(kind === 'deduct' ? deductions : kind === 'fixed' ? fixedAllowances : wages, key, value);if(kind==='deduct' && /법정\s*요율/.test(line))statutory.add(key); }
+                if(kind==='fixed'&&value===null)unreadableAllowance=true;
+                if (value !== null) { assign(kind === 'deduct' ? deductions : kind === 'fixed' ? fixedAllowances : kind === 'reference' ? references : wages, key, value);if(kind==='deduct' && /법정\s*요율/.test(line))statutory.add(key); }
             }
         }
         if(Object.keys(fixedAllowances).length)wages.dutyPay=Object.values(fixedAllowances).reduce((sum,n)=>sum+n,0);
@@ -77,8 +80,8 @@
         } else if (gross !== undefined || Object.keys(deductions).length || statedTotal !== undefined) {
             warnings.push('공제 기준에는 지급 합계와 공제 합계가 필요합니다. 합계가 없거나 내역과 맞지 않아 공제율은 변경하지 않습니다.');
         }
-        if (!Object.keys(wages).length && !profile) throw new Error(warnings[0] || '인식한 시급·수당이 없습니다. 지급내역과 공제내역을 포함한 명세서를 붙여넣어주세요.');
-        return { wages, deductions, profile, warnings };
+        if (!Object.keys(wages).length && !profile && !(options.kind!=='bonus'&&references.baseMonthly>0)) throw new Error(warnings[0] || '인식한 시급·수당이 없습니다. 지급내역과 공제내역을 포함한 명세서를 붙여넣어주세요.');
+        return { wages, deductions, profile, warnings, fixedAllowances, completeAllowances:hasPaySection&&Number.isSafeInteger(gross)&&!unreadableAllowance, baseMonthly:options.kind==='bonus'?null:references.baseMonthly };
     }
     const api = { parse };
     root.PayrollSMS = api;

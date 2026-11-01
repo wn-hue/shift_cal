@@ -17,12 +17,16 @@
             if (!object(value)) throw Error('저장할 설정 형식을 확인하세요.');
             const safe = {};
             if (key === 'shift_salary_config_master') {
-                const allowed = ['hireDate','employmentMonth','totalLeave','leaveByYear','leaveManualYears','baseHourly','ordinaryHourly','baseHours','dutyPay','seniorityPay','applyRetroPay','holidayBonus'];
+                const allowed = ['hireDate','employmentMonth','totalLeave','leaveByYear','leaveManualYears','baseHourly','ordinaryHourly','baseHours','dutyPay','fixedAllowances','seniorityPay','applyRetroPay','holidayBonus'];
                 if (Object.keys(value).some(k => !allowed.includes(k))) throw Error('알 수 없는 급여 설정입니다.');
                 for (const [k,v] of Object.entries(value)) {
                     if (k === 'employmentMonth') continue;
                     else if (k === 'hireDate') { if (v !== '' && !dateOK(v)) throw Error('입사일을 확인하세요.'); }
                     else if (k === 'applyRetroPay') { if (typeof v !== 'boolean') throw Error('수당 설정을 확인하세요.'); }
+                    else if(k === 'fixedAllowances') {
+                        const keys=['qualification','job','family','duty','legacy'];
+                        if(!object(v)||Object.keys(v).length!==5||!keys.every(n=>Number.isSafeInteger(v[n])&&v[n]>=0&&v[n]<=1000000000)||Object.values(v).reduce((a,b)=>a+b,0)!==value.dutyPay)throw Error('수당 금액을 확인하세요.');
+                    }
                     else if (k === 'leaveManualYears') {
                         if (!object(v) || Object.keys(v).length > 100 || Object.entries(v).some(([year,manual]) => !/^\d{4}$/.test(year) || manual !== true)) throw Error('연차 수동 설정을 확인하세요.');
                     }
@@ -82,7 +86,17 @@
             if ((object(b) || b == null) && object(l) && object(r)) {
                 b = b || {};
                 const out = {};
+                // The breakdown and its total are one value when merging two devices.
+                const allowanceBundle=path==='shift_salary_config_master'&&(b.fixedAllowances||l.fixedAllowances||r.fixedAllowances);
+                if(allowanceBundle){
+                    const pick=o=>Object.fromEntries(['dutyPay','fixedAllowances'].filter(k=>Object.hasOwn(o,k)).map(k=>[k,o[k]]));
+                    const bp=pick(b),lp=pick(l),rp=pick(r);
+                    if(equal(lp,rp)||equal(bp,rp))Object.assign(out,lp);
+                    else if(equal(bp,lp))Object.assign(out,rp);
+                    else {conflicts.push(path+'.fixedAllowances');Object.assign(out,lp);}
+                }
                 for (const key of new Set([...Object.keys(b),...Object.keys(l),...Object.keys(r)])) {
+                    if(allowanceBundle&&['dutyPay','fixedAllowances'].includes(key))continue;
                     const v = visit(b[key],l[key],r[key],path ? path+'.'+key : key);
                     if (v !== undefined) out[key] = v;
                 }

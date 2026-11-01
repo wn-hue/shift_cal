@@ -1,6 +1,6 @@
 'use strict';
-const assert=require('node:assert/strict'),{webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE);
-const address=process.env.CHECK_URL||'http://127.0.0.1:8769/';
+const assert=require('node:assert/strict'),{webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const address=process.env.TEST_URL||'http://127.0.0.1:8772/';
 (async()=>{for(const engine of[webkit,chromium]){const browser=await engine.launch();
  for(const width of[320,390,412]){
   const page=await browser.newPage({viewport:{width,height:844},isMobile:true,timezoneId:'Asia/Seoul',reducedMotion:'reduce'}),errors=[];
@@ -21,9 +21,9 @@ const address=process.env.CHECK_URL||'http://127.0.0.1:8769/';
   await page.setViewportSize({width,height:500});const footer=await next.boundingBox();assert(footer.y>=0&&footer.y+footer.height<=501);await page.setViewportSize({width,height:844});
   if(width===390)await page.screenshot({path:'/tmp/onboarding-wage-'+engine.name()+'.png'});
   await next.click();assert.equal(await page.locator('#payroll-sms-dialog').evaluate(e=>e.open),true);
-  await page.locator('#payroll-sms-text').fill('기본시급: 11,050원');await page.locator('#payroll-sms-apply').click();
-  assert.equal(await wizard.evaluate(e=>e.open),true);await page.waitForFunction(()=>document.getElementById('onboarding-error').textContent.includes('통상시급'));
-  await next.click();await page.locator('#payroll-sms-text').fill('성명 PRIVATE_ONBOARDING_TEST\n기본시급: 11,050원\n통상시급: 14,482원');await page.locator('#payroll-sms-apply').click();
+  await page.locator('#wage-paste-fallback>summary').click();await page.locator('#payroll-sms-text').fill('기본시급: 11,050원');await page.locator('#payroll-sms-apply').click();
+  assert.equal(await wizard.evaluate(e=>e.open),true);await page.waitForFunction(()=>document.getElementById('wage-manual-status').textContent.includes('통상시급'));
+  await page.locator('#wage-paste-fallback>summary').click();await page.locator('#payroll-sms-text').fill('성명 PRIVATE_ONBOARDING_TEST\n기본시급: 11,050원\n통상시급: 14,482원');await page.locator('#payroll-sms-apply').click();
   assert.equal(await wizard.evaluate(e=>e.open),false);assert.equal(await page.locator('body').getAttribute('data-view'),'calendar');assert.equal(await page.locator('#payroll-sms-text').inputValue(),'');
   assert.equal(await page.evaluate(()=>config.baseHourly),11050);assert.equal(await page.evaluate(()=>config.ordinaryHourly),14482);
   assert.equal(await page.evaluate(()=>JSON.stringify(localStorage).includes('PRIVATE_ONBOARDING_TEST')),false);assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_onboarding_v1')).status),'complete');

@@ -48,3 +48,14 @@ for(const amounts of [{regular:0,support:100000,bonus:0},{regular:10000,support:
  const x=payments(amounts,monthly);assert.ok(x.regular.net>=0&&x.support.net>=0);assert.equal(x.gross,x.total+x.net);
 }
 assert.throws(()=>require('../account-data-core.js').normalize({shift_bonus_sms_reference_v1:minimal}));
+
+assert.equal(parse('기본급: 2,156,880원').baseMonthly,2156880);
+assert.equal(parse('기본 2,156,880\n기본시급 11,050').wages.baseHourly,11050);
+assert.throws(()=>parse('기본급 2,156,880',{kind:'bonus'}));
+assert.equal(parse('기본급 2,156,880\n통상시급 12,000',{kind:'bonus'}).baseMonthly,null);
+assert.equal(parse('통상시급 12,000\n공제내역\n기본 500').baseMonthly,undefined);
+assert.throws(()=>parse('기본급 2,156,880\n기본급 2,200,000'),/섞여/);
+assert.deepEqual(parse('자격 10000\n직무 20000').fixedAllowances,{qualification:10000,job:20000});
+assert.equal(parse('기본시급 11050\n지급내역\n직책 읽을수없음\n소계 2000000').completeAllowances,false);
+assert.equal(parse('기본시급 11050\n지급내역\n소계 2000000').completeAllowances,true);
+console.log('PASS monthly base recognition, explicit wage priority, bonus exclusion and allowance completeness');

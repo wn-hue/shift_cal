@@ -34,40 +34,6 @@
     const apply = document.getElementById('payroll-sms-apply'), dialog = document.getElementById('payroll-sms-dialog');
     const manualBase=document.getElementById('wage-manual-base'), manualOrdinary=document.getElementById('wage-manual-ordinary');
     const manualStatus=document.getElementById('wage-manual-status');
-    const methods=['sms','manual'];
-    function selectMethod(method,focus=false) {
-        for(const name of methods){
-            const tab=document.getElementById('wage-'+name+'-tab'),selected=name===method;
-            tab.setAttribute('aria-selected',String(selected));tab.setAttribute('tabindex',selected?'0':'-1');
-            document.getElementById('wage-'+name+'-panel').hidden=!selected;
-            if(selected&&focus)tab.focus();
-        }
-    }
-    for(const [index,name] of methods.entries()){
-        const tab=document.getElementById('wage-'+name+'-tab');
-        tab.addEventListener('click',()=>selectMethod(name));
-        tab.addEventListener('keydown',event=>{
-            if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
-            event.preventDefault();selectMethod(methods[event.key==='Home'?0:event.key==='End'?1:1-index],true);
-        });
-    }
-    const smsIntro=document.getElementById('wage-import-intro'), smsLabel=document.querySelector('label[for="payroll-sms-text"]');
-    const defaultIntro=smsIntro?.textContent, defaultLabel=smsLabel?.textContent;
-    api.open = options => {
-        const onboarding=options?.onboarding===true;
-        dialog.setAttribute('data-onboarding',String(onboarding));
-        if(smsIntro)smsIntro.textContent=onboarding?'기본시급과 통상시급을 확인해 주세요. 상여금 문자는 나중에 추가할 수 있어요.':defaultIntro;
-        if(smsLabel)smsLabel.textContent=onboarding?'급여 문자 붙여넣기':defaultLabel;
-        clearDraft();selectMethod('sms');
-        for(const [input,id] of [[manualBase,'input-base-hourly'],[manualOrdinary,'input-ordinary-hourly']]){
-            const value=Number(document.getElementById(id).value.replace(/[^0-9]/g,''));
-            input.value=value>0?value.toLocaleString('ko-KR'):'';
-        }
-        dialog.showModal();
-    };
-    document.getElementById('payroll-sms-open').addEventListener('click', api.open);
-    document.getElementById('payroll-sms-close').addEventListener('click', () => dialog.close());
-    dialog.addEventListener('close', () => { clearDraft();document.getElementById('payroll-sms-open')?.focus(); });
     const labels = {baseHourly:'기본시급', ordinaryHourly:'통상시급', dutyPay:'자격·직무·가족·직책 (고정수당)'};
     const fmt = value => value.toLocaleString('ko-KR') + ' 원';
     let parts = {regular:0,bonus:0,support:0}, profile = null, bonusProfile = null;
@@ -107,72 +73,82 @@
     api.update = (gross, breakdown) => { parts=breakdown || {regular:gross,bonus:0,support:0}; render(); };
     api.reloadReference = () => {profile=loadProfile(storageKey);bonusProfile=loadProfile(bonusKey);render();};
     toggle.checked = false; toggle.addEventListener('change', render);
-    function clearDraft() { document.getElementById('payroll-sms-recognized').hidden=true;document.getElementById('payroll-sms-recognized').textContent='';for(const id of ['wage-import-review','wage-bonus-input','wage-import-help'])document.getElementById(id).open=false;document.getElementById('wage-import-review').hidden=true;document.getElementById('wage-import-info').setAttribute('aria-expanded','false');text.placeholder='기본시급: 10,320원\n통상시급: 11,000원\n자격: 0원\n직무: 0원\n가족: 0원\n직책: 0원'; text.value='';bonusText.value='';apply.disabled=true;preview.textContent='';status.textContent='';manualBase.value='';manualOrdinary.value='';manualStatus.textContent='';for(const input of [manualBase,manualOrdinary])input.setAttribute('aria-invalid','false'); }
-    api.clearDraft = () => { clearDraft(); if(dialog.open)dialog.close(); };
-    api.clearReference = () => {
-        localStorage.removeItem(storageKey);localStorage.removeItem(bonusKey);profile=null;bonusProfile=null;api.clearDraft();render();
-        document.getElementById('payroll-sms-applied').textContent='';
-        if(window.AccountSync)AccountSync.changed();
+    const allowanceKeys=['qualification','job','family','duty','legacy'];
+    const allowanceLabels={qualification:'자격수당',job:'직무수당',family:'가족수당',duty:'직책수당',legacy:'기존 고정수당'};
+    const el=id=>document.getElementById(id), amountInputs=[manualBase,manualOrdinary,...allowanceKeys.map(k=>el('wage-'+k))];
+    let draftSalary=null,draftBonus=null,conversionMonthly=0,importError=false;
+    const money=n=>n.toLocaleString('ko-KR');
+    function clearDraft(){
+        if(typeof root.CustomEvent==='function')dialog.dispatchEvent(new CustomEvent('wage-draft-reset'));
+        text.value='';bonusText.value='';draftSalary=draftBonus=null;conversionMonthly=0;importError=false;
+        for(const input of amountInputs){input.value='';input.setAttribute('aria-invalid','false');input.classList.remove('wage-filled');}
+        for(const id of ['wage-paste-fallback','wage-bonus-input','wage-import-help','wage-import-review'])el(id).open=false;
+        el('wage-import-review').hidden=true;el('wage-conversion').hidden=true;el('wage-legacy-row').hidden=true;
+        el('payroll-sms-recognized').hidden=true;el('payroll-sms-recognized').textContent='';el('wage-bonus-status').textContent='';
+        el('wage-import-info').setAttribute('aria-expanded','false');preview.textContent='';status.textContent='';manualStatus.textContent='';apply.disabled=false;
+    }
+    api.open=options=>{
+        clearDraft();dialog.setAttribute('data-onboarding',String(options?.onboarding===true));
+        for(const [input,id] of [[manualBase,'input-base-hourly'],[manualOrdinary,'input-ordinary-hourly']]){const n=Number(el(id).value.replace(/[^0-9]/g,''));input.value=n>0?money(n):'';}
+        let current={};try{current=JSON.parse(localStorage.getItem('shift_salary_config_master'))||{};}catch{}
+        const savedParts=current.fixedAllowances,valid=savedParts&&allowanceKeys.every(k=>Number.isSafeInteger(savedParts[k])&&savedParts[k]>=0)&&Object.values(savedParts).reduce((a,b)=>a+b,0)===current.dutyPay;
+        for(const key of allowanceKeys)el('wage-'+key).value=money(valid?savedParts[key]:key==='legacy'?current.dutyPay||0:0);
+        el('wage-legacy-row').hidden=!(Number(el('wage-legacy').value.replace(/,/g,''))>0);dialog.showModal();
     };
-    function parseDraft() {
-        const salary=text.value.trim()?root.PayrollSMS.parse(text.value):null;
-        const bonus=bonusText.value.trim()?root.PayrollSMS.parse(bonusText.value,{kind:'bonus'}):null;
-        if(!salary&&!bonus)throw new Error('급여 또는 상여 문자를 붙여넣어 주세요.');
-        if(salary?.profile&&!validProfile(salary.profile))throw new Error('급여 지급·공제 합계를 확인해 주세요.');
-        if(bonus?.profile&&!validProfile(bonus.profile))throw new Error('상여 지급·공제 합계를 확인해 주세요.');
-        if(bonus&&!bonus.profile)throw new Error('상여 문자에는 올바른 지급 합계와 공제 합계가 필요합니다.');
-        return {salary,bonus};
+    el('payroll-sms-open').addEventListener('click',()=>api.open());el('payroll-sms-close').addEventListener('click',()=>dialog.close());
+    dialog.addEventListener('close',()=>{if(dialog.open)return;clearDraft();el('payroll-sms-open')?.focus();});
+    api.clearDraft=()=>{clearDraft();if(dialog.open)dialog.close();};
+    api.clearReference=()=>{localStorage.removeItem(storageKey);localStorage.removeItem(bonusKey);profile=bonusProfile=null;api.clearDraft();render();el('payroll-sms-applied').textContent='';root.AccountSync?.changed();};
+    function fill(input,value){input.value=money(value);input.classList.add('wage-filled');input.setAttribute('aria-invalid','false');}
+    function conversion(){
+        const hours=Number(el('wage-conversion-hours').value),valid=Number.isFinite(hours)&&hours>=1&&hours<=744;
+        el('wage-conversion-result').textContent=valid?money(conversionMonthly)+'원 ÷ '+hours+'시간 = '+money(Math.round(conversionMonthly/hours))+'원 (원 단위 반올림)':'환산 기준시간을 1~744시간으로 입력해 주세요.';
+        el('wage-conversion-use').disabled=!valid;return valid?Math.round(conversionMonthly/hours):null;
     }
-    function refreshPreview() {
-        preview.textContent='';status.textContent='';apply.disabled=true;const recognized=document.getElementById('payroll-sms-recognized'),review=document.getElementById('wage-import-review');recognized.hidden=true;recognized.textContent='';review.hidden=true;
-        if(!text.value.trim()&&!bonusText.value.trim())return;
-        try {
-            const {salary,bonus}=parseDraft(),lines=[];
-            if(salary) {
-                lines.push('저장할 시급·수당');
-                for(const [key,value] of Object.entries(salary.wages)) if(!['dutyPay'].includes(key)||value>0)lines.push(labels[key]+': '+fmt(value));
-                if(salary.profile){if(salary.profile.model==='monthly-insurance')lines.push(basis('급여',salary.profile));else lines.push('지급 합계: '+fmt(salary.profile.gross),'공제 합계: '+fmt(salary.profile.total),basis('급여',salary.profile));}
-                status.textContent=salary.warnings.join(' ');
+    el('wage-conversion-hours').addEventListener('input',conversion);
+    el('wage-conversion-use').addEventListener('click',()=>{const value=conversion();if(value>0){fill(manualBase,value);conversionMonthly=0;el('wage-conversion').hidden=true;manualStatus.textContent='';}});
+    api.importText=(kind,raw)=>{
+        let count=0;status.textContent='';manualStatus.textContent='';
+        try{
+            const parsed=root.PayrollSMS.parse(raw,{kind}), isBonus=kind==='bonus';
+            if(isBonus){if(!validProfile(parsed.profile))throw Error('상여 문자에는 올바른 지급 합계와 공제 합계가 필요합니다.');draftBonus=minimalProfile(parsed.profile);el('wage-bonus-status').textContent=basis('상여',draftBonus);}
+            else{
+                for(const [key,input] of [['baseHourly',manualBase],['ordinaryHourly',manualOrdinary]])if(Object.hasOwn(parsed.wages,key)){fill(input,parsed.wages[key]);count++;}
+                const fixed=parsed.fixedAllowances||{},complete=parsed.completeAllowances||['qualification','job','family','duty'].every(k=>Object.hasOwn(fixed,k));
+                if(complete){for(const key of allowanceKeys)el('wage-'+key).value='0';el('wage-legacy-row').hidden=true;}
+                for(const [key,value] of Object.entries(fixed)){fill(el('wage-'+key),value);count++;}
+                if(parsed.profile)draftSalary=minimalProfile(parsed.profile);
+                conversionMonthly=!Object.hasOwn(parsed.wages,'baseHourly')&&parsed.baseMonthly>0?parsed.baseMonthly:0;
+                el('wage-conversion').hidden=!conversionMonthly;
+                if(conversionMonthly){el('wage-conversion-hours').value='209';el('wage-conversion-description').textContent='월 기본급만 인식했어요. 환산 금액을 확인해 주세요.';conversion();}
             }
-            if(bonus)lines.push('\n상여 공제 기준','지급 합계: '+fmt(bonus.profile.gross),'공제 합계: '+fmt(bonus.profile.total),basis('상여',bonus.profile));
-            preview.textContent=lines.join('\n');const summary=[];for(const key of ['baseHourly','ordinaryHourly'])if(salary&&Object.hasOwn(salary.wages,key))summary.push(labels[key]+' '+fmt(salary.wages[key]));if(salary&&Object.hasOwn(salary.wages,'dutyPay'))summary.push('고정수당 '+fmt(salary.wages.dutyPay));if(salary?.profile)summary.push('급여 공제 기준');if(bonus)summary.push('상여 공제 기준');recognized.textContent='인식 완료: '+summary.join(' · ');recognized.hidden=false;review.hidden=false;apply.disabled=false;
-        }catch(error){status.textContent=error.message;}
+            const recognized=el('payroll-sms-recognized');recognized.hidden=false;recognized.textContent=isBonus?'상여 공제 기준을 가져왔어요':count?'문자에서 '+count+'개 항목을 자동으로 채웠어요':conversionMonthly?'월 기본급을 인식했어요. 환산 기준을 확인해 주세요.':'급여 공제 기준을 가져왔어요';
+            preview.textContent=[draftSalary?basis('급여',draftSalary):'',draftBonus?basis('상여',draftBonus):'',...parsed.warnings].filter(Boolean).join('\n');el('wage-import-review').hidden=!preview.textContent;
+            status.textContent=parsed.warnings.join(' ');el('wage-paste-fallback').open=false;importError=false;return true;
+        }catch(error){status.textContent=error.message;importError=true;return false;}
+        finally{text.value='';bonusText.value='';}
+    };
+    for(const [input,kind] of [[text,'salary'],[bonusText,'bonus']]){
+        input.addEventListener('paste',event=>{if(!event.clipboardData)return;event.preventDefault();api.importText(kind,event.clipboardData.getData('text'));});
+        input.addEventListener('input',event=>{if(!event.isComposing&&input.value)api.importText(kind,input.value);});
+        input.addEventListener('compositionend',()=>{if(input.value)api.importText(kind,input.value);});
     }
-    text.addEventListener('input',refreshPreview);bonusText.addEventListener('input',refreshPreview);
-    apply.addEventListener('click', () => {
-        let draft;
-        try{draft=parseDraft();}catch(error){status.textContent=error.message;return;}
-        const previous=[storageKey,bonusKey].map(key=>[key,localStorage.getItem(key)]);
-        try {
-            if(draft.salary?.profile)localStorage.setItem(storageKey,JSON.stringify(minimalProfile(draft.salary.profile)));
-            if(draft.bonus)localStorage.setItem(bonusKey,JSON.stringify(minimalProfile(draft.bonus.profile)));
-            if(draft.salary&&Object.keys(draft.salary.wages).length)root.applyPayrollStatement(draft.salary.wages);
-        }catch(_){
-            for(const [key,value] of previous)try{if(value===null)localStorage.removeItem(key);else localStorage.setItem(key,value);}catch(_){}
-            status.textContent='저장하지 못했습니다. 브라우저 저장공간 설정을 확인해주세요.';return;
-        }
-        api.reloadReference();root.calculatePayrollFromInputs();
-        if(window.AccountSync)AccountSync.changed();
-        document.getElementById('payroll-sms-applied').textContent='설정 적용됨';clearDraft();dialog.close();
-        if(typeof window.CustomEvent==='function')window.dispatchEvent(new CustomEvent('shift-payroll-applied'));
+    for(const input of amountInputs){input.addEventListener('input',()=>{input.classList.remove('wage-filled');input.setAttribute('aria-invalid','false');manualStatus.textContent='';importError=false;if(input===manualBase){conversionMonthly=0;el('wage-conversion').hidden=true;}});}
+    function readAmount(input,label,positive){const raw=input.value.trim(),n=Number(raw.replace(/,/g,''));if(!/^(?:[0-9]+|[1-9][0-9]{0,2}(?:,[0-9]{3})+)$/.test(raw)||!Number.isSafeInteger(n)||n<(positive?1:0)||n>1000000000){input.setAttribute('aria-invalid','true');input.focus();throw Error(label+'을 '+(positive?'1':'0')+'원 이상 10억 원 이하의 정수로 입력해 주세요.');}return n;}
+    apply.addEventListener('click',()=>{
+        const wages={};manualStatus.textContent='';
+        try{
+            if(importError)throw Error('문자 인식 결과를 확인해 주세요. 다시 붙여넣거나 금액을 직접 수정할 수 있어요.');
+            if(conversionMonthly)throw Error('기본급 환산 금액을 확인하거나 기본시급을 직접 입력해 주세요.');
+            if(manualBase.value.trim()||manualOrdinary.value.trim()||!(draftBonus||draftSalary)){wages.baseHourly=readAmount(manualBase,'기본시급',true);wages.ordinaryHourly=readAmount(manualOrdinary,'통상시급',true);}
+            const parts={};for(const key of allowanceKeys)parts[key]=readAmount(el('wage-'+key),allowanceLabels[key],false);
+            wages.dutyPay=Object.values(parts).reduce((a,b)=>a+b,0);if(wages.dutyPay>1000000000)throw Error('고정수당 합계는 10억 원 이하여야 합니다.');wages.fixedAllowances=parts;
+        }catch(error){manualStatus.textContent=error.message;return;}
+        const previous=[storageKey,bonusKey,'shift_salary_config_master'].map(key=>[key,localStorage.getItem(key)]);
+        try{if(draftSalary)localStorage.setItem(storageKey,JSON.stringify(draftSalary));if(draftBonus)localStorage.setItem(bonusKey,JSON.stringify(draftBonus));root.applyPayrollStatement(wages);}
+        catch(_){for(const [key,value]of previous)try{value===null?localStorage.removeItem(key):localStorage.setItem(key,value);}catch{}manualStatus.textContent='저장하지 못했습니다. 작성한 내용을 확인하고 다시 시도해 주세요.';return;}
+        api.reloadReference();root.calculatePayrollFromInputs();root.AccountSync?.changed();el('payroll-sms-applied').textContent='설정 적용됨';dialog.close();
+        if(typeof root.CustomEvent==='function')root.dispatchEvent(new CustomEvent('shift-payroll-applied'));
     });
-    for(const input of [manualBase,manualOrdinary])input.addEventListener('input',()=>{input.setAttribute('aria-invalid','false');manualStatus.textContent='';});
-    document.getElementById('wage-manual-apply').addEventListener('click',()=>{
-        const wages={};manualStatus.textContent='';let firstInvalid=null;
-        for(const [input,key] of [[manualBase,'baseHourly'],[manualOrdinary,'ordinaryHourly']]){
-            const raw=input.value.trim(),value=Number(raw.replace(/,/g,''));
-            const valid=/^(?:[0-9]+|[1-9][0-9]{0,2}(?:,[0-9]{3})+)$/.test(raw)&&Number.isSafeInteger(value)&&value>0&&value<=1000000000;
-            input.setAttribute('aria-invalid',String(!valid));
-            if(!valid){if(!firstInvalid){firstInvalid=input;manualStatus.textContent=labels[key]+'을 1원 이상 10억 원 이하의 정수로 입력해 주세요.';}}
-            else wages[key]=value;
-        }
-        if(firstInvalid){firstInvalid.focus();return;}
-        try{root.applyPayrollStatement(wages);}
-        catch(_){manualStatus.textContent='저장하지 못했습니다. 브라우저 저장공간 설정을 확인해주세요.';return;}
-        document.getElementById('payroll-sms-applied').textContent='설정 적용됨';
-        dialog.close();
-        if(typeof window.CustomEvent==='function')window.dispatchEvent(new CustomEvent('shift-payroll-applied',{detail:{method:'manual'}}));
-    });
-    document.getElementById('payroll-sms-clear').addEventListener('click',clearDraft);
     render();
 })(typeof globalThis !== 'undefined' ? globalThis : this);
