@@ -76,3 +76,30 @@ for(const hire of ['2017-01-01','2018-01-01','2020-01-01'])for(const type of ['S
 assert.equal(require('../google-sync-core.js').infer('C조 야특 잔업X','OFF'),'SPECIAL_NIGHT_NO_OT');
 assert.equal(require('../google-sync-core.js').colorId({type:'SPECIAL_NIGHT_NO_OT'}),'1');
 console.log('PASS special no-overtime payroll parity, night hours, account/shared storage and Google mapping');
+
+// Month-end changes belong to the next payroll period, including leap years and year rollover.
+for(const [day,start,end] of [
+ ['2026-01-31','2026-01-16','2026-02-15'],['2026-10-31','2026-10-16','2026-11-15'],
+ ['2024-02-29','2024-02-16','2024-03-15'],['2026-12-31','2026-12-16','2027-01-15'],
+ ['2026-11-15','2026-10-16','2026-11-15'],['2026-11-16','2026-11-16','2026-12-15']
+])assert.deepEqual(C.period(day),{start,end});
+for(const day of C.range('2024-01-01','2028-12-31')){const period=C.period(day);assert(period.start<=day&&day<=period.end,day);assert(period.start.endsWith('-16')&&period.end.endsWith('-15'));}
+// Independently calculated OT deductions: 2.5 hours, plus the pre-2018 night 0.5-hour supplement.
+for(const hire of ['2017-01-01','2018-01-01','2020-01-01'])for(const type of ['NO_OT','HALF_POST','UNPAID_HALF_POST']){
+ const cfg={baseHourly:10000,ordinaryHourly:12000,baseHours:209,dutyPay:100000,hireDate:hire};
+ const counts=C.counts([{type,origType:'NIGHT'}]);assert.equal(counts.nightNoOT,type==='UNPAID_HALF_POST'?.5:1);
+ vm.runInContext(`config=${JSON.stringify(cfg)};currentGroup='C';currentPayDate=new Date(2026,10,1);overrides={};updateLeaveStats=()=>{};syncFromCalendar()`,ctx);
+ const amount=id=>Number(el(id).innerText.replace(/[^0-9.-]/g,''));
+ const before={ot:amount('row-ot-pay'),other:amount('row-other-pay'),night:amount('row-night-pay'),gross:amount('hero-gross-pay')};
+ vm.runInContext(`overrides={'2026-10-27':'${type}'};syncFromCalendar()`,ctx);
+ assert.equal(vm.runInContext('syncedNightNoOT',ctx),type==='UNPAID_HALF_POST'?.5:1);
+ assert.equal(before.ot-amount('row-ot-pay'),45000);
+ if(type!=='UNPAID_HALF_POST'){
+  assert.equal(before.night,amount('row-night-pay'),'only OT is removed; night premium retains the established leave rules');
+  assert.equal(before.other-amount('row-other-pay'),hire.startsWith('2017')?9000:0);
+  assert.equal(before.gross-amount('hero-gross-pay'),hire.startsWith('2017')?54000:45000);
+ }
+ const period=C.period('2026-10-27'),days=C.range(period.start,period.end).map(k=>vm.runInContext(`getActualShift(new Date('${k}T12:00:00'),'C')`,ctx));
+ assert.equal(C.gross(C.counts(days),cfg,period.end),amount('hero-gross-pay'),'month total matches the preview after each OT/leave change');
+}
+console.log('PASS 1,827 payroll-date boundaries and independently checked night OT/half-leave deductions');

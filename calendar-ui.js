@@ -8,7 +8,6 @@
         $('header-view-title').hidden=view==='calendar'||view==='groups';
         $('header-view-title').textContent=view==='all'?'전체':view==='payroll'?'급여 계산기':view==='menu'?'오늘 메뉴':view==='groups'?'조별 근무':'시급 · 연차';
         $('header-calendar-actions').hidden=view!=='calendar';
-        $('header-group-actions').hidden=view!=='groups';
         $('today-menu-refresh').hidden=view!=='menu';
         for (const [name,id] of [['calendar','bnav-cal'],['groups','bnav-groups'],['payroll','bnav-pay'],['menu','bnav-menu'],['all','account-menu-button']]) {
             $(id).setAttribute('aria-current',view===name?'page':'false');

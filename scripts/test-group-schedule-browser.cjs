@@ -16,7 +16,7 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
  assert.deepEqual(await page.locator('.nav-capsule>button').evaluateAll(els=>els.map(e=>e.id)),['bnav-cal','bnav-groups','bnav-pay','bnav-menu','account-menu-button']);
  await page.getByRole('button',{name:'조별 근무',exact:true}).click();assert.equal(await page.locator('#bnav-groups').getAttribute('aria-current'),'page');assert.equal(await page.locator('#header-view-title').isVisible(),false);assert.equal(await page.locator('#group-month-title').isVisible(),true);assert.equal(await page.locator('#group-weeks table').count(),5);
  assert.equal(await page.locator('#group-prev,#group-next,#group-mine-label').count(),0);
- assert.equal(await page.locator('#group-today').isVisible(),true);assert.equal(await page.locator('.group-mine-label').count(),5);assert.equal(await page.locator('.group-week-heading h2').first().textContent(),'1주차');assert.equal(await page.locator('#group-overview-teams>div').count(),3);
+ assert.equal(await page.locator('#group-today').count(),0);assert.equal(await page.locator('.group-mine-label').count(),5);assert.equal(await page.locator('.group-week-heading h2').first().textContent(),'1주차');assert.equal(await page.locator('.group-overview').count(),0);
  assert.equal(await page.locator('#group-weeks .selected-date[data-date="2026-10-26"]').count(),4);
  assert.equal(await page.locator('thead [aria-current=date]').count(),1);
  // Drag from a date's button, not only from gaps between dates.

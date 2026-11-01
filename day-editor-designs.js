@@ -27,8 +27,9 @@
  main.before(daySummary,make('h3','kakao-choice-heading','근무 고르기'));
  const extra=make('details','design-extra','<summary><span class="design-row-icon">'+icons.NO_OT+'</span><span><strong>특근 설정</strong><small>추가 근무 선택</small></span><span class="design-chevron" aria-hidden="true">›</span></summary><div class="shift-scroll design-extra-choices" role="group" aria-label="특근과 잔업 선택"></div>');
  const overtime=make('div','design-overtime','<div><strong id="design-ot-label">O.T (잔업)</strong><small id="design-ot-hint">이 날짜에만 적용돼요</small></div><span id="design-ot-state" aria-hidden="true">ON</span><button type="button" id="design-ot-toggle" role="switch" aria-checked="true" aria-labelledby="design-ot-label" aria-describedby="design-ot-hint"><span></span></button>');
+ const dateRow=make('div','design-date-row','');hero.prepend(dateRow);dateRow.append($('design-date'),dateNav,overtime);
  const attend=make('details','design-attendance','<summary><span class="design-row-icon">'+icons.OFF+'</span><span><strong>근태 · 휴가</strong><small id="design-attendance-value">선택 안 함</small></span><span class="design-chevron" aria-hidden="true">›</span></summary>');
- main.after(extra,overtime,attend);attend.append(attendance);
+ main.after(extra,attend);attend.append(attendance);
  const memoLink=make('button','design-memo-link',`<span class="design-row-icon">${svg('<path d="M5 3h14v18H5zM9 8h6m-6 4h6m-6 4h3"/>')}</span><span><strong>메모 · 일정</strong><small id="design-note-value">추가할 내용이 있나요?</small></span><span class="design-chevron" aria-hidden="true">›</span>`);memoLink.type='button';memoLink.onclick=()=>window.MemoComposer?MemoComposer.enter(null):switchEditorTab('memo');attend.after(memoLink);
  const reset=$('modal-override').querySelector('.override-reset');reset.classList.add('design-reset');memoLink.after(reset);reset.querySelector('span').textContent='기본근무로 복구';
  const footer=make('footer','design-footer','<button type="button" id="design-cancel">취소</button>');
@@ -37,6 +38,17 @@
  // Keep the original buttons, validators and palette hooks; only their visual children change.
  const options=[...work.querySelectorAll('.shift-scroll .opt-btn')];
  for(const b of options){const type=b.dataset.override,label=labels[type];const badge=document.createElement('span');badge.className='design-choice-badge';badge.textContent=shorts[type]||'−';const icon=make('span','design-choice-icon',icons[type]||icons[type.includes('NIGHT')?'NIGHT':'DAY']);const text=document.createElement('span');text.className='design-choice-label';text.textContent=label;const check=b.querySelector('.selection-check');b.replaceChildren(badge,icon,text,check);b.setAttribute('aria-label',label);if(!['DAY','NIGHT','OFF'].includes(type)&&main.contains(b))extra.querySelector('.shift-scroll').append(b);}
+ // Expand/collapse from the painted height so rapid taps never snap to an old state.
+ const detailMotion=new WeakMap();
+ function settleDetails(detail){const state=detailMotion.get(detail);if(state){state.animation.cancel();detailMotion.delete(detail);}detail.style.removeProperty('overflow');}
+ for(const detail of [extra,attend,pay])detail.querySelector('summary').addEventListener('click',event=>{
+  event.preventDefault();const active=detailMotion.get(detail),expand=active?!active.expand:!detail.open,from=detail.getBoundingClientRect().height;
+  settleDetails(detail);
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches||!detail.animate){detail.open=expand;return;}
+  detail.open=expand;const to=detail.getBoundingClientRect().height;detail.open=true;detail.style.overflow='hidden';
+  const animation=detail.animate([{height:from+'px'},{height:to+'px'}],{duration:220,easing:'cubic-bezier(.2,.7,.2,1)',fill:'both'}),state={animation,expand};detailMotion.set(detail,state);
+  animation.finished.then(()=>{if(detailMotion.get(detail)!==state)return;detail.open=expand;settleDetails(detail);},()=>{});
+ });
  let pane='work',saving=false,opening=false;
  const design=()=>document.body.dataset.prefTheme==='test3'?'apple':document.body.dataset.prefTheme==='test4'?'kakao':'toss';
  const dateObj=key=>new Date(key+'T12:00:00');
@@ -55,7 +67,8 @@
  function withOT(type,enabled){return enabled?type:['SPECIAL_DAY','SPECIAL_NIGHT'].includes(type)?type+'_NO_OT':'NO_OT';}
  function updateOT(base){
   const shift=selectedShift(),eligible=canToggleOT(shift,base),type=regularType(shift.type,base);
-  overtime.hidden=!eligible;const enabled=shift.hasOt!==false;
+  overtime.hidden=false;const enabled=shift.hasOt===true;
+  text('design-ot-hint',type==='HALF_POST'||type==='UNPAID_HALF_POST'?'반차(후)는 잔업이 없어요':eligible?'이 날짜에만 적용돼요':'선택한 근무의 잔업 기준을 적용해요');
   $('design-ot-toggle').setAttribute('aria-checked',String(enabled));$('design-ot-toggle').disabled=!eligible;text('design-ot-state',enabled?'ON':'OFF');
   // The shift remains selected when its overtime switch is off.
   for(const button of [...main.querySelectorAll('.opt-btn'),...extra.querySelectorAll('.opt-btn')])button.setAttribute('aria-pressed',String(button.dataset.override===type));
@@ -75,7 +88,7 @@
  for(const [id,delta]of [['kakao-prev-day',-1],['kakao-next-day',1]])$(id).onclick=()=>{const d=dateObj(selectedDateStr);d.setDate(d.getDate()+delta);goDate(toDateKey(d.getFullYear(),d.getMonth(),d.getDate()));};
  nav.addEventListener('click',e=>{const b=e.target.closest('button');if(b){if(b.dataset.pane==='memo'&&window.MemoComposer)MemoComposer.enter(null);else showPane(b.dataset.pane);}});
  const switchTab=switchEditorTab;switchEditorTab=function(tab){if(!opening&&tab==='work'&&!$('event-form').hidden){if(!DayScheduler.canLeave())return;DayScheduler.open(selectedDateStr);}switchTab(tab);if(tab==='stickers')return;if(tab==='memo')pane='memo';else if(pane==='memo')pane='work';update();};
- const open=openOverrideModal;openOverrideModal=function(...args){pane='work';overlay.dataset.editorDesign=design();extra.open=design()==='apple'||design()==='kakao';attend.open=design()==='kakao';pay.open=false;opening=true;try{open(...args);}finally{opening=false;}week();update();};
+ const open=openOverrideModal;openOverrideModal=function(...args){pane='work';[extra,attend,pay].forEach(settleDetails);overlay.dataset.editorDesign=design();extra.open=true;attend.open=design()==='kakao';pay.open=false;opening=true;try{open(...args);}finally{opening=false;}week();update();};
  const choose=setDayOverride;setDayOverride=function(type){
   const shift=selectedShift(),base=getBaseShift(dateObj(selectedDateStr),currentGroup).type;
   if(['DAY','NIGHT','SPECIAL_DAY','SPECIAL_NIGHT'].includes(type)&&canToggleOT(shift,base)&&shift.hasOt===false)type=withOT(type,false);
@@ -117,7 +130,7 @@
  $('design-back').onclick=()=>pane!=='work'?showPane('work'):closeModalDirect();$('design-cancel').onclick=()=>closeModalDirect();
  $('modal-memo-input').addEventListener('input',update);
  let lastTheme=document.body.dataset.prefTheme,lastLanguage=document.body.dataset.uiLanguage;
- new MutationObserver(()=>{const theme=document.body.dataset.prefTheme,language=document.body.dataset.uiLanguage;if(theme===lastTheme&&language===lastLanguage)return;const themeChanged=theme!==lastTheme;lastTheme=theme;lastLanguage=language;if(overlay.classList.contains('active')){if(themeChanged){extra.open=design()!=='toss';attend.open=design()==='kakao';overlay.dataset.editorDesign=design();WorkEditor.filterOptions(selectedDateStr);}update();week();}}).observe(document.body,{attributes:true,attributeFilter:['data-pref-theme','data-ui-language']});
+ new MutationObserver(()=>{const theme=document.body.dataset.prefTheme,language=document.body.dataset.uiLanguage;if(theme===lastTheme&&language===lastLanguage)return;const themeChanged=theme!==lastTheme;lastTheme=theme;lastLanguage=language;if(overlay.classList.contains('active')){if(themeChanged){[extra,attend,pay].forEach(settleDetails);extra.open=true;attend.open=design()==='kakao';overlay.dataset.editorDesign=design();WorkEditor.filterOptions(selectedDateStr);}update();week();}}).observe(document.body,{attributes:true,attributeFilter:['data-pref-theme','data-ui-language']});
  new MutationObserver(()=>{overlay.dataset.designEvent=String(!$('event-form').hidden)}).observe($('event-form'),{attributes:true,attributeFilter:['hidden']});
  window.DayEditorDesigns={save,showPane};
 })();

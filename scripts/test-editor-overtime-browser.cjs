@@ -17,7 +17,9 @@ const assert=require('node:assert/strict'),{webkit,chromium}=require(process.env
   for(const[date,base]of[['2026-10-20','DAY'],['2026-10-27','NIGHT'],['2026-10-22','OFF']]){
    await open(date);assert.deepEqual(await p.locator('.design-main-choices .opt-btn:visible').evaluateAll(es=>es.map(e=>e.dataset.override)),[base]);
    assert.equal(await p.locator('.design-change').count(),0);assert.equal(await p.locator('[data-override="NO_OT"],[data-override$="_NO_OT"]').evaluateAll(es=>es.every(e=>e.hidden&&e.disabled)),true);
-   if(base==='OFF')assert(await toggle.isHidden());else{assert(await toggle.isVisible());assert.equal(await toggle.getAttribute('aria-checked'),'true');}
+   assert(await p.locator('.design-extra').evaluate(e=>e.open));
+   const header=await p.locator('.design-date-row').boundingBox(),ot=await toggle.boundingBox(),dateBox=await p.locator(theme==='test4'?'#kakao-date': '#design-date').boundingBox();assert(ot.x>=dateBox.x+dateBox.width&&ot.y>=header.y&&ot.y+ot.height<=header.y+header.height+1,JSON.stringify({theme,width,header,ot,dateBox}));
+   if(base==='OFF'){assert(await toggle.isDisabled());assert.equal(await toggle.getAttribute('aria-checked'),'false');}else{assert(await toggle.isVisible());assert.equal(await toggle.getAttribute('aria-checked'),'true');}
    assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
    await close();
   }
@@ -35,15 +37,15 @@ const assert=require('node:assert/strict'),{webkit,chromium}=require(process.env
  await open('2026-10-22');await extra();await p.locator('[data-override="SPECIAL_DAY"]').click();assert.equal(await toggle.getAttribute('aria-checked'),'true');await toggle.click();
  await p.locator('[data-override="SPECIAL_NIGHT"]').click();assert.equal(await toggle.getAttribute('aria-checked'),'false','same-day OT preference follows special shift selection');await save();assert.equal((await read())['2026-10-22'],'SPECIAL_NIGHT_NO_OT');
  await open('2026-10-22');await extra();assert.equal(await p.locator('[data-override="SPECIAL_NIGHT"]').getAttribute('aria-pressed'),'true');await toggle.click();await save();assert.equal((await read())['2026-10-22'],'SPECIAL_NIGHT');
- await open('2026-10-22');await p.locator('.design-reset').click();assert(await toggle.isHidden());await save();assert.equal((await read())['2026-10-22'],undefined);
+ await open('2026-10-22');await p.locator('.design-reset').click();assert(await toggle.isVisible());assert(await toggle.isDisabled());await save();assert.equal((await read())['2026-10-22'],undefined);
  // Automatic holiday special work must stay special when overtime is switched off/on.
  await open('2026-10-09');assert.equal(await p.evaluate(()=>getActualShift(new Date(2026,9,9),currentGroup).type),'SPECIAL_DAY');await toggle.click();await save();assert.equal((await read())['2026-10-09'],'SPECIAL_DAY_NO_OT');
  await open('2026-10-09');await toggle.click();await save();assert.equal((await read())['2026-10-09'],undefined);assert.equal(await p.evaluate(()=>getActualShift(new Date(2026,9,9),currentGroup).type),'SPECIAL_DAY');
  // Attendance keeps its existing OT/pay rules, rather than being replaced by an OT toggle.
- await open('2026-10-20');if(!await p.locator('.design-attendance').evaluate(e=>e.open))await p.locator('.design-attendance>summary').click();await p.locator('[data-override="HALF_POST"]').click();assert(await toggle.isHidden());await save();assert.equal((await read())['2026-10-20'],'HALF_POST');
+ await open('2026-10-20');if(!await p.locator('.design-attendance').evaluate(e=>e.open))await p.locator('.design-attendance>summary').click();await p.locator('[data-override="HALF_POST"]').click();assert(await toggle.isVisible());assert(await toggle.isDisabled());assert.equal(await toggle.getAttribute('aria-checked'),'false');await save();assert.equal((await read())['2026-10-20'],'HALF_POST');
  // Existing opposite shifts and other teams remain intact when opening/closing.
  await p.evaluate(()=>{overrides['2026-10-20']='NIGHT';saveOverrides();localStorage.setItem('shift_overrides_A','{"2026-10-20":"LEAVE"}');});
- await open('2026-10-20');assert(await toggle.isHidden());await close();assert.equal((await read())['2026-10-20'],'NIGHT');assert.equal(await p.evaluate(()=>localStorage.getItem('shift_overrides_A')),'{"2026-10-20":"LEAVE"}');
+ await open('2026-10-20');assert(await toggle.isVisible());assert(await toggle.isDisabled());await close();assert.equal((await read())['2026-10-20'],'NIGHT');assert.equal(await p.evaluate(()=>localStorage.getItem('shift_overrides_A')),'{"2026-10-20":"LEAVE"}');
  // Completion still fits a short screen; a memo saves the staged shift in the same action.
  await p.evaluate(()=>{delete overrides['2026-10-20'];saveOverrides();});await p.setViewportSize({width,height:540});await open('2026-10-20');await toggle.click();await p.locator('.design-memo-link').click();await p.locator('#memo-compose-input').fill('잔업 없이 퇴근');await p.locator('#memo-compose-save').click();await closed();assert.equal((await read())['2026-10-20'],'NO_OT');assert.equal(await p.evaluate(()=>dayMemos['2026-10-20']),'잔업 없이 퇴근');
  assert.deepEqual(errors,[]);console.log('PASS scheduled-only choices, 8 themes, per-date OT staging/persistence/reset, night/holiday/special/leave rules, legacy preservation and one-save memo',engine.name(),width);await p.close();

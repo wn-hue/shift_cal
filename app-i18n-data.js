@@ -44,6 +44,8 @@ window.AppTranslations=Object.fromEntries(`
 추가 근무 선택|Choose an extra shift|选择加班班次|追加勤務を選択
 O.T (잔업)|Overtime|延时加班|残業
 이 날짜에만 적용돼요|Applies only to this date|仅适用于此日期|この日付のみに適用
+반차(후)는 잔업이 없어요|No overtime with a second-half leave|后半天休假不含延时加班|後半休には残業がありません
+선택한 근무의 잔업 기준을 적용해요|Overtime follows the selected shift|按所选班次确定延时加班|選択した勤務の残業設定を適用
 기본근무로 복구|Restore base shift|恢复基本班次|基本勤務に戻す
 주간특근|Extra day shift|白班加班|日勤特別勤務
 야간특근|Extra night shift|夜班加班|夜勤特別勤務

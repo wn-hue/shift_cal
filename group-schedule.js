@@ -40,26 +40,10 @@
    row.append(badge(s),name,label);$('group-day-rows').append(row);
   }
  }
- function renderOverview(now,all){
-  const d=date(now),time=$('group-overview-date');time.dateTime=now;time.textContent=`${d.getMonth()+1}월 ${d.getDate()}일 (${weekdays[d.getDay()]})`;
-  // Keep all three teams visible, including leave and saved changes; never infer attendance from a label.
-  const items=groups.map(group=>({group,s:shift(d,group,all)}));
-  const rank=s=>s.type.includes('DAY')||s.type==='NO_OT'&&s.origType==='DAY'?0:s.type.includes('NIGHT')||s.type==='NO_OT'&&s.origType==='NIGHT'?1:s.type==='OFF'?2:3;
-  items.sort((a,b)=>rank(a.s)-rank(b.s));
-  const fragment=document.createDocumentFragment();
-  for(const {group,s} of items){
-   const item=document.createElement('div');item.className='group-overview-team';item.dataset.group=group;item.dataset.shift=s.type;item.dataset.kind=['day','night','off','leave'][rank(s)];
-   const label=document.createElement('span');label.className='group-overview-shift';label.textContent=shiftName(s);
-   const name=document.createElement('strong');name.textContent=group+'조';
-   const mine=document.createElement('small');mine.className='group-overview-mine';mine.textContent=group===currentGroup?'내 조':'';
-   item.append(label,name,mine);fragment.append(item);
-  }
-  $('group-overview-teams').replaceChildren(fragment);
- }
  function render(){
   if(document.body.dataset.view!=='groups')return;
   const year=currentCalDate.getFullYear(),month=currentCalDate.getMonth(),start=new Date(year,month,1),count=new Date(year,month+1,0).getDate(),rows=Math.ceil((start.getDay()+count)/7),all=changes(),now=key(new Date());
-  renderedToday=now;renderOverview(now,all);
+  renderedToday=now;
   const monthTitle=$('group-month-title-text');
   if(['test1','test3','test4'].includes(document.body.dataset.prefTheme))monthTitle.innerHTML=`<span class="theme-year">${year}년</span> <span class="theme-month">${month+1}월</span>`;
   else monthTitle.textContent=year+'. '+String(month+1).padStart(2,'0');
@@ -115,7 +99,7 @@
  dialog.addEventListener('close',()=>{const target=lastTrigger?.isConnected?lastTrigger:$('group-weeks').querySelector(`thead th[data-date="${selected}"] button`);target?.focus({preventScroll:true})});
  $('group-open-calendar').onclick=()=>{dialog.close();const d=date(selected);currentCalDate=new Date(d.getFullYear(),d.getMonth(),1);switchView('calendar');requestAnimationFrame(()=>document.querySelector(`.cal-day[data-date="${selected}"]`)?.scrollIntoView({block:'center'}))};
  window.addEventListener('storage',e=>{if(e.key===null||e.key==='shift_overrides_'+currentGroup){loadOverrides();renderCalendar()}else if(e.key?.startsWith('shift_overrides_'))render()});
- // Refresh the overview at local midnight and after returning from the background.
+ // Refresh today's column at local midnight and after returning from the background.
  function refreshDate(){if(!document.hidden&&renderedToday!==key(new Date()))render();}
  document.addEventListener('visibilitychange',refreshDate);window.addEventListener('focus',refreshDate);
  function midnight(){const now=new Date(),next=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);setTimeout(()=>{refreshDate();midnight();},next-now+100);}
