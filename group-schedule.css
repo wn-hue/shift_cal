@@ -108,19 +108,19 @@ body[data-view=groups] .header-view-title{font-size:25px;line-height:1.4;letter-
 body[data-pref-theme] #group-month-title{display:inline-flex;align-items:center;justify-content:center;min-height:44px;max-width:100%;margin:0;padding:6px 3px;border:0;border-radius:12px;background:transparent;color:var(--theme-text,#191f28);font:inherit;font-size:16px;font-weight:650;letter-spacing:-.3px;white-space:nowrap;font-variant-numeric:tabular-nums;cursor:pointer}
 body[data-pref-theme] #group-today{min-height:44px;min-width:48px;padding:8px 12px;border:0;border-radius:15px;background:var(--group-action-bg);color:var(--group-action);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
 #view-groups{padding-bottom:24px}
-#view-groups .group-overview{margin:0 0 14px;padding:13px 16px 11px;border:1px solid var(--group-hero-rule);border-radius:var(--group-radius);background:var(--group-hero);color:var(--group-hero-ink);box-shadow:0 4px 12px #18233807}
-.group-overview-heading{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;margin-bottom:9px}
+#view-groups .group-overview{margin:0 0 14px;padding:10px 14px 8px;border:1px solid var(--group-hero-rule);border-radius:var(--group-radius);background:var(--group-hero);color:var(--group-hero-ink);box-shadow:0 4px 12px #18233807}
+.group-overview-heading{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;margin-bottom:5px}
 #group-overview-title{margin:0;font-size:13px;font-weight:550;line-height:1.5;color:var(--group-hero-muted)}
 #group-overview-date{font-size:12px;font-variant-numeric:tabular-nums;color:var(--group-hero-muted)}
 .group-overview-teams{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
-.group-overview-team{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;min-width:0;padding:0 8px;box-sizing:border-box;text-align:center}
+.group-overview-team{display:grid;grid-template-columns:minmax(0,max-content) max-content;align-items:center;align-content:start;justify-content:center;gap:0 5px;min-width:0;padding:0 6px;box-sizing:border-box;text-align:center}
 .group-overview-team+.group-overview-team{border-left:1px solid var(--group-hero-rule)}
 .group-overview-shift{font-size:12px;font-weight:550;line-height:1.45;overflow-wrap:anywhere;color:var(--group-hero-ink)}
-.group-overview-team strong{font-size:21px;font-weight:700;letter-spacing:-.6px;line-height:1.25;color:var(--group-hero-ink)}
+.group-overview-team strong{font-size:18px;font-weight:700;letter-spacing:-.6px;line-height:1.25;color:var(--group-hero-ink)}
 .group-overview-team[data-kind=day] .group-overview-shift{color:var(--group-hero-day)}
 .group-overview-team[data-kind=night] .group-overview-shift{color:var(--group-hero-night)}
 .group-overview-team:is([data-kind=off],[data-kind=leave]) .group-overview-shift{color:var(--group-hero-off)}
-.group-overview-mine{min-height:14px;font-size:10px;line-height:14px;color:var(--group-hero-muted)}
+.group-overview-mine{grid-column:1/-1;min-height:12px;font-size:9px;line-height:12px;color:var(--group-hero-muted)}
 #view-groups .group-view-caption{margin:0 4px 9px;font-size:14px;font-weight:650;color:var(--group-ink);flex-wrap:wrap}
 .group-view-caption small{font-size:10px;font-weight:400;color:var(--group-muted)}
 #group-weeks{gap:12px}
@@ -144,8 +144,8 @@ body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])
 body[data-pref-theme=dark] #view-groups .group-week-card{box-shadow:none}
 body[data-view=groups] :is(#group-month-title,#group-today):focus-visible{outline:2px solid var(--group-action);outline-offset:2px}
 body[data-view=groups] :is(#group-month-title,#group-today):active{opacity:.7}
-@media(max-width:360px){body[data-view=groups] .header-view-title{font-size:22px}body[data-pref-theme] #group-month-title{font-size:14px}.header-group-actions{gap:3px}body[data-pref-theme] #group-today{padding:8px 10px}#view-groups .group-overview{padding:12px 12px 10px}.group-overview-team{padding:0 5px}.group-overview-shift{font-size:11px}.group-overview-team strong{font-size:21px}#view-groups .group-week .group-column{width:37px}#view-groups .group-week .group-shift{width:26px;height:26px;font-size:11px}#view-groups .group-week tbody .group-cell{height:36px}.group-week-heading{padding:9px 12px 3px}}
-@media(min-width:600px){#view-groups .group-overview{padding:14px 20px 12px}.group-overview-heading{margin-bottom:10px}.group-overview-team strong{font-size:23px}#view-groups .group-week tbody .group-cell{height:40px}#view-groups .group-week .group-shift{width:28px;height:28px}}
+@media(max-width:360px){body[data-view=groups] .header-view-title{font-size:22px}body[data-pref-theme] #group-month-title{font-size:14px}.header-group-actions{gap:3px}body[data-pref-theme] #group-today{padding:8px 10px}#view-groups .group-overview{padding:10px 12px 8px}.group-overview-team{padding:0 5px}.group-overview-shift{font-size:11px}.group-overview-team strong{font-size:18px}#view-groups .group-week .group-column{width:37px}#view-groups .group-week .group-shift{width:26px;height:26px;font-size:11px}#view-groups .group-week tbody .group-cell{height:36px}.group-week-heading{padding:9px 12px 3px}}
+@media(min-width:600px){#view-groups .group-overview{padding:10px 18px 9px}.group-overview-heading{margin-bottom:5px}.group-overview-team strong{font-size:19px}#view-groups .group-week tbody .group-cell{height:40px}#view-groups .group-week .group-shift{width:28px;height:28px}}
 
 #view-groups .group-week thead th.today{border-radius:12px 12px 0 0}
 #view-groups .group-week tbody tr:last-child td.today{border-radius:0 0 12px 12px}
