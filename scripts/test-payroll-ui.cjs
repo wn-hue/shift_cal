@@ -67,6 +67,12 @@ for(const id of ['tr-duty-pay','tr-seniority-pay','duty-pay-setting','seniority-
 assert.equal(elem('payroll-sms-text').value,'');assert.ok(![...saved.values()].join('').includes('합성테스트'));assert.ok(![...saved.values()].join('').includes('123456'));
 elem('payroll-estimate-toggle').checked=true;for(const f of elem('payroll-estimate-toggle').handlers.change)f();
 assert.match(elem('payroll-estimate-basis').textContent,/15.00%/);
+// Missing personal bonus reference uses the default without storing another person's profile.
+elem('inp-bonus-check').checked=true;evaluate('calculatePayrollFromInputs()');
+assert.match(elem('payroll-estimate-basis').textContent,/상여:.*기준 명세서.*2.41%/);
+const defaultBonusGross=payAmount('row-bonus-pay');
+assert.equal(elem('hero-bonus-pay').innerText,(defaultBonusGross-Math.trunc(defaultBonusGross*(29570/1224725))).toLocaleString('ko-KR')+' 원');
+assert.equal(saved.get('shift_bonus_sms_reference_v1'),undefined);
 // Independent bonus reference, one-step import, and invalid drafts do not overwrite salary settings.
 elem('payroll-bonus-sms-text').value='성명 비공개상여테스트\n기본시급 999,999\n지급내역\n상여 1,000,000\n소계(ⓐ) 1,000,000\n공제내역\n소계(ⓑ) 50,000';
 for(const f of elem('payroll-bonus-sms-text').handlers.input||[])f();click('payroll-sms-apply');
@@ -87,7 +93,7 @@ elem('payroll-sms-text').value='기본시급 22,000';elem('payroll-bonus-sms-tex
 assert.equal(evaluate('config.baseHourly'),10100);assert.match(elem('payroll-sms-status').textContent,/상여 문자/);
 ctx.PayrollEstimate.clearDraft();
 elem('payroll-sms-text').value='another private draft';ctx.PayrollEstimate.open();elem('payroll-sms-dialog').close();assert.equal(elem('payroll-sms-text').value,'');
-evaluate('renderCalendar=()=>{};resetDefaults()');assert.equal(saved.get('shift_payroll_sms_reference_v1'),undefined);assert.equal(saved.get('shift_bonus_sms_reference_v1'),undefined);assert.equal(evaluate('config.baseHourly'),0);
+evaluate('renderCalendar=()=>{};resetDefaults()');assert.equal(saved.get('shift_payroll_sms_reference_v1'),undefined);assert.equal(saved.get('shift_bonus_sms_reference_v1'),undefined);assert.equal(evaluate('config.baseHourly'),0);assert.match(elem('payroll-estimate-basis').textContent,/상여:.*기준 명세서.*2.41%/);
 assert.match(elem('payroll-estimate-basis').textContent,/18%/);
 assert.equal(/inp-retro-check|disp-retro-status|toggleRetroCheck|근속수당 가산/.test(html),false);
 for(const id of ['input-base-hourly','input-ordinary-hourly','input-duty-pay','input-seniority-pay'])assert.match(html.match(new RegExp('<input[^>]+id="'+id+'"[^>]*>'))[0],/\breadonly\b/);

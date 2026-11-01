@@ -1,6 +1,9 @@
 (function (root) {
     'use strict';
     const rate = 0.18, storageKey = 'shift_payroll_sms_reference_v1', bonusKey = 'shift_bonus_sms_reference_v1';
+    // Anonymized reference statement: total deductions / total payments, including other pay.
+    // This is an effective estimate (income/local tax and employment insurance), not a statutory tax rate.
+    const bonusRate = 29570 / 1224725;
     function validProfile(p) {
         if(p?.model==='monthly-insurance')return Object.keys(p).length===6 && ['rate','taxRate','employmentRate'].every(k=>Number.isFinite(p[k])&&p[k]>=0&&p[k]<=1) && ['fixedInsurance','otherFixed'].every(k=>Number.isSafeInteger(p[k])&&p[k]>=0&&p[k]<=1000000000) && p.taxRate+p.employmentRate<=1;
         if(p && Object.keys(p).length===1 && Number.isFinite(p.rate) && p.rate>=0 && p.rate<=1)return true;
@@ -16,12 +19,12 @@
         return { gross, total, net: gross - total };
     }
     function estimatePayments(parts, profile = null, bonusProfile = null) {
-        let regular = estimate(parts.regular, profile), bonus = estimate(parts.bonus, bonusProfile), support = estimate(parts.support || 0, profile);
+        let regular = estimate(parts.regular, profile), bonus = estimate(parts.bonus, bonusProfile ?? {rate:bonusRate}), support = estimate(parts.support || 0, profile);
         if(profile?.model==='monthly-insurance'){const combined=estimate(parts.regular+(parts.support||0),profile);const supportTotal=Math.max(0,combined.total-regular.gross,Math.min(combined.total,support.gross,Math.trunc(support.gross*(profile.taxRate+profile.employmentRate))));support={gross:support.gross,total:supportTotal,net:support.gross-supportTotal};regular={gross:regular.gross,total:combined.total-supportTotal,net:regular.gross-(combined.total-supportTotal)};}
         return { regular, bonus, support, gross: regular.gross + bonus.gross + support.gross,
             total: regular.total + bonus.total + support.total, net: regular.net + bonus.net + support.net };
     }
-    const api = { rate, validProfile, minimalProfile, estimate, estimatePayments };
+    const api = { rate, bonusRate, validProfile, minimalProfile, estimate, estimatePayments };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     root.PayrollEstimate = api;
     if (typeof document === 'undefined') return;
@@ -70,7 +73,7 @@
     let parts = {regular:0,bonus:0,support:0}, profile = null, bonusProfile = null;
     function loadProfile(key) { try {const p=JSON.parse(localStorage.getItem(key));const minimal=minimalProfile(p);if(minimal)localStorage.setItem(key,JSON.stringify(minimal));return minimal;}catch(_){return null;} }
     profile=loadProfile(storageKey);bonusProfile=loadProfile(bonusKey);
-    const basis = (name,p) => name + ': ' + (p ? p.model==='monthly-insurance'?'월 보험료 '+fmt(p.fixedInsurance)+' · 세금 문자 비율 '+(p.taxRate*100).toFixed(2)+'% · 고용 '+(p.employmentRate*100).toFixed(2)+'%'+(p.otherFixed?' · 기타 월 공제 '+fmt(p.otherFixed):''):'적용한 문자 공제율 ' + (100*minimalProfile(p).rate).toFixed(2) + '%' : '개인 기준 미등록 · 기본 공제율 18% 단순 추정');
+    const basis = (name,p) => name + ': ' + (p ? p.model==='monthly-insurance'?'월 보험료 '+fmt(p.fixedInsurance)+' · 세금 문자 비율 '+(p.taxRate*100).toFixed(2)+'% · 고용 '+(p.employmentRate*100).toFixed(2)+'%'+(p.otherFixed?' · 기타 월 공제 '+fmt(p.otherFixed):''):'적용한 문자 공제율 ' + (100*minimalProfile(p).rate).toFixed(2) + '%' : name==='상여'?'개인 기준 미등록 · 기준 명세서 공제율 '+(bonusRate*100).toFixed(2)+'% 추정 (소득세·지방소득세·고용보험 포함)':'개인 기준 미등록 · 기본 공제율 18% 단순 추정');
     function render() {
         panel.hidden = !toggle.checked;
         document.getElementById('payroll-estimate-state').textContent = toggle.checked ? 'ON' : 'OFF';
