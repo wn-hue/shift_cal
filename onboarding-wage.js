@@ -27,7 +27,7 @@
   for(const node of importNodes)only(node,importing);
   optional.hidden=importing;
   for(const button of choice.querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.dataset.guidedAllowance===hasAllowance));
-  apply.textContent=importing?'확인하고 계속하기':stage==='base'||stage==='ordinary'?'다음':'설정 완료하기';
+  apply.textContent=importing?'확인하고 계속하기':stage==='base'||stage==='ordinary'||(stage==='choice'&&hasAllowance==='yes')?'다음':'설정 완료하기';
   apply.disabled=busy||(stage==='choice'&&hasAllowance===null);
   $('wage-manual-status').textContent='';content.scrollTop=0;
  }

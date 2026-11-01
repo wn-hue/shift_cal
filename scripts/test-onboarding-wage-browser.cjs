@@ -40,7 +40,7 @@ async function checkKeyboard(p,id,width){
  const p=await setup(browser);await p.locator('#onboarding-wage-import').click();assert.equal(await stage(p),'import');
  await p.locator('#wage-paste-fallback>summary').click();await p.locator('#payroll-sms-text').fill('성명 PRIVATE_GUIDED\n기본시급 11050\n통상시급 14482\n직무 70000\n지급내역\n소계(ⓐ) 1000000\n공제내역\n소계(ⓑ) 100000');
  assert.equal(await p.locator('#payroll-sms-text').inputValue(),'');assert.equal(await p.evaluate(()=>JSON.stringify(localStorage).includes('PRIVATE_GUIDED')),false);
- await next(p);assert.equal(await stage(p),'base');await next(p);await next(p);assert.equal(await stage(p),'choice');
+ await next(p);assert.equal(await stage(p),'base');await next(p);await next(p);assert.equal(await stage(p),'choice');assert.equal(await p.locator('#payroll-sms-apply').textContent(),'다음');
  await p.locator('[data-guided-allowance=no]').click();await next(p);await p.waitForFunction(()=>!document.getElementById('onboarding-dialog').open);
  assert.deepEqual(await p.evaluate(()=>[config.baseHourly,config.ordinaryHourly,config.dutyPay,JSON.parse(localStorage.getItem('shift_payroll_sms_reference_v1')).rate,savedCount]),[11050,14482,0,.1,1]);await p.close();
  const cancelled=await setup(browser);await cancelled.locator('#onboarding-next').click();await cancelled.locator('#wage-manual-base').fill('12345');await cancelled.locator('#guided-wage-import').click();await cancelled.locator('#wage-fill').click();await cancelled.locator('#guided-wage-back').click();await cancelled.evaluate(()=>resolveClip('기본시급 99999'));await cancelled.waitForTimeout(30);assert.equal(await cancelled.locator('#wage-manual-base').inputValue(),'12345');
