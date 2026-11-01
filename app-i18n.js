@@ -44,6 +44,7 @@
   if(!value&&(m=s.match(/^(.+) · (\d{2}:\d{2})$/)))value=t(m[1])+' · '+m[2];
   if(!value&&(m=s.match(/^(.+) ⌄$/)))value=t(m[1])+' ⌄';
   if(!value&&(m=s.match(/^(\d+)개 노선(?: · (.+))?$/)))value=copy(`${m[1]} routes`,`${m[1]}条路线`,`${m[1]}路線`)+(m[2]?' · '+t(m[2]):'');
+  if(!value&&(m=s.match(/^(\d+)주차$/)))value=copy(`Week ${m[1]}`,`第${m[1]}周`,`${m[1]}週目`);
   if(!value&&(m=s.match(/^문자에서 (\d+)개 항목을 자동으로 채웠어요$/)))value=copy(`Filled ${m[1]} fields from your message`, `已从短信自动填入${m[1]}项`, `メッセージから${m[1]}項目を入力しました`);
   if(!value&&(m=s.match(/^인식 완료: (.+)$/)))value=copy('Recognized: ','识别完成：','読み取り完了：')+m[1].split(' · ').map(part=>{const amount=part.match(/^(기본시급|통상시급|고정수당) ([\d,]+) 원$/);return amount?t(amount[1])+' '+t(amount[2]+' 원'):t(part);}).join(' · ');
   if(!value&&(m=s.match(/^조회 결과 (\d+)개$/)))value=copy(`${m[1]} results`,`${m[1]}条结果`,`${m[1]}件の結果`);

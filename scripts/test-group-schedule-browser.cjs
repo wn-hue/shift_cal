@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
 (async()=>{for(const engine of [webkit,chromium]){const browser=await engine.launch();for(const width of (process.env.GROUP_QUICK?[390]:[320,390,412])){
  const page=await browser.newPage({viewport:{width,height:844},timezoneId:'Asia/Seoul',reducedMotion:'reduce'}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.clock.setFixedTime(new Date('2026-10-26T12:00:00+09:00'));
  await page.addInitScript(()=>{if(localStorage.getItem('shift_active_group'))return;localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_onboarding_v1',JSON.stringify({status:'existing'}));localStorage.setItem('shift_salary_config_master',JSON.stringify({hireDate:'2015-06-16',baseHourly:10320,ordinaryHourly:11000}));for(const[g,type]of[['A','OFF'],['B','DAY'],['C','LEAVE']])localStorage.setItem('shift_overrides_'+g,JSON.stringify({'2026-10-18':type}));});
- await page.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await page.goto(process.env.TEST_URL||'http://localhost:8768/');
+ await page.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await page.goto(process.env.TEST_URL||'http://127.0.0.1:8772/');
  async function swipe(dx,dy=2,cancel=false){
   await page.locator('#group-weeks tbody button').first().evaluate((el,{dx,dy,cancel})=>{
    const fire=(name,x,y)=>{const e=new Event(name,{bubbles:true,cancelable:true});Object.defineProperties(e,{touches:{value:name==='touchend'?[]:[{clientX:x,clientY:y}]},changedTouches:{value:[{clientX:x,clientY:y}]}});el.dispatchEvent(e)};
@@ -15,8 +15,8 @@ const assert=require('node:assert/strict');const{webkit,chromium}=require(proces
  const saved=await page.evaluate(()=>({group:currentGroup,overrides:JSON.stringify(overrides),storage:['A','B','C'].map(g=>localStorage.getItem('shift_overrides_'+g)),config:localStorage.getItem('shift_salary_config_master')}));
  assert.deepEqual(await page.locator('.nav-capsule>button').evaluateAll(els=>els.map(e=>e.id)),['bnav-cal','bnav-groups','bnav-pay','bnav-menu','account-menu-button']);
  await page.getByRole('button',{name:'조별 근무',exact:true}).click();assert.equal(await page.locator('#bnav-groups').getAttribute('aria-current'),'page');assert.equal(await page.locator('#header-view-title').textContent(),'조별 근무');assert.equal(await page.locator('#group-weeks table').count(),5);
- assert.equal(await page.locator('#group-prev,#group-next,#group-today,#group-mine-label').count(),0);
- assert(!((await page.locator('#view-groups').textContent()).includes('내 조')));
+ assert.equal(await page.locator('#group-prev,#group-next,#group-mine-label').count(),0);
+ assert.equal(await page.locator('#group-today').isVisible(),true);assert.equal(await page.locator('.group-mine-label').count(),5);assert.equal(await page.locator('.group-week-heading h2').first().textContent(),'1주차');assert.equal(await page.locator('#group-overview-teams>div').count(),3);
  assert.equal(await page.locator('#group-weeks .selected-date[data-date="2026-10-26"]').count(),4);
  assert.equal(await page.locator('thead [aria-current=date]').count(),1);
  // Drag from a date's button, not only from gaps between dates.

@@ -1,7 +1,7 @@
 /* Read-only comparison. Pass each group's overrides explicitly; never swap the active group. */
 (()=>{'use strict';
  const $=id=>document.getElementById(id),groups=['A','B','C'],weekdays=['일','월','화','수','목','금','토'];
- const dialog=$('group-day-dialog');let selected='',lastTrigger=null;
+ const dialog=$('group-day-dialog');let selected='',lastTrigger=null,renderedToday='';
  const key=d=>toDateKey(d.getFullYear(),d.getMonth(),d.getDate());
  const date=k=>{const[y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)};
  function changes(){
@@ -40,14 +40,36 @@
    row.append(badge(s),name,label);$('group-day-rows').append(row);
   }
  }
+ function renderOverview(now,all){
+  const d=date(now),time=$('group-overview-date');time.dateTime=now;time.textContent=`${d.getMonth()+1}월 ${d.getDate()}일 (${weekdays[d.getDay()]})`;
+  // Keep all three teams visible, including leave and saved changes; never infer attendance from a label.
+  const items=groups.map(group=>({group,s:shift(d,group,all)}));
+  const rank=s=>s.type.includes('DAY')||s.type==='NO_OT'&&s.origType==='DAY'?0:s.type.includes('NIGHT')||s.type==='NO_OT'&&s.origType==='NIGHT'?1:s.type==='OFF'?2:3;
+  items.sort((a,b)=>rank(a.s)-rank(b.s));
+  const fragment=document.createDocumentFragment();
+  for(const {group,s} of items){
+   const item=document.createElement('div');item.className='group-overview-team';item.dataset.group=group;item.dataset.shift=s.type;item.dataset.kind=['day','night','off','leave'][rank(s)];
+   const label=document.createElement('span');label.className='group-overview-shift';label.textContent=shiftName(s);
+   const name=document.createElement('strong');name.textContent=group+'조';
+   const mine=document.createElement('small');mine.className='group-overview-mine';mine.textContent=group===currentGroup?'내 조':'';
+   item.append(label,name,mine);fragment.append(item);
+  }
+  $('group-overview-teams').replaceChildren(fragment);
+ }
  function render(){
   if(document.body.dataset.view!=='groups')return;
   const year=currentCalDate.getFullYear(),month=currentCalDate.getMonth(),start=new Date(year,month,1),count=new Date(year,month+1,0).getDate(),rows=Math.ceil((start.getDay()+count)/7),all=changes(),now=key(new Date());
+  renderedToday=now;renderOverview(now,all);
   $('group-month-title').textContent=year+'. '+String(month+1).padStart(2,'0')+' ⌄';
   $('group-month-title').setAttribute('aria-label',`${year}년 ${month+1}월 조별 근무 연도와 월 선택`);
   const fragment=document.createDocumentFragment();
   for(let week=0;week<rows;week++){
    const dates=Array.from({length:7},(_,i)=>new Date(year,month,1-start.getDay()+week*7+i));
+   const card=document.createElement('section');card.className='group-week-card';card.dataset.week=String(week);
+   const heading=document.createElement('div');heading.className='group-week-heading';
+   const title=document.createElement('h2');title.id='group-week-heading-'+week;title.textContent=(week+1)+'주차';card.setAttribute('aria-labelledby',title.id);
+   const range=document.createElement('span'),first=dates.find(d=>d.getMonth()===month),last=[...dates].reverse().find(d=>d.getMonth()===month);
+   range.className='group-week-range';range.textContent=first.getDate()===last.getDate()?`${month+1}.${first.getDate()}`:`${month+1}.${first.getDate()} – ${month+1}.${last.getDate()}`;heading.append(title,range);card.append(heading);
    const table=document.createElement('table');table.className='group-week';table.dataset.week=String(week);
    const caption=document.createElement('caption');caption.className='sr-only';caption.textContent=`${year}년 ${month+1}월 ${week+1}번째 주 조별 근무`;table.append(caption);
    const head=document.createElement('thead'),hr=document.createElement('tr'),corner=document.createElement('th');corner.scope='col';corner.className='group-column';corner.textContent='조';hr.append(corner);
@@ -62,10 +84,10 @@
    const body=document.createElement('tbody');
    for(const group of groups){
     const tr=document.createElement('tr');tr.dataset.group=group;if(group===currentGroup)tr.className='my-group';
-    const label=document.createElement('th');label.scope='row';label.textContent=group+'조';label.className='group-column';tr.append(label);
+    const label=document.createElement('th');label.scope='row';const name=document.createElement('strong');name.textContent=group+'조';label.append(name);if(group===currentGroup){const mine=document.createElement('small');mine.className='group-mine-label';mine.textContent='내 조';label.append(mine);}label.className='group-column';tr.append(label);
     dates.forEach(d=>{const k=key(d),s=shift(d,group,all),td=document.createElement('td');td.dataset.date=k;td.dataset.shift=s.type;if(d.getMonth()!==month)td.className='adjacent';if(k===now)td.classList.add('today');const button=document.createElement('button');button.type='button';button.className='group-cell';button.setAttribute('aria-label',`${d.getMonth()+1}월 ${d.getDate()}일 ${group}조 ${shiftName(s)}, 조별 근무 보기`);button.append(badge(s));button.onclick=()=>openDay(k,button);td.append(button);tr.append(td)});
     body.append(tr);
-   }table.append(body);fragment.append(table);
+   }table.append(body);card.append(table);fragment.append(card);
   }
   $('group-weeks').replaceChildren(fragment);markDate();if(dialog.open)fillDay();
  }
@@ -73,12 +95,13 @@
  function focusToday(behavior='instant'){
   requestAnimationFrame(()=>{
    if(document.body.dataset.view!=='groups')return;
-   const week=$('group-weeks').querySelector('thead .today')?.closest('table');
+   const week=$('group-weeks').querySelector('thead .today')?.closest('.group-week-card');
    const viewport=window.visualViewport,top=viewport?.offsetTop||0,bottom=top+(viewport?.height||innerHeight);
    const nav=document.querySelector('.bottom-nav')?.getBoundingClientRect();
    const visibleBottom=nav&&nav.height>0?Math.min(bottom,nav.top):bottom;
+   const header=document.querySelector('.reference-header'),visibleTop=top+(header?.getBoundingClientRect().height||0)+12;
    const rect=week?.getBoundingClientRect();
-   const target=rect?scrollY+rect.top-top-Math.max(12,(visibleBottom-top-rect.height)/2):0;
+   const target=rect&&week.dataset.week!=='0'?scrollY+rect.top-visibleTop-Math.max(8,(visibleBottom-visibleTop-rect.height)/2):0;
    window.scrollTo({top:Math.max(0,target),behavior});
   });
  }
@@ -89,5 +112,9 @@
  dialog.addEventListener('close',()=>{const target=lastTrigger?.isConnected?lastTrigger:$('group-weeks').querySelector(`thead th[data-date="${selected}"] button`);target?.focus({preventScroll:true})});
  $('group-open-calendar').onclick=()=>{dialog.close();const d=date(selected);currentCalDate=new Date(d.getFullYear(),d.getMonth(),1);switchView('calendar');requestAnimationFrame(()=>document.querySelector(`.cal-day[data-date="${selected}"]`)?.scrollIntoView({block:'center'}))};
  window.addEventListener('storage',e=>{if(e.key===null||e.key==='shift_overrides_'+currentGroup){loadOverrides();renderCalendar()}else if(e.key?.startsWith('shift_overrides_'))render()});
- window.GroupSchedule={render,today,focusToday};
+ // Refresh the overview at local midnight and after returning from the background.
+ function refreshDate(){if(!document.hidden&&renderedToday!==key(new Date()))render();}
+ document.addEventListener('visibilitychange',refreshDate);window.addEventListener('focus',refreshDate);
+ function midnight(){const now=new Date(),next=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);setTimeout(()=>{refreshDate();midnight();},next-now+100);}
+ midnight();window.GroupSchedule={render,today,focusToday};
 })();
