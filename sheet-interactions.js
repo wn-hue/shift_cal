@@ -61,7 +61,7 @@
   sheet.addEventListener('pointerdown',()=>{suppressUntil=0;},true);
   sheet.addEventListener('touchstart',e=>{
    if(sheet.dataset.sheetClosing==='true')return;
-   if(e.touches.length!==1||e.target.closest('input,textarea,select,[contenteditable=true]'))return;
+   if(e.touches.length!==1||e.target.closest('input,textarea,select,[contenteditable=true],[data-sheet-scroll]'))return;
    const t=e.touches[0],r=sheet.getBoundingClientRect();if(t.clientX<r.left||t.clientX>r.right||t.clientY<r.top||t.clientY>r.bottom)return;
    // A scrolled list gets its normal scroll gesture. Pull to dismiss only at its top.
    for(let el=e.target;!e.target.closest('.sheet-dismiss-handle,#editor-dismiss')&&el&&sheet.contains(el);el=el.parentElement){if(el.scrollTop>1&&el.scrollHeight>el.clientHeight+1)return;if(el===sheet)break;}

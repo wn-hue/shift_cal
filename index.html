@@ -932,7 +932,8 @@
 <link rel="stylesheet" href="./bright-menu.css?v=1">
 <link rel="stylesheet" href="./app-surfaces.css?v=6">
 <link rel="stylesheet" href="./screen-refinement.css?v=8">
-<link rel="stylesheet" href="./onboarding.css?v=6">
+<link rel="stylesheet" href="./onboarding.css?v=7">
+<link rel="preload" as="image" href="./assets/onboarding/hire-v2.webp" fetchpriority="high">
 <link rel="stylesheet" href="./mobile-surfaces.css?v=11">
 <link rel="stylesheet" href="./test-calendar.css?v=9">
 <link rel="stylesheet" href="./month-picker.css?v=1">
@@ -3020,8 +3021,10 @@
   <p id="onboarding-step-label">1 / 3</p>
   <div id="onboarding-heading" tabindex="-1" autofocus><h1 id="onboarding-title">입사일을 알려주세요.</h1><p id="onboarding-description">내 연차와 예상 급여를 계산하는 기준이에요.</p></div>
   <section class="onboarding-panel" aria-label="입사일 설정">
-   <div class="onboarding-art" aria-hidden="true"><img src="./assets/onboarding/hire-v2.webp" alt="" width="384" height="384" decoding="async"></div>
-   <label for="onboarding-date">입사년월일 · 정규직 기준</label><input type="date" id="onboarding-date" min="1900-01-01" aria-describedby="onboarding-hire-help">
+   <div class="onboarding-art" aria-hidden="true"><img src="./assets/onboarding/hire-v2.webp" alt="" width="384" height="384" decoding="sync" fetchpriority="high"></div>
+   <label id="onboarding-date-label" for="onboarding-date-open">입사년월일 · 정규직 기준</label>
+   <input type="hidden" id="onboarding-date">
+   <button type="button" id="onboarding-date-open" aria-haspopup="dialog" aria-controls="onboarding-date-picker" aria-labelledby="onboarding-date-label onboarding-date-value" aria-describedby="onboarding-hire-help"><span id="onboarding-date-value">입사일을 선택해 주세요</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></button>
    <p class="onboarding-tip" id="onboarding-hire-help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v6m0-10v1"/></svg><span>계약직은 현재 입사일을 선택하고, 정규직 전환 후 변경해 주세요. 입사일은 전체 → 연차 설정에서 바꿀 수 있어요.</span></p>
   </section>
   <section class="onboarding-panel" aria-label="교대조 설정" hidden>
@@ -3042,13 +3045,25 @@
  </main>
  <footer class="onboarding-footer"><p id="onboarding-error" role="status" aria-live="polite"></p><button type="button" id="onboarding-next">다음</button><button type="button" id="onboarding-login">이미 사용 중인가요? 로그인해서 불러오기</button></footer>
 </dialog>
-<script src="./onboarding.js?v=4"></script>
+<dialog id="onboarding-date-picker" aria-labelledby="onboarding-date-picker-title" aria-describedby="onboarding-date-picker-help">
+ <button type="button" class="picker-close" aria-label="입사일 선택 닫기">닫기</button>
+ <h2 id="onboarding-date-picker-title">입사일 선택</h2>
+ <p id="onboarding-date-picker-help" class="onboarding-sr-only">연도, 월, 일을 위아래로 쓸어 선택하세요. 키보드 방향키로도 변경할 수 있어요.</p>
+ <div class="onboarding-date-wheels" data-sheet-scroll>
+  <div class="onboarding-date-wheel" data-date-part="year" role="spinbutton" tabindex="0" aria-label="연도" aria-valuemin="1900" aria-valuemax="2026" aria-valuenow="2026"></div>
+  <div class="onboarding-date-wheel" data-date-part="month" role="spinbutton" tabindex="0" aria-label="월" aria-valuemin="1" aria-valuemax="12" aria-valuenow="1"></div>
+  <div class="onboarding-date-wheel" data-date-part="day" role="spinbutton" tabindex="0" aria-label="일" aria-valuemin="1" aria-valuemax="31" aria-valuenow="1"></div>
+ </div>
+ <button type="button" id="onboarding-date-confirm">선택하기</button>
+</dialog>
+<script src="./onboarding-date-picker.js?v=1"></script>
+<script src="./onboarding.js?v=5"></script>
 <script src="./payslip-alert.js?v=3"></script>
 <script src="./memo-editor.js?v=13"></script>
 <script src="./day-editor-navigation.js?v=8"></script>
 <script src="./day-scheduler-core.js?v=3"></script>
 <script src="./day-scheduler.js?v=7"></script>
-<script src="./sheet-interactions.js?v=7"></script>
+<script src="./sheet-interactions.js?v=8"></script>
 <script src="./day-memos-core.js?v=1"></script>
 <script src="./day-entry-core.js?v=1"></script>
 <script src="./day-editor-designs.js?v=10"></script>

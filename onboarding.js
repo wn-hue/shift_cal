@@ -17,7 +17,17 @@
  };
  let state=saved?.status==='in_progress'?{status:'in_progress',step:Math.max(0,Math.min(2,Math.trunc(Number(saved.step)||0)))}:
   saved?.status==='complete'||saved?.status==='existing'?saved:{status:legacy()?'existing':'in_progress',step:0};
- let step=state.step||0, selected='', manual=false, active=false, saving=false;
+ let step=state.step||0, selected='', manual=false, active=false, saving=false, paintedStep=-1, entrance=null;
+ const main=dialog.querySelector('.onboarding-main');
+ // Warm the image decoder for all three steps, not only the currently visible one.
+ for(const image of dialog.querySelectorAll('.onboarding-art img'))image.decode?.().catch(()=>{});
+ function reveal(){
+  const current=entrance?.playState==='running'?getComputedStyle(main):null;
+  const from=current?{opacity:current.opacity,transform:current.transform}:{opacity:0,transform:'translateY(8px)'};
+  entrance?.cancel();entrance=null;
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches||!main.animate)return;
+  entrance=main.animate([from,{opacity:1,transform:'translateY(0)'}],{duration:180,easing:'cubic-bezier(.2,.7,.2,1)'});
+ }
  function remember(next){try{localStorage.setItem(KEY,JSON.stringify(next));state=next;return true}catch{$('onboarding-error').textContent='설정을 저장하지 못했어요. 기기 저장 공간을 확인해 주세요.';return false}}
  // Decide from the pre-existing settings, before the app's load handlers run.
  remember(state);
@@ -33,6 +43,7 @@
   return true;
  }
  function paint(){
+  const changed=paintedStep!==step;paintedStep=step;
   $('onboarding-error').textContent='';
   dialog.dataset.step=String(step);
   $('onboarding-back').hidden=step===0;
@@ -44,7 +55,7 @@
   const titles=['입사일을\n알려주세요.','어느 조에서\n근무하시나요?','시급을 설정하면\n준비가 끝나요'];
   const copies=['내 연차와 예상 급여를\n계산하는 기준이에요.','선택한 조에 맞춰\n내 근무표를 만들어요.','시급을 확인하면\n내 예상 급여를 볼 수 있어요.'];
   $('onboarding-title').textContent=titles[step];$('onboarding-description').textContent=copies[step];
-  $('onboarding-date').max=today();$('onboarding-date').value=config.hireDate||'';
+  $('onboarding-date').value=config.hireDate||'';window.OnboardingDatePicker.sync();
   selected=['A','B','C'].includes(text('shift_active_group'))?text('shift_active_group'):'';
   for(const button of dialog.querySelectorAll('[data-onboarding-group]'))button.setAttribute('aria-pressed',String(button.dataset.onboardingGroup===selected));
   const wagesReady=config.baseHourly>0&&config.ordinaryHourly>0;
@@ -54,21 +65,24 @@
   $('onboarding-import-again').hidden=!wagesReady;
   $('onboarding-next').textContent=step===2?(wagesReady?'캘린더 시작하기':'시급 설정하기'):'다음';
   $('onboarding-next').disabled=step===1&&!selected;
-  $('onboarding-heading').focus();dialog.querySelector('.onboarding-main').scrollTop=0;
+  if(changed){main.scrollTop=0;if(dialog.open){$('onboarding-heading').focus({preventScroll:true});reveal();}}
  }
  function open(revisit=false){
   manual=revisit;step=revisit?0:state.step||0;
   if(!validDate(config.hireDate))step=0;
   else if(step===2&&!['A','B','C'].includes(text('shift_active_group')))step=1;
   active=true;document.body.dataset.onboarding='open';
-  if(!dialog.open)dialog.showModal();paint();
+  paintedStep=-1;paint();
+  if(!dialog.open)dialog.showModal();
+  $('onboarding-heading').focus({preventScroll:true});reveal();
  }
  function next(){
+  if(saving)return;
   $('onboarding-error').textContent='';saving=true;
   try{
    if(step===0){
     const value=$('onboarding-date').value;
-    if(!validDate(value)){$('onboarding-error').textContent='오늘까지의 올바른 입사일을 입력해 주세요.';$('onboarding-date').focus();return;}
+    if(!validDate(value)){$('onboarding-error').textContent='오늘까지의 올바른 입사일을 선택해 주세요.';$('onboarding-date-open').focus({preventScroll:true});return;}
     $('input-hire-date').value=value;onHireDateChange();
    }else if(step===1){if(!selected)return;setGroup(selected);}
    else {if(ready())finish();else PayrollEstimate.open({onboarding:true});return;}
@@ -82,7 +96,7 @@
  $('onboarding-back').addEventListener('click',()=>{if(step>0){step--;if(!manual)remember({status:'in_progress',step});paint()}});
  $('onboarding-exit').addEventListener('click',()=>{active=false;delete document.body.dataset.onboarding;dialog.close();$('onboarding-reopen').focus()});
  dialog.addEventListener('cancel',event=>{if(!manual){event.preventDefault();$('onboarding-error').textContent='세 가지 설정을 완료하면 내 캘린더를 볼 수 있어요.';}});
- dialog.addEventListener('close',()=>{if(!dialog.open){active=false;delete document.body.dataset.onboarding;}});
+ dialog.addEventListener('close',()=>{if(!dialog.open){entrance?.cancel();entrance=null;active=false;delete document.body.dataset.onboarding;}});
  for(const button of dialog.querySelectorAll('[data-onboarding-group]'))button.addEventListener('click',()=>{
   selected=button.dataset.onboardingGroup;
   for(const option of dialog.querySelectorAll('[data-onboarding-group]'))option.setAttribute('aria-pressed',String(option===button));
