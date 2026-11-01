@@ -99,7 +99,8 @@
    const viewport=window.visualViewport,top=viewport?.offsetTop||0,bottom=top+(viewport?.height||innerHeight);
    const nav=document.querySelector('.bottom-nav')?.getBoundingClientRect();
    const visibleBottom=nav&&nav.height>0?Math.min(bottom,nav.top):bottom;
-   const header=document.querySelector('.reference-header'),visibleTop=top+(header?.getBoundingClientRect().height||0)+12;
+   const header=document.querySelector('.reference-header'),headerInset=header?Math.max(0,parseFloat(getComputedStyle(header).top)||0):0;
+   const visibleTop=top+headerInset+(header?.getBoundingClientRect().height||0)+12;
    const rect=week?.getBoundingClientRect();
    const target=rect&&week.dataset.week!=='0'?scrollY+rect.top-visibleTop-Math.max(8,(visibleBottom-visibleTop-rect.height)/2):0;
    window.scrollTo({top:Math.max(0,target),behavior});
