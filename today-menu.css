@@ -54,11 +54,22 @@ body[data-pref-theme="dark"] .meal-footer a{color:#a4cef0!important}
 #view-menu #today-menu-relative { flex:1; text-align:right; font-size:13px; font-weight:600; color:var(--ui-muted,#6b7684); }
 #view-menu #today-menu-panel { min-width:0; }
 #view-menu { overflow-x:clip; }
-/* Keep the four meal slots stable while another date is being fetched. */
-.meal-placeholder{box-sizing:border-box;border-radius:24px;background:var(--ui-card,#fff);padding:24px;margin-bottom:14px;overflow:hidden}
-.meal-placeholder span{display:block;height:12px;border-radius:6px;background:var(--ui-field,#f2f4f6);width:62%;margin:20px 0}
-.meal-placeholder span:first-child{height:20px;width:36%;margin:0 0 32px}
-.meal-placeholder span:last-child{width:42%}
+/* A single quiet loading indicator, without masking navigation or delaying results. */
+.meal-loading[hidden]{display:none}
+.meal-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;box-sizing:border-box;min-height:clamp(240px,calc(100svh - 350px),440px);padding:24px;text-align:center;color:var(--ui-text,#333d4b)}
+.meal-loading-orbit{display:grid;place-items:center;width:60px;height:60px;margin-bottom:6px;border-radius:50%;background:var(--ui-field,#edf0f4)}
+.meal-loading-ring{box-sizing:border-box;width:34px;height:34px;border:3px solid #3182f626;border-top-color:#3182f6;border-right-color:#3182f6;border-radius:50%;animation:meal-spin .9s linear infinite}
+.meal-loading strong{font-size:15px;line-height:1.5;font-weight:600}
+.meal-loading small{max-width:260px;font-size:12px;line-height:1.6;color:var(--ui-muted,#6b7684);word-break:keep-all}
+.meal-loading.is-refreshing{min-height:0;flex-direction:row;flex-wrap:wrap;gap:8px 12px;padding:14px 16px;margin-bottom:14px;border-radius:18px;background:var(--ui-card,#fff)}
+.meal-loading.is-refreshing .meal-loading-orbit{width:32px;height:32px;margin:0}
+.meal-loading.is-refreshing .meal-loading-ring{width:20px;height:20px;border-width:2px}
+.meal-loading.is-refreshing strong{font-size:13px}
+.meal-loading.is-refreshing small{display:none}
+.meal-status-loading{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+body:not([data-view="menu"]) .meal-loading-ring{animation-play-state:paused}
+body[data-pref-theme="dark"] .meal-loading-ring{border-color:#8dbbff30;border-top-color:#8dbbff;border-right-color:#8dbbff}
+@media(prefers-reduced-motion:reduce){.meal-loading-ring{animation:none}}
 
 /* Keep footer guidance and its final checked-at line on one left edge. */
 #view-menu #today-menu-panel > .meal-rating-note,

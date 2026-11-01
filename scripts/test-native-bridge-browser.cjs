@@ -26,6 +26,19 @@ const root=path.resolve(__dirname,'..');
   });
   await page.goto('https://h-lyart-ten.vercel.app/');
   await page.addScriptTag({path:path.join(root,'ios-app/Sources/Bridge.js')});
+  const feedbackCount=()=>page.evaluate(()=>window.nativeMessages.filter(x=>x.action==='selectionHaptic').length);
+  for(const id of ['account-menu-button','bnav-cal','bnav-groups','bnav-pay','bnav-menu']) {
+   const before=await feedbackCount();
+   await page.locator('#'+id).click();
+   assert.equal(await feedbackCount(),before+1,'Each direct tab press sends one haptic');
+  }
+  const feedbackBefore=await feedbackCount();
+  await page.evaluate(()=>{switchView('calendar');document.getElementById('bnav-groups').click()});
+  assert.equal(await feedbackCount(),feedbackBefore,'Automatic navigation and synthetic clicks stay silent');
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.locator('#bnav-cal').click();
+  assert.equal(await feedbackCount(),feedbackBefore+1,'Haptics do not depend on visual animations');
+  await page.emulateMedia({reducedMotion:'no-preference'});
   const latest=()=>page.evaluate(()=>window.nativeMessages.filter(x=>x.action==='snapshot').at(-1).value);
   let snapshot=await latest();assert.equal(snapshot.days.length,30);assert.equal(snapshot.group,'C');
   const koreaDate=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'}).format(instant);

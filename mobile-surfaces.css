@@ -127,26 +127,26 @@ body[data-pref-theme] #view-payroll :is(#hero-regular-pay,#hero-bonus-pay) { fon
 #view-all .menu-preferences { color:var(--ui-muted); }
 #view-all .all-settings-section { margin-bottom:16px; }
 #view-all #menu-group-settings { padding:0; border:0; border-radius:24px; background:var(--ui-card); box-shadow:none; }
-#view-all .group-summary { display:grid; grid-template-columns:42px minmax(0,1fr) 16px; grid-template-rows:auto auto; gap:3px 14px; padding:22px; min-height:94px; }
-#view-all .group-summary-icon { grid-column:1; grid-row:1/3; width:42px; height:42px; border-radius:15px; background:var(--ui-blue-soft); color:var(--ui-blue); }
+#view-all .group-summary { display:grid; grid-template-columns:40px minmax(0,1fr) minmax(0,1fr); grid-template-rows:auto; align-items:center; gap:12px; padding:22px; min-height:84px; }
+#view-all .group-summary-icon { grid-column:1; grid-row:1; width:40px; height:40px; border-radius:15px; background:var(--ui-blue-soft); color:var(--ui-blue); }
 #view-all .group-summary-icon svg { width:25px; height:25px; }
-#view-all .group-summary-label { grid-column:2; grid-row:1; font-size:13px; font-weight:500; color:var(--ui-muted); }
-#view-all #menu-group-current { grid-column:2; grid-row:2; font-size:17px; font-weight:650; color:var(--ui-ink); text-align:left; }
-#view-all .group-summary-chevron { grid-column:3; grid-row:1/3; }
+#view-all .group-summary-label { grid-column:2; grid-row:1; font-size:16px; font-weight:550; color:var(--ui-ink); word-break:keep-all; }
+#view-all #menu-group-current { grid-column:3; grid-row:1; font-size:12px; line-height:1.6; font-weight:550; color:var(--menu-blue); text-align:right; word-break:keep-all; overflow-wrap:anywhere; }
+#view-all :is(.group-summary-chevron,.menu-service-chevron) { display:none; }
 #view-all :is(.all-shortcuts,.life-section) { background:var(--ui-card); border:0; border-radius:24px; padding:22px 22px 10px; margin-bottom:16px; }
 #view-all :is(.all-shortcuts,.life-section)>h2 { font-size:15px; font-weight:650; color:var(--ui-copy); margin:0 0 8px; }
 #view-all .all-shortcut-grid { display:block; }
 #view-all .all-shortcut { display:grid; grid-template-columns:40px minmax(0,1fr) auto; grid-template-rows:auto; align-items:center; min-height:72px; gap:12px; padding:12px 0; border:0; border-radius:12px; background:transparent; box-shadow:none; }
 #view-all .all-shortcut-icon { position:static; grid-column:1; grid-row:1; width:40px; height:40px; border-radius:14px; }
 #view-all .all-shortcut strong { grid-column:2; grid-row:1; font-size:16px; font-weight:550; }
-#view-all .all-shortcut-caption { grid-column:3; grid-row:1; font-size:12px; line-height:1.6; max-width:96px; text-align:right; }
+#view-all .all-shortcut-caption { grid-column:3; grid-row:1; font-size:12px; line-height:1.6; max-width:110px; text-align:right; color:var(--menu-blue); font-weight:550; }
 #view-all :is(.life-entry,.lab-entry) { min-height:78px; gap:14px; padding:14px 0; border:0; }
 #view-all .menu-services .life-entry+.life-entry { border:0; }
 #view-all :is(.menu-services,.all-menu-content) .menu-service-icon { width:40px; height:40px; border-radius:14px; background:var(--service-bg); color:var(--service-color); }
 #view-all :is(.menu-services,.all-menu-content) .menu-service-icon svg { width:25px; height:25px; }
-#view-all .menu-service-copy { gap:4px; }
-#view-all :is(.menu-services,.all-menu-content) .menu-service-copy strong { font-size:16px; font-weight:550; }
-#view-all :is(.menu-services,.all-menu-content) .menu-service-copy small { font-size:12px; line-height:1.6; }
+#view-all .menu-service-copy { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+#view-all :is(.menu-services,.all-menu-content) .menu-service-copy strong { font-size:16px; font-weight:550; min-width:0; word-break:keep-all; overflow-wrap:anywhere; }
+#view-all :is(.menu-services,.all-menu-content) .menu-service-copy small { flex:0 1 48%; font-size:12px; line-height:1.6; font-weight:550; color:var(--menu-blue); text-align:right; word-break:keep-all; overflow-wrap:anywhere; }
 #view-all .all-menu-content>.lab-entry { border:0; border-radius:24px; background:var(--ui-card); margin:0 0 20px; padding:20px 22px; }
 #view-all .all-account-card { background:transparent; border:0; padding:0 8px; margin-bottom:8px; }
 #view-all .all-account-card summary { font-size:12px; min-height:44px; display:flex; align-items:center; }

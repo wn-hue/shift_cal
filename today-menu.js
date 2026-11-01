@@ -5,6 +5,22 @@
     const today = () => new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(Date.now() - 3 * 60 * 60 * 1000));
     let shownDate = '', selectedDate = null, requestId = 0;
     const pending = new Map();
+    let loadingTimer;
+    function loading(active, refreshing = false) {
+        clearTimeout(loadingTimer);
+        const indicator = $('today-menu-loading');
+        indicator.hidden = !active;
+        indicator.classList.toggle('is-refreshing', refreshing);
+        $('today-menu-status').classList.toggle('meal-status-loading', active);
+        if (!active) return;
+        indicator.querySelector('strong').textContent = refreshing ? '식단을 다시 확인하고 있어요' : '식단을 가져오고 있어요';
+        indicator.querySelector('small').textContent = '잠시만 기다려 주세요';
+        $('today-menu-status').textContent = indicator.querySelector('strong').textContent;
+        loadingTimer = setTimeout(() => {
+            indicator.querySelector('small').textContent = '식당 응답을 기다리고 있어요. 조금만 더 기다려 주세요.';
+            $('today-menu-status').textContent = '식당 응답을 기다리고 있어요. 조금만 더 기다려 주세요.';
+        }, 8000);
+    }
     const selected = () => selectedDate || today();
     const offset = date => Math.round((Date.parse(date)-Date.parse(today()))/86400000);
     const moveDate = (date, days) => new Date(Date.parse(date+'T12:00:00Z')+days*86400000).toISOString().slice(0,10);
@@ -125,6 +141,7 @@
         const date = selected();
         updateNavigation(date);
         const id = ++requestId;
+        loading(false);
         $('today-menu-refresh').disabled = false;
         $('today-menu-refresh').textContent = '새로고침';
         $('today-menu-refresh').setAttribute('aria-busy','false');
@@ -138,15 +155,15 @@
             }
         }
         if (shownDate !== date) {
-            const cards=$('today-menu-cards'),heights=[...cards.children].map(card=>card.getBoundingClientRect?.().height||240);
-            cards.replaceChildren();
-            for(let i=0;i<4;i++){const placeholder=node('div','meal-placeholder');placeholder.setAttribute('aria-hidden','true');placeholder.style.minHeight=Math.max(180,heights[i]||240)+'px';for(let line=0;line<4;line++)placeholder.appendChild(node('span'));cards.appendChild(placeholder);}
+            $('today-menu-cards').replaceChildren();
+            $('today-menu-note').hidden = true;
+            $('today-menu-checked').textContent = '';
         }
         const button = $('today-menu-refresh');
         button.disabled = true;
         button.setAttribute('aria-busy','true');
         button.textContent = '불러오는 중…';
-        $('today-menu-status').textContent = '식단을 불러오는 중이에요.';
+        loading(true, Boolean($('today-menu-cards').querySelector('.meal-card')));
         $('today-menu-panel').setAttribute('aria-busy','true');
         $('today-menu-empty').hidden = true;
         try {
@@ -160,6 +177,7 @@
             empty(error.name === 'TimeoutError' || error.name === 'AbortError' ? '응답이 늦어지고 있어요. 잠시 후 다시 시도해 주세요.' : error.message === 'Failed to fetch' ? '인터넷 연결을 확인한 뒤 다시 시도해 주세요.' : error.message);
         } finally {
             if (id !== requestId) return;
+            loading(false);
             button.disabled = false;
             button.setAttribute('aria-busy','false');
             button.textContent = '새로고침';

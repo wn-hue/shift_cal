@@ -2,6 +2,14 @@
   'use strict';
   if (location.origin !== 'https://h-lyart-ten.vercel.app') return;
   const send = (action, value) => window.webkit.messageHandlers.natbam.postMessage({action, value});
+  // Only direct bottom-tab interactions produce feedback, never programmatic navigation.
+  const isTabPress = event => event.isTrusted && event.target.closest?.('.bottom-nav .nav-item:not(:disabled)');
+  document.addEventListener('pointerdown', event => {
+    if (isTabPress(event)) send('prepareSelectionHaptic');
+  }, {capture: true, passive: true});
+  document.addEventListener('click', event => {
+    if (isTabPress(event)) send('selectionHaptic');
+  }, {capture: true});
   let previous = '', timer;
   function sync(force = false) {
     addMenu();
@@ -35,7 +43,7 @@
     button.type = 'button';
     button.className = 'life-entry';
     button.setAttribute('aria-label', '근무 알람');
-    button.innerHTML = '<span class="menu-service-icon" style="--service-color:#3182f6;--service-bg:#eaf2ff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M5 3 2 6m17-3 3 3M6 20l-1 2m13-2 1 2"/></svg></span><span class="menu-service-copy"><strong>근무 알람</strong><small>아이폰 알람 · 달력과 자동 연결</small></span><span class="menu-service-chevron" aria-hidden="true">›</span>';
+    button.innerHTML = '<span class="menu-service-icon" style="--service-color:#3182f6;--service-bg:#eaf2ff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M5 3 2 6m17-3 3 3M6 20l-1 2m13-2 1 2"/></svg></span><span class="menu-service-copy"><strong>근무 알람</strong><small>아이폰 알람 · 달력과 자동 연결</small></span>';
     button.addEventListener('click', () => { sync(true); send('alarms'); });
     section.append(button);
   }

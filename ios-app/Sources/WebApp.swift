@@ -1,5 +1,6 @@
 import SwiftUI
 import WebKit
+import UIKit
 
 @MainActor
 final class WebState: ObservableObject {
@@ -47,6 +48,7 @@ struct WebApp: UIViewRepresentable {
         let alarms: AlarmModel
         let state: WebState
         let login = AccountLogin()
+        private let selectionFeedback = UISelectionFeedbackGenerator()
         weak var webView: WKWebView?
         init(alarms: AlarmModel, state: WebState) { self.alarms = alarms; self.state = state }
         private func trusted(_ url: URL?) -> Bool { url?.scheme == "https" && url?.host == WebApp.home.host && (url?.port == nil || url?.port == 443) }
@@ -54,6 +56,12 @@ struct WebApp: UIViewRepresentable {
             guard message.frameInfo.isMainFrame, trusted(message.frameInfo.request.url), trusted(webView?.url),
                   let body = message.body as? [String: Any], let action = body["action"] as? String else { return }
             switch action {
+            case "prepareSelectionHaptic":
+                guard UIApplication.shared.applicationState == .active, webView?.window != nil else { return }
+                selectionFeedback.prepare()
+            case "selectionHaptic":
+                guard UIApplication.shared.applicationState == .active, webView?.window != nil else { return }
+                selectionFeedback.selectionChanged()
             case "alarms": alarms.showingSettings = true
             case "snapshot":
                 guard let value = body["value"], JSONSerialization.isValidJSONObject(value),
