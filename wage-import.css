@@ -85,3 +85,27 @@ body[data-pref-theme] #payroll-sms-dialog:not([data-guided=true])[open]{display:
 #payroll-sms-dialog .wage-seniority .wage-value{justify-content:flex-end}
 #payroll-sms-dialog .wage-seniority output{font-size:16px;font-weight:550;font-variant-numeric:tabular-nums;color:var(--ui-copy,#4e5968)}
 @media(max-width:360px){body[data-pref-theme] #payroll-sms-dialog .wage-legacy-row input{font-size:16px!important}#payroll-sms-dialog .wage-seniority{flex-direction:row;align-items:center}}
+
+/* SMS import is a compact review, with editing only when requested. */
+body[data-pref-theme] #payroll-sms-dialog[data-wage-confirming=true][open]{height:auto!important;max-height:var(--sheet-limit,88dvh)!important}
+#payroll-sms-dialog[data-wage-confirming=true] .wage-unified-body>:not(#wage-confirmation):not(#wage-import-review){display:none!important}
+#payroll-sms-dialog[data-wage-confirming=true] #wage-import-info{display:none!important}
+#wage-confirm-hourly{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#wage-confirm-hourly>div{display:flex;flex-direction:column;gap:8px;min-width:0;padding:16px 14px;background:var(--ui-field,#f2f4f6);border-radius:18px}
+#wage-confirm-hourly span{font-size:13px;color:var(--ui-copy,#4e5968)}
+#wage-confirm-hourly strong{font-size:22px;letter-spacing:-.7px;line-height:1.4;color:var(--ui-ink,#191f28);font-variant-numeric:tabular-nums}
+#wage-confirm-hourly small,#wage-confirm-allowances small{font-size:11px;font-weight:400;letter-spacing:0;color:var(--ui-muted,#6b7684)}
+#wage-confirm-hourly strong small,#wage-confirm-allowances dd small{margin-left:3px}
+#wage-confirm-allowances{margin:14px 0 0;padding:0 2px}
+#wage-confirm-allowances>div{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;border-bottom:1px solid var(--ui-line,#f2f4f6)}
+#wage-confirm-allowances dt{font-size:14px;color:var(--ui-copy,#4e5968)}
+#wage-confirm-allowances dt small{display:block;margin-top:3px}
+#wage-confirm-allowances dd{margin:0;font-size:17px;font-weight:600;white-space:nowrap;color:var(--ui-ink,#191f28);font-variant-numeric:tabular-nums}
+#wage-confirm-note,.wage-confirm-privacy{margin:12px 0 0;font-size:12px;color:var(--ui-muted,#6b7684);line-height:1.6;word-break:keep-all}
+#payroll-sms-dialog[data-wage-confirming=true] .sms-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+#payroll-sms-dialog[data-wage-confirming=true] #wage-manual-status{grid-column:1/-1}
+body[data-pref-theme] #wage-confirm-edit{border:0;border-radius:16px;background:var(--ui-field,#f2f4f6);color:var(--ui-copy,#4e5968);font:inherit;font-size:14px;font-weight:600;min-height:54px;padding:12px 8px}
+body[data-pref-theme] #payroll-sms-dialog[data-wage-confirming=true] #payroll-sms-apply{font-size:15px;padding:12px 8px;min-height:54px}
+body[data-pref-theme] #payroll-sms-dialog #wage-seniority-reset{padding:2px 0;min-height:28px;border:0;background:none;color:var(--ui-blue,#3182f6);font-size:11px;text-align:left;box-shadow:none}
+#payroll-sms-dialog .wage-seniority .wage-value{max-width:48%}
+@media(max-width:360px){#wage-confirm-hourly>div{padding:14px 11px}#wage-confirm-hourly strong{font-size:20px}}

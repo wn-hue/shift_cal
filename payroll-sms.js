@@ -11,6 +11,7 @@
             ['baseHourly', /^(?:기본시급|기준 기본시급)/, 'wage'],
             ['ordinaryHourly', /^(?:통상시급|통상임금\(시급\))/, 'wage'],
             ['baseMonthly', /^(?:기본급|기본)(?=\s|:|$)/, 'reference'],
+            ['seniorityPayOverride', /^(?:근속수당|근속)/, 'seniority'],
             ['duty', /^(?:직책수당|직책)/, 'fixed'],
             ['qualification', /^(?:자격수당|자격)/, 'fixed'],
             ['job', /^(?:직무수당|직무)/, 'fixed'],
@@ -46,11 +47,12 @@
             }
             for (const [key, pattern, kind] of definitions) {
                 const m = line.match(pattern);
-                if (!m || (['pay','fixed','reference'].includes(kind) && section === 'deduct')) continue;
+                if (!m || (['pay','fixed','reference','seniority'].includes(kind) && section === 'deduct')) continue;
                 if (kind === 'fixed') seenAllowances.add('dutyPay');
                 const rest = line.slice(m[0].length).replace(/^\s*[:：]\s*/, '');
                 const value = amount(rest.trim() ? rest : (lines[i + 1] || ''));
                 if(kind==='fixed'&&value===null)unreadableAllowance=true;
+                if(kind==='seniority'&&value===null)warnings.push('근속수당 금액을 인식하지 못했어요. 기존 금액을 확인해 주세요.');
                 if (value !== null) { assign(kind === 'deduct' ? deductions : kind === 'fixed' ? fixedAllowances : kind === 'reference' ? references : wages, key, value);if(kind==='deduct' && /법정\s*요율/.test(line))statutory.add(key); }
             }
         }

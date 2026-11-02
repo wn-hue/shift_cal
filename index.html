@@ -957,7 +957,7 @@
 <link rel="stylesheet" href="./commute-page.css?v=13">
 <link rel="stylesheet" href="./lost-found-page.css?v=5">
 <link rel="stylesheet" href="./parking-sheet.css?v=5">
-<link rel="stylesheet" href="./wage-import.css?v=4">
+<link rel="stylesheet" href="./wage-import.css?v=sms-confirm-1">
 <link rel="stylesheet" href="./test-theme-palette.css?v=11">
 <link rel="stylesheet" href="./experimental-themes.css?v=5">
 <link rel="stylesheet" href="./beige-round-theme.css?v=1">
@@ -1441,6 +1441,7 @@
             <button type="button" id="payroll-sms-close" class="sms-close-btn" aria-label="시급 설정 닫기">×</button>
         </div>
         <div class="wage-unified-body">
+        <section id="wage-confirmation" aria-label="인식한 시급과 수당" hidden><div id="wage-confirm-hourly"></div><dl id="wage-confirm-allowances"></dl><p id="wage-confirm-note"></p><p class="wage-confirm-privacy">문자 원문은 저장하지 않아요.</p></section>
         <p id="guided-wage-summary" class="guided-wage-summary" hidden></p>
         <div id="guided-wage-choice" class="guided-wage-choice" role="group" aria-label="추가수당 여부" hidden><button type="button" data-guided-allowance="yes" aria-pressed="false"><strong>있음</strong><span>수당 금액을 직접 입력할게요</span><i aria-hidden="true">✓</i></button><button type="button" data-guided-allowance="no" aria-pressed="false"><strong>없음</strong><span>직접 추가할 수당이 없어요</span><i aria-hidden="true">✓</i></button></div>
         <section id="guided-allowance-entry" aria-label="고정수당 입력" hidden>
@@ -1460,15 +1461,15 @@
         </div>
         <section id="wage-conversion" hidden aria-label="기본급에서 시급 환산"><p id="wage-conversion-description"></p><label for="wage-conversion-hours">환산 기준시간 <input id="wage-conversion-hours" type="number" min="1" max="744" step="0.01" value="209"> 시간</label><p id="wage-conversion-result" role="status"></p><button type="button" id="wage-conversion-use">확인하고 기본시급에 넣기</button><small>회사 기준시간을 확인해 주세요. 통상시급은 별도로 입력해요.</small></section>
         <div class="wage-allowance-heading"><span>월 고정수당</span><small>없으면 0원</small></div>
-        <div class="wage-mini-cards"><div class="wage-mini-card wage-seniority"><span>근속수당<small>입사일 기준 자동 계산</small></span><span class="wage-value"><output id="wage-seniority" aria-label="근속수당">0</output><small>원</small></span></div><label class="wage-mini-card" for="wage-duty"><span>직책수당</span><span class="wage-value"><input id="wage-duty" inputmode="numeric" type="text" maxlength="13" autocomplete="off" value="0"><small>원</small></span></label><label class="wage-mini-card" for="wage-qualification"><span>자격수당</span><span class="wage-value"><input id="wage-qualification" inputmode="numeric" type="text" maxlength="13" autocomplete="off" value="0"><small>원</small></span></label><label class="wage-mini-card" for="wage-family"><span>가족수당</span><span class="wage-value"><input id="wage-family" inputmode="numeric" type="text" maxlength="13" autocomplete="off" value="0"><small>원</small></span></label><label class="wage-mini-card" for="wage-job"><span>직무수당</span><span class="wage-value"><input id="wage-job" inputmode="numeric" type="text" maxlength="13" autocomplete="off" value="0"><small>원</small></span></label></div>
+        <div class="wage-mini-cards"><div class="wage-mini-card wage-seniority"><span>근속수당<small id="wage-seniority-source">입사일 기준 자동 계산</small><button type="button" id="wage-seniority-reset" hidden>자동 계산으로</button></span><span class="wage-value"><input id="wage-seniority" aria-label="근속수당" type="text" inputmode="numeric" maxlength="13" autocomplete="off" value="0"><small>원</small></span></div><label class="wage-mini-card" for="wage-duty"><span>직책수당</span><span class="wage-value"><input id="wage-duty" inputmode="numeric" type="text" maxlength="13" autocomplete="off" value="0"><small>원</small></span></label><label class="wage-mini-card" for="wage-qualification"><span>자격수당</span><span class="wage-value"><input id="wage-qualification" inputmode="numeric" type="text" maxlength="13" autocomplete="off" value="0"><small>원</small></span></label><label class="wage-mini-card" for="wage-family"><span>가족수당</span><span class="wage-value"><input id="wage-family" inputmode="numeric" type="text" maxlength="13" autocomplete="off" value="0"><small>원</small></span></label><label class="wage-mini-card" for="wage-job"><span>직무수당</span><span class="wage-value"><input id="wage-job" inputmode="numeric" type="text" maxlength="13" autocomplete="off" value="0"><small>원</small></span></label></div>
         <label id="wage-legacy-row" class="wage-legacy-row" for="wage-legacy" hidden>기존 고정수당 <span class="wage-value"><input id="wage-legacy" type="text" inputmode="numeric" maxlength="13" value="0"><small>원</small></span><small>기존에 합계만 저장된 금액이에요. 수당을 나누어 입력한다면 이 금액도 조정해 주세요.</small></label>
         <details id="wage-bonus-input" class="wage-bonus-input"><summary><span>상여금 공제 기준</span><small>선택</small></summary><div class="wage-bonus-body"><p class="sms-privacy">미등록 시 기준 공제율 약 2.41%로 추정해요. 본인 문자를 등록하면 개인 공제율을 사용해요.</p><button type="button" class="wage-paste-button" data-wage-paste="payroll-bonus-sms-text">복사한 상여 문자로 채우기</button><label for="payroll-bonus-sms-text">상여 문자 직접 붙여넣기</label><textarea id="payroll-bonus-sms-text" rows="2" maxlength="30000" placeholder="여기를 길게 눌러 붙여넣어 주세요"></textarea><p id="wage-bonus-status" role="status"></p></div></details>
         <details id="wage-import-review" class="wage-import-review" hidden><summary>공제 기준과 인식 안내</summary><div id="payroll-sms-preview" class="sms-preview"></div></details>
-            <details id="wage-import-help" class="sms-help wage-import-help"><summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span><strong>문자 원문은 저장하지 않아요</strong><small>인식 후 바로 비워져요. 상세 안내</small></span></summary><div class="wage-help-body"><p>이름·사번·계좌번호는 제외해 주세요. 원문은 기기에서만 인식하고 인식 시 입력창을 바로 비웁니다. 저장 항목은 시급·통상시급·수당별 금액과 합계·공제 기준입니다. 급여 법정요율 항목이 인식되면 월 보험료·기타 월 공제액과 세금·고용 비율을 저장합니다. 지급·공제 합계는 저장하지 않습니다. 로그인하여 동기화를 연결하면 저장 항목도 본인 계정에 전송됩니다. <a href="./privacy.html">저장 안내</a></p><h3>어떤 항목이 적용되나요?</h3><p>급여문자 확인에서 시급과 자격·직무·가족·직책 줄을 붙여넣으세요. 인식한 네 수당의 합계를 고정수당으로 적용합니다. 인식한 금액은 입력 카드에서 바로 수정할 수 있습니다. 일부 수당만 붙여넣으면 나머지는 유지됩니다. 공제율은 선택 사항이며 지급 합계·공제 합계 두 줄로 계산합니다. 월 기본급만 인식되면 환산 기준시간을 확인해 기본시급으로 나눌 수 있습니다. 통상시급은 별도로 확인해 주세요. 상여 문자에서는 상여금 공제율만 적용하며 시급·수당은 바꾸지 않습니다. 문자에서 인식하지 않은 시급은 현재 입력값을 유지합니다. 급여의 연금·건강·고용에 법정요율이 표시되고 세금 내역이 있으면, 연금·건강(별도 요양 포함)은 문자 월액으로 유지하고 고용은 문자와 일치하는 0.9% 또는 문자 비율로 추정합니다. 소득세·지방소득세는 문자 비율로 추정합니다. 기타 공제는 문자 월액으로 유지합니다. 해당 내역이 없으면 공제 합계 ÷ 지급 합계로 추정합니다. 상여금은 본인의 상여 문자 공제율을 우선 사용하며, 미등록 시 기준 명세서 공제율 약 2.41%를 적용합니다. 소득세·지방소득세·고용보험을 포함한 비율이며 급여 월 보험료를 다시 차감하지 않습니다. 보험료 정산·비과세·가족 수 변경 시 새 문자를 적용하세요. 비워둔 문자 칸의 기존 공제율은 변경하지 않습니다. 저장된 공제율이 없으면 월 급여는 기준 명세서의 세금·보험료 공제율 약 18.09%, 상여금은 기준 명세서 공제율 약 2.41%로 세후 금액을 추정합니다. 이는 개인별 세금·보험료를 정확히 계산한 값이 아닙니다. 상여 문자만으로 급여 공제율을 추정하지 않습니다. 상여 지급액·근무일수 계산은 기존 규칙을 유지하며 추정 공제액은 실제 세액과 다를 수 있습니다.</p></div></details>
+            <details id="wage-import-help" class="sms-help wage-import-help"><summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span><strong>문자 원문은 저장하지 않아요</strong><small>인식 후 바로 비워져요. 상세 안내</small></span></summary><div class="wage-help-body"><p>이름·사번·계좌번호는 제외해 주세요. 원문은 기기에서만 인식하고 인식 시 입력창을 바로 비웁니다. 저장 항목은 시급·통상시급·수당별 금액과 합계·공제 기준입니다. 급여 법정요율 항목이 인식되면 월 보험료·기타 월 공제액과 세금·고용 비율을 저장합니다. 지급·공제 합계는 저장하지 않습니다. 로그인하여 동기화를 연결하면 저장 항목도 본인 계정에 전송됩니다. <a href="./privacy.html">저장 안내</a></p><h3>어떤 항목이 적용되나요?</h3><p>급여문자의 기본시급·통상시급과 근속·직책·자격·직무·가족 수당을 각각의 이름으로 확인하고 저장해요. 근속수당은 문자 금액을 우선 적용하며 자동 계산액과 중복해서 더하지 않아요. 금액이 다르면 ‘아니요, 수정할게요’에서 고칠 수 있어요. 일부 수당만 붙여넣으면 나머지는 유지됩니다. 공제율은 선택 사항이며 지급 합계·공제 합계 두 줄로 계산합니다. 월 기본급만 인식되면 환산 기준시간을 확인해 기본시급으로 나눌 수 있습니다. 통상시급은 별도로 확인해 주세요. 상여 문자에서는 상여금 공제율만 적용하며 시급·수당은 바꾸지 않습니다. 문자에서 인식하지 않은 시급은 현재 입력값을 유지합니다. 급여의 연금·건강·고용에 법정요율이 표시되고 세금 내역이 있으면, 연금·건강(별도 요양 포함)은 문자 월액으로 유지하고 고용은 문자와 일치하는 0.9% 또는 문자 비율로 추정합니다. 소득세·지방소득세는 문자 비율로 추정합니다. 기타 공제는 문자 월액으로 유지합니다. 해당 내역이 없으면 공제 합계 ÷ 지급 합계로 추정합니다. 상여금은 본인의 상여 문자 공제율을 우선 사용하며, 미등록 시 기준 명세서 공제율 약 2.41%를 적용합니다. 소득세·지방소득세·고용보험을 포함한 비율이며 급여 월 보험료를 다시 차감하지 않습니다. 보험료 정산·비과세·가족 수 변경 시 새 문자를 적용하세요. 비워둔 문자 칸의 기존 공제율은 변경하지 않습니다. 저장된 공제율이 없으면 월 급여는 기준 명세서의 세금·보험료 공제율 약 18.09%, 상여금은 기준 명세서 공제율 약 2.41%로 세후 금액을 추정합니다. 이는 개인별 세금·보험료를 정확히 계산한 값이 아닙니다. 상여 문자만으로 급여 공제율을 추정하지 않습니다. 상여 지급액·근무일수 계산은 기존 규칙을 유지하며 추정 공제액은 실제 세액과 다를 수 있습니다.</p></div></details>
         </div>
         <button type="button" id="guided-wage-import" class="guided-wage-import" hidden>급여 문자로 채우기 <span>선택</span></button>
         </div>
-        <div class="sms-actions"><p id="wage-manual-status" class="sms-status" role="alert"></p><button type="button" id="payroll-sms-apply" class="sms-primary-btn">설정 완료하기</button></div>
+        <div class="sms-actions"><p id="wage-manual-status" class="sms-status" role="alert"></p><button type="button" id="wage-confirm-edit" hidden>아니요, 수정할게요</button><button type="button" id="payroll-sms-apply" class="sms-primary-btn">설정 완료하기</button></div>
     </dialog>
 
     <!-- 모달: 연/월 선택 피커 (캘린더 & 급여계산기 공용) -->
@@ -2570,7 +2571,7 @@
 
             const rawBasicPay = Math.trunc(B7 * baseHours);
             const rawDutyPay = config.dutyPay;
-            const rawSeniorityPay = ShiftPlannerCore.seniorityPay((config.hireDate||'').slice(0,7), `${currentPayDate.getFullYear()}-${String(currentPayDate.getMonth()+1).padStart(2,'0')}-15`);
+            const rawSeniorityPay = ShiftPlannerCore.resolveSeniorityPay(config, `${currentPayDate.getFullYear()}-${String(currentPayDate.getMonth()+1).padStart(2,'0')}-15`);
             document.getElementById('input-seniority-pay').value=rawSeniorityPay.toLocaleString('ko-KR')+'원';
             document.getElementById('seniority-pay-setting').hidden=!(rawSeniorityPay>0);
             document.getElementById('wage-allowance-settings').hidden=!(rawDutyPay>0||rawSeniorityPay>0);
@@ -2838,7 +2839,8 @@
             document.getElementById('input-base-hourly').value = fmt(config.baseHourly) + '원';
             document.getElementById('input-ordinary-hourly').value = fmt(config.ordinaryHourly) + '원';
             document.getElementById('input-duty-pay').value = fmt(config.dutyPay) + '원';
-            document.getElementById('input-seniority-pay').value = fmt(config.seniorityPay) + '원';
+            const savedSeniority = ShiftPlannerCore.resolveSeniorityPay(config, `${currentPayDate.getFullYear()}-${String(currentPayDate.getMonth()+1).padStart(2,'0')}-15`);
+            document.getElementById('input-seniority-pay').value = fmt(savedSeniority) + '원';
             const allowanceKeys = ['qualification', 'job', 'family', 'duty', 'legacy'];
             const allowanceParts = config.fixedAllowances;
             const hasAllowanceParts = allowanceParts && allowanceKeys.every(key =>
@@ -2851,9 +2853,9 @@
                 document.getElementById('display-allowance-' + key).value = fmt(amount) + '원';
             }
             document.getElementById('duty-pay-setting').hidden = hasAllowanceParts || !(config.dutyPay > 0);
-            document.getElementById('seniority-pay-setting').hidden = !(config.seniorityPay > 0);
-            document.getElementById('wage-allowance-settings').hidden = !(config.dutyPay > 0 || config.seniorityPay > 0);
-            document.getElementById('wage-settings-title').textContent = (config.dutyPay > 0 || config.seniorityPay > 0) ? '시급 · 수당' : '시급';
+            document.getElementById('seniority-pay-setting').hidden = !(savedSeniority > 0);
+            document.getElementById('wage-allowance-settings').hidden = !(config.dutyPay > 0 || savedSeniority > 0);
+            document.getElementById('wage-settings-title').textContent = (config.dutyPay > 0 || savedSeniority > 0) ? '시급 · 수당' : '시급';
             document.getElementById('inp-holiday-bonus').value = config.holidayBonus || 0;
             config.applyRetroPay = !!config.hireDate && parseInt(config.hireDate.slice(0,4),10) < 2020;
         }
@@ -2862,6 +2864,11 @@
             const next = { ...config };
             for (const key of ['baseHourly', 'ordinaryHourly', 'dutyPay']) {
                 if (Number.isSafeInteger(wages[key]) && wages[key] >= 0) next[key] = wages[key];
+            }
+            if(Object.hasOwn(wages,'seniorityPayOverride')) {
+                if(wages.seniorityPayOverride===null)delete next.seniorityPayOverride;
+                else if(Number.isSafeInteger(wages.seniorityPayOverride)&&wages.seniorityPayOverride>=0&&wages.seniorityPayOverride<=1000000000)next.seniorityPayOverride=wages.seniorityPayOverride;
+                else throw Error('근속수당 금액을 확인해 주세요.');
             }
             if(wages.fixedAllowances) {
                 const amounts=wages.fixedAllowances, keys=['qualification','job','family','duty','legacy'];
@@ -2984,12 +2991,12 @@
             if (!window.ShiftOnboarding?.needsSetup()) checkPayslipPopup();
         };
     </script>
-    <script src="./payroll-sms.js?v=unified-monthly-4"></script>
-    <script src="./payroll-estimate.js?v=unified-wage-20"></script>
+    <script src="./payroll-sms.js?v=sms-confirm-1"></script>
+    <script src="./payroll-estimate.js?v=sms-confirm-1"></script>
     <script src="./calendar-integration.js?v=6"></script>
     <script src="./schedule-share.js?v=3"></script>
     <script src="./google-sync-core.js?v=6"></script>
-    <script src="./account-data-core.js?v=wage-parts-13"></script>
+    <script src="./account-data-core.js?v=sms-confirm-1"></script>
     <script src="./app-motion.js?v=2"></script>
     <script src="./calendar-ui.js?v=groups-57"></script>
     <script src="./group-schedule.js?v=8"></script>
@@ -3003,7 +3010,7 @@
     <script src="./settings-ui.js?v=10"></script>
     <script src="./account-sync.js?v=privacy-14"></script>
     <script src="./google-sync.js?v=12"></script>
-<script src="planner-core.js?v=8"></script><script src="shift-tools.js?v=designs-7"></script><script src="work-editor.js?v=4"></script>
+<script src="planner-core.js?v=sms-confirm-1"></script><script src="shift-tools.js?v=designs-7"></script><script src="work-editor.js?v=4"></script>
 <script src="./external-calendars.js?v=3"></script>
 
     <dialog id="today-weather" class="weather-card sms-dialog" aria-labelledby="weather-dialog-title">
@@ -3076,7 +3083,7 @@
 <script src="./onboarding-date-picker.js?v=1"></script>
 <script src="./onboarding-flow-motion.js?v=2"></script>
 <script src="./onboarding-story.js?v=2"></script>
-<script src="./onboarding-allowances.js?v=1"></script>
+<script src="./onboarding-allowances.js?v=sms-confirm-1"></script>
 <script src="./onboarding-wage.js?v=4"></script>
 <script src="./onboarding.js?v=7"></script>
 <script src="./payslip-alert.js?v=3"></script>
@@ -3091,7 +3098,7 @@
 <script src="./memo-composer.js?v=12"></script>
 <script src="./settings-options.js?v=2"></script>
 <script src="./wage-import-ui.js?v=3"></script>
-<script src="./app-i18n-data.js?v=35"></script>
+<script src="./app-i18n-data.js?v=sms-confirm-1"></script>
 <script src="./app-i18n-zh.js?v=3"></script>
 <script src="./app-i18n.js?v=9"></script>
 <script src="./app-currency.js?v=2"></script>

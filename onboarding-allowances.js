@@ -34,7 +34,7 @@
    list.append(item);
   }
   options();
-  const seniority=$('wage-seniority').textContent;
+  const seniority=$('wage-seniority').value;
   const note=$('guided-allowance-seniority');note.hidden=!(Number(seniority.replace(/,/g,''))>0);note.textContent='근속수당 '+seniority+'원은 입사일에 따라 자동 반영돼요.';
  }
  function refresh(){

@@ -103,3 +103,8 @@ for(const hire of ['2017-01-01','2018-01-01','2020-01-01'])for(const type of ['N
  assert.equal(C.gross(C.counts(days),cfg,period.end),amount('hero-gross-pay'),'month total matches the preview after each OT/leave change');
 }
 console.log('PASS 1,827 payroll-date boundaries and independently checked night OT/half-leave deductions');
+
+const experienced={...cfg,hireDate:'2015-01-01',dutyPay:70000};
+const automatic=C.payments(C.counts([]),experienced,'2026-10-15');
+const imported=C.payments(C.counts([]),{...experienced,seniorityPayOverride:70000},'2026-10-15');assert.deepEqual(imported,automatic,'Imported seniority replaces automatic seniority, never adds it twice');
+const zero=C.payments(C.counts([]),{...experienced,seniorityPayOverride:0},'2026-10-15');assert.equal(automatic.regular-zero.regular,70000);assert.equal(automatic.bonus-zero.bonus,70000);

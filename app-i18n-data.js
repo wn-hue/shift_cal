@@ -1,5 +1,22 @@
 /* UI-only translations. User notes, event names, meals and source documents stay untouched. */
 window.AppTranslations=Object.fromEntries(`
+시급과 수당이 맞나요?|Are these amounts correct?|这些时薪和津贴金额正确吗？|時給と手当は正しいですか？
+금액을 확인하면 설정이 끝나요.|Confirm the amounts to finish setup.|确认金额后即可完成设置。|金額を確認すると設定が完了します。
+예, 맞아요|Yes, save|是的，保存|はい、保存する
+아니요, 수정할게요|No, edit|不，修改|いいえ、修正する
+시급과 수당 수정|Edit pay and allowances|修改时薪和津贴|時給と手当の修正
+다른 금액만 고친 뒤 저장해 주세요.|Edit any incorrect amounts, then save.|请修改有误的金额后保存。|異なる金額だけ修正して保存してください。
+인식한 시급과 수당|Imported pay and allowances|识别的时薪和津贴|読み取った時給と手当
+문자에서 인식|From your message|从短信识别|メッセージから取得
+기존 입력 유지|Existing amount kept|保留已输入的金额|入力済みの金額を維持
+확인 필요|Needs review|需要确认|確認が必要
+수정에서 입력해 주세요|Enter when editing|请在修改时输入|修正画面で入力してください
+인식하지 못한 시급은 ‘아니요, 수정할게요’에서 입력해 주세요.|Choose “No, edit” to enter the missing hourly rate.|请选择“不，修改”输入未识别的时薪。|「いいえ、修正する」で未取得の時給を入力してください。
+월 수당 금액이에요. 틀린 항목만 수정할 수 있어요.|Monthly allowances. You can edit any incorrect item.|这是每月津贴金额，可仅修改有误的项目。|毎月の手当額です。異なる項目だけ修正できます。
+문자 원문은 저장하지 않아요.|Your original message is not saved.|不保存短信原文。|メッセージの原文は保存しません。
+문자 또는 직접 입력한 금액|Imported or manually entered|短信或手动输入的金额|メッセージまたは手入力の金額
+자동 계산으로|Use automatic calculation|使用自动计算|自動計算に戻す
+
 고정수당을 알려주세요|Tell us your fixed allowances|请填写固定津贴|固定手当を教えてください
 수당 종류를 고르고 매월 받는 금액을 입력해 주세요.|Choose an allowance and enter the amount you receive each month.|选择津贴种类，输入每月领取的金额。|手当の種類を選び、毎月受け取る金額を入力してください。
 수당 선택|Choose allowance|选择津贴|手当を選択

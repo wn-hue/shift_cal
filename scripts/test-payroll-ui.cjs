@@ -133,11 +133,11 @@ saved.set('shift_payroll_sms_reference_v1',JSON.stringify({rate:.15}));
 saved.set('shift_bonus_sms_reference_v1',JSON.stringify({rate:.05}));
 ctx.PayrollEstimate.reloadReference();ctx.PayrollEstimate.open();
 const preserved=evaluate('JSON.stringify(config)');
-for(const value of ['', '0','-1','12.5','1,23','1000000001','1e4']){
+for(const value of ['-1','12.5','1,23','1000000001','1e4']){
  elem('wage-manual-base').value=value;elem('wage-manual-ordinary').value='14,482';click('payroll-sms-apply');
  assert.equal(evaluate('JSON.stringify(config)'),preserved);assert.match(elem('wage-manual-status').textContent,/기본시급/);
 }
-elem('wage-manual-base').value='11,050';elem('wage-manual-ordinary').value='';click('payroll-sms-apply');
+elem('wage-manual-base').value='11,050';elem('wage-manual-ordinary').value='-1';click('payroll-sms-apply');
 assert.equal(evaluate('JSON.stringify(config)'),preserved);assert.match(elem('wage-manual-status').textContent,/통상시급/);
 elem('wage-manual-ordinary').value='14482';click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),11050);assert.equal(evaluate('config.ordinaryHourly'),14482);
@@ -153,7 +153,7 @@ console.log('PASS manual wage modes, integer validation, preserved allowances/da
 // One form retains individual amounts and changes only fields present in a partial import.
 ctx.PayrollEstimate.open();ctx.PayrollEstimate.importText('salary','자격 10,000\n직무 20,000\n가족 0\n직책 0');
 assert.equal(elem('wage-legacy').value,'0');assert.equal(elem('payroll-sms-text').value,'');
-elem('wage-job').value='25000';click('payroll-sms-apply');assert.equal(evaluate('config.dutyPay'),35000);
+click('wage-confirm-edit');elem('wage-job').value='25000';click('payroll-sms-apply');assert.equal(evaluate('config.dutyPay'),35000);
 ctx.PayrollEstimate.open();ctx.PayrollEstimate.importText('salary','직무 30,000');click('payroll-sms-apply');assert.equal(evaluate('config.dutyPay'),40000);
 ctx.PayrollEstimate.open();ctx.PayrollEstimate.importText('salary','기본급 2,156,880');
 click('payroll-sms-apply');assert.match(elem('wage-manual-status').textContent,/환산/);assert.equal(evaluate('config.baseHourly'),11050);
@@ -175,3 +175,10 @@ for(const k of ['qualification','job','family','duty','legacy'])assert.equal(ele
 evaluate('applyPayrollStatement({dutyPay:0})');
 assert.equal(elem('duty-pay-setting').hidden,true);
 console.log('PASS only paid allowance names and amounts, neutral legacy total and zero allowance hiding');
+
+ctx.PayrollEstimate.open();ctx.PayrollEstimate.importText('salary','기본시급 11050\n통상시급 14482\n지급내역\n직책 70000\n근속 70000\n소계 3000000');
+assert.equal(elem('wage-confirmation').hidden,false);assert.match(elem('wage-confirm-allowances').innerHTML,/근속수당/);assert.match(elem('wage-confirm-allowances').innerHTML,/직책수당/);
+click('payroll-sms-apply');assert.equal(evaluate('config.seniorityPayOverride'),70000);assert.equal(evaluate('config.dutyPay'),70000);assert.equal(elem('display-allowance-duty').value,'70,000원');assert.equal(elem('input-seniority-pay').value,'70,000원');assert.equal(elem('duty-pay-setting').hidden,true);
+ctx.PayrollEstimate.open();ctx.PayrollEstimate.importText('salary','근속 0');click('payroll-sms-apply');assert.equal(evaluate('config.seniorityPayOverride'),0);assert.equal(elem('tr-seniority-pay').hidden,true);
+ctx.PayrollEstimate.open();click('wage-seniority-reset');click('payroll-sms-apply');assert.equal(evaluate('Object.hasOwn(config,"seniorityPayOverride")'),false);
+console.log('PASS confirmed named allowance save, explicit zero and resetting automatic seniority');

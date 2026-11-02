@@ -133,3 +133,6 @@ for(const id of ['soju','beer','kimchi-stew','pork-belly','chicken','gukbap'])as
 assert.throws(()=>stickers({'2026-02-30':'soju'}));assert.throws(()=>stickers({'2026-10-03':'<script>'}));assert.throws(()=>stickers({'2026-10-03':['beer']}));
 assert.deepEqual(C.merge(stickers({}),stickers({'2026-10-03':'soju'}),stickers({'2026-10-04':'beer'})).data.shift_day_stickers,{'2026-10-03':'soju','2026-10-04':'beer'});
 assert.deepEqual(C.merge(stickers({'2026-10-03':'soju'}),stickers({}),stickers({'2026-10-03':'soju','2026-10-04':'beer'})).data.shift_day_stickers,{'2026-10-04':'beer'});
+
+for(const n of[0,70000]){const data=C.normalize({shift_salary_config_master:{seniorityPayOverride:n}});assert.equal(data.shift_salary_config_master.seniorityPayOverride,n);assert(C.meaningful(data));}
+for(const n of[-1,1.5,1000000001,'70000',null])assert.throws(()=>C.normalize({shift_salary_config_master:{seniorityPayOverride:n}}));

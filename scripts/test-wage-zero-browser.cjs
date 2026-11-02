@@ -7,13 +7,13 @@ const assert=require('node:assert/strict'),{webkit,chromium}=require('playwright
  await p.addInitScript(()=>{if(localStorage.getItem('shift_active_group'))return;localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_onboarding_v1','{"status":"existing"}');localStorage.setItem('shift_salary_config_master',JSON.stringify({hireDate:'2015-06-16',baseHourly:11050,ordinaryHourly:14482,dutyPay:70000,fixedAllowances:{qualification:0,job:0,family:0,duty:70000,legacy:0}}));});
  await p.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await p.goto(process.env.TEST_URL||'http://127.0.0.1:8773');
  const open=()=>p.evaluate(()=>PayrollEstimate.open());
- const save=async()=>{await p.locator('#payroll-sms-apply').click();await p.waitForFunction(()=>!document.getElementById('payroll-sms-dialog').open);};
+ const save=async()=>{await p.locator('#payroll-sms-apply').click();await p.waitForFunction(()=>!document.getElementById('payroll-sms-dialog').open).catch(async error=>{console.error(await p.evaluate(()=>({status:document.getElementById('wage-manual-status').textContent,dataset:{...document.getElementById('payroll-sms-dialog').dataset},config})),errors);throw error;});};
  await open();await p.locator('#wage-manual-base').fill('');await p.locator('#wage-duty').fill('');await save();
  assert.deepEqual(await p.evaluate(()=>[config.baseHourly,config.ordinaryHourly,config.dutyPay]),[0,14482,0]);
  await open();assert.equal(await p.locator('#wage-manual-base').inputValue(),'0');assert.equal(await p.locator('#wage-duty').inputValue(),'0');
  // Importing a deduction profile must not make explicitly cleared hourly wages survive.
  await p.evaluate(()=>PayrollEstimate.importText('salary','기본시급 11,050\n통상시급 14,482\n지급내역\n소계(ⓐ) 1,000,000\n공제내역\n소계(ⓑ) 100,000'));
- await p.locator('#wage-manual-base').fill('');await p.locator('#wage-manual-ordinary').fill('');
+ await p.locator('#wage-confirm-edit').click();await p.locator('#wage-manual-base').fill('');await p.locator('#wage-manual-ordinary').fill('');
  for(const name of ['qualification','job','family','duty'])await p.locator('#wage-'+name).fill('');
  await save();assert.deepEqual(await p.evaluate(()=>[config.baseHourly,config.ordinaryHourly,config.dutyPay]),[0,0,0]);
  assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('shift_payroll_sms_reference_v1')).rate),.1);

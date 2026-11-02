@@ -49,9 +49,9 @@ async function checkKeyboard(p,id,width){
  const p=await setup(browser);await p.locator('#onboarding-wage-import').click();assert.equal(await stage(p),'import');
  await p.locator('#wage-paste-fallback>summary').click();await p.locator('#payroll-sms-text').fill('성명 PRIVATE_GUIDED\n기본시급 11050\n통상시급 14482\n직무 70000\n지급내역\n소계(ⓐ) 1000000\n공제내역\n소계(ⓑ) 100000');
  assert.equal(await p.locator('#payroll-sms-text').inputValue(),'');assert.equal(await p.evaluate(()=>JSON.stringify(localStorage).includes('PRIVATE_GUIDED')),false);
- await next(p);assert.equal(await stage(p),'base');await next(p);await next(p);assert.equal(await stage(p),'choice');assert.equal(await p.locator('#payroll-sms-apply').textContent(),'다음');
- await p.locator('[data-guided-allowance=no]').click();await next(p);await p.waitForFunction(()=>!document.getElementById('onboarding-dialog').open);
- assert.deepEqual(await p.evaluate(()=>[config.baseHourly,config.ordinaryHourly,config.dutyPay,JSON.parse(localStorage.getItem('shift_payroll_sms_reference_v1')).rate,savedCount]),[11050,14482,0,.1,1]);await p.close();
+ assert(await p.locator('#wage-confirmation').isVisible());assert.equal(await p.locator('#payroll-sms-apply').textContent(),'예, 맞아요');
+ await next(p);await p.waitForFunction(()=>!document.getElementById('onboarding-dialog').open);
+ assert.deepEqual(await p.evaluate(()=>[config.baseHourly,config.ordinaryHourly,config.dutyPay,JSON.parse(localStorage.getItem('shift_payroll_sms_reference_v1')).rate,savedCount]),[11050,14482,70000,.1,1]);await p.close();
  const cancelled=await setup(browser);await cancelled.locator('#onboarding-next').click();await cancelled.locator('#wage-manual-base').fill('12345');await cancelled.locator('#guided-wage-import').click();await cancelled.locator('#wage-fill').click();await cancelled.locator('#guided-wage-back').click();await cancelled.evaluate(()=>resolveClip('기본시급 99999'));await cancelled.waitForTimeout(30);assert.equal(await cancelled.locator('#wage-manual-base').inputValue(),'12345');
  await cancelled.locator('#payroll-sms-dialog .sheet-dismiss-handle').click();await cancelled.waitForFunction(()=>!document.getElementById('payroll-sms-dialog').open);assert.equal(await cancelled.evaluate(()=>config.baseHourly),0);assert.equal(await cancelled.evaluate(()=>savedCount),0);assert.deepEqual(cancelled.errors,[]);await cancelled.close();
 
@@ -61,11 +61,10 @@ async function checkKeyboard(p,id,width){
  await kinds.nth(1).selectOption('qualification');await values.nth(1).fill('10000');await kinds.nth(1).selectOption('job');assert.equal(await values.nth(1).inputValue(),'10000');
  await edits.locator('#guided-allowance-add').click();await kinds.nth(2).selectOption('family');await values.nth(2).fill('30000');await edits.getByRole('button',{name:'가족수당 삭제',exact:true}).click();
  await edits.locator('#guided-wage-back').click();await next(edits);assert.deepEqual(await kinds.evaluateAll(es=>es.map(e=>e.value)),['duty','job']);
- await edits.locator('#guided-wage-import').click();await edits.evaluate(()=>PayrollEstimate.importText('salary','자격 5,000'));await next(edits);
- assert.deepEqual(await kinds.evaluateAll(es=>es.map(e=>e.value)),['duty','qualification','job']);assert.deepEqual(await values.evaluateAll(es=>es.map(e=>e.value.replace(/,/g,''))),['70000','5000','10000']);
- for(const key of['family','legacy']){await edits.locator('#guided-allowance-add').click();await kinds.last().selectOption(key);await values.last().fill('1000');}
- assert(await edits.locator('#guided-allowance-add').isDisabled());
- await values.last().fill('-1');await next(edits);assert.match(await edits.locator('#wage-manual-status').textContent(),/정수/);assert.equal(await stage(edits),'allowances');await values.last().fill('');
+ await edits.locator('#guided-wage-import').click();await edits.evaluate(()=>PayrollEstimate.importText('salary','자격 5,000'));await edits.locator('#wage-confirm-edit').click();
+ assert.equal((await edits.locator('#wage-duty').inputValue()).replace(/,/g,''),'70000');assert.equal(await edits.locator('#wage-qualification').inputValue(),'5,000');assert.equal((await edits.locator('#wage-job').inputValue()).replace(/,/g,''),'10000');
+ await edits.locator('#wage-family').fill('1000');await edits.locator('#wage-legacy').evaluate(e=>{e.value='-1';e.dispatchEvent(new Event('input',{bubbles:true}));});
+ await next(edits);assert.match(await edits.locator('#wage-manual-status').textContent(),/정수/);await edits.locator('#wage-legacy').evaluate(e=>{e.value='';e.dispatchEvent(new Event('input',{bubbles:true}));});
  await next(edits);await edits.waitForFunction(()=>!document.getElementById('onboarding-dialog').open);assert.deepEqual(await edits.evaluate(()=>[config.dutyPay,config.fixedAllowances.duty,config.fixedAllowances.job,config.fixedAllowances.qualification,config.fixedAllowances.family,config.fixedAllowances.legacy,savedCount]),[86000,70000,10000,5000,1000,0,1]);
  await edits.evaluate(()=>PayrollEstimate.open());assert.equal(await edits.locator('#guided-allowance-entry').isVisible(),false);assert.equal(await edits.locator('#wage-duty').inputValue(),'70,000');assert.equal(await edits.locator('#pref-theme option[value=test]').textContent(),'2. 베이지');assert.deepEqual(edits.errors,[]);await edits.close();
  console.log('PASS chosen categories, duplicate prevention, add/remove/reassign, back, partial SMS merge, validation, single save and regular editor',engine.name());

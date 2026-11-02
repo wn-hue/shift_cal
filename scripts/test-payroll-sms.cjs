@@ -3,7 +3,7 @@ const { parse } = require('../payroll-sms.js');
 const { estimate } = require('../payroll-estimate.js');
 const sample = '기본시급 10,000\n통상시급 12,000\n지급내역\n직책 30,000\n근속 40,000\n소계(ⓐ) 2,000,000\n공제내역\n근로소득세 100,000\n지방소득세 10,000\n연금 90,000\n건강 70,000\n고용 18,000\n기타 12,000\n소계(ⓑ) 300,000';
 const result = parse(sample);
-assert.deepEqual(result.wages, {baseHourly:10000,ordinaryHourly:12000,dutyPay:30000});
+assert.deepEqual(result.wages, {baseHourly:10000,ordinaryHourly:12000,dutyPay:30000,seniorityPayOverride:40000});
 assert.deepEqual(result.profile,{gross:2000000,total:300000});
 assert.equal(result.deductions.health,70000);
 assert.equal(estimate(2000000,result.profile).net,1700000);
@@ -59,3 +59,12 @@ assert.deepEqual(parse('자격 10000\n직무 20000').fixedAllowances,{qualificat
 assert.equal(parse('기본시급 11050\n지급내역\n직책 읽을수없음\n소계 2000000').completeAllowances,false);
 assert.equal(parse('기본시급 11050\n지급내역\n소계 2000000').completeAllowances,true);
 console.log('PASS monthly base recognition, explicit wage priority, bonus exclusion and allowance completeness');
+
+// Imported seniority is separate from other fixed allowances, including explicit zero.
+const named=parse('기본시급 11,050\n통상시급 14,482\n지급내역\n직책 70,000\n근속 70,000\n자격 0\n직무 0\n가족 0\n소계 5,781,870');
+assert.equal(named.wages.seniorityPayOverride,70000);assert.equal(named.wages.dutyPay,70000);assert.equal(named.fixedAllowances.duty,70000);
+assert.equal(parse('근속수당 0').wages.seniorityPayOverride,0);
+assert.equal(parse('기본시급 10000\n공제내역\n근속 70000').wages.seniorityPayOverride,undefined);
+assert.throws(()=>parse('근속 70000\n근속수당 80000'),/서로 다른/);
+assert.equal(parse('기본시급 10000\n근속 확인불가').wages.seniorityPayOverride,undefined);
+console.log('PASS named seniority allowance parsing, zero, section boundaries and conflicts');
