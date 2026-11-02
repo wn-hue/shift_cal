@@ -1,0 +1,4 @@
+/* Pan remains available; pinch and double-tap page zoom do not. */
+:where(html,body,body *){touch-action:pan-x pan-y}
+.month-swipe-surface,#group-weeks,#editor-swipe-space{touch-action:pan-y}
+#modal-override .override-header{touch-action:pan-x}
