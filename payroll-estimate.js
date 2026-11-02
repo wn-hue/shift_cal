@@ -116,7 +116,7 @@
         el('wage-confirmation').hidden=el('wage-confirm-edit').hidden=!value;
         if(!value){apply.disabled=false;apply.textContent='설정 완료하기';}
     }
-    function editImported(){
+    function paintImportedEdit(){
         setConfirming(false);root.OnboardingWage?.prepare();
         el('payroll-sms-title').textContent='시급과 수당 수정';
         el('wage-import-intro').textContent='다른 금액만 고친 뒤 저장해 주세요.';
@@ -124,12 +124,20 @@
         apply.textContent='저장하기';
         el('payroll-sms-title').focus({preventScroll:true});
     }
+    function moveImported(paint,direction){
+        // Clear the source before transitioning to the review or edit form.
+        text.value='';bonusText.value='';
+        const content=dialog.querySelector?.('.guided-wage-content');
+        const update=()=>{if(content&&root.OnboardingFlowMotion)root.OnboardingFlowMotion.replace(content,paint,direction);else paint();};
+        if(root.AppSheets?.resize)root.AppSheets.resize(dialog,update);else update();
+    }
+    function editImported(){moveImported(paintImportedEdit,-1);}
     el('wage-confirm-edit').addEventListener('click',editImported);
-    function confirmImported(){
+    function paintImportedConfirmation(){
         // Import replaces the guided questions; the original single save path stays in charge.
         root.OnboardingWage?.prepare();
         if(typeof root.CustomEvent==='function')dialog.dispatchEvent(new CustomEvent('wage-draft-navigation'));
-        if(conversionMonthly){editImported();return;}
+        if(conversionMonthly){paintImportedEdit();return;}
         setConfirming(true);document.activeElement?.blur?.();
         el('payroll-sms-title').textContent='시급과 수당이 맞나요?';
         el('wage-import-intro').textContent='금액을 확인하면 설정이 끝나요.';
@@ -146,6 +154,7 @@
         apply.textContent='예, 맞아요';apply.disabled=missing;
         el('payroll-sms-title').tabIndex=-1;el('payroll-sms-title').focus({preventScroll:true});
     }
+    function confirmImported(){moveImported(paintImportedConfirmation,1);}
     function fill(input,value){input.value=money(value);input.classList.add('wage-filled');input.setAttribute('aria-invalid','false');}
     function conversion(){
         const hours=Number(el('wage-conversion-hours').value),valid=Number.isFinite(hours)&&hours>=1&&hours<=744;

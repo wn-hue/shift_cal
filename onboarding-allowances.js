@@ -55,7 +55,7 @@
  add.onclick=()=>{
   if(rows.length>=categories.length)return;
   if(!validate())return;
-  const row=makeRow();rows.push(row);render();$('guided-allowance-kind-'+row.id).focus({preventScroll:true});
+  const row=makeRow();rows.push(row);render();OnboardingFlowMotion.field(list.lastElementChild);$('guided-allowance-kind-'+row.id).focus({preventScroll:true});
  };
  window.OnboardingAllowances={refresh,validate,hide(){entry.hidden=true;},show(){entry.hidden=false;}};
 })();

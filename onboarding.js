@@ -17,15 +17,9 @@
  };
  let state=saved?.status==='in_progress'?{status:'in_progress',step:Math.max(0,Math.min(2,Math.trunc(Number(saved.step)||0)))}:
   saved?.status==='complete'||saved?.status==='existing'?saved:{status:legacy()?'existing':'in_progress',step:0};
- let step=state.step||0, selected='', manual=false, active=false, saving=false, navigating=false, paintedStep=-1, entrance=null;
+ let step=state.step||0, selected='', manual=false, active=false, saving=false, navigating=false, paintedStep=-1;
  const main=dialog.querySelector('.onboarding-main');
- function reveal(){
-  const current=entrance?.playState==='running'?getComputedStyle(main):null;
-  const from=current?{opacity:current.opacity,transform:current.transform}:{opacity:0,transform:'translateY(8px)'};
-  entrance?.cancel();entrance=null;
-  if(matchMedia('(prefers-reduced-motion:reduce)').matches||!main.animate)return;
-  entrance=main.animate([from,{opacity:1,transform:'translateY(0)'}],{duration:280,easing:'cubic-bezier(.22,1,.36,1)'});
- }
+ function reveal(){OnboardingFlowMotion.reveal(main);}
  function remember(next){try{localStorage.setItem(KEY,JSON.stringify(next));state=next;return true}catch{$('onboarding-error').textContent='설정을 저장하지 못했어요. 기기 저장 공간을 확인해 주세요.';return false}}
  // Decide from the pre-existing settings, before the app's load handlers run.
  remember(state);
@@ -67,7 +61,7 @@
  }
  async function changeStep(target){
   if(navigating)return;
-  const direction=target>step?1:-1;navigating=true;entrance?.cancel();entrance=null;
+  const direction=target>step?1:-1;navigating=true;OnboardingFlowMotion.cancel(main);
   dialog.dataset.transitioning='true';
   $('onboarding-next').disabled=$('onboarding-back').disabled=true;
   try{await OnboardingFlowMotion.swap(main,()=>{step=target;paint();},direction);}
@@ -102,7 +96,7 @@
  $('onboarding-back').addEventListener('click',()=>{if(step>0&&!navigating){if(!manual&&!remember({status:'in_progress',step:step-1}))return;changeStep(step-1);}});
  $('onboarding-exit').addEventListener('click',()=>{active=false;delete document.body.dataset.onboarding;dialog.close();$('onboarding-reopen').focus()});
  dialog.addEventListener('cancel',event=>{if(!manual){event.preventDefault();$('onboarding-error').textContent='세 가지 설정을 완료하면 내 캘린더를 볼 수 있어요.';}});
- dialog.addEventListener('close',()=>{if(!dialog.open){entrance?.cancel();entrance=null;OnboardingFlowMotion.cancel(main);active=false;delete document.body.dataset.onboarding;}});
+ dialog.addEventListener('close',()=>{if(!dialog.open){OnboardingFlowMotion.cancel(main);active=false;delete document.body.dataset.onboarding;}});
  for(const button of dialog.querySelectorAll('[data-onboarding-group]'))button.addEventListener('click',()=>{
   selected=button.dataset.onboardingGroup;
   for(const option of dialog.querySelectorAll('[data-onboarding-group]'))option.setAttribute('aria-pressed',String(option===button));

@@ -1,15 +1,31 @@
 /* Bottom-sheet affordances preserve each feature's existing dismissal and draft guards. */
 (()=>{'use strict';
  const attached=new WeakSet(),backdrops=new WeakSet(),draggables=new WeakSet();
- const openings=new WeakMap(),returns=new WeakMap();
+ const openings=new WeakMap(),returns=new WeakMap(),resizes=new Map();
  let closingCount=0,clickFenceUntil=0;
  function cancelReturn(sheet){clearTimeout(returns.get(sheet));returns.delete(sheet);sheet.classList.remove('sheet-returning');}
+ function cancelResize(sheet){const state=resizes.get(sheet);if(!state)return;cancelAnimationFrame(state.frame);clearTimeout(state.timer);resizes.delete(sheet);delete sheet.dataset.sheetResizing;sheet.style.removeProperty('--sheet-resize-height');}
+ function resize(sheet,update){
+  const from=sheet.getBoundingClientRect().height;cancelResize(sheet);update();
+  if(reduced()||!sheet.open||sheet.dataset.sheetClosing==='true')return;
+  const to=sheet.getBoundingClientRect().height;if(Math.abs(from-to)<2)return;
+  const state={frame:0,timer:0};resizes.set(sheet,state);
+  sheet.style.setProperty('--sheet-resize-height',from+'px');sheet.dataset.sheetResizing='true';void sheet.offsetHeight;
+  state.frame=requestAnimationFrame(()=>{if(resizes.get(sheet)!==state)return;sheet.style.setProperty('--sheet-resize-height',to+'px');state.timer=setTimeout(()=>cancelResize(sheet),340);});
+ }
  function enter(sheet){
   if(reduced()||!sheet.animate)return;
-  openings.get(sheet)?.cancel();cancelReturn(sheet);
-  const guided=sheet.dataset.guided==='true';
-  const a=sheet.animate([{translate:guided?'0 '+(sheet.getBoundingClientRect().height+24)+'px':'0 28px',opacity:guided?1:.65},{translate:'0 0',opacity:1}],{duration:guided?340:220,easing:'cubic-bezier(.22,1,.36,1)'});openings.set(sheet,a);
-  a.finished.then(()=>{if(openings.get(sheet)===a)openings.delete(sheet);},()=>{});
+  openings.get(sheet)?.cancel();cancelReturn(sheet);cancelResize(sheet);
+  // Some pickers populate their options just after showModal(). Measure the completed
+  // contents before the first painted frame, so a long picker starts fully below view.
+  let frame;const pending={cancel(){cancelAnimationFrame(frame);sheet.style.removeProperty('translate');}};
+  sheet.style.translate='0 '+innerHeight+'px';openings.set(sheet,pending);
+  frame=requestAnimationFrame(()=>{
+   if(openings.get(sheet)!==pending)return;
+   const distance=sheet.getBoundingClientRect().height+24;sheet.style.removeProperty('translate');
+   const a=sheet.animate([{translate:'0 '+distance+'px',opacity:1},{translate:'0 0',opacity:1}],{duration:360,easing:'cubic-bezier(.22,1,.36,1)'});openings.set(sheet,a);
+   a.finished.then(()=>{if(openings.get(sheet)===a)openings.delete(sheet);},()=>{});
+  });
  }
  const reduced=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
  const fence=()=>{clickFenceUntil=performance.now()+700;};
@@ -23,9 +39,9 @@
   const native=sheet.tagName==='DIALOG',container=native?sheet:sheet.parentElement;
   if(native?!sheet.open:!container.classList.contains('active')){perform();return;}
   fence();
-  if(reduced()){perform();sheet.style.removeProperty('--sheet-drag');return;}
+  if(reduced()){cancelResize(sheet);perform();sheet.style.removeProperty('--sheet-drag');return;}
   const rect=sheet.getBoundingClientRect(),transform=getComputedStyle(sheet).transform,offset=transform==='none'?0:new DOMMatrixReadOnly(transform).m42;
-  openings.get(sheet)?.cancel();openings.delete(sheet);cancelReturn(sheet);
+  openings.get(sheet)?.cancel();openings.delete(sheet);cancelReturn(sheet);cancelResize(sheet);
   for(const [name,value] of Object.entries({top:rect.top-offset,left:rect.left,width:rect.width,height:rect.height}))sheet.style.setProperty('--sheet-close-'+name,value+'px');
   sheet.dataset.sheetClosing='true';container.dataset.sheetClosing='true';sheet.classList.add('sheet-closing');closingCount++;
   // Freeze the visible geometry while the keyboard/visual viewport is changing.
@@ -85,7 +101,7 @@
   sheet.addEventListener('click',e=>{if(performance.now()<suppressUntil&&!e.target.closest('.sheet-original-close')){e.preventDefault();e.stopImmediatePropagation();}},true);
  }
 
- let fitFrame=0;function scheduleFit(){if(!fitFrame)fitFrame=requestAnimationFrame(()=>{fitFrame=0;fit();});}
+ let fitFrame=0;function scheduleFit(){for(const sheet of resizes.keys())cancelResize(sheet);if(!fitFrame)fitFrame=requestAnimationFrame(()=>{fitFrame=0;fit();});}
  function fit(){const vp=visualViewport,w=vp?.width||innerWidth,h=vp?.height||innerHeight,top=vp?.offsetTop||0,left=vp?.offsetLeft||0,gap=h<420?24:Math.max(56,h*.08);
   for(const d of document.querySelectorAll('dialog.app-bottom-sheet')){if(d.dataset.sheetClosing==='true')continue;d.style.setProperty('--sheet-limit',Math.max(120,h-gap)+'px');d.style.setProperty('--sheet-width',Math.min(w,560)+'px');d.style.setProperty('--sheet-left',left+(w-Math.min(w,560))/2+'px');d.style.setProperty('--sheet-bottom',Math.max(0,innerHeight-top-h)+'px');}
  }
@@ -106,5 +122,5 @@
   const editor=document.getElementById('modal-override');if(editor){const sheet=editor.querySelector('.override-sheet');backdrop(editor,sheet,()=>closeModalDirect());bindDrag(sheet,()=>closeModalDirect());if(!attached.has(sheet)){attached.add(sheet);let visible=editor.classList.contains('active');new MutationObserver(()=>{const next=editor.classList.contains('active');if(next&&!visible)enter(sheet);visible=next;}).observe(editor,{attributes:true,attributeFilter:['class']});}}
   const onboarding=document.getElementById('onboarding-dialog');if(onboarding)backdrop(onboarding,onboarding,()=>document.getElementById('onboarding-exit').click());
  }
- window.AppSheets={attach,fit,closeOverlay};scan();new MutationObserver(records=>{if(records.some(r=>[...r.addedNodes].some(n=>n.nodeType===1&&(n.matches?.('dialog,.modal-overlay')||n.querySelector?.('dialog,.modal-overlay')))))scan();}).observe(document.body,{childList:true,subtree:true});visualViewport?.addEventListener('resize',scheduleFit);visualViewport?.addEventListener('scroll',scheduleFit);window.addEventListener('resize',scheduleFit);
+ window.AppSheets={attach,fit,closeOverlay,resize};scan();new MutationObserver(records=>{if(records.some(r=>[...r.addedNodes].some(n=>n.nodeType===1&&(n.matches?.('dialog,.modal-overlay')||n.querySelector?.('dialog,.modal-overlay')))))scan();}).observe(document.body,{childList:true,subtree:true});visualViewport?.addEventListener('resize',scheduleFit);visualViewport?.addEventListener('scroll',scheduleFit);window.addEventListener('resize',scheduleFit);
 })();

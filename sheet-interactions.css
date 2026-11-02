@@ -46,3 +46,11 @@ dialog.sheet-closing::backdrop{animation:sheet-backdrop-out 240ms ease-out forwa
 
 /* A single opening animation owns the sheet; legacy slideUp used a competing transform. */
 body[data-pref-theme] :is(dialog.app-bottom-sheet,.app-overlay-sheet,#modal-override .override-sheet){animation:none!important}
+
+/* All sheets travel from the bottom with the same quiet deceleration. */
+dialog.app-bottom-sheet[open]:not(.sheet-closing)::backdrop{animation:app-sheet-backdrop-in 280ms ease-out}
+.modal-overlay.active:not([data-sheet-closing=true]){animation:app-sheet-overlay-in 280ms ease-out}
+@keyframes app-sheet-backdrop-in{from{background-color:#0000}to{background-color:#0006}}
+@keyframes app-sheet-overlay-in{from{background-color:transparent}}
+body[data-pref-theme] #payroll-sms-dialog.app-bottom-sheet[data-sheet-resizing=true][open]{height:var(--sheet-resize-height)!important;overflow:hidden!important;transition:height 320ms cubic-bezier(.22,1,.36,1)!important}
+@media(prefers-reduced-motion:reduce){dialog.app-bottom-sheet[open]::backdrop,.modal-overlay.active:not([data-sheet-closing=true]){animation:none!important}body[data-pref-theme] #payroll-sms-dialog.app-bottom-sheet[data-sheet-resizing=true][open]{transition:none!important}}

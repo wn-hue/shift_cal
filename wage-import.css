@@ -109,3 +109,12 @@ body[data-pref-theme] #payroll-sms-dialog[data-wage-confirming=true] #payroll-sm
 body[data-pref-theme] #payroll-sms-dialog #wage-seniority-reset{padding:2px 0;min-height:28px;border:0;background:none;color:var(--ui-blue,#3182f6);font-size:11px;text-align:left;box-shadow:none}
 #payroll-sms-dialog .wage-seniority .wage-value{max-width:48%}
 @media(max-width:360px){#wage-confirm-hourly>div{padding:14px 11px}#wage-confirm-hourly strong{font-size:20px}}
+
+/* Real pending clipboard work gets a quiet three-dot response, with no artificial wait. */
+#payroll-sms-dialog [data-wage-paste][aria-busy=true]{position:relative;opacity:.75}
+#payroll-sms-dialog [data-wage-paste][aria-busy=true]>*:not(.wage-progress-dots){opacity:0}
+.wage-progress-dots{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:5px;background:inherit;border-radius:inherit}
+.wage-progress-dots i{width:5px;height:5px;border-radius:50%;background:currentColor;animation:wage-progress-pulse 900ms ease-in-out infinite}
+.wage-progress-dots i:nth-child(2){animation-delay:120ms}.wage-progress-dots i:nth-child(3){animation-delay:240ms}
+@keyframes wage-progress-pulse{0%,70%,100%{opacity:.35;transform:translateY(0)}35%{opacity:1;transform:translateY(-3px)}}
+@media(prefers-reduced-motion:reduce){.wage-progress-dots i{animation:none;opacity:.7}}

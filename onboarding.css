@@ -94,3 +94,10 @@ body[data-pref-theme] #onboarding-date-picker.app-bottom-sheet:not(.sheet-closin
 #onboarding-dialog .onboarding-optional-import span{margin-left:5px;color:#8b95a1;font-size:11px}
 .onboarding-scene-copy{user-select:none;overflow:hidden!important}
 #onboarding-dialog[data-transitioning=true] #onboarding-next:disabled{background:var(--onboarding-blue);color:#fff}
+
+/* Touch feedback and selection use the same restrained rhythm as the form flow. */
+#onboarding-dialog :is(#onboarding-next,.onboarding-date-open,[data-onboarding-group]),#payroll-sms-dialog :is(#payroll-sms-apply,#wage-confirm-edit,#wage-fill,[data-guided-allowance]){transition:scale 160ms ease-out,background-color 180ms ease-out,border-color 180ms ease-out}
+#onboarding-dialog :is(#onboarding-next,.onboarding-date-open,[data-onboarding-group]):active:not(:disabled),#payroll-sms-dialog :is(#payroll-sms-apply,#wage-confirm-edit,#wage-fill,[data-guided-allowance]):active:not(:disabled){scale:.985}
+#onboarding-dialog [data-onboarding-group][aria-pressed=true] .onboarding-check{animation:onboarding-selection-in 240ms cubic-bezier(.22,1,.36,1)}
+@keyframes onboarding-selection-in{from{scale:.8;opacity:.4}to{scale:1;opacity:1}}
+@media(prefers-reduced-motion:reduce){#onboarding-dialog :is(#onboarding-next,.onboarding-date-open,[data-onboarding-group]),#payroll-sms-dialog :is(#payroll-sms-apply,#wage-confirm-edit,#wage-fill,[data-guided-allowance]){transition:none;scale:1!important}#onboarding-dialog [data-onboarding-group][aria-pressed=true] .onboarding-check{animation:none}}
