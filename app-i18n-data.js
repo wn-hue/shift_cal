@@ -237,7 +237,7 @@ Google 캘린더 연결|Connect Google Calendar|连接 Google 日历|Google カ�
 개인정보처리방침|Privacy policy|隐私政策|プライバシーポリシー
 서비스 이용약관|Terms of service|服务条款|利用規約
 음식 아이콘 · Icons8|Food icons · Icons8|美食图标 · Icons8|フードアイコン・Icons8
-교대 루틴|Shift Routine|轮班日常|シフトルーティン
+근무 루틴|Shift Routine|轮班日常|シフトルーティン
 교대 캘린더|Shift calendar|轮班日历|シフトカレンダー
 캘린더|Calendar|日历|カレンダー
 조별 근무|Teams|各组班次|グループ勤務
