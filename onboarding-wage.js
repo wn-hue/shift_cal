@@ -11,12 +11,13 @@
  function focus(){if(enabled){$('payroll-sms-title').tabIndex=-1;$('payroll-sms-title').focus({preventScroll:true});}}
  function paint(){
   dialog.dataset.wageStep=stage;
-  dialog.style.setProperty('--guided-wage-height',((stage==='choice'||stage==='import')?640:stage==='allowances'?Math.min(640,330+OnboardingAllowances.count()*90):460)+'px');
+  dialog.style.setProperty('--guided-wage-height',((stage==='choice'||stage==='import')?640:stage==='allowances'&&['seniority','duty'].includes(OnboardingAllowances.current()[0])?560:460)+'px');
   const importing=stage==='import',editing=stage==='allowances';
   const titles={base:'기본시급을 알려주세요',ordinary:'통상시급은 얼마인가요?',choice:'받고 있는 수당이 있나요?',allowances:'선택한 수당은 얼마인가요?',import:'개인 공제 기준 설정'};
   const descriptions={base:'급여명세서에 적힌 기본시급을 입력해 주세요.',ordinary:'기본시급과 별도로 적힌 통상시급을 확인해 주세요.',choice:'받는 수당을 모두 선택해 주세요. 여러 개 선택할 수 있어요.',allowances:'선택한 수당의 월 금액을 입력해 주세요.',import:'선택 사항이에요. 등록하지 않아도 기본 공제 기준으로 추정해요.'};
-  $('payroll-sms-title').textContent=titles[stage];$('wage-import-intro').textContent=descriptions[stage];
-  $('guided-wage-progress').textContent=importing?'세금 추정 · 선택':stage==='base'?'시급 설정 1 / 3':stage==='ordinary'?'시급 설정 2 / 3':'시급 설정 3 / 3';
+  $('payroll-sms-title').textContent=editing?OnboardingAllowances.current()[1]+'은 얼마인가요?':titles[stage];
+  $('wage-import-intro').textContent=editing?['seniority','duty'].includes(OnboardingAllowances.current()[0])?'7만원을 선택하거나 다른 금액을 직접 입력해 주세요.':'매월 받는 수당 금액을 입력해 주세요.':descriptions[stage];
+  $('guided-wage-progress').textContent=editing?'고정수당 '+(OnboardingAllowances.index()+1)+' / '+OnboardingAllowances.count():importing?'세금 추정 · 선택':stage==='base'?'시급 설정 1 / 3':stage==='ordinary'?'시급 설정 2 / 3':'시급 설정 3 / 3';
   back.hidden=stage==='base';
   const base=amount('wage-manual-base'),ordinary=amount('wage-manual-ordinary');
   summary.textContent=[stage!=='base'&&base>0?'기본시급 '+money(base):'',(stage==='choice'||editing||importing)&&ordinary>0?'통상시급 '+money(ordinary):''].filter(Boolean).join(' · ');
@@ -29,26 +30,27 @@
   optional.hidden=importing;
   $('wage-tax-import').open=importing;
   if(stage==='choice')OnboardingAllowances.renderChoice();
-  apply.textContent=stage==='choice'&&OnboardingAllowances.count()>0?'선택한 수당 금액 입력':importing?'시급 입력 계속하기':stage==='base'||stage==='ordinary'?'다음':'설정 완료하기';
-  apply.disabled=busy||(stage==='choice'&&!OnboardingAllowances.ready());
+  apply.textContent=stage==='choice'&&OnboardingAllowances.count()>0?'선택한 수당 금액 입력':importing?'시급 입력 계속하기':stage==='base'||stage==='ordinary'||editing&&!OnboardingAllowances.isLast()?'다음':'설정 완료하기';
+  apply.disabled=busy||!ready();
   $('wage-manual-status').textContent='';content.scrollTop=0;
  }
- async function go(next,direction=1){
+ function ready(){return stage==='choice'?OnboardingAllowances.ready():stage==='allowances'?OnboardingAllowances.readyCurrent():true;}
+ async function go(next,direction=1,updateState=()=>{}){
   if(busy||!enabled)return;
   const token=revision;
   dialog.dispatchEvent(new Event('wage-draft-navigation'));
   dialog.dataset.wageMoving='true';
   busy=true;apply.disabled=back.disabled=true;
-  const transition=['base','ordinary'].includes(stage)&&['base','ordinary'].includes(next)?'swap':'replace';
+  const transition=(['base','ordinary'].includes(stage)&&['base','ordinary'].includes(next))||(stage==='allowances'&&next==='allowances')?'swap':'replace';
   let motion;const update=()=>{motion=OnboardingFlowMotion[transition](content,()=>{
-   stage=next;paint();
+   updateState();stage=next;paint();
    if(next==='base'||next==='ordinary')$(next==='base'?'wage-manual-base':'wage-manual-ordinary').focus({preventScroll:true});else focus();
   },direction);};
   if(window.AppSheets?.resize)AppSheets.resize(dialog,update);else update();
   await motion;
   if(token!==revision)return;
   busy=false;back.disabled=false;delete dialog.dataset.wageMoving;
-  if(enabled&&dialog.open)apply.disabled=stage==='choice'&&!OnboardingAllowances.ready();
+  if(enabled&&dialog.open)apply.disabled=!ready();
  }
  function prepare(options){
   revision++;delete dialog.dataset.wageMoving;
@@ -80,10 +82,14 @@
   }
   if(stage==='choice'){
    if(!OnboardingAllowances.ready()){stop();return;}
-   if(OnboardingAllowances.count()){stop();go('allowances');return;}
+   if(OnboardingAllowances.count()){stop();go('allowances',1,()=>OnboardingAllowances.start());return;}
    OnboardingAllowances.validate();
   }
-  if(stage==='allowances'&&!OnboardingAllowances.validate()){stop();return;}
+  if(stage==='allowances'){
+   if(!OnboardingAllowances.validateCurrent()){stop();return;}
+   if(!OnboardingAllowances.isLast()){stop();go('allowances',1,()=>OnboardingAllowances.move(1));return;}
+   if(!OnboardingAllowances.validate()){stop();return;}
+  }
   // The original save handler validates and commits all amounts exactly once.
  },true);
  choice.addEventListener('click',event=>{
@@ -95,7 +101,10 @@
  });
  $('guided-allowance-change').addEventListener('click',()=>go('choice',-1));
  optional.addEventListener('click',()=>{returnStage=stage;go('import');});
- back.addEventListener('click',()=>go(stage==='import'?returnStage:stage==='allowances'?'choice':stage==='choice'?'ordinary':'base',-1));
+ back.addEventListener('click',()=>{
+  if(stage==='allowances'&&OnboardingAllowances.index()>0){go('allowances',-1,()=>OnboardingAllowances.move(-1));return;}
+  go(stage==='import'?returnStage:stage==='allowances'?'choice':stage==='choice'?'ordinary':'base',-1);
+ });
 
  function keepInputVisible(){
   const input=document.activeElement;
@@ -108,5 +117,5 @@
  const observer=new ResizeObserver(()=>requestAnimationFrame(keepInputVisible));observer.observe(content);
  dialog.addEventListener('focusin',()=>requestAnimationFrame(keepInputVisible));
  dialog.addEventListener('close',()=>{if(!dialog.open){revision++;enabled=false;busy=false;delete dialog.dataset.wageMoving;OnboardingFlowMotion.cancel(content);}});
- window.OnboardingWage={prepare,focus};
+ window.OnboardingWage={prepare,focus,allowanceChanged(){if(enabled&&stage==='allowances')apply.disabled=busy||!ready();}};
 })();

@@ -148,7 +148,13 @@
         input.addEventListener('input',event=>{if(!event.isComposing&&input.value)api.importText(kind,input.value);});
         input.addEventListener('compositionend',()=>{if(input.value)api.importText(kind,input.value);});
     }
-    for(const input of amountInputs){input.addEventListener('input',()=>{input.classList.remove('wage-filled');input.setAttribute('aria-invalid','false');manualStatus.textContent='';if(input===el('wage-seniority')){seniorityOverride=true;senioritySource();}});}
+    for(const input of amountInputs){
+        input.addEventListener('focus',()=>{if(input.value==='0')input.value='';});
+        input.addEventListener('input',()=>{
+            if(/^\d+$/.test(input.value))input.value=input.value.replace(/^0+(?=\d)/,'');
+            input.classList.remove('wage-filled');input.setAttribute('aria-invalid','false');manualStatus.textContent='';if(input===el('wage-seniority')){seniorityOverride=true;senioritySource();}
+        });
+    }
     function readAmount(input,label,positive){const raw=input.value.trim()||(positive?'':'0'),n=Number(raw.replace(/,/g,''));if(!/^(?:[0-9]+|[1-9][0-9]{0,2}(?:,[0-9]{3})+)$/.test(raw)||!Number.isSafeInteger(n)||n<(positive?1:0)||n>1000000000){input.setAttribute('aria-invalid','true');input.focus();throw Error(label+'을 '+(positive?'1':'0')+'원 이상 10억 원 이하의 정수로 입력해 주세요.');}return n;}
     api.validateHourly=kind=>{try{return readAmount(kind==='base'?manualBase:manualOrdinary,kind==='base'?'기본시급':'통상시급',true);}catch(error){manualStatus.textContent=error.message;return null;}};
     api.validateAllowance=(input,label)=>{try{return readAmount(input,label,false);}catch(error){manualStatus.textContent=error.message;return null;}};

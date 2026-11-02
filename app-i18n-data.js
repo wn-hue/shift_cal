@@ -627,3 +627,20 @@ Object.assign(window.AppTranslations, {
  '세금·보험료와 실수령액은 추정치예요. 시급과 수당은 직접 입력한 금액을 유지해요.': {en:'Taxes, insurance and take-home pay are estimates. Your manually entered pay and allowances are unchanged.',zh:'税费、保险费和实发工资均为估算值，手动输入的时薪和津贴保持不变。',ja:'税金・保険料と手取り額は推定値です。手入力した時給と手当は変更しません。'},
  '저장된 금액 · 직접 수정 가능': {en:'Saved amount · editable',zh:'已保存金额 · 可手动修改',ja:'保存済み金額 · 編集可能'}
 });
+
+Object.assign(window.AppTranslations, {
+ '근속수당은 얼마인가요?': {en:'How much is your seniority allowance?',zh:'您的工龄津贴是多少？',ja:'勤続手当はいくらですか？'},
+ '직책수당은 얼마인가요?': {en:'How much is your position allowance?',zh:'您的职位津贴是多少？',ja:'役職手当はいくらですか？'},
+ '자격수당은 얼마인가요?': {en:'How much is your qualification allowance?',zh:'您的资格津贴是多少？',ja:'資格手当はいくらですか？'},
+ '가족수당은 얼마인가요?': {en:'How much is your family allowance?',zh:'您的家庭津贴是多少？',ja:'家族手当はいくらですか？'},
+ '직무수당은 얼마인가요?': {en:'How much is your job allowance?',zh:'您的职务津贴是多少？',ja:'職務手当はいくらですか？'},
+ '기타 고정수당은 얼마인가요?': {en:'How much is your other fixed allowance?',zh:'您的其他固定津贴是多少？',ja:'その他の固定手当はいくらですか？'},
+ '근속수당 7만원': {en:'Seniority allowance · ₩70,000',zh:'工龄津贴 · 70,000韩元',ja:'勤続手当 70,000ウォン'},
+ '직책수당 7만원': {en:'Position allowance · ₩70,000',zh:'职位津贴 · 70,000韩元',ja:'役職手当 70,000ウォン'},
+ '매월 70,000원': {en:'₩70,000 per month',zh:'每月70,000韩元',ja:'毎月70,000ウォン'},
+ '기타 금액': {en:'Another amount',zh:'其他金额',ja:'その他の金額'},
+ '매월 받는 금액': {en:'Monthly amount',zh:'每月领取的金额',ja:'毎月受け取る金額'},
+ '7만원을 선택하거나 다른 금액을 직접 입력해 주세요.': {en:'Choose ₩70,000 or enter another amount.',zh:'请选择70,000韩元，或手动输入其他金额。',ja:'70,000ウォンを選ぶか、別の金額を入力してください。'},
+ '매월 받는 수당 금액을 입력해 주세요.': {en:'Enter the allowance you receive each month.',zh:'请输入每月领取的津贴金额。',ja:'毎月受け取る手当の金額を入力してください。'},
+ '수당 금액을 선택해 주세요.': {en:'Choose an allowance amount.',zh:'请选择津贴金额。',ja:'手当の金額を選んでください。'}
+});

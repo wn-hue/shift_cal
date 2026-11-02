@@ -13,13 +13,14 @@ const assert=require('node:assert/strict'),{webkit,chromium}=require('playwright
  await open();assert.equal(await p.locator('#wage-manual-base').inputValue(),'0');assert.equal(await p.locator('#wage-duty').inputValue(),'0');
  // Importing a deduction profile must not make explicitly cleared hourly wages survive.
  await p.evaluate(()=>PayrollEstimate.importText('salary','기본시급 11,050\n통상시급 14,482\n지급내역\n소계(ⓐ) 1,000,000\n공제내역\n소계(ⓑ) 100,000'));
- await p.locator('#wage-confirm-edit').click();await p.locator('#wage-manual-base').fill('');await p.locator('#wage-manual-ordinary').fill('');
+ await p.locator('#wage-manual-base').fill('');await p.locator('#wage-manual-ordinary').fill('');
  for(const name of ['qualification','job','family','duty'])await p.locator('#wage-'+name).fill('');
  await save();assert.deepEqual(await p.evaluate(()=>[config.baseHourly,config.ordinaryHourly,config.dutyPay]),[0,0,0]);
  assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('shift_payroll_sms_reference_v1')).rate),.1);
  await p.reload();await open();assert.equal(await p.locator('#wage-manual-base').inputValue(),'0');assert.equal(await p.locator('#wage-manual-ordinary').inputValue(),'0');
  for(const invalid of ['-1','1.5','1,23','1000000001']){await p.locator('#wage-manual-base').fill(invalid);await p.locator('#payroll-sms-apply').click();assert(await p.locator('#payroll-sms-dialog').isVisible());assert.match(await p.locator('#wage-manual-status').textContent(),/정수/);assert.equal(await p.evaluate(()=>config.baseHourly),0);}
  await p.locator('#wage-manual-base').fill('0');await p.locator('#wage-manual-ordinary').fill('12000');await save();assert.deepEqual(await p.evaluate(()=>[config.baseHourly,config.ordinaryHourly]),[0,12000]);
+ await open();await p.locator('#wage-manual-base').focus();assert.equal(await p.locator('#wage-manual-base').inputValue(),'');await p.locator('#wage-manual-base').pressSequentially('010000');assert.equal(await p.locator('#wage-manual-base').inputValue(),'10000');await p.locator('#wage-qualification').focus();assert.equal(await p.locator('#wage-qualification').inputValue(),'');await p.locator('#wage-qualification').pressSequentially('070000');assert.equal(await p.locator('#wage-qualification').inputValue(),'70000');await save();assert.deepEqual(await p.evaluate(()=>[config.baseHourly,config.fixedAllowances.qualification]),[10000,70000]);
  assert.deepEqual(errors,[]);console.log('PASS',engine.name(),'cleared amounts become zero / independent fields / imported profile / reload / invalid amounts');
  }finally{await browser.close();}
 }})().catch(e=>{console.error(e);process.exitCode=1});
