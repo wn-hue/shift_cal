@@ -93,7 +93,7 @@
    if(!start)return;if(e.touches.length!==1){reset();return;}
    const dx=e.touches[0].clientX-start.x;delta=e.touches[0].clientY-start.y;
    if(Math.abs(dx)>10&&Math.abs(dx)>Math.abs(delta)*1.3||delta < -10){reset();return;}
-   if(delta>10&&delta>Math.abs(dx)*1.3){if(e.cancelable)e.preventDefault();if(!matchMedia('(prefers-reduced-motion:reduce)').matches)sheet.style.setProperty('--sheet-drag',Math.min(delta,220)+'px');}
+   if(delta>10&&delta>Math.abs(dx)*1.3){if(e.cancelable)e.preventDefault();if(!matchMedia('(prefers-reduced-motion:reduce)').matches)sheet.style.setProperty('--sheet-drag',Math.max(0,delta)+'px');}
   },{passive:false});
   sheet.addEventListener('touchend',e=>{const t=e.changedTouches[0],close=start&&t&&t.clientY-start.y>70&&t.clientY-start.y>Math.abs(t.clientX-start.x)*1.3;
    if(close){suppressUntil=performance.now()+600;if(e.cancelable)e.preventDefault();start=null;delta=0;fence();dismiss();settle(sheet);}else{start=null;delta=0;settle(sheet);}},{passive:false});

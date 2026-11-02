@@ -36,7 +36,7 @@ body[data-pref-theme] #modal-override[data-editor-tab]>.override-sheet{transform
 body[data-pref-theme] :is(dialog,.modal-sheet).sheet-closing{
  position:fixed!important;top:var(--sheet-close-top)!important;left:var(--sheet-close-left)!important;right:auto!important;bottom:auto!important;
  width:var(--sheet-close-width)!important;height:var(--sheet-close-height)!important;max-height:none!important;min-height:0!important;margin:0!important;
- animation:none!important;transition:transform 240ms cubic-bezier(.32,0,.67,0)!important;transform:translate3d(0,var(--sheet-drag,0px),0)!important;will-change:transform;pointer-events:none;
+ animation:none!important;transition:transform 240ms cubic-bezier(.2,.65,.3,1)!important;transform:translate3d(0,var(--sheet-drag,0px),0)!important;will-change:transform;pointer-events:none;
 }
 body[data-pref-theme] :is(dialog,.modal-sheet).sheet-returning:not(.sheet-closing){transition:transform 180ms ease-out!important}
 @media(prefers-reduced-motion:reduce){body[data-pref-theme] :is(dialog,.modal-sheet).sheet-returning:not(.sheet-closing){transition:none!important}}

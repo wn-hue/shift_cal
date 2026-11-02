@@ -157,6 +157,11 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design][data-de
 @media(prefers-reduced-motion:reduce){#memo-body-section summary>span:last-child{transition:none}}
 
 /* Fade the backdrop with the sheet, not after the keyboard's resize sequence. */
-#memo-compose-dialog::backdrop{transition:background-color 220ms ease-out}
+#memo-compose-dialog::backdrop{transition:background-color 240ms ease-out}
 #memo-compose-dialog[data-closing=true]::backdrop{background:transparent}
 @media(prefers-reduced-motion:reduce){#memo-compose-dialog::backdrop{transition:none}}
+
+/* Match the common sheet rhythm while keeping the writing surface and keyboard separate. */
+#memo-compose-dialog[open]:not([data-closing=true])::backdrop{animation:app-sheet-backdrop-in 280ms ease-out}
+#memo-compose-dialog[data-closing=true]{pointer-events:none}
+@media(prefers-reduced-motion:reduce){#memo-compose-dialog::backdrop{animation:none!important}}

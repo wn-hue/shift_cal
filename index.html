@@ -935,7 +935,7 @@
 <link rel="stylesheet" href="./screen-refinement.css?v=8">
 <link rel="stylesheet" href="./onboarding.css?v=reference-motion-1">
 <link rel="stylesheet" href="./onboarding-story.css?v=2">
-<link rel="stylesheet" href="./onboarding-wage.css?v=3">
+<link rel="stylesheet" href="./onboarding-wage.css?v=allowance-cards-1">
 <link rel="stylesheet" href="./mobile-surfaces.css?v=12">
 <link rel="stylesheet" href="./test-calendar.css?v=9">
 <link rel="stylesheet" href="./month-picker.css?v=1">
@@ -949,10 +949,10 @@
 <link rel="stylesheet" href="./group-schedule.css?v=9">
 <link rel="stylesheet" href="./settings-page.css?v=2">
 <link rel="stylesheet" href="./app-i18n.css?v=1">
-<link rel="stylesheet" href="./sheet-interactions.css?v=reference-motion-1">
+<link rel="stylesheet" href="./sheet-interactions.css?v=surface-motion-2">
 <link rel="stylesheet" href="./day-editor-layout.css?v=4">
 <link rel="stylesheet" href="./day-editor-designs.css?v=8">
-<link rel="stylesheet" href="./memo-composer.css?v=8">
+<link rel="stylesheet" href="./memo-composer.css?v=surface-motion-2">
 <link rel="stylesheet" href="./app-currency.css?v=1">
 <link rel="stylesheet" href="./commute-page.css?v=13">
 <link rel="stylesheet" href="./lost-found-page.css?v=5">
@@ -1443,12 +1443,10 @@
         <div class="wage-unified-body">
         <section id="wage-confirmation" aria-label="인식한 시급과 수당" hidden><div id="wage-confirm-hourly"></div><dl id="wage-confirm-allowances"></dl><p id="wage-confirm-note"></p><p class="wage-confirm-privacy">문자 원문은 저장하지 않아요.</p></section>
         <p id="guided-wage-summary" class="guided-wage-summary" hidden></p>
-        <div id="guided-wage-choice" class="guided-wage-choice" role="group" aria-label="추가수당 여부" hidden><button type="button" data-guided-allowance="yes" aria-pressed="false"><strong>있음</strong><span>수당 금액을 직접 입력할게요</span><i aria-hidden="true">✓</i></button><button type="button" data-guided-allowance="no" aria-pressed="false"><strong>없음</strong><span>직접 추가할 수당이 없어요</span><i aria-hidden="true">✓</i></button></div>
-        <section id="guided-allowance-entry" aria-label="고정수당 입력" hidden>
-          <div class="guided-allowance-caption">월 고정수당</div>
+        <div id="guided-wage-choice" class="guided-wage-choice" role="group" aria-label="받는 수당 선택 · 복수 선택 가능" hidden></div>
+        <section id="guided-allowance-entry" aria-label="선택한 수당 금액" hidden>
           <div id="guided-allowance-list"></div>
-          <button type="button" id="guided-allowance-add" class="guided-allowance-add">＋ 수당 추가</button>
-          <p id="guided-allowance-seniority" class="guided-allowance-seniority" hidden></p>
+          <button type="button" id="guided-allowance-change" class="guided-allowance-change">수당 다시 선택</button>
         </section>
         <p id="wage-paste-guide">급여 문자를 복사한 뒤 아래 버튼을 누르면 시급·수당이 자동으로 채워져요.</p>
         <button type="button" id="wage-fill" class="wage-fill" data-wage-paste="payroll-sms-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="8" y="7" width="12" height="14" rx="2"/><path d="M16 7V4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h3"/></svg><span>복사한 급여 문자로 채우기</span></button>
@@ -3083,19 +3081,19 @@
 <script src="./onboarding-date-picker.js?v=1"></script>
 <script src="./onboarding-flow-motion.js?v=reference-motion-1"></script>
 <script src="./onboarding-story.js?v=2"></script>
-<script src="./onboarding-allowances.js?v=reference-motion-1"></script>
-<script src="./onboarding-wage.js?v=4"></script>
+<script src="./onboarding-allowances.js?v=allowance-cards-1"></script>
+<script src="./onboarding-wage.js?v=allowance-cards-1"></script>
 <script src="./onboarding.js?v=reference-motion-1"></script>
 <script src="./payslip-alert.js?v=3"></script>
 <script src="./memo-editor.js?v=13"></script>
 <script src="./day-editor-navigation.js?v=8"></script>
 <script src="./day-scheduler-core.js?v=3"></script>
 <script src="./day-scheduler.js?v=7"></script>
-<script src="./sheet-interactions.js?v=reference-motion-1"></script>
+<script src="./sheet-interactions.js?v=surface-motion-2"></script>
 <script src="./day-memos-core.js?v=1"></script>
 <script src="./day-entry-core.js?v=1"></script>
 <script src="./day-editor-designs.js?v=10"></script>
-<script src="./memo-composer.js?v=12"></script>
+<script src="./memo-composer.js?v=surface-motion-2"></script>
 <script src="./settings-options.js?v=2"></script>
 <script src="./wage-import-ui.js?v=reference-motion-1"></script>
 <script src="./app-i18n-data.js?v=sms-confirm-1"></script>

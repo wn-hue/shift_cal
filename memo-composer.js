@@ -123,7 +123,7 @@
   const locale={ko:'ko-KR',en:'en',zh:'zh-CN',ja:'ja'}[localStorage.getItem('shift_display_language')]||'ko-KR';
   dialog.querySelector('#memo-compose-date').textContent=new Intl.DateTimeFormat(locale,{month:'long',day:'numeric',weekday:'long'}).format(new Date((source?.date||date)+'T12:00:00'));
   overlay.dataset.memoComposing='true';document.body.classList.add('memo-composer-open');dialog.showModal();dialog.scrollTop=0;fit();
-  if(!reduced())entrance=dialog.animate([{opacity:.7},{opacity:1}],{duration:220,easing:'cubic-bezier(.2,.7,.2,1)'});
+  if(!reduced())entrance=dialog.animate([{translate:'0 '+(Math.max(restingHeight,innerHeight)+24)+'px'},{translate:'0 0'}],{duration:360,easing:'cubic-bezier(.22,1,.36,1)'});
   input.focus({preventScroll:true});scheduleFit();
  }
 
@@ -139,7 +139,7 @@
   const complete=()=>{if(!finished&&animationDone&&keyboardDone){finished=true;finish();}};
   if(animated&&!reduced()){
    const distance=Math.max(restingHeight,innerHeight,(viewport?.height||0)+(viewport?.offsetTop||0),offset+1);
-   returnAnimation=dialog.animate([{transform:`translateY(${offset}px)`,opacity:1},{transform:`translateY(${distance}px)`,opacity:0}],{duration:220,easing:'cubic-bezier(.16,.75,.3,1)',fill:'forwards'});
+   returnAnimation=dialog.animate([{transform:`translateY(${offset}px)`,opacity:1},{transform:`translateY(${distance}px)`,opacity:0}],{duration:240,easing:'cubic-bezier(.2,.65,.3,1)',fill:'forwards'});
    returnAnimation.finished.then(()=>{animationDone=true;complete();},()=>{animationDone=true;complete();});
   }else{dialog.style.opacity='0';animationDone=true;}
   afterKeyboard(()=>{keyboardDone=true;complete();});
@@ -162,25 +162,44 @@
  add.onclick=()=>open(null);dialog.querySelector('#memo-compose-back').onclick=()=>cancel();dialog.querySelector('#memo-compose-dismiss').onclick=()=>cancel(true,'calendar');dialog.querySelector('#memo-compose-save').onclick=()=>save();
  dialog.addEventListener('cancel',e=>{e.preventDefault();cancel();});
  dialog.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'&&!e.isComposing){e.preventDefault();save();}});
- // Only the header/handle starts dismissal. Text selection and textarea scrolling stay native.
- dialog.addEventListener('pointerdown',e=>{
-  if(!e.isPrimary){if(drag)settle();return;}
-  if(closing||e.button!==0||!e.target.closest('#memo-compose-dismiss,.memo-compose-header,#memo-compose-date')||e.target.closest('button:not(#memo-compose-dismiss)'))return;
-  const css=getComputedStyle(dialog),from=(css.transform==='none'?0:new DOMMatrixReadOnly(css.transform).m42)+(parseFloat(css.translate.split(/\s+/)[1])||0);entrance?.cancel();entrance=null;clearDrag();offset=from;dialog.style.setProperty('--compose-drag',from+'px');drag={id:e.pointerId,x:e.clientX,y:e.clientY-from,moved:false};try{e.target.setPointerCapture(e.pointerId);}catch{}
- });
- dialog.addEventListener('pointermove',e=>{
-  if(!drag||e.pointerId!==drag.id)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+ // Pull from the header or blank content at its top. Fields retain text selection and native scrolling.
+ function canDrag(target){
+  if(closing||target.closest('input,textarea,select,summary,a,label,[contenteditable=true],button:not(#memo-compose-dismiss)'))return false;
+  if(target.closest('#memo-compose-dismiss,.memo-compose-header,.memo-compose-context'))return true;
+  for(let node=target;node&&dialog.contains(node);node=node.parentElement){if(node.scrollTop>1&&node.scrollHeight>node.clientHeight+1)return false;if(node===dialog)break;}
+  return target===dialog||content.contains(target);
+ }
+ function startDrag(target,x,y,id,kind){
+  if(!canDrag(target))return;
+  const css=getComputedStyle(dialog),from=(css.transform==='none'?0:new DOMMatrixReadOnly(css.transform).m42)+(parseFloat(css.translate.split(/\s+/)[1])||0);
+  entrance?.cancel();entrance=null;clearDrag();offset=from;dialog.style.setProperty('--compose-drag',from+'px');drag={id,kind,x,y,from,moved:false};
+ }
+ function moveDrag(x,y,event){
+  const dx=x-drag.x,dy=y-drag.y;
   if(Math.abs(dx)>8||Math.abs(dy)>8)drag.moved=true;
   if(Math.abs(dx)>12&&Math.abs(dx)>Math.abs(dy)*1.3||dy< -12){suppressClickUntil=performance.now()+400;settle();return;}
-  if(dy>8&&dy>Math.abs(dx)*1.3){e.preventDefault();offset=dy;if(!reduced())dialog.style.setProperty('--compose-drag',offset+'px');}
- });
- dialog.addEventListener('pointerup',e=>{
-  if(!drag||e.pointerId!==drag.id)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y,moved=drag.moved;drag=null;
-  if(moved)suppressClickUntil=performance.now()+400;
+  if(dy>8&&dy>Math.abs(dx)*1.3){if(event.cancelable)event.preventDefault();offset=Math.max(0,drag.from+dy);if(!reduced())dialog.style.setProperty('--compose-drag',offset+'px');}
+ }
+ function endDrag(x,y,event){
+  const dx=x-drag.x,dy=y-drag.y,moved=drag.moved;drag=null;
+  if(moved){suppressClickUntil=performance.now()+400;if(event.cancelable)event.preventDefault();}
   if(dy>=72&&dy>Math.abs(dx)*1.3){suppressClickUntil=performance.now()+600;cancel(true,'calendar');}else settle();
+ }
+ dialog.addEventListener('pointerdown',e=>{
+  if(!e.isPrimary){if(drag)settle();return;}if(e.button!==0)return;
+  startDrag(e.target,e.clientX,e.clientY,e.pointerId,'pointer');
+  if(drag&&e.pointerType==='mouse')try{e.target.setPointerCapture(e.pointerId);}catch{}
  });
- dialog.addEventListener('pointercancel',()=>{if(drag){suppressClickUntil=performance.now()+400;settle();}});
- dialog.addEventListener('lostpointercapture',()=>{if(drag)settle();});
+ dialog.addEventListener('pointermove',e=>{if(drag?.kind==='pointer'&&e.pointerId===drag.id)moveDrag(e.clientX,e.clientY,e);});
+ dialog.addEventListener('pointerup',e=>{if(drag?.kind==='pointer'&&e.pointerId===drag.id)endDrag(e.clientX,e.clientY,e);});
+ dialog.addEventListener('pointercancel',()=>{if(drag?.kind==='pointer'){suppressClickUntil=performance.now()+400;settle();}});
+ dialog.addEventListener('lostpointercapture',()=>{if(drag?.kind==='pointer')settle();});
+ // iOS can cancel a pointer sequence when native scrolling begins. A non-passive
+ // touchmove owns only downward pulls on blank space, without intercepting input gestures.
+ dialog.addEventListener('touchstart',e=>{if(e.touches.length!==1){if(drag)settle();return;}const t=e.touches[0];startDrag(e.target,t.clientX,t.clientY,t.identifier,'touch');},{passive:true});
+ dialog.addEventListener('touchmove',e=>{if(drag?.kind!=='touch')return;if(e.touches.length!==1){settle();return;}const t=e.touches[0];moveDrag(t.clientX,t.clientY,e);},{passive:false});
+ dialog.addEventListener('touchend',e=>{if(drag?.kind!=='touch')return;const t=[...e.changedTouches].find(t=>t.identifier===drag.id);if(t)endDrag(t.clientX,t.clientY,e);},{passive:false});
+ dialog.addEventListener('touchcancel',()=>{if(drag?.kind==='touch'){suppressClickUntil=performance.now()+400;settle();}},{passive:true});
  dialog.addEventListener('click',e=>{if(closing||performance.now()<suppressClickUntil){e.preventDefault();e.stopImmediatePropagation();}},true);
  // A fresh pointer gesture is intentional; only the previous gesture's delayed click is fenced.
  window.addEventListener('pointerdown',()=>{if(!closing)suppressClickUntil=0;},true);
