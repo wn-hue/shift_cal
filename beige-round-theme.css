@@ -1,0 +1,129 @@
+/* Opt-in shape study. The existing Beige theme and saved work data are unchanged. */
+body[data-pref-theme=test][data-beige-round] {
+  --round-card:28px;
+  --round-control:18px;
+  --round-date:18px;
+  --round-shadow:0 5px 18px #51423908;
+  --test-today-edge:#a4c6f5;
+  --test-today-soft:#edf5ff;
+}
+
+/* A soft, continuous toolbar with room for the month and touch targets. */
+body[data-pref-theme=test][data-beige-round]:is([data-view=calendar],[data-view=groups]) .reference-header {
+  margin-left:0;
+  margin-right:0;
+  border-radius:var(--round-card);
+  background:var(--test-surface)!important;
+  border-color:#eae4e0;
+  box-shadow:var(--round-shadow);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+body[data-pref-theme=test][data-beige-round] .reference-header .month-title-btn {
+  border-radius:var(--round-control);
+}
+body[data-pref-theme=test][data-beige-round] .header-calendar-actions .icon-button:not(.weather-trigger) {
+  width:38px;
+  min-width:38px;
+  height:44px;
+  border-radius:50%;
+  background:var(--test-page);
+}
+
+/* Keep the seven-column rhythm; rounding never changes the cell measurements. */
+body[data-pref-theme=test][data-beige-round] #view-calendar .cal-weekdays {
+  border-radius:999px;
+  background:#eeeae780;
+  margin-bottom:8px;
+  padding:8px 0;
+  font-weight:500;
+}
+body[data-pref-theme=test][data-beige-round] #view-calendar .cal-grid {
+  gap:5px;
+  min-height:clamp(352px,var(--theme-calendar-room,560px),740px);
+}
+body[data-pref-theme=test][data-beige-round] #view-calendar .cal-grid .cal-day {
+  border-radius:var(--round-date);
+  box-shadow:inset 0 0 0 1px #e9e3df52;
+}
+body[data-pref-theme=test][data-beige-round] #view-calendar .cal-grid .cal-day.today {
+  background:#f2f7ff;
+  border-radius:var(--round-date);
+  box-shadow:0 3px 9px #3182f60d;
+}
+body[data-pref-theme=test][data-beige-round] #view-calendar .cal-grid .cal-day.today::after {
+  inset:1px;
+  border:1.5px solid var(--test-today-edge);
+  border-radius:calc(var(--round-date) - 1px);
+}
+body[data-pref-theme=test][data-beige-round] #view-calendar .cal-grid .cal-day.today .day-num {
+  background:#3182f6!important;
+  color:#fff!important;
+}
+
+/* Shared cards use one corner treatment without adding vertical empty space. */
+body[data-pref-theme=test][data-beige-round] #view-groups .group-week {
+  border-radius:var(--round-card);
+  border-color:#e9e3df;
+  box-shadow:var(--round-shadow);
+}
+body[data-pref-theme=test][data-beige-round] #view-groups {
+  --group-highlight:#eeebe8;
+  --group-today-bg:#edf5ff;
+  --group-today-accent:#3182f6;
+}
+body[data-pref-theme=test][data-beige-round] #view-payroll :is(.card,.salary-hero,.salary-month-viewport),
+body[data-pref-theme=test][data-beige-round] #view-all :is(.all-shortcuts,.life-section,.all-settings-card,.lab-entry,.all-account-card) {
+  border-radius:var(--round-card)!important;
+  box-shadow:var(--round-shadow);
+}
+body[data-pref-theme=test][data-beige-round] #view-all .all-settings-card .group-select,
+body[data-pref-theme=test][data-beige-round] #view-payroll :is(.wage-edit-button,.calendar-reflect-button) {
+  border-radius:var(--round-control);
+}
+
+body[data-pref-theme=test][data-beige-round] #app-preferences-dialog :is(.settings-list,.preferences-card,.external-calendars,.all-info-section) {
+  border-radius:var(--round-card);
+}
+body[data-pref-theme=test][data-beige-round] #view-all .all-shortcut-icon {
+  border-radius:var(--round-control);
+}
+
+/* Navigation is a pill inside a pill, with a restrained sand-colored selection. */
+body[data-pref-theme=test][data-beige-round] .nav-capsule {
+  border:1px solid #e9e3df;
+  border-radius:999px;
+  background:var(--test-surface);
+  box-shadow:0 5px 20px #5142390d;
+}
+body[data-pref-theme=test][data-beige-round] .bottom-nav .nav-item .nav-visual {
+  border-radius:999px;
+}
+body[data-pref-theme=test][data-beige-round] .bottom-nav .nav-item.active .nav-visual {
+  border-radius:999px;
+  background:var(--test-accent-soft)!important;
+}
+body[data-pref-theme=test][data-beige-round] .bottom-nav .nav-item:active .nav-visual {
+  background:#ecd9cf!important;
+}
+body[data-pref-theme=test][data-beige-round] :is(.month-title-btn,.icon-button,.nav-item):focus-visible {
+  outline:2px solid #3182f6;
+  outline-offset:2px;
+}
+@media (hover:hover) and (pointer:fine) {
+  body[data-pref-theme=test][data-beige-round] #view-calendar .cal-day:not(.today):hover {
+    background:#f7ebe4;
+  }
+}
+@media (prefers-reduced-motion:no-preference) {
+  body[data-pref-theme=test][data-beige-round] :is(.cal-day,.icon-button,.nav-visual) {
+    transition:background-color .16s ease,color .16s ease;
+  }
+}
+@media (max-width:360px) {
+  body[data-pref-theme=test][data-beige-round] { --round-date:15px; }
+  body[data-pref-theme=test][data-beige-round] .header-calendar-actions .icon-button:not(.weather-trigger) {
+    width:32px;
+    min-width:32px;
+  }
+}
