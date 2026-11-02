@@ -10,7 +10,7 @@
  ];
  const types=['hire','team','wage'],visible=new WeakMap();let active=null;
  for(const [index,art]of arts.entries()){
-  const scene=document.createElement('div');scene.className='onboarding-story';scene.dataset.story=types[index];scene.innerHTML='<div class="story-scene">'+scenes[index]+'</div>';art.replaceChildren(scene);art.dataset.storyReady='true';
+  const scene=document.createElement('div');scene.className='onboarding-story';scene.dataset.story=types[index];scene.innerHTML='<div class="story-scene story-motion">'+scenes[index]+'</div>';art.replaceChildren(scene);art.dataset.storyReady='true';
  }
  const stories=arts.map(art=>art.firstElementChild);
  function size(entry){entry.target.style.setProperty('--story-scale',String(entry.contentRect.width/320));}

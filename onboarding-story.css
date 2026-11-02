@@ -44,9 +44,10 @@
 .story-coin{position:absolute;left:16px;top:80px;width:103px;height:103px;border-radius:50%;background:linear-gradient(135deg,#6ebcff,#3a73d9);box-shadow:5px 5px 0 #2762c6,9px 13px 15px #2b73db26;transform:rotate(-12deg)}
 .story-coin-face{position:absolute;inset:3px 4px 5px 3px;border-radius:50%;background:radial-gradient(circle at 30% 22%,#9bd8ff 0,#58aafa 28%,#3182f6 65%,#326ad3 100%);box-shadow:inset 1px 2px 4px #c6ecff,inset -2px -4px 6px #215dc34d;display:grid;place-items:center;color:white;font-size:57px;font-weight:700;line-height:1;text-shadow:0 2px 3px #215dc333}
 .story-pay-spark{position:absolute;left:60px;top:27px;font-size:31px;color:#9ac8ff;transform:rotate(14deg)}
-/* Each story tells its sequence once (under 5 seconds), then rests on the result. */
-.onboarding-story[data-animated] .story-motion{animation-duration:4.6s;animation-fill-mode:both;animation-timing-function:cubic-bezier(.22,1,.36,1);animation-play-state:paused}
+/* Hold the result, then fade the illustration before the next loop resets its parts. */
+.onboarding-story[data-animated] .story-motion{animation-duration:6.4s;animation-iteration-count:infinite;animation-fill-mode:both;animation-timing-function:cubic-bezier(.22,1,.36,1);animation-play-state:paused}
 .onboarding-story[data-playing=true] .story-motion{animation-play-state:running}
+.onboarding-story[data-animated] .story-scene{animation-name:story-loop;animation-timing-function:ease-in-out}
 [data-animated] .story-calendar{animation-name:story-calendar-arrive}
 [data-animated] .story-calendar-flip{animation-name:story-page-turn}
 [data-animated] .story-date-selected{animation-name:story-date-pick}
@@ -60,6 +61,7 @@
 [data-animated] .story-pay-line>i{animation-name:story-amount-fill}
 [data-animated] .story-pay-total{animation-name:story-pay-ready}
 [data-animated] .story-pay-spark{animation-name:story-pay-spark}
+@keyframes story-loop{0%,98%,100%{opacity:0}6%,84%{opacity:1}}
 @keyframes story-calendar-arrive{0%{opacity:0;transform:translateY(18px) rotate(-13deg) scale(.92)}20%,100%{opacity:1;transform:rotate(-5deg)}}
 @keyframes story-page-turn{0%,15%{opacity:1;transform:rotateX(0)}44%,100%{opacity:0;transform:rotateX(155deg)}}
 @keyframes story-date-pick{0%,27%{opacity:0;transform:scale(.55)}42%{opacity:1;transform:scale(1.4)}50%,100%{opacity:1;transform:scale(1.25)}}
