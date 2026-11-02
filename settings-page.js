@@ -40,7 +40,7 @@
    const text=document.createElement('span'),value=document.createElement('span');text.textContent=title;value.className='settings-value';row.append(text,value);label.before(row);label.hidden=true;
    const sourceText=el=>window.AppI18n?.sourceText(el)??el.textContent;
    const update=()=>{value.textContent=sourceText(input.selectedOptions[0]).replace(/^\d+\. /,'');};input.addEventListener('change',update);update();
-   row.onclick=()=>window.SettingsOptions.open(title,[...input.options].map(o=>({value:o.value,label:sourceText(o).replace(/^\d+\. /,'')})),input.value,v=>{input.value=v;input.dispatchEvent(new Event('change',{bubbles:true}));});
+   row.onclick=()=>window.SettingsOptions.open(title,[...input.options].filter(o=>!o.hidden&&!o.disabled).map(o=>({value:o.value,label:sourceText(o).replace(/^\d+\. /,'')})),input.value,v=>{input.value=v;input.dispatchEvent(new Event('change',{bubbles:true}));});
   }
  }
  $('choose-language').onclick=()=>window.SettingsOptions.open('언어',[

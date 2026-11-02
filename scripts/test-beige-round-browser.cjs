@@ -7,11 +7,18 @@ const assert=require('node:assert/strict'),{webkit,chromium}=require(process.env
  await p.route('**/api/**',r=>r.fulfill({json:{configured:false}}));
  await p.goto(process.env.TEST_URL||'http://127.0.0.1:8773/');await p.evaluate(()=>document.fonts.ready);
  assert.equal(await p.locator('#pref-theme').inputValue(),'current');
- async function choose(theme){await p.evaluate(()=>openAppPreferences());await p.locator('#choose-theme').click();await p.locator('#settings-options input[value="'+theme+'"]').check();await p.locator('#settings-back').click();await p.waitForFunction(()=>document.getElementById('app-preferences-dialog').hidden);await p.waitForTimeout(80);}
+ // Explicitly re-enable an archived option only inside this preview regression fixture.
+ async function choose(theme){await p.locator('#pref-theme option[value="'+theme+'"]').evaluate(o=>{o.hidden=false;o.disabled=false});await p.evaluate(()=>openAppPreferences());await p.locator('#choose-theme').click();await p.locator('#settings-options input[value="'+theme+'"]').check();await p.locator('#settings-back').click();await p.waitForFunction(()=>document.getElementById('app-preferences-dialog').hidden);await p.waitForTimeout(80);}
  const snapshot=()=>p.evaluate(()=>{const cell=document.querySelector('.cal-day.today'),header=document.querySelector('.reference-header');return{radius:getComputedStyle(cell).borderRadius,outline:getComputedStyle(cell,'::after').borderTopColor,header:getComputedStyle(header).borderRadius,page:getComputedStyle(document.body).backgroundColor}});
+ await p.evaluate(()=>openAppPreferences());await p.locator('#choose-theme').click();
+ assert.equal(await p.locator('#settings-options input[value=test],#settings-options input[value=beige-round]').count(),0,'archived themes are absent from the real picker');
+ await p.locator('#settings-options .sheet-dismiss-handle').click();await p.waitForFunction(()=>!document.getElementById('settings-options').open);await p.locator('#settings-back').click();await p.waitForFunction(()=>document.getElementById('app-preferences-dialog').hidden);
  await choose('test');const original=await snapshot();await choose('beige-round');
  assert.equal(await p.evaluate(()=>localStorage.getItem('shift_display_theme')),'beige-round');
- await p.reload();await p.waitForFunction(()=>document.body.hasAttribute('data-beige-round'));assert.equal(await p.locator('#pref-theme').inputValue(),'beige-round');
+ await p.reload();assert.equal(await p.locator('#pref-theme').inputValue(),'current');
+ assert.equal(await p.evaluate(()=>localStorage.getItem('shift_display_theme')),'current','saved archived theme falls back to Day & night');
+ assert.equal(await p.evaluate(()=>document.body.hasAttribute('data-beige-round')),false);
+ await choose('beige-round');
  assert.equal(await p.locator('.cal-day.today .day-num').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(49, 130, 246)');
  for(const view of ['calendar','groups','payroll','all']){
   await p.evaluate(v=>switchView(v),view);await p.waitForTimeout(100);
@@ -27,5 +34,5 @@ const assert=require('node:assert/strict'),{webkit,chromium}=require(process.env
  const bounds=await p.locator('.cal-day[data-date="2026-05-01"]').evaluate(e=>{const r=e.getBoundingClientRect();return[...e.children].filter(c=>getComputedStyle(c).display!=='none').map(c=>{const b=c.getBoundingClientRect();return{kind:c.className,fits:b.bottom<=r.bottom+1&&b.left>=r.left-1&&b.right<=r.right+1}})});assert(bounds.every(x=>x.fits),JSON.stringify({width,bounds}));
  await p.evaluate(()=>{document.querySelectorAll('style').forEach(s=>{if(s.textContent.startsWith('body{padding-top:59px'))s.remove()});currentCalDate=new Date(2026,10,1);renderCalendar();window.scrollTo(0,0)});
  await choose('test');assert.equal(await p.evaluate(()=>document.body.hasAttribute('data-beige-round')),false);assert.deepEqual(await snapshot(),original);
- assert.deepEqual(errors,[]);console.log(engine.name(),width,'PASS: opt-in theme selection, persistence, original Beige restored, default unchanged, 4 screens, today marker and six-week safe-area layout');await p.close();
+ assert.deepEqual(errors,[]);console.log(engine.name(),width,'PASS: archived themes hidden, saved preview falls back, retained Beige designs work, default unchanged, 4 screens, today marker and six-week safe-area layout');await p.close();
  }await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

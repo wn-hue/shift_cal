@@ -14,7 +14,9 @@ function openAppPreferences(){window.SettingsPage.open();}
             if (saved !== null) {
                 if (name === 'theme') {
                     const theme = ['routine','google'].includes(saved) ? 'test' : saved;
-                    input.value = ['current','gpt','toss','dark','test','test1','test3','test4','beige-round'].includes(theme) ? theme : 'current';
+                    // Archived themes retain their styles but are unavailable until re-enabled.
+                    const available = [...input.options].some(option => option.value === theme && !option.hidden && !option.disabled);
+                    input.value = available ? theme : 'current';
                     if (input.value !== saved) localStorage.setItem(key,input.value);
                 } else if (name === 'shape') input.value = saved === 'circle' ? 'circle' : 'square';
                 else input.checked = saved !== 'false';
