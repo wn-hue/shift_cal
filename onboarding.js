@@ -103,7 +103,6 @@
   $('onboarding-next').disabled=navigating;
  });
  $('onboarding-import-again').addEventListener('click',()=>PayrollEstimate.open({onboarding:true}));
- $('onboarding-wage-import').addEventListener('click',()=>PayrollEstimate.open({onboarding:true,importFirst:true}));
  $('onboarding-login').addEventListener('click',()=>$('account-sheet-open').click());
  $('onboarding-reopen').addEventListener('click',()=>open(true));
  $('payroll-sms-dialog').addEventListener('close',()=>{if(active)requestAnimationFrame(()=>{if(active){paint();if(step===2&&(config.baseHourly>0||config.ordinaryHourly>0)&&!(config.baseHourly>0&&config.ordinaryHourly>0))$('onboarding-error').textContent='기본시급과 통상시급을 모두 설정해 주세요.';$('onboarding-next').focus()}})});

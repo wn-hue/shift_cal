@@ -957,7 +957,7 @@
 <link rel="stylesheet" href="./commute-page.css?v=13">
 <link rel="stylesheet" href="./lost-found-page.css?v=5">
 <link rel="stylesheet" href="./parking-sheet.css?v=5">
-<link rel="stylesheet" href="./wage-import.css?v=reference-motion-1">
+<link rel="stylesheet" href="./wage-import.css?v=manual-tax-1">
 <link rel="stylesheet" href="./test-theme-palette.css?v=11">
 <link rel="stylesheet" href="./experimental-themes.css?v=5">
 <link rel="stylesheet" href="./beige-round-theme.css?v=1">
@@ -1049,7 +1049,7 @@
 
             <div class="card payroll-summary" id="payroll-estimate-card">
                 <label class="estimate-toggle" for="payroll-estimate-toggle">
-                    <span><span class="estimate-title">예상 실수령액</span><span class="estimate-caption">세금·보험 공제 적용</span></span>
+                    <span><span class="estimate-title">예상 실수령액</span><span class="estimate-caption">세금·보험료를 추정해요</span></span>
                     <span class="estimate-switch"><span id="payroll-estimate-state" class="estimate-state" aria-hidden="true">OFF</span><input type="checkbox" id="payroll-estimate-toggle" role="switch" aria-label="예상 실수령액 계산" aria-controls="payroll-estimate-panel"></span>
                 </label>
                 <div id="payroll-estimate-panel" hidden>
@@ -1063,7 +1063,7 @@
                         <div class="estimate-row"><span>전체 예상 공제액</span><strong id="estimate-total">0 원</strong></div>
                         <p class="estimate-note" id="payroll-estimate-basis"></p>
                     </details>
-                    <p class="estimate-disclaimer">추정값이며 실제 실수령액과 다를 수 있어요.</p>
+                    <p class="estimate-disclaimer">세금·보험료와 실수령액은 추정치예요. 실제 명세서와 다를 수 있어요.</p>
                 </div>
                 <div class="estimate-footer">
                     <span id="payroll-sms-applied" class="estimate-applied" role="status"></span>
@@ -1115,7 +1115,7 @@
                         <input type="text" id="input-seniority-pay" value="0원" readonly aria-describedby="wage-sms-hint">
                     </div>
                 </div>
-                <details class="wage-help"><summary>시급과 수당은 어떻게 반영되나요?</summary><p id="wage-sms-hint" class="account-hint">시급은 문자 또는 직접 입력으로 설정해요. 고정수당은 문자 또는 직접 입력, 근속수당은 정규직 전환일을 기준으로 반영해요.</p></details>
+                <details class="wage-help"><summary>시급과 수당은 어떻게 반영되나요?</summary><p id="wage-sms-hint" class="account-hint">시급과 수당은 직접 입력해요. 근속수당은 입사일 기준 금액을 확인하고 수정할 수 있어요. 문자 붙여넣기는 개인 세금·보험료 추정에만 사용해요.</p></details>
 
             </div>
             <div class="card payroll-input-card">
@@ -1270,7 +1270,7 @@
 
         <section class="all-shortcuts" aria-labelledby="all-shortcuts-title"><h2 id="all-shortcuts-title">내 근무 도구</h2><div class="all-shortcut-grid">
           <div id="menu-leave-settings"><button type="button" class="all-shortcut" onclick="SettingsUI.openLeave()"><span class="all-shortcut-icon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4m-9 10 3 3 5-6"/></svg></span><strong>연차 설정</strong><span class="all-shortcut-caption">잔여 <span id="quick-remain-leave">0</span>일</span></button></div>
-          <div id="menu-salary-settings"><button type="button" id="payroll-sms-open" class="all-shortcut"><span class="all-shortcut-icon lavender"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><circle cx="12" cy="12" r="3"/></svg></span><strong>시급 설정</strong><span class="all-shortcut-caption">문자 · 직접 입력</span></button></div>
+          <div id="menu-salary-settings"><button type="button" id="payroll-sms-open" class="all-shortcut"><span class="all-shortcut-icon lavender"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><circle cx="12" cy="12" r="3"/></svg></span><strong>시급 설정</strong><span class="all-shortcut-caption">직접 입력</span></button></div>
         </div></section>
         <details class="all-account-card"><summary>계정 연결 및 동기화 안내</summary>
         <div class="all-account-details">
@@ -1437,37 +1437,41 @@
         <div class="guided-wage-content">
         <div class="guided-wage-top" hidden><button type="button" id="guided-wage-back" aria-label="이전 입력">〈</button><span id="guided-wage-progress"></span></div>
         <div class="sms-dialog-header">
-            <div><div class="wage-import-title"><h2 id="payroll-sms-title">시급 설정</h2><button type="button" id="wage-import-info" aria-label="시급 설정 안내" aria-expanded="false" aria-controls="wage-import-help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v7M12 6v2"/></svg></button></div><p id="wage-import-intro" class="guided-wage-description">시급과 수당을 확인해 주세요. 금액을 직접 입력해도 돼요.</p></div>
+            <div><div class="wage-import-title"><h2 id="payroll-sms-title">시급 설정</h2><button type="button" id="wage-import-info" aria-label="시급 설정 안내" aria-expanded="false" aria-controls="wage-import-help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v7M12 6v2"/></svg></button></div><p id="wage-import-intro" class="guided-wage-description">기본시급·통상시급과 받는 수당을 직접 입력해 주세요.</p></div>
             <button type="button" id="payroll-sms-close" class="sms-close-btn" aria-label="시급 설정 닫기">×</button>
         </div>
         <div class="wage-unified-body">
-        <section id="wage-confirmation" aria-label="인식한 시급과 수당" hidden><div id="wage-confirm-hourly"></div><dl id="wage-confirm-allowances"></dl><p id="wage-confirm-note"></p><p class="wage-confirm-privacy">문자 원문은 저장하지 않아요.</p></section>
         <p id="guided-wage-summary" class="guided-wage-summary" hidden></p>
         <div id="guided-wage-choice" class="guided-wage-choice" role="group" aria-label="받는 수당 선택 · 복수 선택 가능" hidden></div>
         <section id="guided-allowance-entry" aria-label="선택한 수당 금액" hidden>
           <div id="guided-allowance-list"></div>
           <button type="button" id="guided-allowance-change" class="guided-allowance-change">수당 다시 선택</button>
         </section>
-        <p id="wage-paste-guide">급여 문자를 복사한 뒤 아래 버튼을 누르면 시급·수당이 자동으로 채워져요.</p>
-        <button type="button" id="wage-fill" class="wage-fill" data-wage-paste="payroll-sms-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="8" y="7" width="12" height="14" rx="2"/><path d="M16 7V4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h3"/></svg><span>복사한 급여 문자로 채우기</span></button>
-        <details id="wage-paste-fallback" class="wage-paste-fallback"><summary>직접 붙여넣기</summary><label for="payroll-sms-text">급여 문자</label><textarea id="payroll-sms-text" rows="2" maxlength="30000" placeholder="여기를 길게 눌러 붙여넣어 주세요" aria-describedby="payroll-sms-status"></textarea></details>
-        <p id="payroll-sms-recognized" role="status" hidden></p>
-        <p id="payroll-sms-status" class="sms-status" role="status"></p>
         <div class="wage-main-cards">
           <label for="wage-manual-base"><span>기본시급</span><span class="wage-value"><input id="wage-manual-base" type="text" inputmode="numeric" maxlength="13" autocomplete="off" placeholder="금액 입력" aria-describedby="wage-manual-status"><small>원</small></span></label>
           <label for="wage-manual-ordinary"><span>통상시급</span><span class="wage-value"><input id="wage-manual-ordinary" type="text" inputmode="numeric" maxlength="13" autocomplete="off" placeholder="금액 입력" aria-describedby="wage-manual-status"><small>원</small></span></label>
         </div>
-        <section id="wage-conversion" hidden aria-label="기본급에서 시급 환산"><p id="wage-conversion-description"></p><label for="wage-conversion-hours">환산 기준시간 <input id="wage-conversion-hours" type="number" min="1" max="744" step="0.01" value="209"> 시간</label><p id="wage-conversion-result" role="status"></p><button type="button" id="wage-conversion-use">확인하고 기본시급에 넣기</button><small>회사 기준시간을 확인해 주세요. 통상시급은 별도로 입력해요.</small></section>
         <div class="wage-allowance-heading"><span>월 고정수당</span><small>없으면 0원</small></div>
         <div class="wage-mini-cards"><div class="wage-mini-card wage-seniority"><span>근속수당<small id="wage-seniority-source">입사일 기준 자동 계산</small><button type="button" id="wage-seniority-reset" hidden>자동 계산으로</button></span><span class="wage-value"><input id="wage-seniority" aria-label="근속수당" type="text" inputmode="numeric" maxlength="13" autocomplete="off" value="0"><small>원</small></span></div><label class="wage-mini-card" for="wage-duty"><span>직책수당</span><span class="wage-value"><input id="wage-duty" inputmode="numeric" type="text" maxlength="13" autocomplete="off" value="0"><small>원</small></span></label><label class="wage-mini-card" for="wage-qualification"><span>자격수당</span><span class="wage-value"><input id="wage-qualification" inputmode="numeric" type="text" maxlength="13" autocomplete="off" value="0"><small>원</small></span></label><label class="wage-mini-card" for="wage-family"><span>가족수당</span><span class="wage-value"><input id="wage-family" inputmode="numeric" type="text" maxlength="13" autocomplete="off" value="0"><small>원</small></span></label><label class="wage-mini-card" for="wage-job"><span>직무수당</span><span class="wage-value"><input id="wage-job" inputmode="numeric" type="text" maxlength="13" autocomplete="off" value="0"><small>원</small></span></label></div>
         <label id="wage-legacy-row" class="wage-legacy-row" for="wage-legacy" hidden>기존 고정수당 <span class="wage-value"><input id="wage-legacy" type="text" inputmode="numeric" maxlength="13" value="0"><small>원</small></span><small>기존에 합계만 저장된 금액이에요. 수당을 나누어 입력한다면 이 금액도 조정해 주세요.</small></label>
-        <details id="wage-bonus-input" class="wage-bonus-input"><summary><span>상여금 공제 기준</span><small>선택</small></summary><div class="wage-bonus-body"><p class="sms-privacy">미등록 시 기준 공제율 약 2.41%로 추정해요. 본인 문자를 등록하면 개인 공제율을 사용해요.</p><button type="button" class="wage-paste-button" data-wage-paste="payroll-bonus-sms-text">복사한 상여 문자로 채우기</button><label for="payroll-bonus-sms-text">상여 문자 직접 붙여넣기</label><textarea id="payroll-bonus-sms-text" rows="2" maxlength="30000" placeholder="여기를 길게 눌러 붙여넣어 주세요"></textarea><p id="wage-bonus-status" role="status"></p></div></details>
+        <section id="wage-tax-settings" class="wage-tax-settings" aria-label="세금 추정 기준">
+          <h3>세금 추정</h3><p id="wage-tax-source"></p><p id="wage-tax-basis"></p>
+          <p class="wage-tax-disclaimer">세금·보험료와 실수령액은 추정치예요. 실제 명세서와 다를 수 있어요.</p>
+          <details id="wage-tax-import"><summary>문자로 개인 공제 기준 가져오기 <small>선택</small></summary>
+        <p id="wage-paste-guide">지급 합계와 공제내역이 포함된 급여 문자를 복사해 주세요. 개인 세금·보험료 추정에만 사용해요.</p>
+        <button type="button" id="wage-fill" class="wage-fill" data-wage-paste="payroll-sms-text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="8" y="7" width="12" height="14" rx="2"/><path d="M16 7V4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h3"/></svg><span>급여 문자로 공제 기준 가져오기</span></button>
+        <details id="wage-paste-fallback" class="wage-paste-fallback"><summary>직접 붙여넣기</summary><label for="payroll-sms-text">급여 문자</label><textarea id="payroll-sms-text" rows="2" maxlength="30000" placeholder="여기를 길게 눌러 붙여넣어 주세요" aria-describedby="payroll-sms-status"></textarea></details>
+        <p id="payroll-sms-recognized" role="status" hidden></p>
+        <p id="payroll-sms-status" class="sms-status" role="status"></p>
+        <details id="wage-bonus-input" class="wage-bonus-input"><summary><span>상여금 공제 기준</span><small>선택</small></summary><div class="wage-bonus-body"><p class="sms-privacy">미등록 시 기준 공제율 약 2.41%로 추정해요. 본인 문자를 등록하면 개인 공제율을 사용해요.</p><button type="button" class="wage-paste-button" data-wage-paste="payroll-bonus-sms-text">상여 문자로 공제 기준 가져오기</button><label for="payroll-bonus-sms-text">상여 문자 직접 붙여넣기</label><textarea id="payroll-bonus-sms-text" rows="2" maxlength="30000" placeholder="여기를 길게 눌러 붙여넣어 주세요"></textarea><p id="wage-bonus-status" role="status"></p></div></details>
         <details id="wage-import-review" class="wage-import-review" hidden><summary>공제 기준과 인식 안내</summary><div id="payroll-sms-preview" class="sms-preview"></div></details>
-            <details id="wage-import-help" class="sms-help wage-import-help"><summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span><strong>문자 원문은 저장하지 않아요</strong><small>인식 후 바로 비워져요. 상세 안내</small></span></summary><div class="wage-help-body"><p>이름·사번·계좌번호는 제외해 주세요. 원문은 기기에서만 인식하고 인식 시 입력창을 바로 비웁니다. 저장 항목은 시급·통상시급·수당별 금액과 합계·공제 기준입니다. 급여 법정요율 항목이 인식되면 월 보험료·기타 월 공제액과 세금·고용 비율을 저장합니다. 지급·공제 합계는 저장하지 않습니다. 로그인하여 동기화를 연결하면 저장 항목도 본인 계정에 전송됩니다. <a href="./privacy.html">저장 안내</a></p><h3>어떤 항목이 적용되나요?</h3><p>급여문자의 기본시급·통상시급과 근속·직책·자격·직무·가족 수당을 각각의 이름으로 확인하고 저장해요. 근속수당은 문자 금액을 우선 적용하며 자동 계산액과 중복해서 더하지 않아요. 금액이 다르면 ‘아니요, 수정할게요’에서 고칠 수 있어요. 일부 수당만 붙여넣으면 나머지는 유지됩니다. 공제율은 선택 사항이며 지급 합계·공제 합계 두 줄로 계산합니다. 월 기본급만 인식되면 환산 기준시간을 확인해 기본시급으로 나눌 수 있습니다. 통상시급은 별도로 확인해 주세요. 상여 문자에서는 상여금 공제율만 적용하며 시급·수당은 바꾸지 않습니다. 문자에서 인식하지 않은 시급은 현재 입력값을 유지합니다. 급여의 연금·건강·고용에 법정요율이 표시되고 세금 내역이 있으면, 연금·건강(별도 요양 포함)은 문자 월액으로 유지하고 고용은 문자와 일치하는 0.9% 또는 문자 비율로 추정합니다. 소득세·지방소득세는 문자 비율로 추정합니다. 기타 공제는 문자 월액으로 유지합니다. 해당 내역이 없으면 공제 합계 ÷ 지급 합계로 추정합니다. 상여금은 본인의 상여 문자 공제율을 우선 사용하며, 미등록 시 기준 명세서 공제율 약 2.41%를 적용합니다. 소득세·지방소득세·고용보험을 포함한 비율이며 급여 월 보험료를 다시 차감하지 않습니다. 보험료 정산·비과세·가족 수 변경 시 새 문자를 적용하세요. 비워둔 문자 칸의 기존 공제율은 변경하지 않습니다. 저장된 공제율이 없으면 월 급여는 기준 명세서의 세금·보험료 공제율 약 18.09%, 상여금은 기준 명세서 공제율 약 2.41%로 세후 금액을 추정합니다. 이는 개인별 세금·보험료를 정확히 계산한 값이 아닙니다. 상여 문자만으로 급여 공제율을 추정하지 않습니다. 상여 지급액·근무일수 계산은 기존 규칙을 유지하며 추정 공제액은 실제 세액과 다를 수 있습니다.</p></div></details>
+        <details id="wage-import-help" class="sms-help wage-import-help"><summary><strong>문자 원문은 저장하지 않아요</strong></summary><div class="wage-help-body"><p>문자는 기기에서 인식한 뒤 바로 비워요. 이름·사번·계좌번호·문자 원문과 지급·공제 합계는 저장하지 않아요. 개인 공제 비율과 필요한 월 보험료·기타 공제액만 가져와요. 시급과 수당은 직접 입력한 값을 사용해요. 계정 동기화를 연결하면 적용한 설정이 본인 계정에 저장돼요. <a href="./privacy.html">저장 안내</a></p><p>개인 공제 기준을 등록하지 않으면 기본 명세서의 공제 비율로 추정해요. 급여는 약 18.09%, 상여는 약 2.41%이며 세금·보험료를 포함한 비율이에요. 기존 개인 공제 기준이 있으면 그대로 우선 적용해요. 세금·보험료와 실수령액은 추정치이며 실제 명세서와 다를 수 있어요.</p></div></details>
+          </details>
+        </section>
         </div>
-        <button type="button" id="guided-wage-import" class="guided-wage-import" hidden>급여 문자로 채우기 <span>선택</span></button>
+        <button type="button" id="guided-wage-import" class="guided-wage-import" hidden>개인 공제 기준 설정 <span>선택</span><small>세금·보험료와 실수령액은 추정치예요.</small></button>
         </div>
-        <div class="sms-actions"><p id="wage-manual-status" class="sms-status" role="alert"></p><button type="button" id="wage-confirm-edit" hidden>아니요, 수정할게요</button><button type="button" id="payroll-sms-apply" class="sms-primary-btn">설정 완료하기</button></div>
+        <div class="sms-actions"><p id="wage-manual-status" class="sms-status" role="alert"></p><button type="button" id="payroll-sms-apply" class="sms-primary-btn">설정 완료하기</button></div>
     </dialog>
 
     <!-- 모달: 연/월 선택 피커 (캘린더 & 급여계산기 공용) -->
@@ -2989,8 +2993,8 @@
             if (!window.ShiftOnboarding?.needsSetup()) checkPayslipPopup();
         };
     </script>
-    <script src="./payroll-sms.js?v=sms-confirm-1"></script>
-    <script src="./payroll-estimate.js?v=reference-motion-1"></script>
+    <script src="./payroll-sms.js?v=manual-tax-1"></script>
+    <script src="./payroll-estimate.js?v=manual-tax-1"></script>
     <script src="./calendar-integration.js?v=6"></script>
     <script src="./schedule-share.js?v=3"></script>
     <script src="./google-sync-core.js?v=6"></script>
@@ -3060,7 +3064,6 @@
   <section class="onboarding-panel" aria-label="시급 설정" hidden>
    <div class="onboarding-art" aria-hidden="true"></div>
    <div class="onboarding-import-card onboarding-wage-plan"><strong>하나씩 입력하면 돼요</strong><p>기본시급 → 통상시급 → 추가수당</p><small>추가수당이 있는 경우에만 금액을 입력해요.</small></div>
-   <button type="button" id="onboarding-wage-import" class="onboarding-optional-import">급여 문자로 가져오기 <span>선택</span></button>
    <div id="onboarding-wage-summary" class="onboarding-wage-summary" hidden><div><span>기본시급</span><strong id="onboarding-base-wage" class="onboarding-base-wage"></strong></div><div><span>통상시급</span><strong id="onboarding-ordinary-wage" class="onboarding-ordinary-wage"></strong></div></div>
    <button type="button" id="onboarding-import-again" class="onboarding-import-again" hidden>시급 다시 설정하기</button>
   </section>
@@ -3082,8 +3085,8 @@
 <script src="./onboarding-flow-motion.js?v=reference-motion-1"></script>
 <script src="./onboarding-story.js?v=2"></script>
 <script src="./onboarding-allowances.js?v=allowance-cards-1"></script>
-<script src="./onboarding-wage.js?v=allowance-cards-1"></script>
-<script src="./onboarding.js?v=reference-motion-1"></script>
+<script src="./onboarding-wage.js?v=manual-tax-1"></script>
+<script src="./onboarding.js?v=manual-tax-1"></script>
 <script src="./payslip-alert.js?v=3"></script>
 <script src="./memo-editor.js?v=13"></script>
 <script src="./day-editor-navigation.js?v=8"></script>
@@ -3095,8 +3098,8 @@
 <script src="./day-editor-designs.js?v=10"></script>
 <script src="./memo-composer.js?v=surface-motion-2"></script>
 <script src="./settings-options.js?v=2"></script>
-<script src="./wage-import-ui.js?v=reference-motion-1"></script>
-<script src="./app-i18n-data.js?v=sms-confirm-1"></script>
+<script src="./wage-import-ui.js?v=manual-tax-1"></script>
+<script src="./app-i18n-data.js?v=manual-tax-1"></script>
 <script src="./app-i18n-zh.js?v=3"></script>
 <script src="./app-i18n.js?v=9"></script>
 <script src="./app-currency.js?v=2"></script>

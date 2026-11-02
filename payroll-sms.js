@@ -46,6 +46,7 @@
                 if (value !== null && kind) assign(totals, kind, value);
             }
             for (const [key, pattern, kind] of definitions) {
+                if(options.taxOnly && kind!=='deduct')continue;
                 const m = line.match(pattern);
                 if (!m || (['pay','fixed','reference','seniority'].includes(kind) && section === 'deduct')) continue;
                 if (kind === 'fixed') seenAllowances.add('dutyPay');
@@ -61,7 +62,7 @@
         statedTotal = totals.deduct;
         // Only a complete payment section establishes that an omitted allowance is absent.
         // Partial wage snippets and unreadable allowance amounts must not erase saved values.
-        if (hasPaySection && Number.isSafeInteger(gross)) {
+        if (!options.taxOnly && hasPaySection && Number.isSafeInteger(gross)) {
             for (const key of ['dutyPay']) {
                 if (!seenAllowances.has(key)) wages[key] = 0;
             }
@@ -82,6 +83,7 @@
         } else if (gross !== undefined || Object.keys(deductions).length || statedTotal !== undefined) {
             warnings.push('공제 기준에는 지급 합계와 공제 합계가 필요합니다. 합계가 없거나 내역과 맞지 않아 공제율은 변경하지 않습니다.');
         }
+        if(options.taxOnly&&!profile)throw new Error(warnings[0] || '지급 합계와 공제 합계가 포함된 급여 문자를 붙여넣어 주세요.');
         if (!Object.keys(wages).length && !profile && !(options.kind!=='bonus'&&references.baseMonthly>0)) throw new Error(warnings[0] || '인식한 시급·수당이 없습니다. 지급내역과 공제내역을 포함한 명세서를 붙여넣어주세요.');
         return { wages, deductions, profile, warnings, fixedAllowances, completeAllowances:hasPaySection&&Number.isSafeInteger(gross)&&!unreadableAllowance, baseMonthly:options.kind==='bonus'?null:references.baseMonthly };
     }

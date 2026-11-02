@@ -68,3 +68,12 @@ assert.equal(parse('기본시급 10000\n공제내역\n근속 70000').wages.senio
 assert.throws(()=>parse('근속 70000\n근속수당 80000'),/서로 다른/);
 assert.equal(parse('기본시급 10000\n근속 확인불가').wages.seniorityPayOverride,undefined);
 console.log('PASS named seniority allowance parsing, zero, section boundaries and conflicts');
+
+// Tax-only imports must not read or mutate wage fields, including conflicting wage lines.
+const taxOnly=parse(sample+'\n기본시급 99,999\n직책 999,999',{taxOnly:true});
+assert.deepEqual(taxOnly.wages,{});assert.deepEqual(taxOnly.fixedAllowances,{});assert.deepEqual(taxOnly.profile,{gross:2000000,total:300000});
+assert.deepEqual(parse(assessed,{taxOnly:true}).profile,monthly);
+assert.throws(()=>parse('기본시급 11050\n직책 70000',{taxOnly:true}),/지급 합계와 공제 합계/);
+assert.throws(()=>parse(sample+'\n공제 합계 400000',{taxOnly:true}),/섞여/);
+assert.deepEqual(parse('지급 합계 1000000\n공제 합계 0',{taxOnly:true}).profile,{gross:1000000,total:0});
+console.log('PASS tax-only profile import, unrelated wage exclusion, conflict checks and explicit zero');

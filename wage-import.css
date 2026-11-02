@@ -40,13 +40,6 @@ body[data-pref-theme] #payroll-sms-dialog .wage-mini-card input{font-size:16px!i
 #payroll-sms-dialog .wage-legacy-row{display:grid;grid-template-columns:1fr 120px;gap:8px;align-items:center;padding:12px;margin:-6px 0 16px;border:1px solid var(--ui-line,#e5e8eb);border-radius:13px;font-size:12px}
 body[data-pref-theme] #payroll-sms-dialog .wage-legacy-row input{font-size:16px!important;text-align:right;font-weight:550;letter-spacing:-.3px}
 .wage-legacy-row>small{grid-column:1/-1;color:var(--ui-muted,#6b7684);font-size:11px;line-height:1.6}
-#payroll-sms-dialog #wage-conversion{margin:12px 0 0;padding:14px;border:1px solid var(--ui-line,#e5e8eb);border-radius:14px;font-size:12px;line-height:1.7;color:var(--ui-copy,#4e5968)}
-#wage-conversion p{margin:0 0 8px}
-#wage-conversion label{display:flex;gap:8px;align-items:center;font-size:12px}
-body[data-pref-theme] #wage-conversion-hours{width:80px;padding:8px;border:1px solid var(--ui-line,#e5e8eb);border-radius:8px;font-size:16px}
-#wage-conversion-result{margin-top:8px!important;font-variant-numeric:tabular-nums}
-body[data-pref-theme] #wage-conversion-use{min-height:44px;padding:10px 12px;background:var(--ui-blue-soft,#eaf3ff);color:var(--ui-blue,#3182f6);border:0;border-radius:10px;font:inherit;font-weight:550}
-#wage-conversion>small{display:block;margin-top:8px;color:var(--ui-muted,#8b95a1);font-size:11px}
 #payroll-sms-dialog .wage-import-review{font-size:12px;color:var(--ui-muted,#6b7684);margin:0 0 8px}
 .wage-import-review summary{min-height:40px;line-height:40px;cursor:pointer}
 #payroll-sms-dialog .wage-import-review .sms-preview{margin:0;padding:12px;font-size:12px;line-height:1.8;background:var(--ui-field,#f2f4f6);color:var(--ui-copy,#4e5968);white-space:pre-line;overflow-wrap:anywhere}
@@ -86,29 +79,8 @@ body[data-pref-theme] #payroll-sms-dialog:not([data-guided=true])[open]{display:
 #payroll-sms-dialog .wage-seniority output{font-size:16px;font-weight:550;font-variant-numeric:tabular-nums;color:var(--ui-copy,#4e5968)}
 @media(max-width:360px){body[data-pref-theme] #payroll-sms-dialog .wage-legacy-row input{font-size:16px!important}#payroll-sms-dialog .wage-seniority{flex-direction:row;align-items:center}}
 
-/* SMS import is a compact review, with editing only when requested. */
-body[data-pref-theme] #payroll-sms-dialog[data-wage-confirming=true][open]{height:auto!important;max-height:var(--sheet-limit,88dvh)!important}
-#payroll-sms-dialog[data-wage-confirming=true] .wage-unified-body>:not(#wage-confirmation):not(#wage-import-review){display:none!important}
-#payroll-sms-dialog[data-wage-confirming=true] #wage-import-info{display:none!important}
-#wage-confirm-hourly{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-#wage-confirm-hourly>div{display:flex;flex-direction:column;gap:8px;min-width:0;padding:16px 14px;background:var(--ui-field,#f2f4f6);border-radius:18px}
-#wage-confirm-hourly span{font-size:13px;color:var(--ui-copy,#4e5968)}
-#wage-confirm-hourly strong{font-size:22px;letter-spacing:-.7px;line-height:1.4;color:var(--ui-ink,#191f28);font-variant-numeric:tabular-nums}
-#wage-confirm-hourly small,#wage-confirm-allowances small{font-size:11px;font-weight:400;letter-spacing:0;color:var(--ui-muted,#6b7684)}
-#wage-confirm-hourly strong small,#wage-confirm-allowances dd small{margin-left:3px}
-#wage-confirm-allowances{margin:14px 0 0;padding:0 2px}
-#wage-confirm-allowances>div{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;border-bottom:1px solid var(--ui-line,#f2f4f6)}
-#wage-confirm-allowances dt{font-size:14px;color:var(--ui-copy,#4e5968)}
-#wage-confirm-allowances dt small{display:block;margin-top:3px}
-#wage-confirm-allowances dd{margin:0;font-size:17px;font-weight:600;white-space:nowrap;color:var(--ui-ink,#191f28);font-variant-numeric:tabular-nums}
-#wage-confirm-note,.wage-confirm-privacy{margin:12px 0 0;font-size:12px;color:var(--ui-muted,#6b7684);line-height:1.6;word-break:keep-all}
-#payroll-sms-dialog[data-wage-confirming=true] .sms-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
-#payroll-sms-dialog[data-wage-confirming=true] #wage-manual-status{grid-column:1/-1}
-body[data-pref-theme] #wage-confirm-edit{border:0;border-radius:16px;background:var(--ui-field,#f2f4f6);color:var(--ui-copy,#4e5968);font:inherit;font-size:14px;font-weight:600;min-height:54px;padding:12px 8px}
-body[data-pref-theme] #payroll-sms-dialog[data-wage-confirming=true] #payroll-sms-apply{font-size:15px;padding:12px 8px;min-height:54px}
 body[data-pref-theme] #payroll-sms-dialog #wage-seniority-reset{padding:2px 0;min-height:28px;border:0;background:none;color:var(--ui-blue,#3182f6);font-size:11px;text-align:left;box-shadow:none}
 #payroll-sms-dialog .wage-seniority .wage-value{max-width:48%}
-@media(max-width:360px){#wage-confirm-hourly>div{padding:14px 11px}#wage-confirm-hourly strong{font-size:20px}}
 
 /* Real pending clipboard work gets a quiet three-dot response, with no artificial wait. */
 #payroll-sms-dialog [data-wage-paste][aria-busy=true]{position:relative;opacity:.75}
@@ -118,3 +90,17 @@ body[data-pref-theme] #payroll-sms-dialog #wage-seniority-reset{padding:2px 0;mi
 .wage-progress-dots i:nth-child(2){animation-delay:120ms}.wage-progress-dots i:nth-child(3){animation-delay:240ms}
 @keyframes wage-progress-pulse{0%,70%,100%{opacity:.35;transform:translateY(0)}35%{opacity:1;transform:translateY(-3px)}}
 @media(prefers-reduced-motion:reduce){.wage-progress-dots i{animation:none;opacity:.7}}
+
+/* Manual pay fields are primary; personal deduction estimates are optional and separate. */
+#payroll-sms-dialog .wage-tax-settings{margin-top:20px;padding:16px;border-radius:18px;background:var(--ui-field,#f7f8fa)}
+#payroll-sms-dialog .wage-tax-settings h3{margin:0 0 8px;font-size:15px}
+#payroll-sms-dialog #wage-tax-source{font-size:13px;font-weight:600;color:var(--ui-copy,#4e5968);margin:0 0 5px}
+#payroll-sms-dialog #wage-tax-basis{font-size:11px;color:var(--ui-muted,#6b7684);line-height:1.7;word-break:keep-all;margin:0}
+#payroll-sms-dialog .wage-tax-disclaimer{font-size:12px;line-height:1.7;color:var(--ui-copy,#4e5968);margin:10px 0}
+#payroll-sms-dialog #wage-tax-import>summary{min-height:44px;display:flex;align-items:center;gap:8px;color:var(--ui-blue,#3182f6);font-size:13px;cursor:pointer;list-style:none}
+#payroll-sms-dialog #wage-tax-import>summary::-webkit-details-marker{display:none}
+#payroll-sms-dialog #wage-tax-import>summary::after{content:'⌄';margin-left:auto}
+#payroll-sms-dialog #wage-tax-import[open]>summary::after{content:'⌃'}
+#payroll-sms-dialog #wage-tax-import>summary small{font-size:11px;color:var(--ui-muted,#8b95a1)}
+#payroll-sms-dialog[data-guided=true] .wage-tax-settings{margin-top:0;padding:14px}
+#payroll-sms-dialog[data-guided=true] .guided-wage-import small{display:block;color:#8b95a1;font-size:11px;margin-top:5px;line-height:1.6}

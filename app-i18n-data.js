@@ -606,3 +606,24 @@ Object.assign(window.AppTranslations, {
  '선택한 조에 맞춰\n내 근무표를 만들어요.': {en:'We’ll create your schedule\nfor the team you choose.',zh:'根据您选择的班组\n生成您的排班表。',ja:'選んだ勤務組に合わせて\n勤務表を作成します。'},
  '시급을 확인하면\n내 예상 급여를 볼 수 있어요.': {en:'Check your hourly rates\nto see your estimated pay.',zh:'确认时薪后\n即可查看预估工资。',ja:'時給を確認すると\n予想給与がわかります。'}
 });
+
+Object.assign(window.AppTranslations, {
+ '기본시급·통상시급과 받는 수당을 직접 입력해 주세요.': {en:'Enter your base and ordinary hourly rates and allowances.',zh:'请手动输入基本时薪、通常时薪和津贴。',ja:'基本時給・通常時給と手当を入力してください。'},
+ '세금 추정': {en:'Estimated deductions',zh:'税费估算',ja:'税金の見積もり'},
+ '세금·보험료를 추정해요': {en:'Estimate taxes and insurance',zh:'估算税费和保险费',ja:'税金・保険料を見積もります'},
+ '세금·보험료와 실수령액은 추정치예요.': {en:'Taxes, insurance and take-home pay are estimates.',zh:'税费、保险费和实发工资均为估算值。',ja:'税金・保険料と手取り額は推定値です。'},
+ '세금·보험료와 실수령액은 추정치예요. 실제 명세서와 다를 수 있어요.': {en:'Taxes, insurance and take-home pay are estimates and may differ from your payslip.',zh:'税费、保险费和实发工资均为估算值，可能与实际工资单不同。',ja:'税金・保険料と手取り額は推定値です。実際の明細と異なる場合があります。'},
+ '개인 공제 기준 설정': {en:'Personal deduction basis',zh:'个人扣除计算依据',ja:'個人の控除基準を設定'},
+ '문자로 개인 공제 기준 가져오기': {en:'Import a personal deduction basis from SMS',zh:'从短信导入个人扣除计算依据',ja:'SMSから個人の控除基準を取り込む'},
+ '급여 문자로 공제 기준 가져오기': {en:'Import deductions from salary SMS',zh:'从工资短信导入扣除依据',ja:'給与SMSから控除基準を取り込む'},
+ '상여 문자로 공제 기준 가져오기': {en:'Import deductions from bonus SMS',zh:'从奖金短信导入扣除依据',ja:'賞与SMSから控除基準を取り込む'},
+ '지급 합계와 공제내역이 포함된 급여 문자를 복사해 주세요. 개인 세금·보험료 추정에만 사용해요.': {en:'Copy a salary SMS with payment totals and deductions. It is only used to estimate your personal taxes and insurance.',zh:'请复制包含应发合计和扣除明细的工资短信，仅用于估算个人税费和保险费。',ja:'支給合計と控除内訳を含む給与SMSをコピーしてください。個人の税金・保険料の推定にのみ使用します。'},
+ '선택 사항이에요. 등록하지 않아도 기본 공제 기준으로 추정해요.': {en:'Optional. Without an import, the default deduction basis is used.',zh:'可选。不导入时按默认扣除依据估算。',ja:'任意です。登録しない場合は既定の控除基準で推定します。'},
+ '시급 입력 계속하기': {en:'Continue entering hourly pay',zh:'继续输入时薪',ja:'時給の入力を続ける'},
+ '기본 공제 기준으로 추정': {en:'Estimated using the default deduction basis',zh:'按默认扣除依据估算',ja:'既定の控除基準で推定'},
+ '저장된 개인 공제 기준 유지': {en:'Your saved personal deduction basis is retained',zh:'保留已保存的个人扣除依据',ja:'保存済みの個人控除基準を維持'},
+ '새 개인 공제 기준 · 설정 완료 시 적용': {en:'New personal deduction basis · applied when you save',zh:'新的个人扣除依据 · 完成设置后应用',ja:'新しい個人控除基準 · 設定完了時に適用'},
+ '개인 공제 기준을 가져왔어요. 설정 완료 시 적용돼요.': {en:'Personal deduction basis imported. Save settings to apply it.',zh:'已导入个人扣除依据，完成设置后应用。',ja:'個人の控除基準を取り込みました。設定完了時に適用します。'},
+ '세금·보험료와 실수령액은 추정치예요. 시급과 수당은 직접 입력한 금액을 유지해요.': {en:'Taxes, insurance and take-home pay are estimates. Your manually entered pay and allowances are unchanged.',zh:'税费、保险费和实发工资均为估算值，手动输入的时薪和津贴保持不变。',ja:'税金・保険料と手取り額は推定値です。手入力した時給と手当は変更しません。'},
+ '저장된 금액 · 직접 수정 가능': {en:'Saved amount · editable',zh:'已保存金额 · 可手动修改',ja:'保存済み金額 · 編集可能'}
+});
