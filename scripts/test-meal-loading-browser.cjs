@@ -21,17 +21,17 @@ const menu=date=>({status:'ok',date,checkedAt:'2026-11-02T07:00:00+09:00',meals:
   await page.goto(process.env.CHECK_URL||'http://127.0.0.1:8773');
   await page.locator('#bnav-menu').click();await pending(today);
   assert(await page.locator('#today-menu-loading').isVisible());
-  assert.equal(await page.locator('.meal-art-bowl').evaluate(e=>getComputedStyle(e).animationName),'meal-bowl-float');
+  assert.equal(await page.locator('.meal-chef-head').evaluate(e=>getComputedStyle(e).animationName),'meal-chef-nod');
   assert.equal(await page.locator('#today-menu-panel').getAttribute('aria-busy'),'true');
-  assert.equal(await page.locator('.meal-art-bowl').evaluate(e=>getComputedStyle(e).animationIterationCount),'infinite');
-  assert.equal(await page.locator('.meal-art-steam path').count(),3);
+  assert.equal(await page.locator('.meal-chef-head').evaluate(e=>getComputedStyle(e).animationIterationCount),'infinite');
+  assert.equal(await page.locator('.meal-chef-spatula').evaluate(e=>getComputedStyle(e).animationName),'meal-chef-stir');
   for(const width of[320,390])for(const theme of['current','dark']){
    await page.setViewportSize({width,height:844});await page.evaluate(t=>{const input=document.getElementById('pref-theme');input.value=t;input.dispatchEvent(new Event('change'));},theme);
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
    if(theme==='dark')assert(await page.locator('#today-menu-loading strong').evaluate(e=>getComputedStyle(e).color.match(/\d+/g).slice(0,3).every(v=>Number(v)>220)));
    if(width===390)await page.screenshot({path:'/tmp/meal-story-'+engine.name()+'-'+theme+'.png'});
   }
-  await page.locator('#bnav-cal').click();assert.equal(await page.locator('.meal-art-bowl').evaluate(e=>getComputedStyle(e).animationPlayState),'paused');await page.locator('#bnav-menu').click();
+  await page.locator('#bnav-cal').click();assert.equal(await page.locator('.meal-chef-head').evaluate(e=>getComputedStyle(e).animationPlayState),'paused');await page.locator('#bnav-menu').click();
 
   await page.clock.fastForward(8100);
   assert.match(await page.locator('#today-menu-loading small').textContent(),/식당 응답/);
@@ -59,7 +59,7 @@ const menu=date=>({status:'ok',date,checkedAt:'2026-11-02T07:00:00+09:00',meals:
   assert.equal(await page.locator('#today-menu-status').textContent(),'','Completed requests clear the slow-response timer');
   await page.emulateMedia({reducedMotion:'reduce'});
   await page.locator('#today-menu-next').click();await page.locator('#today-menu-next').click();
-  assert.equal(await page.locator('.meal-art-bowl').evaluate(e=>getComputedStyle(e).animationName),'none');
+  assert.equal(await page.locator('.meal-chef-head').evaluate(e=>getComputedStyle(e).animationName),'none');
   await respond('2026-11-04',{status:'not_published',date:'2026-11-04',message:'아직 등록되지 않은 식단이에요.'});
   await page.locator('#today-menu-loading').waitFor({state:'hidden'});
   assert.match(await page.locator('#today-menu-empty').textContent(),/아직 등록/);

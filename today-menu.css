@@ -80,6 +80,18 @@ body[data-pref-theme="dark"] .meal-footer a{color:#a4cef0!important}
 @keyframes meal-spoon-sway{0%,100%{transform:rotate(16deg) translateY(0)}50%{transform:rotate(10deg) translateY(-5px)}}
 @keyframes meal-steam-rise{0%{opacity:0;transform:translateY(8px)}30%{opacity:.7}80%,100%{opacity:0;transform:translateY(-8px)}}
 @keyframes meal-spark-glow{0%,100%{opacity:.35;transform:scale(.85) rotate(-8deg)}50%{opacity:.8;transform:scale(1) rotate(8deg)}}
+/* Selected option 4: the little chef, with the preview's gentle stirring motion. */
+.meal-chef-hat{position:absolute;left:66px;top:19px;width:64px;height:39px;border-radius:15px 15px 10px 10px;background:linear-gradient(135deg,#fff,#dfeafa);box-shadow:1px 3px 3px #31558917;z-index:2}
+.meal-chef-hat::before{content:'';position:absolute;left:-4px;top:-14px;width:29px;height:29px;border-radius:50%;background:#fff;box-shadow:21px -6px 0 #fff,43px 0 0 #fff}
+.meal-chef-head{position:absolute;left:67px;top:46px;width:62px;height:55px;border-radius:22px 22px 29px 29px;background:linear-gradient(125deg,#ffdfc3,#efc4a4);animation:meal-chef-nod 3.6s ease-in-out infinite}
+.meal-chef-eyes{position:absolute;left:19px;top:21px;width:5px;height:7px;border-radius:50%;background:#665349;box-shadow:20px 0 0 #665349}
+.meal-chef-smile{position:absolute;width:13px;height:7px;left:25px;top:34px;border-bottom:2px solid #b87e67;border-radius:0 0 50% 50%}
+.meal-chef-apron{position:absolute;width:82px;height:47px;left:57px;top:95px;background:linear-gradient(125deg,#94c5ff,#4a92eb);border-radius:29px 29px 10px 10px}
+.meal-chef-pan{position:absolute;left:40px;top:121px;width:115px;height:24px;background:linear-gradient(125deg,#e9f0fa,#a9c2df);border-radius:6px 6px 22px 22px}
+.meal-chef-spatula{position:absolute;left:145px;top:83px;width:8px;height:52px;background:linear-gradient(90deg,#c49a72,#eed1af);border-radius:8px;transform-origin:50% 90%;animation:meal-chef-stir 3.6s ease-in-out infinite}
+.meal-chef-spatula::before{content:'';position:absolute;left:-5px;top:-7px;width:18px;height:24px;border-radius:50%;background:#d6b18b}
+@keyframes meal-chef-nod{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(3deg)}}
+@keyframes meal-chef-stir{0%,100%{transform:rotate(-15deg)}50%{transform:rotate(25deg)}}
 .meal-loading strong{font-size:15px;line-height:1.5;font-weight:600}
 .meal-loading small{max-width:260px;font-size:12px;line-height:1.6;color:var(--ui-muted,#6b7684);word-break:keep-all}
 .meal-loading.is-refreshing{min-height:0;flex-direction:row;flex-wrap:wrap;gap:8px 12px;padding:14px 16px;margin-bottom:14px;border-radius:18px;background:var(--ui-card,#fff)}
