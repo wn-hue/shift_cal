@@ -46,7 +46,7 @@ body[data-pref-theme="dark"] .meal-extras{border-color:#42566c!important}
 body[data-pref-theme="dark"] .meal-footer a{color:#a4cef0!important}
 
 #view-menu .meal-navigation { display:flex; align-items:center; gap:8px; margin-top:16px; min-width:0; }
-#view-menu .meal-navigation button { display:grid; place-items:center; min-width:44px; height:44px; padding:0 12px; border:0; border-radius:14px; background:var(--ui-card,#f2f4f6); color:var(--ui-text,#333d4b); font:inherit; cursor:pointer; }
+#view-menu .meal-navigation button { display:grid; place-items:center; min-width:44px; height:44px; padding:0 12px; border:0; border-radius:14px; background:var(--ui-card,#f2f4f6); color:var(--ui-ink,#333d4b); font:inherit; cursor:pointer; }
 #view-menu .meal-navigation :is(#today-menu-prev,#today-menu-next) { font-size:28px; line-height:1; }
 #view-menu .meal-navigation #today-menu-today { font-size:13px; font-weight:600; }
 #view-menu .meal-navigation button:disabled { opacity:.35; cursor:default; }
@@ -56,20 +56,42 @@ body[data-pref-theme="dark"] .meal-footer a{color:#a4cef0!important}
 #view-menu { overflow-x:clip; }
 /* A single quiet loading indicator, without masking navigation or delaying results. */
 .meal-loading[hidden]{display:none}
-.meal-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;box-sizing:border-box;min-height:clamp(240px,calc(100svh - 350px),440px);padding:24px;text-align:center;color:var(--ui-text,#333d4b)}
-.meal-loading-orbit{display:grid;place-items:center;width:60px;height:60px;margin-bottom:6px;border-radius:50%;background:var(--ui-field,#edf0f4)}
-.meal-loading-ring{box-sizing:border-box;width:34px;height:34px;border:3px solid #3182f626;border-top-color:#3182f6;border-right-color:#3182f6;border-radius:50%;animation:meal-spin .9s linear infinite}
+.meal-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;box-sizing:border-box;min-height:clamp(240px,calc(100svh - 350px),440px);padding:24px;text-align:center;color:var(--ui-ink,#333d4b)}
+/* Soft illustrated bowl and spoon, matching the setup scenes. Only transforms and
+   opacity animate; the loader does not change the network request or its timing. */
+.meal-loading-art{position:relative;display:block;flex:none;width:200px;height:154px;margin-bottom:4px;pointer-events:none;isolation:isolate}
+.meal-art-scene{position:absolute;inset:0;width:200px;height:154px}
+.meal-art-halo{position:absolute;left:22px;top:13px;width:147px;height:130px;border-radius:48% 52% 45% 55%;background:var(--ui-blue-soft,#eaf3ff);opacity:.6;transform:rotate(-12deg)}
+.meal-art-ground{position:absolute;left:40px;bottom:5px;width:126px;height:13px;border-radius:50%;background:#3155891a;filter:blur(5px)}
+.meal-art-bowl{position:absolute;left:35px;top:65px;width:120px;height:75px;animation:meal-bowl-float 3.6s ease-in-out infinite}
+.meal-art-rice{position:absolute;left:5px;right:5px;top:0;height:30px;border-radius:50%;background:linear-gradient(#fff,#eaf0f9);box-shadow:0 -1px 2px #fff}
+.meal-art-rice i{position:absolute;top:-9px;left:12px;width:39px;height:30px;border-radius:50%;background:linear-gradient(145deg,#fff,#f0f4fa)}
+.meal-art-rice i:nth-child(2){left:37px;top:-14px;width:43px}.meal-art-rice i:nth-child(3){left:66px;top:-6px;width:34px}
+.meal-art-cup{position:absolute;inset:16px 0 10px;border-radius:8px 8px 54px 54px;background:linear-gradient(130deg,#8ac5ff 0%,#4697f5 40%,#2f77dd 100%);box-shadow:inset 1px 3px 4px #ffffff60,inset -3px -3px 6px #1c59b522,0 5px 8px #31558916}
+.meal-art-cup::after{content:'';position:absolute;left:17px;top:10px;width:9px;height:22px;border-radius:9px;background:#ffffff45;transform:rotate(-24deg)}
+.meal-art-foot{position:absolute;left:38px;bottom:4px;width:44px;height:9px;border-radius:3px 3px 8px 8px;background:linear-gradient(90deg,#6ba8f3,#3074ce)}
+.meal-art-spoon{position:absolute;left:165px;top:58px;width:9px;height:76px;border-radius:8px;background:linear-gradient(90deg,#d2deed,#f9fcff 48%,#bccce0);transform-origin:50% 88%;transform:rotate(16deg);animation:meal-spoon-sway 3.6s ease-in-out infinite;box-shadow:2px 3px 6px #31558912}
+.meal-art-spoon::before{content:'';position:absolute;left:-9px;top:-20px;width:27px;height:37px;border-radius:50%;background:radial-gradient(ellipse at 35% 25%,#fff,#dce6f3 65%,#b4c7df);box-shadow:inset 1px 1px 2px #fff}
+.meal-art-steam{position:absolute;left:45px;top:0;width:100px;height:60px;color:#93b7dd}
+.meal-art-steam path{animation:meal-steam-rise 2.8s ease-in-out infinite;opacity:.6}
+.meal-art-steam path:nth-child(2){animation-delay:-.9s}.meal-art-steam path:nth-child(3){animation-delay:-1.8s}
+.meal-art-spark{position:absolute;left:17px;top:47px;font-size:22px;line-height:1;color:#a3c9f4;animation:meal-spark-glow 3.6s ease-in-out infinite}
+@keyframes meal-bowl-float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-4px) rotate(1deg)}}
+@keyframes meal-spoon-sway{0%,100%{transform:rotate(16deg) translateY(0)}50%{transform:rotate(10deg) translateY(-5px)}}
+@keyframes meal-steam-rise{0%{opacity:0;transform:translateY(8px)}30%{opacity:.7}80%,100%{opacity:0;transform:translateY(-8px)}}
+@keyframes meal-spark-glow{0%,100%{opacity:.35;transform:scale(.85) rotate(-8deg)}50%{opacity:.8;transform:scale(1) rotate(8deg)}}
 .meal-loading strong{font-size:15px;line-height:1.5;font-weight:600}
 .meal-loading small{max-width:260px;font-size:12px;line-height:1.6;color:var(--ui-muted,#6b7684);word-break:keep-all}
 .meal-loading.is-refreshing{min-height:0;flex-direction:row;flex-wrap:wrap;gap:8px 12px;padding:14px 16px;margin-bottom:14px;border-radius:18px;background:var(--ui-card,#fff)}
-.meal-loading.is-refreshing .meal-loading-orbit{width:32px;height:32px;margin:0}
-.meal-loading.is-refreshing .meal-loading-ring{width:20px;height:20px;border-width:2px}
+.meal-loading.is-refreshing .meal-loading-art{width:68px;height:53px;margin:0}
+.meal-loading.is-refreshing .meal-art-scene{transform:scale(.34);transform-origin:top left}
 .meal-loading.is-refreshing strong{font-size:13px}
 .meal-loading.is-refreshing small{display:none}
 .meal-status-loading{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-body:not([data-view="menu"]) .meal-loading-ring{animation-play-state:paused}
-body[data-pref-theme="dark"] .meal-loading-ring{border-color:#8dbbff30;border-top-color:#8dbbff;border-right-color:#8dbbff}
-@media(prefers-reduced-motion:reduce){.meal-loading-ring{animation:none}}
+body:not([data-view="menu"]) .meal-art-motion{animation-play-state:paused}
+body[data-pref-theme="dark"] .meal-art-halo{opacity:.35}
+body[data-pref-theme="dark"] .meal-art-steam{color:#a6c7ec}
+@media(prefers-reduced-motion:reduce){.meal-art-motion{animation:none!important}}
 
 /* Keep footer guidance and its final checked-at line on one left edge. */
 #view-menu #today-menu-panel > .meal-rating-note,
