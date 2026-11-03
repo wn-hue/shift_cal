@@ -37,9 +37,9 @@ body[data-pref-theme] #commute-dialog .bus-place-form[hidden]{display:none!impor
 /* Search-first booking: one compact card, results only after an explicit query. */
 #commute-dialog .bus-booking-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:8px 0 20px}
 #commute-dialog .bus-booking-heading h2{font-size:23px;letter-spacing:-.8px;margin:0;font-weight:700}
-#commute-dialog .bus-follow-shift{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;padding:0 0 14px;border-bottom:1px solid var(--ui-line,#f2f4f6)}
+#commute-dialog .bus-follow-shift{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:44px;padding:0;border:0}
 #commute-dialog .bus-follow-copy{display:flex;flex-direction:column;gap:5px;min-width:0}
-#commute-dialog .bus-follow-copy strong{font-size:15px;font-weight:650;line-height:1.4}
+#commute-dialog .bus-follow-copy strong{font-size:13px;font-weight:650;line-height:1.4}
 #commute-dialog .bus-follow-copy small{font-size:12px;line-height:1.5;color:var(--ui-muted,#8b95a1);overflow-wrap:anywhere}
 body[data-pref-theme] #commute-dialog .bus-shift-switch{position:relative;flex:none;width:52px;height:44px;min-height:44px;padding:0;background:none!important;border:0!important;box-shadow:none!important;cursor:pointer}
 #commute-dialog .bus-shift-switch::before{content:'';position:absolute;inset:9px 3px;border-radius:20px;background:#c5cbd3;transition:background .18s}
@@ -196,3 +196,7 @@ body[data-pref-theme] #commute-dialog .bus-result-conditions{background:var(--ui
 .bus-schedule-update>summary{min-height:46px;line-height:1.6;padding:12px 0;box-sizing:border-box;font-weight:550;cursor:pointer}
 #commute-dialog .bus-schedule-update .bus-tip{font-size:12px;line-height:1.8;margin:0 0 12px;color:var(--ui-copy,#4e5968)}
 #commute-dialog.bus-results-mode .bus-schedule-update{display:none}
+
+/* Keep matching next to the stop-search title without growing the form. */
+#commute-dialog .bus-booking-heading .bus-follow-shift{flex:none}
+#commute-dialog .bus-follow-copy small{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
