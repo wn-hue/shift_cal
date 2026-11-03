@@ -196,6 +196,13 @@
     $('today-menu-prev')?.addEventListener('click',() => changeDate(-1));
     $('today-menu-next')?.addEventListener('click',() => changeDate(1));
     $('today-menu-today')?.addEventListener('click',() => {selectedDate=null;load();});
-    window.ShiftUI?.bindMonthSwipe($('view-menu'),$('today-menu-panel'),changeDate);
+    // Empty/unpublished meals leave most of the viewport as body background.
+    // Accept that background too, while keeping navigation and overlays independent.
+    window.ShiftUI?.bindMonthSwipe(document.body,$('today-menu-panel'),changeDate,{
+        decorateTarget:false,
+        enabled:event=>document.body.dataset.view==='menu'
+            && !document.querySelector('dialog[open],.modal-overlay.active')
+            && !event.target.closest('.bottom-nav,.app-header,#lost-found-dialog,#commute-dialog')
+    });
     window.TodayMenu = {load,changeDate};
 })();

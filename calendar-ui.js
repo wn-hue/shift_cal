@@ -100,7 +100,7 @@
     function bindMonthSwipe(target,surface,change,options={}) {
         if (!target || !surface || target.dataset.monthSwipeBound) return;
         target.dataset.monthSwipeBound='true';
-        target.classList.add('month-swipe-surface');
+        if (options.decorateTarget!==false) target.classList.add('month-swipe-surface');
         const state=stateFor(surface);
         let start=null,axis='',frame=0,suppressClick=false;
         const flush=()=>{
@@ -109,10 +109,11 @@
         };
         function cancel() { flush(); start=null; axis=''; if (!state.busy) reset(surface,state); }
         target.addEventListener('touchstart',event=>{
-            if (state.busy || event.touches.length!==1 || (event.target.closest('input,textarea,select,button,a') && !(options.allowButtons && event.target.closest(options.allowButtons)))) { cancel(); return; }
+            if ((options.enabled && !options.enabled(event)) || state.busy || event.touches.length!==1 || (event.target.closest('input,textarea,select,button,a') && !(options.allowButtons && event.target.closest(options.allowButtons)))) { cancel(); return; }
             start={x:event.touches[0].clientX,y:event.touches[0].clientY}; axis='';
         },{passive:true});
         target.addEventListener('touchmove',event=>{
+            if (options.enabled && !options.enabled(event)) { cancel(); return; }
             if (!start || state.busy) return;
             if (event.touches.length!==1) { cancel(); return; }
             const dx=event.touches[0].clientX-start.x,dy=event.touches[0].clientY-start.y;
@@ -129,6 +130,7 @@
             });
         },{passive:false});
         target.addEventListener('touchend',event=>{
+            if (options.enabled && !options.enabled(event)) { cancel(); return; }
             if (!start || state.busy) return;
             const dx=event.changedTouches[0].clientX-start.x,dy=event.changedTouches[0].clientY-start.y;
             flush();
@@ -146,7 +148,7 @@
             } else reset(surface,state);
         },{passive:true});
         target.addEventListener('touchcancel',cancel,{passive:true});
-        target.addEventListener('click',event=>{ if (suppressClick || state.busy) { event.preventDefault(); event.stopPropagation(); } },true);
+        target.addEventListener('click',event=>{ if(options.enabled&&!options.enabled(event))return; if (suppressClick || state.busy) { event.preventDefault(); event.stopPropagation(); } },true);
     }
     window.ShiftUI={showView,rendered,tap,slideMonth,bindMonthSwipe};
 })();
