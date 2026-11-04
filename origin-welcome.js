@@ -1,0 +1,1 @@
+(()=>{'use strict';const button=document.getElementById('start-app');if(localStorage.getItem('shift_salary_config_master'))button.textContent='내 근무표 열기';button.onclick=()=>{localStorage.setItem('shift_origin_ready_v1','1');document.cookie='__Host-work-routine-ready=1; Path=/; Secure; SameSite=Lax; Max-Age=31536000';location.assign('/');};button.disabled=false;})();

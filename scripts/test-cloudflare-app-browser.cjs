@@ -1,15 +1,19 @@
 'use strict';
 const assert=require('node:assert/strict'),{chromium,webkit}=require('playwright'),cfg=require('../origin-migration-config.json');
 (async()=>{
- for(const [name,engine,width]of[['webkit',webkit,390],['chromium',chromium,320]]){
+ for(const [name,engine,width]of[['webkit',webkit,390],['chromium',chromium,320]])for(const source of[cfg.source,...(cfg.previous||[])]){
   const browser=await engine.launch({headless:true}),context=await browser.newContext({viewport:{width,height:844}});
   try{
-   const legacy=await context.newPage();await legacy.goto(cfg.source+'/origin-transfer.html');await legacy.locator('#transfer').waitFor();
+   const legacy=await context.newPage();await legacy.goto(source+'/origin-transfer.html');await legacy.locator('#transfer').waitFor();
    const original={shift_active_group:'C',shift_day_memos:JSON.stringify({'2026-11-04':'이전 테스트 메모'}),shift_salary_config_master:JSON.stringify({baseHourly:11050,ordinaryHourly:14482,hireDate:'2020-01-01'})};
    await legacy.evaluate(values=>{for(const[k,v]of Object.entries(values))localStorage.setItem(k,v);},original);await legacy.close();
-   const page=await context.newPage();await page.goto(cfg.target+'/');await page.locator('#transfer').waitFor();assert(page.url().includes('origin-transfer'));
+   const page=await context.newPage();await page.goto(cfg.target+'/');await page.locator('#start-app').waitFor();
+   assert.equal(await page.locator('nav a[href="'+cfg.target+'/privacy"]').count(),1);
+   for(const resource of['/privacy','/terms','/about.html'])assert.equal((await context.request.get(cfg.target+resource)).status(),200,resource);
+   await page.getByRole('link',{name:'기존 데이터 가져오기',exact:true}).click();await page.locator('#transfer').waitFor();assert(page.url().includes('origin-transfer'));
+   await page.locator('#source-select').selectOption(source);
    assert.equal(await page.evaluate(()=>localStorage.getItem('shift_salary_config_master')),null,'first-visit gate must precede default-setting writes');
-   console.log('CHECK '+name+': migration welcome ready');const popupWait=page.waitForEvent('popup');await page.locator('#transfer').click();const popup=await popupWait;await popup.waitForURL(cfg.source+'/**');await popup.locator('#transfer').waitFor();
+   console.log('CHECK '+name+': migration welcome ready');const popupWait=page.waitForEvent('popup');await page.locator('#transfer').click();const popup=await popupWait;await popup.waitForURL(source+'/**');await popup.locator('#transfer').waitFor();
    console.log('CHECK '+name+': source popup ready');await popup.locator('#transfer').click();await page.waitForURL(cfg.target+'/',{timeout:30000});await page.locator('#view-calendar').waitFor({state:'attached'});
    const copied=await page.evaluate(()=>({memo:localStorage.getItem('shift_day_memos'),group:localStorage.getItem('shift_active_group'),salary:JSON.parse(localStorage.getItem('shift_salary_config_master'))}));assert.equal(copied.memo,original.shift_day_memos);assert.equal(copied.group,'C');assert.equal(copied.salary.baseHourly,11050);
    assert.deepEqual(await popup.evaluate(keys=>Object.fromEntries(keys.map(k=>[k,localStorage.getItem(k)])),Object.keys(original)),original,'original local data must remain unchanged');
@@ -19,10 +23,11 @@ const assert=require('node:assert/strict'),{chromium,webkit}=require('playwright
    const account=await (await context.request.get(cfg.target+'/api/account?action=status')).json();assert.equal(account.configured,true);assert.equal(account.connected,false);
    const bad=await context.request.post(cfg.target+'/api/origin-transfer?action=issue',{headers:{Origin:'https://attacker.invalid'},data:{}});assert.equal(bad.status(),403);
    for(const resource of['/.env','/wrangler.app.jsonc','/.migration-private/copy-receipt-20261104.json','/cloudflare/DATA-COPY-RESULT.json'])assert.equal((await context.request.get(cfg.target+resource)).status(),404);
+   const googleStatus=await(await context.request.get(cfg.target+'/api/google-calendar?action=status')).json();
    let oauth=null,resolveOAuth;const oauthDone=new Promise(resolve=>{resolveOAuth=resolve;});
-   await page.route(cfg.source+'/api/google-calendar?**',async route=>{const login=new URL(route.request().url());assert.equal(login.searchParams.get('web_return'),cfg.target);assert.match(login.searchParams.get('native_challenge'),/^[a-f0-9]{64}$/);const r=await route.fetch({maxRedirects:0});oauth=r.headers()['location'];await route.fulfill({status:200,contentType:'text/plain',body:'OAuth test stop'});resolveOAuth();});
-   await page.evaluate(()=>document.getElementById('account-login').click());await oauthDone;const u=new URL(oauth);assert.equal(u.hostname,'accounts.google.com');assert.equal(u.searchParams.get('redirect_uri'),cfg.source+'/api/google-calendar?action=callback');
-   console.log('PASS '+name+' '+width+': source→Cloudflare local-data copy, original preservation, no startup overwrite, reload, mobile layout, shared account API, CSRF/private-file guards and OAuth relay');
+   await page.route(cfg.source+'/api/google-calendar?**',async route=>{const login=new URL(route.request().url());assert.equal(login.searchParams.get('web_return'),cfg.target);assert.match(login.searchParams.get('native_challenge'),/^[a-f0-9]{64}$/);let r=await route.fetch({maxRedirects:0});let next=r.headers()['location'];if(next?.startsWith(cfg.target+'/api/google-calendar?')){r=await context.request.get(next,{maxRedirects:0});next=r.headers()['location'];}oauth=next;await route.fulfill({status:200,contentType:'text/plain',body:'OAuth test stop'});resolveOAuth();});
+   await page.evaluate(()=>document.getElementById('account-login').click());await oauthDone;const u=new URL(oauth);assert.equal(u.hostname,'accounts.google.com');assert.equal(u.searchParams.get('redirect_uri'),googleStatus.redirectUri);
+   console.log('PASS '+name+' '+width+' '+source+': public homepage, source→custom-domain local-data copy, original preservation, no startup overwrite, reload, mobile layout, shared account API, CSRF/private-file guards and OAuth relay');
   }finally{await context.close();await browser.close();}
  }
 })().catch(e=>{console.error(e);process.exitCode=1});

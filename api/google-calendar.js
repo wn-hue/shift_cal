@@ -14,8 +14,10 @@ function config() {
         try { const u = new URL(env.APP_URL); if (u.protocol !== 'https:' || u.pathname !== '/' || u.search || u.hash || u.username || u.password) throw Error(); origin = u.origin; }
         catch { missing.push('APP_URL 형식(https://도메인)'); }
     }
+    let oauthOrigin=origin;
+    if(env.GOOGLE_OAUTH_REDIRECT_ORIGIN){if(require('../lib/app-origins').trusted(env.GOOGLE_OAUTH_REDIRECT_ORIGIN))oauthOrigin=env.GOOGLE_OAUTH_REDIRECT_ORIGIN;else missing.push('GOOGLE_OAUTH_REDIRECT_ORIGIN 형식');}
     if (env.GOOGLE_CALENDAR_SESSION_SECRET && env.GOOGLE_CALENDAR_SESSION_SECRET.length < 32) missing.push('GOOGLE_CALENDAR_SESSION_SECRET 길이(32자 이상)');
-    return { origin, missing, clientId: env.GOOGLE_CALENDAR_CLIENT_ID, clientSecret: env.GOOGLE_CALENDAR_CLIENT_SECRET, secret: env.GOOGLE_CALENDAR_SESSION_SECRET };
+    return { origin, oauthOrigin, missing, clientId: env.GOOGLE_CALENDAR_CLIENT_ID, clientSecret: env.GOOGLE_CALENDAR_CLIENT_SECRET, secret: env.GOOGLE_CALENDAR_SESSION_SECRET };
 }
 function seal(value, secret) {
     const iv = crypto.randomBytes(12), key = crypto.createHash('sha256').update(secret).digest();
@@ -186,15 +188,16 @@ async function handler(req, res) {
     let session = cfg.secret ? unseal(cookies(req)[SESSION], cfg.secret) : null;
     try {
         if (action === 'status' && req.method === 'GET') return json(res,200,{configured:!cfg.missing.length,missing:cfg.missing,connected:!!session,cloudConnected:!!session?.drive,externalConnected:!!session?.external,provider:"google",
-            ...(session ? {user:{id:session.sub,email:session.email},csrf:session.csrf} : {}), ...(cfg.origin ? {redirectUri:cfg.origin+'/api/google-calendar?action=callback'} : {})});
+            ...(session ? {user:{id:session.sub,email:session.email},csrf:session.csrf} : {}), ...(cfg.origin ? {redirectUri:cfg.oauthOrigin+'/api/google-calendar?action=callback'} : {})});
         if (cfg.missing.length) throw new ApiError(503,'SETUP','관리자가 구글 연동 설정을 완료해야 합니다.');
         if (action === 'login' && req.method === 'GET') {
+            if(cfg.oauthOrigin!==cfg.origin&&req.headers['x-work-routine-origin']!==cfg.oauthOrigin)return redirect(res,cfg.oauthOrigin+'/api/google-calendar'+url.search);
             const state = crypto.randomBytes(32).toString('base64url'), verifier = crypto.randomBytes(32).toString('base64url');
             const storage = url.searchParams.get('storage') === '1' || !!session?.drive;
             const external = url.searchParams.get('external') === '1' || !!session?.external;
             const nativeFlow=require('../lib/native-auth.js').flow(url);
             setCookie(res,FLOW,seal({state,verifier,storage,external,...nativeFlow,exp:Date.now()+600000},cfg.secret),600);
-            const params = new URLSearchParams({ client_id:cfg.clientId, redirect_uri:cfg.origin+'/api/google-calendar?action=callback', response_type:'code',
+            const params = new URLSearchParams({ client_id:cfg.clientId, redirect_uri:cfg.oauthOrigin+'/api/google-calendar?action=callback', response_type:'code',
                 scope:'openid email https://www.googleapis.com/auth/calendar.app.created https://www.googleapis.com/auth/calendar.calendarlist.readonly'+(storage ? ' https://www.googleapis.com/auth/drive.appdata' : '')+(external ? ' https://www.googleapis.com/auth/calendar.events.readonly' : ''),
                 include_granted_scopes:'true',
                 access_type:'offline', prompt:'consent select_account', state, code_challenge:crypto.createHash('sha256').update(verifier).digest('base64url'), code_challenge_method:'S256' });
@@ -204,11 +207,11 @@ async function handler(req, res) {
             const flow = unseal(cookies(req)[FLOW],cfg.secret);
             setCookie(res,FLOW,'',0);
             if (!flow || !url.searchParams.get('state') || flow.state !== url.searchParams.get('state')) throw new ApiError(400,'STATE','로그인 요청을 확인할 수 없습니다. 다시 연결하세요.');
-            if (url.searchParams.get('error')) return redirect(res,cfg.origin+'/?google=denied');
+            if (url.searchParams.get('error')) return redirect(res,cfg.oauthOrigin+'/?google=denied');
             const code = url.searchParams.get('code');
             if (!code) throw new ApiError(400,'CODE','로그인 코드를 확인할 수 없습니다.');
             const data = await request('https://oauth2.googleapis.com/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({
-                code, client_id:cfg.clientId, client_secret:cfg.clientSecret, redirect_uri:cfg.origin+'/api/google-calendar?action=callback', grant_type:'authorization_code',code_verifier:flow.verifier })});
+                code, client_id:cfg.clientId, client_secret:cfg.clientSecret, redirect_uri:cfg.oauthOrigin+'/api/google-calendar?action=callback', grant_type:'authorization_code',code_verifier:flow.verifier })});
             const scopes = new Set((data.scope || '').split(' '));
             if (!scopes.has('https://www.googleapis.com/auth/calendar.app.created') || !scopes.has('https://www.googleapis.com/auth/calendar.calendarlist.readonly')) throw new ApiError(403,'SCOPE','캘린더 연결 권한을 모두 허용해 주세요.');
             if (flow.storage && !scopes.has('https://www.googleapis.com/auth/drive.appdata')) throw new ApiError(403,'DRIVE_PERMISSION','계정 저장 권한을 허용해주세요.');
@@ -223,7 +226,7 @@ async function handler(req, res) {
             setCookie(res,SESSION,cookie,30*86400);
             setCookie(res,'__Host-shiftcal-apple','',0);
             if(flow.nativeChallenge)return redirect(res,require('../lib/native-auth.js').callback(flow,cookie,'google',cfg.secret));
-            return redirect(res,cfg.origin+(flow.storage ? '/?cloud=connected' : '/?google=connected'));
+            return redirect(res,cfg.oauthOrigin+(flow.storage ? '/?cloud=connected' : '/?google=connected'));
         }
         if (req.method !== 'POST') throw new ApiError(405,'METHOD','지원하지 않는 요청 방식입니다.');
         if (!session) throw new ApiError(401,'RECONNECT','구글 계정을 연결해 주세요.');
@@ -269,7 +272,7 @@ async function handler(req, res) {
         if (action === 'write') return json(res,200,{results:await writes(token,body.calendarId,group,body.operations)});
         throw new ApiError(400,'ACTION','지원하지 않는 요청입니다.');
     } catch (e) {
-        if (action === 'callback' && cfg.origin) return redirect(res,cfg.origin+'/?google=error&reason='+encodeURIComponent(e.code || 'ERROR'));
+        if (action === 'callback' && cfg.origin) return redirect(res,cfg.oauthOrigin+'/?google=error&reason='+encodeURIComponent(e.code || 'ERROR'));
         return json(res,e.status || 500,{error:e.code || 'ERROR',message:e.status ? e.message : '서버 요청을 처리하지 못했습니다.'});
     }
 }
