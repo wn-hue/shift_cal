@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),{chromium,webkit}=require('playwright'),cfg=require('../origin-migration-config.json');
 (async()=>{
- for(const [name,engine,width]of[['webkit',webkit,390],['chromium',chromium,320]])for(const source of[cfg.source,...(cfg.previous||[])]){
+ for(const [name,engine,width]of[['webkit',webkit,390],['chromium',chromium,320]])for(const source of cfg.sources){
   const browser=await engine.launch({headless:true}),context=await browser.newContext({viewport:{width,height:844}});
   try{
    const legacy=await context.newPage();await legacy.goto(source+'/origin-transfer.html');await legacy.locator('#transfer').waitFor();
@@ -11,7 +11,7 @@ const assert=require('node:assert/strict'),{chromium,webkit}=require('playwright
    assert.equal(await page.locator('nav a[href="'+cfg.target+'/privacy"]').count(),1);
    for(const resource of['/privacy','/terms','/about.html'])assert.equal((await context.request.get(cfg.target+resource)).status(),200,resource);
    await page.getByRole('link',{name:'기존 데이터 가져오기',exact:true}).click();await page.locator('#transfer').waitFor();assert(page.url().includes('origin-transfer'));
-   await page.locator('#source-select').selectOption(source);
+   assert.equal(await page.locator('#source-select').inputValue(),source);assert.equal(await page.locator('#source-select option').count(),1);assert.equal(await page.locator('#source-select-area').isVisible(),false);
    assert.equal(await page.evaluate(()=>localStorage.getItem('shift_salary_config_master')),null,'first-visit gate must precede default-setting writes');
    console.log('CHECK '+name+': migration welcome ready');const popupWait=page.waitForEvent('popup');await page.locator('#transfer').click();const popup=await popupWait;await popup.waitForURL(source+'/**');await popup.locator('#transfer').waitFor();
    console.log('CHECK '+name+': source popup ready');await popup.locator('#transfer').click();await page.waitForURL(cfg.target+'/',{timeout:30000});await page.locator('#view-calendar').waitFor({state:'attached'});

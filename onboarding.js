@@ -3,20 +3,8 @@
  'use strict';
  const KEY='shift_onboarding_v1', $=id=>document.getElementById(id);
  const dialog=$('onboarding-dialog');
- const read=key=>{try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}};
  const text=key=>{try{return localStorage.getItem(key)}catch{return null}};
- const saved=read(KEY);
- const legacy=()=>{
-  const salary=read('shift_salary_config_master');
-  if(['A','B','C'].includes(text('shift_active_group')))return true;
-  if(salary && (salary.hireDate || ['baseHourly','ordinaryHourly','dutyPay','seniorityPay'].some(k=>salary[k]>0) || Object.values(salary.leaveByYear||{}).some(v=>v>0)))return true;
-  if(['A','B','C'].some(g=>Object.keys(read('shift_overrides_'+g)||{}).length))return true;
-  if(Object.keys(read('shift_day_memos')||{}).length)return true;
-  if(['shift_today_menu_cache_v1','shift_bus_favorites_v1','shift_weather_city','shift_account_owner_v1'].some(k=>text(k)!==null))return true;
-  return ['theme','shape','memos','holidays','adjacent'].some(k=>text('shift_display_'+k)!==null);
- };
- let state=saved?.status==='in_progress'?{status:'in_progress',step:Math.max(0,Math.min(2,Math.trunc(Number(saved.step)||0)))}:
-  saved?.status==='complete'||saved?.status==='existing'?saved:{status:legacy()?'existing':'in_progress',step:0};
+ let state=window.ShiftOnboardingInitialState||OnboardingState.resolve(localStorage);
  let step=state.step||0, selected='', manual=false, active=false, saving=false, navigating=false, paintedStep=-1;
  const main=dialog.querySelector('.onboarding-main');
  function reveal(){OnboardingFlowMotion.reveal(main);}
@@ -74,6 +62,7 @@
   active=true;document.body.dataset.onboarding='open';
   paintedStep=-1;paint();
   if(!dialog.open)dialog.showModal();
+  document.documentElement.removeAttribute('data-onboarding-pending');
   $('onboarding-heading').focus({preventScroll:true});reveal();
  }
  async function next(){
@@ -108,5 +97,12 @@
  $('payroll-sms-dialog').addEventListener('close',()=>{if(active)requestAnimationFrame(()=>{if(active){paint();if(step===2&&(config.baseHourly>0||config.ordinaryHourly>0)&&!(config.baseHourly>0&&config.ordinaryHourly>0))$('onboarding-error').textContent='기본시급과 통상시급을 모두 설정해 주세요.';$('onboarding-next').focus()}})});
  window.addEventListener('shift-payroll-applied',()=>{if(active&&step===2){if(!finish()){$('onboarding-error').textContent='기본시급과 통상시급을 모두 설정해 주세요.';}}});
  window.ShiftOnboarding={open:()=>open(true),needsSetup:()=>state.status==='in_progress',refresh(){if(active&&!saving&&!navigating&&!manual&&!$('payroll-sms-dialog').open&&ready())finish();}};
- window.addEventListener('load',()=>{if(state.status==='in_progress'){if(ready())remember({status:'complete',step:2});else open();}});
+ function start(){
+  if(state.status==='in_progress'){
+   loadConfig();
+   if(ready()&&remember({status:'complete',step:2}))document.documentElement.removeAttribute('data-onboarding-pending');
+   else open();
+  }else document.documentElement.removeAttribute('data-onboarding-pending');
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
