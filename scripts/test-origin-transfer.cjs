@@ -1,0 +1,17 @@
+'use strict';
+const assert=require('node:assert/strict'),crypto=require('node:crypto'),core=require('../origin-data-core.js'),cfg=require('../origin-migration-config.json');
+process.env.GOOGLE_CALENDAR_SESSION_SECRET='synthetic-test-key-'.repeat(4);
+const auth=require('../lib/native-auth.js'),handler=require('../api/origin-transfer.js');
+function storage(entries={}){const m=new Map(Object.entries(entries));return {get length(){return m.size},key:i=>[...m.keys()][i],getItem:k=>m.get(k)??null,setItem:(k,v)=>m.set(k,v),removeItem:k=>m.delete(k),m};}
+function call(action,body,extra={}){const out={headers:{}};const res={setHeader:(k,v)=>{out.headers[k]=v},end:v=>{out.data=JSON.parse(v);out.status=res.statusCode}};return Promise.resolve(handler({method:'POST',url:'/api/origin-transfer?action='+action,headers:{origin:cfg.source,'content-type':'application/json',...extra},body},res)).then(()=>out);}
+(async()=>{
+ const source=storage({shift_day_memos:'{"2026-11-04":"원본 메모"}',shift_active_group:'C',shift_token:'private',unrelated:'ignore'}),data=core.snapshot(source);assert.equal(data.values.shift_token,undefined);assert.equal(data.values.unrelated,undefined);
+ const dest=storage({shift_active_group:'A'});core.restore(dest,data);assert.equal(dest.getItem('shift_active_group'),'A');assert.equal(dest.getItem('shift_day_memos'),data.values.shift_day_memos);assert.equal(source.getItem('shift_active_group'),'C');core.restore(dest,data,true);assert.equal(dest.getItem('shift_active_group'),'C');
+ const failing=storage(),set=failing.setItem;let n=0;failing.setItem=(k,v)=>{if(++n===2)throw Error('Quota');set(k,v)};assert.throws(()=>core.restore(failing,data),/Quota/);assert.equal(failing.length,0);
+ const verifier=crypto.randomBytes(32).toString('hex'),state=crypto.randomBytes(32).toString('hex'),challenge=crypto.createHash('sha256').update(verifier).digest('hex');
+ const issued=await call('issue',{challenge,state},{cookie:'__Host-shift-parking='+('a'.repeat(32)+'.'+'b'.repeat(64))+'; ignored=secret'});assert.equal(issued.status,200);assert(!issued.data.ticket.includes('ignored'));
+ const exchanged=await call('exchange',{ticket:issued.data.ticket,state,verifier});assert.equal(exchanged.status,200);assert.equal(exchanged.headers['Set-Cookie'].length,1);assert.match(exchanged.headers['Set-Cookie'][0],/HttpOnly; SameSite=Lax/);
+ assert.equal((await call('exchange',{ticket:issued.data.ticket,state,verifier:'0'.repeat(64)})).status,401);assert.equal((await call('exchange',{ticket:issued.data.ticket,state:'0'.repeat(64),verifier})).status,401);assert.equal((await call('issue',{challenge,state},{origin:'https://attacker.invalid'})).status,403);
+ const flow=auth.flow(new URL(cfg.source+'/api/google-calendar?'+new URLSearchParams({native_challenge:challenge,native_state:state,web_return:cfg.target})));assert(auth.callback(flow,'test','google',process.env.GOOGLE_CALENDAR_SESSION_SECRET).startsWith(cfg.target+'/origin-auth.html#'));assert.throws(()=>auth.flow(new URL(cfg.source+'?'+new URLSearchParams({native_challenge:challenge,native_state:state,web_return:'https://attacker.invalid'}))));
+ console.log('PASS source retained, import conflict protection and rollback, excluded credentials, cookie PKCE/state/origin checks, fixed OAuth return origin');
+})().catch(e=>{console.error(e);process.exitCode=1});
