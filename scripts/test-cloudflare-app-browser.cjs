@@ -4,7 +4,7 @@ const assert=require('node:assert/strict'),{chromium,webkit}=require('playwright
  for(const [name,engine,width]of[['webkit',webkit,390],['chromium',chromium,320]])for(const source of cfg.sources){
   const browser=await engine.launch({headless:true}),context=await browser.newContext({viewport:{width,height:844}});
   try{
-   const legacy=await context.newPage();await legacy.goto(source+'/origin-transfer.html');await legacy.locator('#transfer').waitFor();
+   const legacy=await context.newPage();await legacy.goto(source+'/origin-transfer.html');await legacy.locator('#transfer').waitFor({state:'attached'});
    const original={shift_active_group:'C',shift_day_memos:JSON.stringify({'2026-11-04':'이전 테스트 메모'}),shift_salary_config_master:JSON.stringify({baseHourly:11050,ordinaryHourly:14482,hireDate:'2020-01-01'})};
    await legacy.evaluate(values=>{for(const[k,v]of Object.entries(values))localStorage.setItem(k,v);},original);await legacy.close();
    const page=await context.newPage();await page.goto(cfg.target+'/');await page.locator('#start-app').waitFor();
