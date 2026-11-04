@@ -162,7 +162,7 @@
         }
         el('google-sync-badge').textContent=g?.enabled ? '구글 동기화 사용 중':'구글 캘린더 동기화';
         const entry=document.querySelector('.calendar-link-entry');
-        if(entry)entry.textContent='📅 구글 · 애플 캘린더 동기화'+(g&&Object.keys(g.pending).length ? ` · 변경 확인 ${Object.keys(g.pending).length}건`:'')+' ›';
+        if(entry)entry.textContent='근무표 Google 캘린더에 연결'+(g&&Object.keys(g.pending).length ? ` · 변경 확인 ${Object.keys(g.pending).length}건`:'');
         renderReview(); renderPersonal();
     }
     async function refreshStatus() {

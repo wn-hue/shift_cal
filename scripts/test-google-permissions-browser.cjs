@@ -32,7 +32,7 @@ const assert=require('node:assert/strict'),{chromium,webkit}=require('playwright
    await page.goto((process.env.TEST_APP_URL||'http://127.0.0.1:8767/')+'?oauth-review=1&external=connected');
    await page.locator('[data-settings-panel="calendars"]').waitFor({state:'visible'});
    assert.match(await page.locator('.external-connect').getAttribute('href'),/external=1&review=1/);
-   assert(!page.url().includes('external=connected'),'callback marker is consumed');assert(page.url().includes('oauth-review=1'));
+   await page.getByRole('button',{name:'근무표 Google 캘린더에 연결',exact:true}).click();await page.locator('#modal-calendar-link.active').waitFor({state:'visible'});assert.equal(await page.locator('#google-sync-login').isVisible(),true,'separate shift-sync entry is reachable and interactive');await page.getByRole('button',{name:'닫기',exact:true}).click();assert(!page.url().includes('external=connected'),'callback marker is consumed');assert(page.url().includes('oauth-review=1'));
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
    console.log('PASS '+name+': basic-login separation, no Calendar calls, selective unlink, hidden review entry and callback navigation');
   }finally{await context.close();await browser.close();}

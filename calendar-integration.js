@@ -63,7 +63,10 @@ function openCalendarIntegration() {
     const preferences=document.getElementById('app-preferences-dialog');
     if(preferences?.open)preferences.close();
     document.getElementById('calendar-link-group').textContent = `${currentGroup}조`;
-    document.getElementById('modal-calendar-link').classList.add('active');
+    const overlay=document.getElementById('modal-calendar-link');
+    // Settings locks the main container; keep this separate feature sheet interactive.
+    if(overlay.parentElement!==document.body)document.body.append(overlay);
+    overlay.classList.add('active');
     if(window.GoogleSync){GoogleSync.render();GoogleSync.refreshStatus();}
 }
 function closeCalendarIntegration(event) {
