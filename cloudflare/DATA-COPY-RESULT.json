@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "mode": "copy-only",
+  "completedAt": "2026-11-04T03:15:47.989Z",
+  "source": {
+    "platform": "vercel-blob",
+    "team": "go1945",
+    "project": "h",
+    "storeId": "store_KABe8beDXnphtYSW",
+    "originalRetained": true,
+    "unchangedAtVerification": true
+  },
+  "target": {
+    "platform": "cloudflare-d1",
+    "databaseName": "work-routine-copy-20261104",
+    "databaseId": "81cb16f8-5705-45e1-9dd8-cbd5ba7c1390",
+    "publicWorkerDeployed": false
+  },
+  "snapshot": {
+    "startedAt": "2026-11-04T03:14:15.873Z",
+    "completedAt": "2026-11-04T03:14:21.451Z",
+    "documentCount": 5,
+    "totalBytes": 24196,
+    "manifestSha256": "041f41a6c69aef927b1f244c11c3f375f61b89c81cc6f81fc36cac2ccfd07054"
+  },
+  "verification": {
+    "documentHashes": true,
+    "versions": true,
+    "metadata": true,
+    "sourceRechecked": true
+  },
+  "productionRoutingChanged": false,
+  "continuousSynchronization": false
+}

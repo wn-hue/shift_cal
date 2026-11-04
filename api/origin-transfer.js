@@ -17,7 +17,7 @@ module.exports=async(req,res)=>{
   if(action==='exchange'){
    const t=unseal(body?.ticket,secret);
    if(t?.kind!=='origin-transfer'||t.target!==config.target||!hex(body?.verifier)||!hex(body?.state)||t.state!==body.state||crypto.createHash('sha256').update(body.verifier).digest('hex')!==t.challenge)return reply(401,{message:'연결이 만료됐어요. 기존 데이터 가져오기를 다시 눌러 주세요.'});
-   const cookies=[];for(const name of names){const value=t.cookies?.[name];if(typeof value==='string'&&/^[A-Za-z0-9._-]+$/.test(value))cookies.push(name+'='+value+'; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=604800');}
+   const cookies=[];for(const name of names){const value=t.cookies?.[name],sameSite=name.includes('shiftcal-')?'Lax':'Strict';if(typeof value==='string'&&/^[A-Za-z0-9._-]+$/.test(value))cookies.push(name+'='+value+'; Path=/; Secure; HttpOnly; SameSite='+sameSite+'; Max-Age=604800');else cookies.push(name+'=; Path=/; Secure; HttpOnly; SameSite='+sameSite+'; Max-Age=0');}
    if(cookies.length)res.setHeader('Set-Cookie',cookies);return reply(200,{ok:true});
   }
   return reply(400,{});

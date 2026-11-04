@@ -2,3 +2,10 @@ node_modules/
 .env
 .env.*
 .DS_Store
+
+# Local migration builds and private backup material
+.wrangler/
+.cloudflare-assets/
+.cloudflare-build/
+.migration-private/
+.dev.vars*

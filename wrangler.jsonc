@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "work-routine-migration",
+  "main": "cloudflare/worker.mjs",
+  "compatibility_date": "2026-11-03",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "assets": {"directory": ".cloudflare-assets", "binding": "ASSETS", "run_worker_first": ["/api/*"]},
+  "alias": {"@vercel/blob": "./cloudflare/blob-adapter.mjs", "@vercel/functions": "./cloudflare/functions-adapter.mjs"},
+  "vars": {"APP_URL": "https://h-lyart-ten.vercel.app", "SHIFT_STORAGE_BACKEND": "d1", "MIGRATION_READ_ONLY": "true"},
+  "d1_databases": [{"binding": "STATE", "database_name": "work-routine-migration", "database_id": "00000000-0000-0000-0000-000000000000", "migrations_dir": "cloudflare/migrations"}]
+}

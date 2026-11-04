@@ -1,0 +1,12 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "work-routine-data-copy",
+  "account_id": "32d1066203eb6fac428b7ddcb116eb58",
+  "compatibility_date": "2026-11-04",
+  // Private copy only. No Worker or public assets are deployed from this config.
+  "d1_databases": [{
+    "binding": "STATE",
+    "database_name": "work-routine-copy-20261104",
+    "database_id": "81cb16f8-5705-45e1-9dd8-cbd5ba7c1390"
+  }]
+}

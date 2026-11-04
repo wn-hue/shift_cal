@@ -1,0 +1,9 @@
+{
+ "$schema":"node_modules/wrangler/config-schema.json",
+ "name":"work-routine",
+ "account_id":"32d1066203eb6fac428b7ddcb116eb58",
+ "main":"cloudflare/app-worker.mjs",
+ "compatibility_date":"2026-11-04",
+ "workers_dev":true,
+ "assets":{"directory":".cloudflare-assets","binding":"ASSETS","run_worker_first":true}
+}

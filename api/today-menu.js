@@ -25,7 +25,7 @@ function parsePdf(buffer) {
 }
 
 async function downloadPdf(fetcher = fetch) {
-    const response = await fetcher(SOURCE_URL, {signal:AbortSignal.timeout(20000), redirect:'error', headers:{Accept:'application/pdf'}});
+    const response = await fetcher(SOURCE_URL, {signal:AbortSignal.timeout(20000), redirect:'manual', headers:{Accept:'application/pdf'}});
     if (!response.ok || Number(response.headers.get('content-length')) > MAX_BYTES) throw new Error('MENU_SOURCE');
     const reader = response.body.getReader(), chunks = [];
     let length = 0;

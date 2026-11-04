@@ -14,7 +14,7 @@ function normalize(data){
 }
 async function search(q){
  const old=cache.get(q);if(old&&Date.now()-old.at<900000)return old.data;if(pending.has(q))return pending.get(q);if(pending.size>=4)throw Error('Busy');
- const request=(async()=>{const url=new URL('https://photon.komoot.io/api/');url.search=new URLSearchParams({q,lat:'37.32',lon:'126.79',limit:'6',bbox:BOUNDS.join(',')}).toString();const r=await fetch(url,{signal:AbortSignal.timeout(12000),redirect:'error',headers:{Accept:'application/json','User-Agent':'ShiftRoutine/2.0 (commute place search; h-lyart-ten.vercel.app)'}});if(!r.ok)throw Error('Search unavailable');const data=normalize(await r.json());if(cache.size>=100)cache.delete(cache.keys().next().value);cache.set(q,{at:Date.now(),data});return data;})().finally(()=>pending.delete(q));pending.set(q,request);return request;
+ const request=(async()=>{const url=new URL('https://photon.komoot.io/api/');url.search=new URLSearchParams({q,lat:'37.32',lon:'126.79',limit:'6',bbox:BOUNDS.join(',')}).toString();const r=await fetch(url,{signal:AbortSignal.timeout(12000),redirect:'manual',headers:{Accept:'application/json','User-Agent':'ShiftRoutine/2.0 (commute place search; h-lyart-ten.vercel.app)'}});if(!r.ok)throw Error('Search unavailable');const data=normalize(await r.json());if(cache.size>=100)cache.delete(cache.keys().next().value);cache.set(q,{at:Date.now(),data});return data;})().finally(()=>pending.delete(q));pending.set(q,request);return request;
 }
 module.exports=async(req,res)=>{
  res.setHeader('Cache-Control','no-store');if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({error:'METHOD_NOT_ALLOWED'});}
