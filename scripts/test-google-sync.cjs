@@ -11,26 +11,15 @@ const value=C.local(), original=event(), record={id:original.id,etag:original.et
 assert.equal(C.colorId({type:'DAY'}),'5');assert.equal(C.colorId({type:'NIGHT'}),'1');assert.equal(C.colorId({type:'OFF'}),null);
 assert.equal(C.colorId({type:'SPECIAL_NIGHT'}),'1');assert.equal(C.colorId({type:'HALF_POST',origType:'NIGHT'}),'1');assert.equal(C.colorId({type:'LEAVE'}),'2');
 assert.equal(C.signature({...original,colorId:'9'}),C.signature(original),'Color changes must not be treated as attendance or memo changes');
-assert.equal(C.plan(value,null,null,original),'insert');
-assert.equal(C.plan(value,null,original,original),'adopt');
-assert.equal(C.plan(C.local('BASE','local'),record,original,event('local')),'patch');
-assert.equal(C.plan(value,record,event('remote'),original),'inbound');
-assert.equal(C.plan(C.local('BASE','local'),record,event('remote'),event('local')),'conflict');
-assert.equal(C.plan(C.local('BASE','same'),record,event('same'),event('same')),'adopt');
-assert.equal(C.plan(value,record,null,original),'deleted');
-assert.equal(C.plan(value,record,{id:original.id,status:'cancelled'},original),'deleted');
-assert.equal(C.plan(value,record,original,event('','C조 야간 1일차')),'patch','Changed baseline must be sent');
+const exported={...original,colorId:'5',visibility:'private'};
+assert.equal(C.planOutbound(null,exported),'insert');
+assert.equal(C.planOutbound(exported,exported),'adopt');
+assert.equal(C.planOutbound({...exported,description:'Google changed this'},exported),'patch','remote memo must never be imported');
+assert.equal(C.planOutbound({...exported,summary:'C조 연차'},exported),'patch','app attendance remains the source of truth');
+assert.equal(C.planOutbound({...exported,status:'cancelled'},exported),'insert');
+assert.equal(C.planOutbound({...exported,colorId:'1'},exported),'color');
+assert.equal(C.planOutbound({...exported,recurrence:['RRULE:FREQ=DAILY']},exported),'blocked');
 assert.equal(C.origin({id:'sc2c20260909r0123456789abcdef'}),'2026-09-09');
-assert.equal(C.memo(event('메모\n둘째 줄')),'메모\n둘째 줄');
-assert.equal(C.memo({...original,description:'구글에서 자유롭게 변경'}),'구글에서 자유롭게 변경');
-assert.equal(C.memo({...original,description:(C.PREFIX+'메모').replace(/\n/g,'\r\n')}),'메모');
-assert.equal(C.infer('C조 연차 · 주간','DAY'),'LEAVE');
-assert.equal(C.infer('C조 야간 특근','OFF'),'SPECIAL_NIGHT');
-assert.equal(C.infer('C조 주간 · O.T해제','DAY'),'NO_OT');
-assert.equal(C.infer('C조 주간 · O.T해제','OFF'),null);
-assert.equal(C.infer('C조 무급 반차(후)','NIGHT'),'UNPAID_HALF_POST');
-assert.equal(C.infer('병원 예약','DAY'),null);
-assert.equal(C.infer('야간','DAY'),null,'Never infer a forbidden shift swap');
 assert.equal(S.dateOK('2026-02-30'),false);
 assert.equal(S.dateOK('2028-02-29'),true);
 const secret='unit-test-secret-not-a-real-credential-0123456789';
@@ -118,7 +107,7 @@ async function run() {
         assert.match(res.headers.Location,/reason=SCOPE/);mode='normal';
         res=await invoke('calendar',{body:{group:'C'}});assert.equal(res.result.calendar.id,'cal-1');
         res=await invoke('read',{body:{group:'C',calendarId:'cal-1',start:'2026-09-01',end:'2026-10-01',knownIds:['sc2c20260910']}});
-        assert.equal(res.result.items.length,3);assert.ok(res.result.items.some(e=>e.id==='sc2c20260910'&&e.status==='cancelled'));
+        assert.equal(res.result.items.length,2,'only app-managed shifts are returned, not Google personal events');assert.ok(res.result.items.some(e=>e.id==='sc2c20260910'&&e.status==='cancelled'));
         const input={group:'C',calendarId:'cal-1',operations:[{id:original.id,type:'patch',etag:'"v1"',event:event('new memo')}]};
         res=await invoke('write',{body:input});assert.equal(res.result.results[0].ok,true);
         const colorInput={group:'C',calendarId:'cal-1',operations:[{id:original.id,type:'color',colorId:'9',etag:'"v1"'}]};
@@ -136,7 +125,7 @@ async function run() {
         mode='foreign';res=await invoke('read',{body:{group:'C',calendarId:'cal-1',start:'2026-09-01',end:'2026-10-01'}});assert.equal(res.statusCode,403);mode='normal';
         res=await invoke('logout');assert.match(res.headers['Set-Cookie'][0],/Max-Age=0/);
         assert.ok(!calls.some(c=>c.url.pathname.includes('/primary')));
-        console.log('PASS: shift colors, private events, safe color-only migration, merge/conflicts, OAuth/CSRF, ownership, pagination, ETag races and protected deletion.');
+        console.log('PASS: shift colors, private events, safe color-only migration, one-way export, OAuth/CSRF, ownership, pagination, ETag races and protected deletion.');
     } finally {
         global.fetch=fetchOriginal;
         for(const k of envKeys){if(previous[k]===undefined)delete process.env[k];else process.env[k]=previous[k];}

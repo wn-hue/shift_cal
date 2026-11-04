@@ -94,7 +94,7 @@ async function findCalendar(token, session, group) {
         page = data.nextPageToken || '';
         if (++rounds >= 20 && page) throw new ApiError(413,'CALENDAR_LIMIT','캘린더 목록이 너무 많습니다.');
     } while (page);
-    return google(token, '/calendars', 'POST', { summary:`Shift_calander ${group}조`, description:marker(session.sub, group), timeZone:'Asia/Seoul' });
+    return google(token, '/calendars', 'POST', { summary:`근무 루틴 ${group}조`, description:marker(session.sub, group), timeZone:'Asia/Seoul' });
 }
 function eventBody(input, group, id, existing = null) {
     if (!input || typeof input !== 'object' || typeof input.summary !== 'string' || !input.summary.trim() || input.summary.length > 2000 ||
@@ -188,21 +188,18 @@ async function handler(req, res) {
     const action = url.searchParams.get('action') || 'status';
     let session = cfg.secret ? unseal(cookies(req)[SESSION], cfg.secret) : null;
     try {
-        if (action === 'status' && req.method === 'GET') return json(res,200,{configured:!cfg.missing.length,missing:cfg.missing,connected:!!session,calendarConnected:Permissions.calendarConnected(session),cloudConnected:!!session?.drive,externalConnected:!!session?.external,externalAvailable:process.env.GOOGLE_EXTERNAL_CALENDAR_ENABLED==='1'||!!session?.external,provider:"google",
+        if (action === 'status' && req.method === 'GET') return json(res,200,{configured:!cfg.missing.length,missing:cfg.missing,connected:!!session,calendarConnected:Permissions.calendarConnected(session),cloudConnected:!!session?.drive,provider:"google",
             ...(session ? {user:{id:session.sub,email:session.email},csrf:session.csrf} : {}), ...(cfg.origin ? {redirectUri:cfg.oauthOrigin+'/api/google-calendar?action=callback'} : {})});
         if (cfg.missing.length) throw new ApiError(503,'SETUP','관리자가 구글 연동 설정을 완료해야 합니다.');
         if (action === 'login' && req.method === 'GET') {
             if(cfg.oauthOrigin!==cfg.origin&&req.headers['x-work-routine-origin']!==cfg.oauthOrigin)return redirect(res,cfg.oauthOrigin+'/api/google-calendar'+url.search);
             const state = crypto.randomBytes(32).toString('base64url'), verifier = crypto.randomBytes(32).toString('base64url');
-            const {storage,calendar,external} = Permissions.intent(url);
-            // Keep new sensitive-scope consent off public traffic until Google approves it.
-            // The unlisted review entry is supplied only to the developer/review team.
-            const review=url.searchParams.get('review')==='1';
-            if(external&&process.env.GOOGLE_EXTERNAL_CALENDAR_ENABLED!=='1'&&!session?.external&&!review)throw new ApiError(503,'EXTERNAL_REVIEW','기존 Google 일정 불러오기는 권한 심사 후 제공됩니다. 로그인과 근무표 동기화는 사용할 수 있어요.');
+            if(url.searchParams.get('external')==='1')throw new ApiError(410,'FEATURE_REMOVED','기존 Google 일정 가져오기는 종료되었습니다. Google Drive 저장과 근무표 보내기를 이용해 주세요.');
+            const {storage,calendar} = Permissions.intent(url);
             const nativeFlow=require('../lib/native-auth.js').flow(url);
-            setCookie(res,FLOW,seal({state,verifier,storage,calendar,external,review,...nativeFlow,exp:Date.now()+600000},cfg.secret),600);
+            setCookie(res,FLOW,seal({state,verifier,storage,calendar,...nativeFlow,exp:Date.now()+600000},cfg.secret),600);
             const params = new URLSearchParams({ client_id:cfg.clientId, redirect_uri:cfg.oauthOrigin+'/api/google-calendar?action=callback', response_type:'code',
-                scope:Permissions.requested({storage,calendar,external}).join(' '),
+                scope:Permissions.requested({storage,calendar}).join(' '),
                 include_granted_scopes:'true',
                 access_type:'offline', prompt:'consent select_account', state, code_challenge:crypto.createHash('sha256').update(verifier).digest('base64url'), code_challenge_method:'S256' });
             return redirect(res,'https://accounts.google.com/o/oauth2/v2/auth?'+params);
@@ -214,12 +211,12 @@ async function handler(req, res) {
             if (url.searchParams.get('error')) return redirect(res,cfg.oauthOrigin+'/?google=denied');
             const code = url.searchParams.get('code');
             if (!code) throw new ApiError(400,'CODE','로그인 코드를 확인할 수 없습니다.');
+            if(flow.external)throw new ApiError(410,'FEATURE_REMOVED','기존 일정 가져오기 요청이 종료되었습니다. Google Drive 저장으로 다시 연결해 주세요.');
             const data = await request('https://oauth2.googleapis.com/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({
                 code, client_id:cfg.clientId, client_secret:cfg.clientSecret, redirect_uri:cfg.oauthOrigin+'/api/google-calendar?action=callback', grant_type:'authorization_code',code_verifier:flow.verifier })});
             const scopes = new Set((data.scope || '').split(' '));
             if (flow.calendar!==false && (!scopes.has(Permissions.scopes.calendar) || !scopes.has(Permissions.scopes.list))) throw new ApiError(403,'SCOPE','근무표 동기화 권한을 모두 허용해 주세요.');
             if (flow.storage && !scopes.has('https://www.googleapis.com/auth/drive.appdata')) throw new ApiError(403,'DRIVE_PERMISSION','계정 저장 권한을 허용해주세요.');
-            if(flow.external && (!scopes.has(Permissions.scopes.external)||!scopes.has(Permissions.scopes.list))) throw new ApiError(403,'EXTERNAL_SCOPE','캘린더 목록과 외부 일정 읽기 권한을 허용해 주세요.');
             const user = await request('https://openidconnect.googleapis.com/v1/userinfo',{headers:{Authorization:`Bearer ${data.access_token}`}});
             if (!user.sub || !user.email || !user.email_verified) throw new ApiError(403,'USER','구글 계정을 확인할 수 없습니다.');
             const refresh = data.refresh_token || (session?.sub === user.sub ? session.refresh : null);
@@ -230,7 +227,7 @@ async function handler(req, res) {
             setCookie(res,SESSION,cookie,30*86400);
             setCookie(res,'__Host-shiftcal-apple','',0);
             if(flow.nativeChallenge)return redirect(res,require('../lib/native-auth.js').callback(flow,cookie,'google',cfg.secret));
-            return redirect(res,cfg.oauthOrigin+(flow.storage ? '/?cloud=connected' : flow.external&&!flow.calendar ? '/?external=connected'+(flow.review?'&oauth-review=1':'') : flow.calendar!==false ? '/?google=connected' : '/?account=connected'));
+            return redirect(res,cfg.oauthOrigin+(flow.storage ? '/?cloud=connected' : flow.calendar!==false ? '/?google=connected' : '/?account=connected'));
         }
         if (req.method !== 'POST') throw new ApiError(405,'METHOD','지원하지 않는 요청 방식입니다.');
         if (!session) throw new ApiError(401,'RECONNECT','구글 계정을 연결해 주세요.');
@@ -249,25 +246,7 @@ async function handler(req, res) {
             if(action==='cloud-delete'){await AccountDrive.remove(token);await request('https://oauth2.googleapis.com/revoke',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({token:session.refresh})});setCookie(res,SESSION,'',0);return json(res,200,{ok:true});}
             return json(res,200,action === 'cloud-read' ? await AccountDrive.read(token) : await AccountDrive.write(token,body));
         }
-        if (action === 'external-list' || action === 'external-read') {
-            if(!session.external) throw new ApiError(403,'EXTERNAL_SCOPE','Google 일정 읽기 권한을 연결해 주세요.');
-            const token=await getToken(session,cfg);
-            if(action==='external-list') {
-                const items=[];let page='';
-                for(let round=0;round<20;round++) {
-                    const params=new URLSearchParams({maxResults:'250',showHidden:'false'});if(page)params.set('pageToken',page);
-                    const data=await google(token,'/users/me/calendarList?'+params);
-                    items.push(...(data.items||[]).filter(c=>['reader','writer','owner'].includes(c.accessRole)).map(c=>({id:c.id,title:c.summaryOverride||c.summary||'캘린더',color:/^#[a-f0-9]{6}$/i.test(c.backgroundColor||'')?c.backgroundColor:'#5385bd'})));
-                    page=data.nextPageToken||'';if(!page)return json(res,200,{items});
-                }
-                throw new ApiError(413,'CALENDAR_LIMIT','캘린더 목록이 너무 많습니다.');
-            }
-            if(typeof body.calendarId!=='string'||!body.calendarId||body.calendarId.length>512)throw new ApiError(400,'CALENDAR_ID','캘린더를 선택하세요.');
-            const listed=await google(token,'/users/me/calendarList/'+encodeURIComponent(body.calendarId));
-            if(!['reader','writer','owner'].includes(listed.accessRole))throw new ApiError(403,'CALENDAR','읽을 수 있는 캘린더를 선택하세요.');
-            const events=await listEvents(token,body.calendarId,{start:body.start,end:body.end});
-            return json(res,200,{items:events.filter(e=>e.status!=='cancelled').map(e=>({id:e.id,title:(e.summary||'일정').slice(0,200),start:e.start,end:e.end}))});
-        }
+        if (action === 'external-list' || action === 'external-read') throw new ApiError(410,'FEATURE_REMOVED','기존 Google 일정 가져오기는 종료되었습니다.');
         if(!['calendar','read','write'].includes(action))throw new ApiError(400,'ACTION','지원하지 않는 요청입니다.');
         if(!Permissions.calendarConnected(session))throw new ApiError(403,'CALENDAR_PERMISSION','근무표 동기화 연결을 먼저 허용해 주세요.');
         const group = groupOf(body.group), token = await getToken(session,cfg);
@@ -278,8 +257,15 @@ async function handler(req, res) {
             return json(res,200,{calendar:{id:calendar.id,summary:calendar.summary}});
         }
         await ownedCalendar(token,body.calendarId,session.sub,group);
-        if (action === 'read') return json(res,200,{items:await listEvents(token,body.calendarId,body)});
-        if (action === 'write') return json(res,200,{results:await writes(token,body.calendarId,group,body.operations)});
+        if (action === 'read') {
+            const managed=e=>(e.extendedProperties?.private?.app==='shift_cal_v2'&&e.extendedProperties.private.kind==='shift'&&e.extendedProperties.private.group===group)||new RegExp('^sc2'+group.toLowerCase()+'\\d{8}(?:r[a-f0-9]{16})?$').test(e.id||'');
+            const items=(await listEvents(token,body.calendarId,body)).filter(managed).map(e=>Object.fromEntries(['id','etag','status','summary','description','start','end','extendedProperties','colorId','visibility','recurrence','recurringEventId'].filter(k=>e[k]!==undefined).map(k=>[k,e[k]])));
+            return json(res,200,{items});
+        }
+        if (action === 'write') {
+            if(Array.isArray(body.operations)&&body.operations.some(op=>!new RegExp('^sc2'+group.toLowerCase()+'\\d{8}(?:r[a-f0-9]{16})?$').test(op?.id||'')||op?.event?.extendedProperties?.private?.kind==='personal'))throw new ApiError(410,'FEATURE_REMOVED','앱의 근무표만 보낼 수 있습니다.');
+            return json(res,200,{results:await writes(token,body.calendarId,group,body.operations)});
+        }
         throw new ApiError(400,'ACTION','지원하지 않는 요청입니다.');
     } catch (e) {
         if (action === 'callback' && cfg.origin) return redirect(res,cfg.oauthOrigin+'/?google=error&reason='+encodeURIComponent(e.code || 'ERROR'));

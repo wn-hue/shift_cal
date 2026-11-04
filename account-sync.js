@@ -8,10 +8,10 @@
         if(!key?.startsWith(basePrefix)&&!key?.startsWith(cachePrefix))continue;
         try { localStorage.setItem(key,JSON.stringify(C.normalize(JSON.parse(localStorage.getItem(key))))); } catch(_) {}
     }
-    let auth=null, baseline=null, parents=[], busy=false, suppressed=false, timer=null, pending=null, epoch=0, renderedOwner;
+    let auth=null, baseline=null, parents=[], busy=false, suppressed=false, timer=null, pending=null, epoch=0, renderedOwner, cloudFound=false;
     const api=window.AccountSync={ready:false,changed,sessionChanged:init,disconnected,prepareLogout};
     function openManager() {
-        switchView('all');
+        switchView('all');const dialog=$('account-login-dialog');if(dialog&&!dialog.open)dialog.showModal?.();
     }
     function snapshot() {
         return C.normalize(Object.fromEntries(C.keys.map(k=>[k,k==='shift_active_group'?localStorage.getItem(k):JSON.parse(localStorage.getItem(k)||'null')])));
@@ -44,6 +44,7 @@
         const button=$('account-sync-now');button.disabled=value;button.textContent=value?'동기화 중…':'지금 동기화';button.setAttribute('aria-busy',String(value));
         $('account-sync-status').setAttribute('aria-busy',String(value));
     }
+    function notifyReady(){if(typeof CustomEvent==='function')window.dispatchEvent(new CustomEvent('shift-account-ready',{detail:{ready:api.ready,pending:!!pending,hasSavedData:cloudFound}}));}
     function completed(message) {
         status(message+' · '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),'success');
     }
@@ -53,15 +54,15 @@
         if($('account-login-dialog'))$('account-login-dialog').setAttribute('data-connected',String(connected));
         if(label)label.textContent=connected?'내 계정':'로그인';
         if(trigger)trigger.setAttribute('aria-label',connected?'내 계정 및 동기화':'로그인');
-        if($('login-sheet-title'))$('login-sheet-title').textContent=connected?'내 계정':'로그인 또는 회원가입';
+        if($('login-sheet-title'))$('login-sheet-title').textContent=connected?(auth.provider==='apple'?'내 계정':'Google Drive 저장'):'Google Drive에 저장하고 이어 쓰기';
         const owner=connected?auth.user.id:null;
         if(owner!==renderedOwner){renderedOwner=owner;if(typeof CustomEvent==='function')window.dispatchEvent(new CustomEvent('shift-account-changed',{detail:{owner}}));}
-        $('account-email').textContent=connected?auth.user.email:'로그인하면 다른 기기에서도 이어서 사용할 수 있습니다.';
+        $('account-email').textContent=connected?auth.user.email:'이전 주소에서 사용한 같은 Google 계정으로 로그인하면 근무표·메모·설정을 불러와요.';
         $('account-login').hidden=!!auth?.cloudConnected;
         if($('apple-login'))$('apple-login').hidden=connected;
         if($('apple-login-status') && connected)$('apple-login-status').textContent='';
-        $('account-login').setAttribute('aria-label',connected?'Google 계정 저장 연결':'Google로 로그인');
-        $('account-sync-now').hidden=!auth?.cloudConnected;
+        $('account-login').setAttribute('aria-label',connected?'Google Drive 저장 연결':'Google로 로그인하고 저장하기');
+        $('account-sync-now').hidden=!auth?.cloudConnected;$('account-sync-now').textContent=auth?.provider==='apple'?'지금 저장하기':'Google Drive에 지금 저장하기';
         $('account-logout').hidden=!connected;
         if($('account-delete'))$('account-delete').hidden=!connected;
     }
@@ -83,7 +84,7 @@
     }
     function adopt(data) {
         restore(data);persistBase(data);pending=null;api.ready=true;
-        $('account-conflict-dialog').close();
+        $('account-conflict-dialog').close();notifyReady();
         if(window.GoogleSync)GoogleSync.groupChanged();
     }
     function disconnected() {
@@ -137,6 +138,7 @@
             auth=live;
             const {versions}=await request('cloud-read');
             if(generation!==epoch)return;
+            cloudFound=versions.some(v=>C.meaningful(v.data));
             if(versions.length>1){showConflict(versions,'여러 기기에서 동시에 변경했습니다. 사용할 데이터를 선택해주세요.');return;}
             const local=snapshot(), remote=versions[0]?.data || C.normalize({});
             parents=versions.map(v=>v.revision);
@@ -147,20 +149,20 @@
                 if(versions.length && C.meaningful(local) && !C.equal(local,remote)) {
                     showConflict(versions,'기기와 계정의 데이터가 다릅니다. 사용할 데이터를 선택해주세요.');return;
                 }
-                if(versions.length){adopt(remote);completed('계정에서 불러옴');return;}
+                if(versions.length){adopt(remote);completed(auth.provider==='apple'?'계정에서 불러왔어요':'Google Drive에서 불러왔어요');return;}
                 baseline=C.normalize({});
             }
             const merged=C.merge(baseline,local,remote);
             if(merged.conflicts.length){showConflict(versions,'같은 항목을 다른 기기에서도 변경했습니다. 사용할 데이터를 선택해주세요.');return;}
             const data=C.normalize(merged.data);
             if(!C.equal(local,data))restore(data);
-            if(C.equal(data,remote)){persistBase(remote);api.ready=true;$('account-setup-help').hidden=true;completed(versions.length?'계정 동기화 완료':'계정 연결 완료 · 변경하면 자동 저장');if(!C.equal(local,data) && window.GoogleSync)GoogleSync.groupChanged();return;}
+            if(C.equal(data,remote)){persistBase(remote);api.ready=true;$('account-setup-help').hidden=true;completed(versions.length?(auth.provider==='apple'?'계정 저장 완료':'Google Drive 저장 완료'):'연결 완료 · 변경하면 자동 저장');if(!C.equal(local,data) && window.GoogleSync)GoogleSync.groupChanged();return;}
             status('계정에 저장 중…');
             const result=await request('cloud-write',{revision:crypto.randomUUID().replace(/-/g,''),parents,data});
             if(generation!==epoch)return;
             parents=[result.revision];persistBase(result.data);api.ready=true;
             $('account-setup-help').hidden=true;
-            C.equal(snapshot(),result.data)?completed('계정 동기화 완료'):status('변경사항 저장 대기 중');
+            C.equal(snapshot(),result.data)?completed(auth.provider==='apple'?'계정 저장 완료':'Google Drive 저장 완료'):status('변경사항 저장 대기 중');
             if(!C.equal(local,data) && window.GoogleSync)GoogleSync.groupChanged();
         } catch(e) {
             if(generation!==epoch)return;
@@ -177,7 +179,7 @@
         }
     }
     async function init() {
-        const generation=++epoch;clearTimeout(timer);api.ready=false;pending=null;
+        const generation=++epoch;clearTimeout(timer);api.ready=false;pending=null;cloudFound=false;
         if($('account-conflict-dialog').open)$('account-conflict-dialog').close();
         try {
             const live=await request('status',null,true);
@@ -208,6 +210,7 @@
             if(!auth.cloudConnected){api.ready=true;status('로그인됨 · 계정 저장은 별도로 연결해 주세요.');return;}
             status('계정 데이터 확인 중…');if(busy)timer=setTimeout(sync,1000);else {await sync();if(api.ready && window.GoogleSync)GoogleSync.groupChanged();}
         } catch(e){api.ready=false;status(e.message||'계정을 확인하지 못했습니다. 기기 저장은 계속 사용할 수 있습니다.');}
+        finally{if(generation===epoch)notifyReady();}
     }
     $('account-sync-now').addEventListener('click',()=>{if(pending)showConflict(pending.versions,'사용할 데이터를 선택해주세요.');else sync();});
     $('account-use-local').addEventListener('click',()=>resolve(null));
@@ -234,5 +237,5 @@
     window.addEventListener('storage',event=>{if(event.key===ownerKey){api.ready=false;init();}else if(C.keys.includes(event.key)){window.refreshAccountData();changed();}});
     window.addEventListener('online',()=>sync());
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync();});
-    window.addEventListener('load',()=>{if(new URLSearchParams(location.search).get('cloud')==='connected')openManager();init();setInterval(()=>{if(!document.hidden)sync();},60000);});
+    window.addEventListener('load',()=>{if(['connected','connect'].includes(new URLSearchParams(location.search).get('cloud')))openManager();init();setInterval(()=>{if(!document.hidden)sync();},60000);});
 })();

@@ -10,7 +10,7 @@ const assert=require('node:assert/strict'),{chromium,webkit}=require('playwright
     const u=new URL(route.request().url()),action=u.searchParams.get('action');calls.push(action);
     let body={items:[],versions:[]};
     if(u.pathname.includes('google-calendar')||u.pathname==='/api/account'){
-     if(action==='status')body={configured:true,connected:true,calendarConnected:calendar,cloudConnected:false,externalConnected:false,externalAvailable:false,user:{id:'synthetic-review',email:'synthetic@example.invalid'},csrf:'synthetic-csrf'};
+     if(action==='status')body={configured:true,connected:true,calendarConnected:calendar,cloudConnected:false,user:{id:'synthetic-review',email:'synthetic@example.invalid'},csrf:'synthetic-csrf'};
      else if(action==='calendar-disconnect'){calendar=false;body={ok:true};}
      else if(action==='read')body={items:[]};
     }else if(u.pathname.includes('apple'))body={configured:false};
@@ -22,19 +22,19 @@ const assert=require('node:assert/strict'),{chromium,webkit}=require('playwright
    assert.equal(await page.locator('#google-sync-controls').evaluate(el=>el.hidden),true,'basic login cannot enable calendar writes');
    assert.match(await page.locator('#google-sync-user').textContent(),/별도로/);
    assert.equal(new URL(await page.locator('#google-sync-login').getAttribute('href'),'https://local.invalid').searchParams.get('calendar'),'1');
-   assert.equal(await page.locator('.external-connect').getAttribute('href'),null,'unverified new event permission stays out of public traffic');
+   assert.equal(await page.locator('.external-connect').count(),0,'external calendar import is removed');
    assert(!calls.some(x=>['calendar','read','write'].includes(x)),'basic login triggers no Calendar API calls');
    assert.match(await page.locator('#account-sync-status').textContent(),/로그인/);
    calendar=true;await page.evaluate(()=>GoogleSync.refreshStatus());
    assert.equal(await page.locator('#google-sync-controls').evaluate(el=>el.hidden),false);
    await page.evaluate(()=>GoogleSync.disconnect());assert(calls.includes('calendar-disconnect'));assert(!calls.includes('logout'),'unlinking calendar keeps account login');
    assert.equal(await page.locator('#google-sync-controls').evaluate(el=>el.hidden),true);
-   await page.goto((process.env.TEST_APP_URL||'http://127.0.0.1:8767/')+'?oauth-review=1&external=connected');
+   await page.evaluate(()=>SettingsPage.open('calendars'));
    await page.locator('[data-settings-panel="calendars"]').waitFor({state:'visible'});
-   assert.match(await page.locator('.external-connect').getAttribute('href'),/external=1&review=1/);
-   await page.getByRole('button',{name:'근무표 Google 캘린더에 연결',exact:true}).click();await page.locator('#modal-calendar-link.active').waitFor({state:'visible'});assert.equal(await page.locator('#google-sync-login').isVisible(),true,'separate shift-sync entry is reachable and interactive');await page.getByRole('button',{name:'닫기',exact:true}).click();assert(!page.url().includes('external=connected'),'callback marker is consumed');assert(page.url().includes('oauth-review=1'));
+   await page.getByRole('button',{name:'Google 캘린더에 근무표 보내기',exact:true}).click();await page.locator('#modal-calendar-link.active').waitFor({state:'visible'});assert.equal(await page.locator('#google-sync-login').isVisible(),true);await page.getByRole('button',{name:'닫기',exact:true}).click();
+   assert.equal(await page.locator('#external-calendar-list').count(),0);assert.equal(await page.locator('#google-personal-form').count(),0);
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
-   console.log('PASS '+name+': basic-login separation, no Calendar calls, selective unlink, hidden review entry and callback navigation');
+   console.log('PASS '+name+': basic-login separation, no Calendar calls, selective unlink, removed imports and optional outbound entry');
   }finally{await context.close();await browser.close();}
  }
 })().catch(e=>{console.error(e);process.exitCode=1});

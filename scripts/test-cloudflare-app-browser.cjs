@@ -10,12 +10,12 @@ const assert=require('node:assert/strict'),{chromium,webkit}=require('playwright
    const page=await context.newPage();await page.goto(cfg.target+'/');await page.locator('#start-app').waitFor();
    assert.equal(await page.locator('nav a[href="'+cfg.target+'/privacy"]').count(),1);
    for(const resource of['/privacy','/terms','/about.html'])assert.equal((await context.request.get(cfg.target+resource)).status(),200,resource);
-   await page.getByRole('link',{name:'기존 데이터 가져오기',exact:true}).click();await page.locator('#transfer').waitFor();assert(page.url().includes('origin-transfer'));
+   await page.getByRole('link',{name:'이전 주소의 데이터 가져오기 안내',exact:true}).click();await page.locator('#fallback-transfer').evaluate(el=>el.open=true);await page.locator('#transfer').waitFor();assert(page.url().includes('origin-transfer'));
    await page.waitForFunction(()=>!document.getElementById('transfer').disabled);
    assert.equal(await page.locator('#source-select').inputValue(),source);assert.equal(await page.locator('#source-select option').count(),1);assert.equal(await page.locator('#source-select-area').isVisible(),false);
    assert.equal(await page.evaluate(()=>localStorage.getItem('shift_salary_config_master')),null,'first-visit gate must precede default-setting writes');
    console.log('CHECK '+name+': migration welcome ready');const popupWait=page.waitForEvent('popup');await page.locator('#transfer').click();const popup=await popupWait;await popup.waitForURL(source+'/**');await popup.locator('#transfer').waitFor();
-   console.log('CHECK '+name+': source popup ready');await popup.locator('#transfer').click();await page.waitForURL(cfg.target+'/',{timeout:30000});await page.locator('#view-calendar').waitFor({state:'attached'});
+   console.log('CHECK '+name+': source popup ready');await popup.locator('#transfer').click();await page.waitForURL(cfg.target+'/?cloud=connect',{timeout:30000});await page.locator('#view-calendar').waitFor({state:'attached'});
    const copied=await page.evaluate(()=>({memo:localStorage.getItem('shift_day_memos'),group:localStorage.getItem('shift_active_group'),salary:JSON.parse(localStorage.getItem('shift_salary_config_master'))}));assert.equal(copied.memo,original.shift_day_memos);assert.equal(copied.group,'C');assert.equal(copied.salary.baseHourly,11050);
    assert.deepEqual(await popup.evaluate(keys=>Object.fromEntries(keys.map(k=>[k,localStorage.getItem(k)])),Object.keys(original)),original,'original local data must remain unchanged');
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'mobile horizontal overflow');

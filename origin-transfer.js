@@ -3,12 +3,13 @@
  const unlock=()=>{document.querySelectorAll('button,input,select').forEach(el=>el.disabled=false);};
  const hash=async s=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s))),b=>b.toString(16).padStart(2,'0')).join('');
  async function call(action,body){const r=await fetch('/api/origin-transfer?action='+action,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),credentials:'same-origin'}),d=await r.json();if(!r.ok)throw Error(d.message||'연결을 확인해 주세요.');return d;}
+ $('cloud-old-account').href=cfg.source+'/';
  function ready(){localStorage.setItem('shift_origin_ready_v1','1');document.cookie='__Host-work-routine-ready=1; Path=/; Secure; SameSite=Lax; Max-Age=31536000';}
- function finish(data){const n=OriginDataCore.restore(localStorage,data,$('overwrite').checked);ready();status(n+'개 항목을 복사했어요. 앱을 열고 있어요.');location.replace('/');}
+ function finish(data){const n=OriginDataCore.restore(localStorage,data,$('overwrite').checked);ready();status(n+'개 항목을 복사했어요. 새 주소에서 Google 저장을 연결할 수 있어요.');location.replace('/?cloud=connect');}
  if(source){
   const challenge=params.get('challenge'),state=params.get('state'),target=params.get('target')||cfg.target;history.replaceState(null,'',location.pathname);
   if(!trusted.includes(target)){status('공식 앱 주소에서 다시 열어 주세요.');return;}
-  $('title').textContent='기존 데이터를 새 주소로 복사해요';$('description').textContent='이 기기의 근무표·메모·설정을 복사합니다. 기존 데이터는 삭제하지 않아요.';$('transfer').textContent='이 기기의 데이터 복사하기';$('start').hidden=true;$('file-area').hidden=true;$('source-select-area').hidden=true;$('source-file').hidden=false;$('new-address').href=cfg.target+'/origin-transfer.html';
+  $('title').textContent='이 기기의 데이터를 새 주소로 가져가세요';$('description').textContent='이미 Google에 저장했다면 새 주소에서 같은 계정으로 로그인하세요. 기기에만 저장했다면 직접 복사하거나 파일로 가져온 뒤 새 주소에서 Google에 저장할 수 있어요.';$('cloud-login').href=cfg.target+'/origin-transfer.html';$('cloud-login').textContent='새 주소에서 Google 로그인하기';if(challenge)$('fallback-transfer').open=true;$('transfer').textContent='이 기기의 데이터 복사하기';$('start').hidden=true;$('file-area').hidden=true;$('source-select-area').hidden=true;$('source-file').hidden=false;$('new-address').href=cfg.target+'/origin-transfer.html';
   $('download').onclick=()=>{try{const data=OriginDataCore.snapshot(localStorage),blob=new Blob([JSON.stringify(data)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='근무루틴-데이터-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);status('파일을 저장한 뒤 새 주소에서 불러와 주세요.');}catch(e){status(e.message);}};
   $('transfer').onclick=async()=>{try{if(!window.opener||!/^[a-f0-9]{64}$/.test(challenge||'')||!/^[a-f0-9]{64}$/.test(state||'')){status('아래의 파일로 저장하기를 이용해 주세요.');return;}const data=OriginDataCore.snapshot(localStorage),result=await call('issue',{challenge,state,target});window.opener.postMessage({type:'work-routine-transfer',state,data,ticket:result.ticket},target);status('새 주소로 복사 요청을 보냈어요. 새 창에서 확인해 주세요.');}catch(e){status(e.message);}};
   unlock();return;

@@ -63,7 +63,7 @@ async function run(){
     await a.tick();assert.equal(server.A[0].data.shift_day_memos['2026-10-05'],'while uploading');
     assert.equal(a.element('account-sync-now').disabled,false);
     assert.equal(a.element('account-sync-status').attributes['data-state'],'success');
-    assert.match(a.element('account-sync-status').textContent,/계정 동기화 완료 · .*\d{1,2}:\d{2}:\d{2}/);
+    assert.match(a.element('account-sync-status').textContent,/Google Drive 저장 완료 · .*\d{1,2}:\d{2}:\d{2}/);
     // A conflict pauses automatic saves until the user selects a version.
     const current=a.snapshot();server.A=[version(memo({'2026-10-01':'cloud conflicting'}))];
     a.change('shift_day_memos',{...current.shift_day_memos,'2026-10-01':'local conflicting'});await a.tick();

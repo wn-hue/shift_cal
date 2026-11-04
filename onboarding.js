@@ -7,6 +7,8 @@
  let state=window.ShiftOnboardingInitialState||OnboardingState.resolve(localStorage);
  let step=state.step||0, selected='', manual=false, active=false, saving=false, navigating=false, paintedStep=-1;
  const main=dialog.querySelector('.onboarding-main');
+ let waitingForAccount=state.status==='in_progress'&&new URLSearchParams(location.search).get('cloud')==='connected';
+ window.addEventListener('shift-account-ready',event=>{if(!waitingForAccount||event.detail?.pending)return;waitingForAccount=false;document.documentElement.removeAttribute('data-account-restoring');if(event.detail?.ready&&event.detail?.hasSavedData)remember({status:'existing',step:0});start();});
  function reveal(){OnboardingFlowMotion.reveal(main);}
  function remember(next){try{localStorage.setItem(KEY,JSON.stringify(next));state=next;return true}catch{$('onboarding-error').textContent='설정을 저장하지 못했어요. 기기 저장 공간을 확인해 주세요.';return false}}
  // Decide from the pre-existing settings, before the app's load handlers run.
@@ -98,6 +100,7 @@
  window.addEventListener('shift-payroll-applied',()=>{if(active&&step===2){if(!finish()){$('onboarding-error').textContent='기본시급과 통상시급을 모두 설정해 주세요.';}}});
  window.ShiftOnboarding={open:()=>open(true),needsSetup:()=>state.status==='in_progress',refresh(){if(active&&!saving&&!navigating&&!manual&&!$('payroll-sms-dialog').open&&ready())finish();}};
  function start(){
+  if(waitingForAccount)return;
   if(state.status==='in_progress'){
    loadConfig();
    if(ready()&&remember({status:'complete',step:2}))document.documentElement.removeAttribute('data-onboarding-pending');

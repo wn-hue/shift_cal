@@ -20,5 +20,5 @@
  root.OnboardingState={resolve};
  let storage;try{storage=root.localStorage}catch{}
  root.ShiftOnboardingInitialState=resolve(storage);
- if(root.ShiftOnboardingInitialState.status==='in_progress')document.documentElement.setAttribute('data-onboarding-pending','');
+ if(root.ShiftOnboardingInitialState.status==='in_progress'){document.documentElement.setAttribute('data-onboarding-pending','');if(new URLSearchParams(root.location.search).get('cloud')==='connected')document.documentElement.setAttribute('data-account-restoring','');}
 })(typeof window==='undefined'?globalThis:window);
