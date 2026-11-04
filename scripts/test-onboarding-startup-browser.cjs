@@ -23,7 +23,7 @@ const settled=p=>p.waitForFunction(()=>!document.querySelector('[data-wage-movin
   await page.route('**/*',async route=>{
    if(new URL(route.request().url()).pathname==='/app-currency.js'){enteredScript();await scriptGate;}
    if(route.request().resourceType()==='image'){imageRequests++;await imageGate;}
-   await route.continue();
+   await route.fallback();
   });
   const navigation=page.waitForNavigation({waitUntil:'domcontentloaded'});
   await page.getByRole('button',{name:'앱 시작하기',exact:true}).click({noWaitAfter:true});await scriptEntered;
@@ -51,6 +51,7 @@ const settled=p=>p.waitForFunction(()=>!document.querySelector('[data-wage-movin
   await page.reload();assert.equal(await page.locator('#onboarding-dialog').evaluate(el=>el.open),false);
   assert.equal(await page.locator('#view-calendar').isVisible(),true);assert.deepEqual(errors,[]);await page.close();
   const returning=await browser.newPage({viewport:{width:320,height:844}});
+  if(new URL(base).protocol==='https:')await returning.context().addCookies([{name:'__Host-work-routine-ready',value:'1',url:url('/'),secure:true,sameSite:'Lax'}]);
   await returning.route('**/api/**',r=>r.fulfill({json:{configured:false}}));
   await returning.addInitScript(()=>{localStorage.setItem('shift_origin_ready_v1','1');localStorage.setItem('shift_day_memos','{"2026-11-04":"기존 메모"}');document.cookie='__Host-work-routine-ready=1; Path=/; Secure; SameSite=Lax';});
   await returning.goto(url('/'));
