@@ -2,53 +2,54 @@
 
 구현 코드와 API를 배포한 뒤, 앱 운영자가 아래 최초 설정을 완료해야 실제 구글 계정 연결이 작동합니다. Google Cloud 계정 접근 및 해당 Vercel 프로젝트의 환경변수 수정 권한이 필요합니다. 비밀 키는 GitHub나 채팅에 올리지 않습니다.
 
-구글 연결에 사용할 운영 앱 주소: **https://h-lyart-ten.vercel.app**. 이 주소에서 API 응답을 확인했습니다. 같은 프로젝트의 `https://h-go1945.vercel.app` 주소는 Vercel 로그인 보호가 적용되어 있으므로, 아래 OAuth 리디렉션과 `APP_URL`은 접근 가능한 운영 주소로 통일합니다. 다른 운영 도메인을 사용한다면 두 주소를 함께 변경합니다.
+운영 앱 주소는 **https://20261104.xyz**입니다. Cloudflare가 화면과 API 중계를 제공하고 Vercel이 기존 API를 실행합니다. 원본 데이터와 기존 세션 비밀 값은 유지합니다.
 
-## 1. Google Cloud 설정
+## 1. Google Cloud와 기능별 권한
 
-1. [Google Cloud Console](https://console.cloud.google.com/)에서 프로젝트를 만들거나 사용할 프로젝트를 선택합니다.
-2. **API 및 서비스 → 라이브러리 → Google Calendar API → 사용**을 켭니다.
-3. **Google Auth Platform**에서 앱 이름 `Shift_cal`, 지원 이메일, 개발자 연락처를 설정합니다. 개인 Gmail 사용자는 대상(Audience)을 External로 설정합니다.
-4. 테스트 상태에서는 **테스트 사용자**에 연결할 본인 구글 이메일을 등록합니다. 다른 사람도 사용한다면 그 계정도 추가합니다.
-5. 데이터 액세스(Data Access)에 아래 권한을 추가합니다. 구글 로그인은 `openid`, `email`도 요청합니다.
+프로젝트 `project-b5041fd2-15ea-4858-8f5`의 앱 이름은 **근무 루틴**이며 브랜딩은 승인되었습니다. Calendar API와 Drive API를 사용 설정합니다. 데이터 액세스에 다음 범위를 등록합니다.
 
-   - `https://www.googleapis.com/auth/calendar.app.created`
-   - `https://www.googleapis.com/auth/calendar.calendarlist.readonly`
+| 사용자 선택 | 요청 범위 | 심사 구분 |
+| --- | --- | --- |
+| 기본 Google 로그인 | `openid`, `email` | 민감하지 않음 |
+| 계정 저장 | 기본 로그인 + `drive.appdata` | 민감하지 않음 |
+| 근무표 동기화 | 기본 로그인 + `calendar.app.created`, `calendar.calendarlist.readonly` | 민감하지 않음 |
+| 기존 Google 일정 가져오기 | 기본 로그인 + `calendar.calendarlist.readonly`, `calendar.events.readonly` | events.readonly는 민감 범위 |
 
-   첫 권한은 앱이 만든 보조 캘린더의 일정 편집을 허용합니다. 두 번째는 재로그인·다른 기기에서도 기존 Shift_cal 캘린더를 찾기 위한 목록 조회입니다. 기본 캘린더의 모든 일정을 편집하는 권한은 요청하지 않습니다.
+위 표에서 짧게 표기한 범위는 `https://www.googleapis.com/auth/` 접두사를 사용합니다. Console은 `email`을 `userinfo.email`로 표시합니다. 기존에 허용한 같은 계정의 권한은 유지하지만, 새 로그인 시 선택하지 않은 캘린더 기능을 자동 요청하지 않습니다. 일반 Drive 파일이나 전체 캘린더 쓰기 권한은 요청하지 않습니다.
 
-6. **Clients → Create client → Web application**에서 OAuth 클라이언트를 만듭니다.
-7. 승인된 리디렉션 URI(Authorized redirect URIs)에 다음 주소를 **쿼리까지 정확하게** 등록합니다.
+OAuth Web client의 승인된 리디렉션 URI:
 
-   ```text
-   https://h-lyart-ten.vercel.app/api/google-calendar?action=callback
-   ```
+```text
+https://20261104.xyz/api/google-calendar?action=callback
+```
 
-8. Client ID와 Client secret을 확인합니다. 서버에서 사용하는 웹 클라이언트이므로 JavaScript origin 등록은 필수가 아닙니다.
+승인된 도메인은 `20261104.xyz`입니다. 다른 주소를 임의로 추가하지 않습니다.
 
-## 2. Vercel 환경변수
-
-Vercel에서 이 저장소와 연결된 프로젝트 → **Settings → Environment Variables**에 아래 값을 등록합니다. Production 환경에 적용하고 **Redeploy**합니다.
+## 2. Vercel 환경변수와 공개 범위
 
 | 이름 | 등록할 값 |
 | --- | --- |
-| `GOOGLE_CALENDAR_CLIENT_ID` | 위에서 만든 웹 OAuth Client ID |
-| `GOOGLE_CALENDAR_CLIENT_SECRET` | 위에서 만든 Client secret. 서버 전용 비밀 값 |
-| `GOOGLE_CALENDAR_SESSION_SECRET` | 최소 32자 무작위 비밀 값. 권장: 암호학적 난수 32바이트의 64자리 hex |
-| `APP_URL` | `https://h-lyart-ten.vercel.app` (경로·쿼리 없이, 운영 주소와 일치) |
+| `GOOGLE_CALENDAR_CLIENT_ID` | 기존 Web OAuth Client ID |
+| `GOOGLE_CALENDAR_CLIENT_SECRET` | 기존 서버 전용 비밀 값 유지 |
+| `GOOGLE_CALENDAR_SESSION_SECRET` | 기존 암호화 비밀 값 유지 |
+| `APP_URL` | `https://h-lyart-ten.vercel.app` (기존 백엔드 Origin/CSRF 기준) |
+| `GOOGLE_OAUTH_REDIRECT_ORIGIN` | `https://20261104.xyz` |
+| `GOOGLE_EXTERNAL_CALENDAR_ENABLED` | 민감 범위 승인 전에는 미설정 또는 `0`; 승인 확인 후에만 `1` |
 
-세션 비밀 값은 개발용 Node.js에서 아래 명령으로 생성할 수 있습니다. 결과를 Vercel 환경변수에만 등록하세요.
+기본 로그인, 앱 전용 계정 저장과 근무표 동기화는 공개할 수 있습니다. 민감 범위 승인이 끝나기 전에는 **기존 Google 일정 가져오기**의 신규 동의만 일반 화면/API에서 막습니다. 이미 해당 권한을 허용한 사용자의 연결은 유지합니다.
 
-```sh
-node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
-```
+### 추가 심사와 데모
 
-Preview 도메인은 운영 OAuth redirect와 다르므로 구글 연결은 운영 주소에서 테스트합니다. 운영 도메인을 변경할 때는 `APP_URL`과 Google redirect URI를 함께 변경합니다. 세션 비밀 값을 교체하면 기존 로그인 쿠키가 무효화되어 다시 연결해야 합니다.
+2026-11-04에 6개 범위와 영문 사용 목적을 Console에 저장했습니다. 최종 제출에는 실제 OAuth 동의와 범위 사용 과정을 보여 주는 YouTube 데모 링크가 필요합니다. 브랜딩 승인과 민감 범위 승인은 별개입니다.
+
+개발자/심사자 전용 숨겨진 진입점은 `https://20261104.xyz/?oauth-review=1`입니다. 처음 설정을 마친 뒤 설정 → 내 캘린더에서 연결합니다. 이 경로는 Google이 안내한 심사 데모용이며 일반 메뉴에 노출하지 않습니다. 실제 동의 화면의 앱 이름·도메인·요청 권한과 미인증 안내를 보여 준 다음, 개인정보가 없는 테스트 캘린더를 선택하여 읽기 전용 표시를 시연합니다. 임의로 만든 동의 화면이나 실제 개인 일정은 데모에 사용하지 않습니다.
+
+심사 영상은 기본 로그인/백업에 캘린더 권한이 필요 없다는 점, 별도 근무표 동기화, 기존 일정 읽기를 각각 보여 줍니다. 일정 읽기는 선택한 캘린더에만 수행하고 원본 일정을 수정하지 않으며 계정 백업/공유에 포함하지 않는다는 설명을 넣습니다. 영상 등록 후 인증 센터의 누락 항목을 해결하여 추가 심사를 제출합니다.
 
 ## 3. 앱 연결
 
 1. 운영 앱을 새로고침하고 **구글 · 애플 캘린더 연결**을 누릅니다.
-2. **구글 계정 연결**을 누르고 등록한 테스트 사용자로 로그인합니다. 요청한 두 캘린더 권한을 모두 허용합니다.
+2. **구글 계정 연결**을 누르면 로그인과 별도로 근무표 동기화 권한을 요청합니다. 요청한 두 캘린더 권한을 모두 허용합니다.
 3. **이달 근무표 연결 시작** 또는 **이 연도 전체 연결**을 누릅니다.
 4. Google Calendar에 `Shift_cal C조`(선택한 조에 따라 A/B/C)가 생성됩니다. 기존 캘린더가 있으면 재사용합니다.
 5. 메모를 하나 저장하고 Google Calendar의 같은 날짜 일정을 확인합니다. 구글에서 메모를 수정한 뒤 앱의 **지금 동기화**를 눌러 반영을 확인합니다.
@@ -78,7 +79,7 @@ Google OAuth 앱이 Testing 상태이면 일부 권한 조합에서 refresh toke
 
 별도 유료 데이터베이스는 사용하지 않습니다. 구글 전용 캘린더를 공통 저장소로 쓰고, 브라우저에는 비교용 이전 값과 ETag만 보관합니다. OAuth refresh token은 AES-256-GCM으로 암호화한 `HttpOnly; Secure; SameSite=Lax` 쿠키에 저장합니다. 브라우저 JavaScript에 토큰을 반환하거나 localStorage에 토큰을 저장하지 않습니다. 로그인은 state와 PKCE를 검증하고, 변경 API는 동일 Origin과 세션 CSRF 값을 확인합니다. 전용 캘린더의 소유자 식별 설명을 확인하고 접근합니다.
 
-이 기기 연결 해제는 로그인 쿠키를 제거하며 이미 저장한 구글 일정을 삭제하지 않습니다. 모든 기기의 앱 권한을 철회하려면 Google 계정의 연결된 앱 관리에서 제거합니다. 회사 PC가 공용 기기라면 작업 후 연결을 해제하세요.
+근무표 동기화 연결 해제는 해당 기능만 중지하며 로그인·계정 저장·이미 저장한 구글 일정은 유지합니다. 내 계정에서 로그아웃하면 로그인 쿠키를 제거합니다. 모든 기기의 앱 권한을 철회하려면 Google 계정의 연결된 앱 관리에서 제거합니다. 회사 PC가 공용 기기라면 작업 후 연결을 해제하세요.
 
 ## 검증
 

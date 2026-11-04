@@ -205,7 +205,7 @@
             // Guest edits made after logout are a new branch. Do not treat them
             // as deletions of the previous signed-in account's data.
             if(saved && (owner || !C.meaningful(local)))baseline=C.normalize(saved);
-            if(!auth.cloudConnected){api.ready=true;status('캘린더 연결됨 · 계정 저장 권한을 추가해주세요.');return;}
+            if(!auth.cloudConnected){api.ready=true;status('로그인됨 · 계정 저장은 별도로 연결해 주세요.');return;}
             status('계정 데이터 확인 중…');if(busy)timer=setTimeout(sync,1000);else {await sync();if(api.ready && window.GoogleSync)GoogleSync.groupChanged();}
         } catch(e){api.ready=false;status(e.message||'계정을 확인하지 못했습니다. 기기 저장은 계속 사용할 수 있습니다.');}
     }

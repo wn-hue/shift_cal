@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <style>html[data-onboarding-pending] body{visibility:hidden}html[data-onboarding-pending] #onboarding-dialog{visibility:visible}</style>
     <script src="./onboarding-state.js?v=startup-1"></script>
-    <script src="/origin-bridge.js?v=1"></script>
+    <script src="/origin-bridge.js?v=permissions-1"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <script src="./viewport-lock.js?v=1"></script>
     <title>근무 루틴 · 교대 캘린더와 급여</title>
@@ -1282,7 +1282,7 @@
 
             <p class="account-hint">시급·연차·메모·근무 변경을 계정에 저장하거나 불러옵니다. 외부 일정은 톱니바퀴의 ‘내 캘린더’에서 표시하세요.</p>
             
-            <p id="account-permission-notice" class="account-hint">로그인은 선택 사항입니다. 계정 확인, 앱 캘린더 관리·목록 조회와 Drive 앱 전용 저장 권한을 요청합니다. 설정은 본인 계정에 저장되며, 캘린더 반영은 동기화를 시작할 때 진행됩니다. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p>
+            <p id="account-permission-notice" class="account-hint">로그인은 선택 사항입니다. 로그인과 계정 저장에는 이메일 확인 및 Drive 앱 전용 저장 권한을 사용합니다. 캘린더 권한은 별도로 연결할 때만 요청합니다. 일반 Drive 파일은 읽지 않습니다. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p>
             <div id="account-setup-help" class="account-hint" hidden>관리자가 Google Cloud에서 Google Drive API를 사용 설정해야 합니다. 사용 설정 후 ‘지금 동기화’를 눌러주세요.</div>
         </div>
         </details>
@@ -1294,7 +1294,7 @@
 
 
 
-<section id="app-preferences-dialog" class="settings-page" hidden aria-label="설정"><section class="preferences-card"><h3>테마</h3><label>달력 스타일<select id="pref-theme"><option value="current" selected>1. 낮밤</option><option value="test" hidden disabled>2. 베이지</option><option value="toss">3. 블루컬러</option><option value="gpt">4. 그레이</option><option value="dark">5. 다크모드</option><option value="test1">6. 테스트1</option><option value="test3">7. 테스트2</option><option value="test4">8. 테스트3</option><option value="beige-round" hidden disabled>9. 베이지 라운드 (테스트)</option></select></label></section><section class="preferences-card"><h3>화면 표시</h3><label>이전 · 다음 달 근무<input type="checkbox" role="switch" id="pref-adjacent" checked></label><label>공휴일 이름<input type="checkbox" role="switch" id="pref-holidays" checked></label><label>달력 메모<input type="checkbox" role="switch" id="pref-memos" checked></label><label>근무 배지 모양<select id="pref-shape"><option value="circle" selected>원</option><option value="square">둥근 네모</option></select></label></section><section class="external-calendars"><h2>내 캘린더</h2><p>개인 일정을 근무표와 함께 확인하세요.</p><a class="external-connect" href="/api/google-calendar?action=login&amp;storage=1&amp;external=1">Google 캘린더 연결</a><div id="external-calendar-list"></div><p id="external-calendar-status" role="status"></p></section>        <section class="all-info-section" aria-labelledby="all-info-title"><h2 id="all-info-title">앱 안내</h2><div class="all-info-list">
+<section id="app-preferences-dialog" class="settings-page" hidden aria-label="설정"><section class="preferences-card"><h3>테마</h3><label>달력 스타일<select id="pref-theme"><option value="current" selected>1. 낮밤</option><option value="test" hidden disabled>2. 베이지</option><option value="toss">3. 블루컬러</option><option value="gpt">4. 그레이</option><option value="dark">5. 다크모드</option><option value="test1">6. 테스트1</option><option value="test3">7. 테스트2</option><option value="test4">8. 테스트3</option><option value="beige-round" hidden disabled>9. 베이지 라운드 (테스트)</option></select></label></section><section class="preferences-card"><h3>화면 표시</h3><label>이전 · 다음 달 근무<input type="checkbox" role="switch" id="pref-adjacent" checked></label><label>공휴일 이름<input type="checkbox" role="switch" id="pref-holidays" checked></label><label>달력 메모<input type="checkbox" role="switch" id="pref-memos" checked></label><label>근무 배지 모양<select id="pref-shape"><option value="circle" selected>원</option><option value="square">둥근 네모</option></select></label></section><section class="external-calendars"><h2>내 캘린더</h2><p>개인 일정을 근무표와 함께 확인하세요. 연결을 선택할 때만 캘린더 목록·일정 읽기 권한을 요청하며, 원본 일정은 수정하지 않아요.</p><a class="external-connect" href="/api/google-calendar?action=login&amp;external=1">Google 캘린더 연결</a><div id="external-calendar-list"></div><p id="external-calendar-status" role="status"></p></section>        <section class="all-info-section" aria-labelledby="all-info-title"><h2 id="all-info-title">앱 안내</h2><div class="all-info-list">
           <a href="./about.html"><span>앱 소개 · 문의</span><span aria-hidden="true">›</span></a>
           <a href="./privacy.html"><span>개인정보처리방침</span><span aria-hidden="true">›</span></a>
           <a href="./terms.html"><span>서비스 이용약관</span><span aria-hidden="true">›</span></a>
@@ -1527,14 +1527,14 @@
                 <strong id="google-sync-badge" style="font-size:14px;">구글 캘린더 동기화</strong>
                 <p id="google-sync-user" class="calendar-link-copy">동기화 상태 확인 중…</p>
                 <p class="calendar-link-copy">구글 전용 캘린더에 근무표·메모·개인 일정을 저장합니다. 앱 변경은 저장 후 반영하고, 구글·아이폰에서 바꾼 내용은 앱을 열면 가져옵니다. 열린 동안에는 약 30초마다 확인합니다.</p>
-                <a id="google-sync-login" class="account-login" href="/api/google-calendar?action=login" aria-label="Google 계정으로 캘린더 연결" aria-describedby="calendar-permission-notice" hidden><img class="google-login-image" src="./google-signin.png?v=3" width="180" height="40" alt="" aria-hidden="true"></a>
-                <p id="calendar-permission-notice" class="account-hint">계정 확인, 캘린더 목록 조회와 앱이 만든 캘린더의 일정 관리 권한을 요청합니다. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p>
+                <a id="google-sync-login" class="account-login" href="/api/google-calendar?action=login&amp;calendar=1" aria-label="Google 계정으로 캘린더 연결" aria-describedby="calendar-permission-notice" hidden><img class="google-login-image" src="./google-signin.png?v=3" width="180" height="40" alt="" aria-hidden="true"></a>
+                <p id="calendar-permission-notice" class="account-hint">로그인과 별도의 선택 기능입니다. 연결할 때 캘린더 목록 조회와 앱이 만든 전용 캘린더의 일정 관리 권한을 요청합니다. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p>
                 <div id="google-sync-controls" hidden>
                     <div class="calendar-link-actions">
                         <button id="google-sync-enable" class="btn-save" onclick="GoogleSync.synchronize()">동기화</button>
                     </div>
                     <details class="calendar-link-help"><summary>동기화 관리</summary>
-                        <div class="calendar-link-actions"><button class="btn-reset-data" onclick="GoogleSync.stop()">자동 동기화 중지</button><button class="btn-reset-data" onclick="GoogleSync.disconnect()">이 기기 연결 해제</button></div>
+                        <div class="calendar-link-actions"><button class="btn-reset-data" onclick="GoogleSync.stop()">자동 동기화 중지</button><button class="btn-reset-data" onclick="GoogleSync.disconnect()">근무표 동기화 해제</button></div>
                         <button class="btn-reset-data" onclick="GoogleSync.relink()">이달 제외 일정 다시 검토</button>
                         <p>중지·해제해도 구글에 저장된 일정은 남습니다. Google 계정의 앱 권한을 완전히 취소하려면 Google 계정 → 보안 → 연결된 앱에서 해제하세요.</p>
                     </details>
@@ -3015,10 +3015,10 @@
 <script src="./theme-header-layout.js?v=3"></script>
 <script src="./settings-page.js?v=7"></script>
     <script src="./settings-ui.js?v=10"></script>
-    <script src="./account-sync.js?v=privacy-14"></script>
-    <script src="./google-sync.js?v=12"></script>
+    <script src="./account-sync.js?v=permissions-1"></script>
+    <script src="./google-sync.js?v=permissions-1"></script>
 <script src="planner-core.js?v=sms-confirm-1"></script><script src="shift-tools.js?v=designs-7"></script><script src="work-editor.js?v=4"></script>
-<script src="./external-calendars.js?v=3"></script>
+<script src="./external-calendars.js?v=permissions-1"></script>
 
     <dialog id="today-weather" class="weather-card sms-dialog" aria-labelledby="weather-dialog-title">
         <div class="sms-dialog-header"><h2 id="weather-dialog-title">오늘 날씨</h2><button type="button" class="sms-close-btn" aria-label="날씨 닫기" onclick="document.getElementById('today-weather').close()">×</button></div>

@@ -5,10 +5,11 @@
     let auth = null, state = null, busy = false, timer = null, polling = null, suppressed = false, viewTag='';
     const storagePrefix = 'shift_google_sync_v2_';
     const el = id => document.getElementById(id);
+    const calendarConnected=()=>!!auth?.connected&&auth.calendarConnected!==false;
     const dateObj = key => { const [y,m,d] = key.split('-').map(Number); return new Date(y,m-1,d); };
     const dateKey = date => toDateKey(date.getFullYear(),date.getMonth(),date.getDate());
     function loadState() {
-        if (!auth?.connected) { state = null; return; }
+        if (!calendarConnected()) { state = null; return; }
         try { state = JSON.parse(localStorage.getItem(storagePrefix+auth.user.id) || '{}'); } catch { state = {}; }
         state.groups ||= {};
         if(!state.externalDisplayMigration){
@@ -148,12 +149,12 @@
     }
     function render() {
         if (!el('google-sync-login')) return;
-        const configured=!!auth?.configured, connected=!!auth?.connected, g=groupState();
+        const configured=!!auth?.configured, connected=calendarConnected(), g=groupState();
         el('google-sync-login').hidden=connected || !configured;
-        el('google-sync-login').href='/api/google-calendar?action=login';
+        el('google-sync-login').href='/api/google-calendar?action=login&calendar=1';
         el('google-sync-controls').hidden=!connected;
         el('google-sync-setup').hidden=configured;
-        el('google-sync-user').textContent=connected ? auth.user.email+' · '+currentGroup+'조':'구글 계정 연결 전';
+        el('google-sync-user').textContent=connected ? auth.user.email+' · '+currentGroup+'조':auth?.connected?'로그인됨 · 근무표 동기화는 별도로 연결해 주세요.':'구글 계정 연결 전';
         el('google-sync-enable').textContent=busy?'동기화 중…':'동기화';
         if (auth && !configured) {
             el('google-sync-setup-message').textContent='관리자 최초 설정이 필요합니다. '+(auth.missing?.length ? '미설정: '+auth.missing.join(', '):'Vercel 서버 설정을 확인하세요.');
@@ -170,7 +171,7 @@
         catch (e) { status(e.message); return null; }
     }
     async function sync(rangeOverride=null) {
-        if (busy || !auth?.connected || !groupState()?.enabled || document.hidden || (window.AccountSync && !AccountSync.ready)) return;
+        if (busy || !calendarConnected() || !groupState()?.enabled || document.hidden || (window.AccountSync && !AccountSync.ready)) return;
         setBusy(true); const group=currentGroup, g=groupState();
         status('구글 일정과 변경사항을 확인하고 있습니다…');
         try {
@@ -236,7 +237,7 @@
         }
     }
     async function migrateColors() {
-        if(busy || !auth?.connected || !groupState()?.enabled || (window.AccountSync && !AccountSync.ready))return;
+        if(busy || !calendarConnected() || !groupState()?.enabled || (window.AccountSync && !AccountSync.ready))return;
         setBusy(true);const group=currentGroup,g=groupState(),userId=auth.user.id;
         status('연결된 근무 일정의 색상을 적용하고 있습니다…');
         try {
@@ -271,7 +272,7 @@
         clearTimeout(timer); timer=setTimeout(()=>sync(),1000);
     }
     async function enable() {
-        if(busy || !auth?.connected) return;
+        if(busy || !calendarConnected()) return;
         status('전용 구글 캘린더를 준비하고 있습니다…'); setBusy(true);
         const group=currentGroup, g=groupState();
         try {
@@ -305,14 +306,14 @@
         }catch(e){status(e.message);}finally{setBusy(false);}
     }
     async function disconnect() {
-        if(busy||!auth?.connected)return;
-        try {if(window.AccountSync?.prepareLogout)await AccountSync.prepareLogout();await api('logout');auth.connected=false;state=null;if(window.AccountSync)AccountSync.disconnected();render();status('이 기기의 연결을 해제했습니다. 구글에 저장된 일정은 유지됩니다.');}
+        if(busy||!calendarConnected())return;
+        try {await api('calendar-disconnect');for(const group of Object.values(state?.groups||{}))group.enabled=false;save();auth.calendarConnected=false;state=null;render();status('근무표 동기화를 해제했습니다. 로그인과 계정 저장, Google에 저장된 일정은 유지됩니다.');}
         catch(e){status(e.message);}
     }
     function stop() { const g=groupState();if(g){g.enabled=false;save();render();status('자동 동기화를 중지했습니다. 구글 일정은 그대로 남습니다.');} }
     async function synchronize() {
         if(busy)return;
-        if(!auth?.connected){status('먼저 Google 계정으로 로그인해 주세요.','warning');return;}
+        if(!calendarConnected()){status('먼저 근무표 동기화 연결을 허용해 주세요.','warning');return;}
         if(window.AccountSync && !AccountSync.ready){status('계정 데이터를 확인 중이거나 변경 확인이 필요합니다. 왼쪽 메뉴에서 계정 저장 상태를 확인해 주세요.','warning');return;}
         if(!navigator.onLine){status('오프라인입니다. 인터넷 연결 후 다시 동기화해 주세요.','warning');return;}
         if (groupState()?.enabled) await sync();
@@ -375,7 +376,7 @@
     }
     async function init() {
         await refreshStatus();
-        if(auth?.connected)await sync();
+        if(calendarConnected())await sync();
         polling=setInterval(()=>sync(),30000);
         document.addEventListener('visibilitychange',()=>{if(!document.hidden){refreshStatus().then(()=>sync());}});
         window.addEventListener('focus',()=>changed());

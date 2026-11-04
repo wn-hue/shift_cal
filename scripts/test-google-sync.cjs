@@ -75,7 +75,7 @@ async function run() {
         assert.equal(res.result.connected,true);assert.equal(res.result.csrf,'fixture-csrf');
         assert.ok(!res.body.includes('fixture-refresh'),'Token must never reach browser JS');
         assert.equal(res.headers['Cache-Control'],'no-store');
-        res=await invoke('login',{method:'GET'});
+        res=await invoke('login',{method:'GET',query:'&calendar=1'});
         assert.equal(res.statusCode,302);
         const login=new URL(res.headers.Location);
         assert.equal(login.searchParams.get('access_type'),'offline');assert.ok(login.searchParams.get('state'));assert.equal(login.searchParams.get('code_challenge_method'),'S256');
