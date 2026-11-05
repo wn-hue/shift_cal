@@ -1,9 +1,9 @@
 'use strict';
 
 const PDFParser = require('pdf2json');
-const {SOURCE_URL, extractToday, menuDate} = require('../lib/today-menu.cjs');
+const {SOURCE_URL, extractToday, extractSchedule, menuDate} = require('../lib/today-menu.cjs');
 const MAX_BYTES = 3 * 1024 * 1024;
-const CACHE_MS = 2 * 60 * 1000;
+const CACHE_MS = 60 * 60 * 1000;
 let cached = null, pending = null;
 
 function parsePdf(buffer) {
@@ -46,7 +46,10 @@ async function downloadPdf(fetcher = fetch) {
 async function loadPdf() {
     if (cached && Date.now() - cached.time < CACHE_MS) return cached;
     if (!pending) {
-        pending = downloadPdf().then(data => {cached = {data, time:Date.now()}; return cached;}).finally(() => {pending = null;});
+        pending = downloadPdf().then(data => {
+            cached = {data, menus:extractSchedule(data), time:Date.now()};
+            return cached;
+        }).finally(() => {pending = null;});
     }
     return pending;
 }
@@ -61,10 +64,12 @@ async function handler(req, res) {
     }
     try {
         const result = await loadPdf();
-        const menu={...extractToday(result.data,new Date(),date), checkedAt:new Date(result.time).toISOString()};
+        const checkedAt = new Date(result.time).toISOString();
+        const selectedDate = date || menuDate();
+        const menu={...(result.menus.find(item => item.date === selectedDate) || extractToday(result.data,new Date(),selectedDate)), checkedAt};
         // Browsing tomorrow must not advance the shared vote record past today.
         if (menu.date === menuDate()) require('@vercel/functions').waitUntil(require('../lib/meal-weekly').saveMenu(menu).catch(()=>{}));
-        return res.status(200).json(menu);
+        return res.status(200).json({...menu, menus:result.menus.map(item => ({...item, checkedAt}))});
     } catch (error) {
         const layout = error.message === 'MENU_LAYOUT';
         return res.status(503).json({status:'error', date:date || menuDate(), sourceUrl:SOURCE_URL, meals:[],

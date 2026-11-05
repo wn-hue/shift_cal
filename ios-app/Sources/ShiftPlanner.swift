@@ -105,7 +105,9 @@ struct WorkBreak: Identifiable {
     let title: String
     // Minutes from the work date's midnight. Night shifts continue into the next day.
     let startMinutes: Int
-    var alarmMinutes: Int { startMinutes - 5 }
+    let isMeal: Bool
+    var leadMinutes: Int { isMeal ? 10 : 5 }
+    var alarmMinutes: Int { startMinutes - leadMinutes }
     var timeLabel: String {
         let minutes = alarmMinutes % 1440
         return (alarmMinutes >= 1440 ? "다음 날 " : "") + String(format: "%02d:%02d", minutes / 60, minutes % 60)
@@ -154,7 +156,8 @@ enum ShiftPlanner {
             titles = ["쉬는시간 1", "점심", "쉬는시간 2", "석식"]
         }
         return zip(starts, titles).enumerated().map { index, value in
-            WorkBreak(id: String(index), title: value.1, startMinutes: value.0)
+            WorkBreak(id: String(index), title: value.1, startMinutes: value.0,
+                      isMeal: index == 1 || (!night && index == 3))
         }
     }
     static func plans(_ snapshot: ShiftSnapshot, preferences: AlarmPreferences, now: Date = Date()) -> [PlannedAlarm] {
@@ -185,7 +188,7 @@ enum ShiftPlanner {
                 for item in breaks(night: night, round: round) {
                     guard let fire = korea.date(byAdding: .minute, value: item.alarmMinutes, to: start), fire > now, fire < end else { continue }
                     plans.append(PlannedAlarm(key: day.date + ":break:" + item.id,
-                        title: "\(snapshot.group)조 \(night ? "야간" : "주간") \(round)차 · \(item.title) 5분 전", date: fire))
+                        title: "\(snapshot.group)조 \(night ? "야간" : "주간") \(round)차 · \(item.title) \(item.leadMinutes)분 전", date: fire))
                 }
             }
         }

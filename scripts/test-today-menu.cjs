@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const {koreaDate, menuDate, resolveDate, extractToday, SOURCE_URL} = require('../lib/today-menu.cjs');
+const {koreaDate, menuDate, resolveDate, extractToday, extractSchedule, SOURCE_URL} = require('../lib/today-menu.cjs');
 const {downloadPdf} = require('../api/today-menu.js');
 const fixture = require('./fixtures/menu-layout.json');
 const copy = () => structuredClone(fixture);
@@ -70,7 +70,7 @@ async function main() {
     await handler({method:'POST'},response);assert.equal(response.code,405);assert.equal(response.headers.Allow,'GET');
     for (const date of ['2026-02-30','invalid',['2026-10-21'],'2037-01-01']) {await handler({method:'GET',query:{date}},response);assert.equal(response.code,400);}
     // Exercise the API against parsed fixture data without touching shared vote storage.
-    let persisted=0;
+    let persisted=0, downloads=0;
     class FakeParser {
         constructor(){this.handlers={};}
         once(name,callback){this.handlers[name]=callback;}
@@ -78,26 +78,30 @@ async function main() {
         destroy(){}
     }
     const apiContext={module:{exports:{}},Buffer,AbortSignal,Date,Number,Array,setTimeout,clearTimeout,
-        fetch:async()=>new Response('%PDF-fixture'),
-        require:name=>name==='pdf2json'?FakeParser:name==='../lib/today-menu.cjs'?{SOURCE_URL,extractToday,menuDate:()=> '2026-10-02'}:name==='@vercel/functions'?{waitUntil(){}}:{saveMenu:async()=>{persisted++;}}};
+        fetch:async()=>{downloads++;return new Response('%PDF-fixture');},
+        require:name=>name==='pdf2json'?FakeParser:name==='../lib/today-menu.cjs'?{SOURCE_URL,extractToday,extractSchedule,menuDate:()=> '2026-10-02'}:name==='@vercel/functions'?{waitUntil(){}}:{saveMenu:async()=>{persisted++;}}};
     vm.createContext(apiContext);vm.runInContext(fs.readFileSync(require.resolve('../api/today-menu.js'),'utf8'),apiContext);
     await apiContext.module.exports({method:'GET',query:{date:'2026-10-03'}},response);
     assert.equal(response.code,200);assert.equal(response.data.date,'2026-10-03');assert.equal(response.data.meals.length,4);
     assert.equal(persisted,0,'Tomorrow browsing must not advance or clear the current shared votes');
     await apiContext.module.exports({method:'GET',query:{date:'2026-10-02'}},response);
     assert.equal(persisted,1,'Today still saves menus for weekly rankings');
+    assert.equal(downloads,1,'Different days reuse the downloaded PDF');
+    assert.equal(response.data.menus.length,14,'One response includes all published date columns');
+    assert.equal(new Set(response.data.menus.map(m=>m.date)).size,14);
+    assert.ok(response.data.menus.every(m=>m.status==='ok' && m.meals.length===4 && m.checkedAt));
     console.log('PASS: Korean date rollover, year/weekday checks, 14 date columns, spatial meal sections, merged/split cells, missing/stale/invalid PDFs, fixed upstream URL and payload limits.');
 
     const elements=new Map();
-    function el(){return {style:{},textContent:'',children:[],hidden:false,disabled:false,attributes:{},handlers:{},setAttribute(k,v){this.attributes[k]=v},appendChild(c){this.children.push(c)},replaceChildren(){this.children=[]},addEventListener(n,f){this.handlers[n]=f}};}
-    for(const id of ['today-menu-date','today-menu-refresh','today-menu-status','today-menu-panel','today-menu-cards','today-menu-empty','today-menu-note','today-menu-checked'])elements.set(id,el());
+    function el(){return {classList:{toggle(){}},dataset:{},querySelector(){return el()},style:{},textContent:'',children:[],hidden:false,disabled:false,attributes:{},handlers:{},setAttribute(k,v){this.attributes[k]=v},appendChild(c){this.children.push(c)},replaceChildren(){this.children=[]},addEventListener(n,f){this.handlers[n]=f}};}
+    for(const id of ['today-menu-relative','today-menu-loading','header-view-title','view-menu','today-menu-status','today-menu-panel','today-menu-cards','today-menu-empty','today-menu-note','today-menu-checked'])elements.set(id,el());
     let instant=new Date('2026-10-02T13:00:00Z'), requests=0, reply={...result,checkedAt:instant.toISOString()};
     class Clock extends Date{constructor(...args){super(...(args.length?args:[instant]));}static now(){return instant.getTime();}}
     const stored=new Map();
     const storage={getItem:k=>stored.get(k)||null,setItem:(k,v)=>stored.set(k,v),removeItem:k=>stored.delete(k)};
-    const ctx={localStorage:storage,window:null,Intl,Date:Clock,AbortSignal,AbortController,document:{body:{dataset:{view:'menu'}},getElementById:id=>elements.get(id),createElement:el,addEventListener(){},hidden:false},setInterval(){},fetch:async()=>{requests++;return {ok:true,json:async()=>reply};}};
+    const ctx={localStorage:storage,window:null,Intl,Date:Clock,AbortSignal,AbortController,setTimeout,clearTimeout,document:{body:{dataset:{view:'menu'}},getElementById:id=>elements.get(id),createElement:el,addEventListener(){},hidden:false},setInterval(){},fetch:async()=>{requests++;return {ok:true,json:async()=>reply};}};
     ctx.window=ctx;vm.createContext(ctx);vm.runInContext(fs.readFileSync(require.resolve('../today-menu.js'),'utf8'),ctx);
-    await ctx.TodayMenu.load();assert.equal(elements.get('today-menu-cards').children.length,4);assert.equal(elements.get('today-menu-refresh').disabled,false);
+    await ctx.TodayMenu.load();assert.equal(elements.get('today-menu-cards').children.length,4);assert.equal(elements.get('today-menu-panel').attributes['aria-busy'],'false');
     await ctx.TodayMenu.load();assert.equal(requests,1,'Repeated tab visits use the current-day cache');
     instant=new Date('2026-10-02T14:30:00Z');
     await ctx.TodayMenu.load();assert.equal(requests,1,'Same meal day remains cached beyond two minutes');
@@ -130,6 +134,17 @@ async function main() {
     vm.runInContext(fs.readFileSync(require.resolve('../today-menu.js'),'utf8'),ctx);
     await ctx.TodayMenu.load();const beforeMemory=requests;instant=new Date('2026-10-02T17:00:00Z');
     await ctx.TodayMenu.load();assert.equal(requests,beforeMemory,'Disabled persistent storage still uses the in-memory meal-day cache');
+    stored.clear();
+    instant=new Date('2026-10-02T13:00:00Z');
+    reply={...result,checkedAt:instant.toISOString(),menus:[{...result,checkedAt:instant.toISOString()},{...extractToday(copy(),instant,'2026-10-03'),checkedAt:instant.toISOString()}]};
+    ctx.localStorage=storage;
+    vm.runInContext(fs.readFileSync(require.resolve('../today-menu.js'),'utf8'),ctx);
+    await ctx.TodayMenu.load();const beforeNext=requests;
+    await ctx.TodayMenu.changeDate(1);assert.equal(requests,beforeNext,'Tomorrow uses the saved schedule without a request');
+    assert.equal(elements.get('header-view-title').textContent,'토요일 메뉴');
+    vm.runInContext(fs.readFileSync(require.resolve('../today-menu.js'),'utf8'),ctx);
+    await ctx.TodayMenu.changeDate(1);assert.equal(requests,beforeNext,'Reload also restores the whole schedule');
+    console.log('PASS: Whole-schedule download/cache, safe text rendering, 03:00 Korean rollover, offline recovery.');
     console.log('PASS: Today menu loading/cache/refresh, accessible status, safe text rendering, 03:00 Korean meal-day rollover and offline recovery.');
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});

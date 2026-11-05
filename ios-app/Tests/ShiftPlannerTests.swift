@@ -130,11 +130,11 @@ final class ShiftPlannerTests: XCTestCase {
         XCTAssertEqual(ShiftPlanner.plans(snapshot, preferences: preferences, now: now).first?.date,
                        ShiftPlanner.date("2026-10-24")!.addingTimeInterval(440 * 60))
     }
-    func testBreakTimesMatchCompanyTableAndUseFiveMinuteLead() {
-        XCTAssertEqual(ShiftPlanner.breaks(night: false, round: 1).map(\.timeLabel), ["10:25", "11:55", "15:25", "17:25"])
-        XCTAssertEqual(ShiftPlanner.breaks(night: false, round: 2).map(\.timeLabel), ["10:40", "12:45", "15:40", "17:55"])
-        XCTAssertEqual(ShiftPlanner.breaks(night: true, round: 1).map(\.timeLabel), ["22:55", "다음 날 01:15", "다음 날 04:25", "다음 날 06:25"])
-        XCTAssertEqual(ShiftPlanner.breaks(night: true, round: 2).map(\.timeLabel), ["23:15", "다음 날 01:55", "다음 날 04:45", "다음 날 06:45"])
+    func testBreakTimesUseFiveMinutesForRestAndTenForMeals() {
+        XCTAssertEqual(ShiftPlanner.breaks(night: false, round: 1).map(\.timeLabel), ["10:25", "11:50", "15:25", "17:20"])
+        XCTAssertEqual(ShiftPlanner.breaks(night: false, round: 2).map(\.timeLabel), ["10:40", "12:40", "15:40", "17:50"])
+        XCTAssertEqual(ShiftPlanner.breaks(night: true, round: 1).map(\.timeLabel), ["22:55", "다음 날 01:10", "다음 날 04:25", "다음 날 06:25"])
+        XCTAssertEqual(ShiftPlanner.breaks(night: true, round: 2).map(\.timeLabel), ["23:15", "다음 날 01:50", "다음 날 04:45", "다음 날 06:45"])
         XCTAssertTrue(ShiftPlanner.breaks(night: false, round: 0).isEmpty)
     }
 
@@ -152,6 +152,9 @@ final class ShiftPlannerTests: XCTestCase {
         prefs.nightBreakRound = 1
         var plans = ShiftPlanner.plans(snapshot, preferences: prefs, now: now)
         XCTAssertEqual(plans.count, 8)
+        XCTAssertTrue(plans.contains { $0.title.contains("점심 10분 전") })
+        XCTAssertTrue(plans.contains { $0.title.contains("야식 10분 전") })
+        XCTAssertTrue(plans.contains { $0.title.contains("쉬는시간 1 5분 전") })
         XCTAssertEqual(plans[0].date, ShiftPlanner.date("2026-10-20")!.addingTimeInterval((10 * 60 + 40) * 60))
         XCTAssertEqual(plans.last?.date, ShiftPlanner.date("2026-10-22")!.addingTimeInterval((6 * 60 + 25) * 60))
         XCTAssertEqual(Set(plans.map(\.key)).count, plans.count)
@@ -176,7 +179,7 @@ final class ShiftPlannerTests: XCTestCase {
             previousDay: ShiftDay(date: "2026-10-20", type: "NIGHT", origType: nil))
         let plans = ShiftPlanner.plans(snapshot, preferences: prefs, now: midnight)
         XCTAssertEqual(plans.count, 3)
-        XCTAssertEqual(plans[0].date, midnight.addingTimeInterval(75 * 60))
+        XCTAssertEqual(plans[0].date, midnight.addingTimeInterval(70 * 60))
         XCTAssertEqual(ShiftPlanner.plans(snapshot, preferences: prefs, now: plans[0].date).count, 2)
         XCTAssertTrue(plans.allSatisfy { $0.key.hasPrefix("2026-10-20:break:") })
         let off = ShiftSnapshot(group: "A", days: snapshot.days, previousDay: ShiftDay(date: "2026-10-20", type: "LEAVE", origType: "NIGHT"))
