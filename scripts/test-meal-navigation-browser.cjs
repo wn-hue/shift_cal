@@ -14,7 +14,7 @@ const day = n => new Date(Date.parse(today+'T12:00:00Z')+n*86400000).toISOString
      const date=url.searchParams.get('date')||today;
      if(date===day(2))return r.fulfill({json:{status:'not_published',date,meals:[],message:'이 날짜의 식단이 아직 등록되지 않았어요.'}});
      if(date===day(1))await new Promise(resolve=>setTimeout(resolve,200));
-     return r.fulfill({json:{status:'ok',date,checkedAt:new Date().toISOString(),meals:['조식','중식','석식','야식'].map(name=>({name,groups:[{title:'한식 · 사계',items:[date+' 콩나물매콤돼지불고기','미역국','알감자버터구이','치커리생채','포기김치','쌀밥']},{title:'Plus',items:['누룽지죽']},{title:'간편식',items:['빵 SET','반숙란 SET','샌드위치 SET','마이보글','컵라면/단무지/맛김치/쌀밥']},{title:'별미공방',items:['돈가스카레라이스','샐러드']}]}))}}).catch(()=>{});
+     return r.fulfill({json:{status:'ok',date,checkedAt:new Date().toISOString(),meals:['조식','중식','석식','야식'].map(name=>({name,groups:[{title:'한식 · 사계',items:[date+' 콩나물매콤돼지불고기','미역국','알감자버터구이','치커리생채','포기김치','쌀밥']},{title:'Plus',items:['누룽지죽']},{title:'간편식',items:['빵 SET','반숙란 SET','샌드위치 SET','마이보글','컵라면/단무지/맛김치/쌀밥']},{title:'별미 · 공방',items:['돈가스카레라이스','샐러드']}]}))}}).catch(()=>{});
     }
     if(url.pathname==='/api/meal-votes')return r.fulfill({json:{date:today,mine:{},totals:Object.fromEntries(['조식','중식','석식','야식'].map(m=>[m,{up:3,down:1}]))}});
     return r.fulfill({json:{configured:false}});
@@ -33,10 +33,13 @@ const day = n => new Date(Date.parse(today+'T12:00:00Z')+n*86400000).toISOString
    assert.equal(await p.locator('.meal-main .meal-addon').count(),4);
    assert.match(await p.locator('.meal-main .meal-addon').first().textContent(),/Plus · 추가 제공/);
    assert.equal(await p.locator('.meal-sides .meal-choice-label').count(),4);
+   assert.equal(await p.locator('.meal-sides .meal-choice-badge').count(),8);
+   assert.match(await p.locator('.meal-sides .meal-side-group').nth(1).textContent(),/별미공방선택/);
+   assert.equal(await p.locator('.meal-main .meal-addon').filter({hasText:'별미'}).count(),0);
    assert.equal(await p.locator('.meal-sides').first().getAttribute('aria-label'),'조식 선택 메뉴');
    assert.equal(await p.locator('.meal-sides .meal-addon').count(),0);
    assert.equal(await p.locator('.all-page a[href="/origin-transfer.html"]').count(),0);
-   const main=await p.locator('.meal-main').first().boundingBox(),side=await p.locator('.meal-sides').first().boundingBox();
+   const [main,side]=await p.evaluate(()=>['.meal-main','.meal-sides'].map(selector=>{const r=document.querySelector(selector).getBoundingClientRect();return{x:r.x,y:r.y,width:r.width};}));
    assert(side.x>=main.x+main.width&&Math.abs(main.y-side.y)<2,'Extra menus sit beside the main menu');
    for(const theme of ['current','toss','gpt','dark','test']){
     await p.evaluate(t=>{const pref=document.getElementById('pref-theme');pref.value=t;pref.dispatchEvent(new Event('change'));},theme);

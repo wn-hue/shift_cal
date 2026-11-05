@@ -43,6 +43,7 @@ const root=path.resolve(__dirname,'..');
   let snapshot=await latest();assert.equal(snapshot.days.length,30);assert.equal(snapshot.group,'C');
   const koreaDate=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'}).format(instant);
   assert.equal(snapshot.days[0].date,koreaDate,'snapshot uses Korea date even while travelling');
+  assert.equal(snapshot.previousDay.date,new Date(Date.parse(koreaDate+'T12:00:00Z')-86400000).toISOString().slice(0,10),'include yesterday for after-midnight night-shift breaks');
   assert.equal(snapshot.days.find(d=>d.date==='2026-10-03').isHoliday,true);
   assert.equal(snapshot.days.find(d=>d.date==='2026-10-05').isHoliday,true,'Substitute holiday is sent even on a weekday');
   assert.equal(snapshot.days.find(d=>d.date==='2026-10-02').isHoliday,false);

@@ -107,4 +107,28 @@ final class AlarmServiceTests: XCTestCase {
         XCTAssertTrue(backend.ids.isEmpty)
         XCTAssertTrue(service.records.isEmpty)
     }
+    @MainActor
+    func testBreakRoundChangesReplaceOnlyBreaksAndDisablingKeepsWakeAlarm() async throws {
+        let backend = FakeBackend()
+        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let service = AlarmService(defaults: defaults, backend: backend)
+        let start = ShiftPlanner.date("2026-10-20")!
+        let snapshot = ShiftSnapshot(group: "C", days: [ShiftDay(date: "2026-10-20", type: "DAY", origType: nil)])
+        var prefs = AlarmPreferences(); prefs.enabled = true; prefs.breaksEnabled = true
+        try await service.reconcile(ShiftPlanner.plans(snapshot, preferences: prefs, now: start))
+        let wake = service.records["2026-10-20"]!.id
+        XCTAssertEqual(backend.ids.count, 5)
+        prefs.dayBreakRound = 2
+        let changed = ShiftPlanner.plans(snapshot, preferences: prefs, now: start)
+        try await service.reconcile(changed)
+        XCTAssertEqual(service.records["2026-10-20"]?.id, wake)
+        XCTAssertEqual(backend.ids.count, 5)
+        XCTAssertEqual(backend.cancelled.count, 4)
+        try await AlarmService(defaults: defaults, backend: backend).reconcile(changed)
+        XCTAssertEqual(backend.scheduledIDs.count, 9, "Restart must not duplicate wake or break alarms")
+        prefs.breaksEnabled = false
+        try await service.reconcile(ShiftPlanner.plans(snapshot, preferences: prefs, now: start))
+        XCTAssertEqual(backend.ids, [wake])
+    }
+
 }

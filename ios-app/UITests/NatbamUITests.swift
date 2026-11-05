@@ -34,6 +34,9 @@ final class NatbamUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.navigationBars["근무 알람"].waitForExistence(timeout: 20))
         XCTAssertTrue(app.switches["shiftAlarmToggle"].exists)
+        app.swipeUp()
+        XCTAssertTrue(app.switches["breakAlarmToggle"].exists)
+        app.swipeDown()
         XCTAssertFalse(app.switches["반차일에도 알림"].exists)
         let test = app.buttons["testAlarmButton"]
         XCTAssertTrue(test.exists)

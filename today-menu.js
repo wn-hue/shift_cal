@@ -94,6 +94,10 @@
         for (const item of items) ul.appendChild(node('li','',item));
         return ul;
     }
+    function choiceName(title) {
+        const name = title.replace(/[\s·ㆍ•-]/g,'');
+        return /간편식/.test(name) ? '간편식' : /별미공방/.test(name) ? '별미공방' : '';
+    }
     function render(data) {
         const cards = $('today-menu-cards');
         cards.replaceChildren();
@@ -103,8 +107,8 @@
             const heading = node('div','meal-card-heading');
             heading.appendChild(node('h2','',meal.name));
             card.appendChild(heading);
-            const choices = meal.groups.slice(1).filter(group => /간편식|별미공방/.test(group.title));
-            const additions = meal.groups.slice(1).filter(group => !/간편식|별미공방/.test(group.title));
+            const choices = meal.groups.slice(1).filter(group => choiceName(group.title));
+            const additions = meal.groups.slice(1).filter(group => !choiceName(group.title));
             const body = node('div','meal-card-body'+(choices.length?' has-sides':''));
             const main = node('section','meal-main');
             main.setAttribute('aria-label',meal.name+' '+meal.groups[0].title);
@@ -124,7 +128,9 @@
                 sides.appendChild(node('p','meal-choice-label','선택 메뉴'));
                 for (const group of choices) {
                     const section = node('section','meal-side-group');
-                    section.appendChild(node('h3','meal-group-title',group.title));
+                    const title = node('h3','meal-group-title meal-choice-title',choiceName(group.title));
+                    title.appendChild(node('span','meal-choice-badge','선택'));
+                    section.appendChild(title);
                     section.appendChild(list(group.items));
                     sides.appendChild(section);
                 }

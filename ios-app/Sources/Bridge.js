@@ -17,12 +17,13 @@
     const now = new Date();
     const parts = new Intl.DateTimeFormat('en-CA', {timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit'}).formatToParts(now);
     const part = name => Number(parts.find(p => p.type === name).value);
-    const days = Array.from({length: 30}, (_, i) => {
+    const shiftDay = i => {
       const date = new Date(part('year'), part('month') - 1, part('day') + i, 12);
       const shift = getActualShift(date, currentGroup);
       return {date: `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`, type: shift.type, origType: shift.origType || null, isHoliday: Boolean(shift.holidayName)};
-    });
-    const value = {group: currentGroup, days};
+    };
+    const days = Array.from({length: 30}, (_, i) => shiftDay(i));
+    const value = {group: currentGroup, days, previousDay: shiftDay(-1)};
     const encoded = JSON.stringify(value);
     if (force || encoded !== previous) { previous = encoded; send('snapshot', value); }
   }

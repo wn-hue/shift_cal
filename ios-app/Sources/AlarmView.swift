@@ -17,6 +17,24 @@ struct AlarmView: View {
             }
         })
     }
+    @ViewBuilder private func breakSchedule(night: Bool) -> some View {
+        let round = night ? model.preferences.nightBreakRound : model.preferences.dayBreakRound
+        VStack(alignment: .leading, spacing: 12) {
+            Text(night ? "야간" : "주간").font(.subheadline.bold())
+            Picker(night ? "야간 차수" : "주간 차수", selection: Binding(get: {
+                night ? model.preferences.nightBreakRound : model.preferences.dayBreakRound
+            }, set: { value in
+                model.change { if night { $0.nightBreakRound = value } else { $0.dayBreakRound = value } }
+            })) {
+                Text("1차").tag(1)
+                Text("2차").tag(2)
+            }.pickerStyle(.segmented)
+                .accessibilityIdentifier(night ? "nightBreakRound" : "dayBreakRound")
+            ForEach(ShiftPlanner.breaks(night: night, round: round)) { item in
+                LabeledContent(item.title, value: item.timeLabel).font(.subheadline)
+            }
+        }.padding(.vertical, 6)
+    }
     var body: some View {
         NavigationStack {
             Form {
@@ -51,6 +69,19 @@ struct AlarmView: View {
                     Text(model.preferences.separateWeekendHolidays
                         ? "토·일요일과 달력에 표시된 공휴일·대체공휴일에 적용해요. 야간 근무도 출근하는 날짜를 기준으로 구분해요."
                         : "지금은 모든 출근일에 같은 시간을 사용해요. 따로 설정하면 처음에는 기존 시간을 그대로 가져와요.")
+                }
+                Section {
+                    Toggle("휴게·식사 5분 전 알람", isOn: Binding(get: { model.preferences.breaksEnabled }, set: { value in
+                        Task { await model.enableBreaks(value) }
+                    })).accessibilityIdentifier("breakAlarmToggle")
+                    if model.preferences.breaksEnabled {
+                        breakSchedule(night: false)
+                        breakSchedule(night: true)
+                    }
+                } header: {
+                    Text("휴게·식사 알람")
+                } footer: {
+                    Text("표시된 시간은 시작 5분 전 알람 시간이에요. 야간의 자정 이후 알람은 다음 날에 울려요. 휴무·연차·무급휴무는 제외하며, 반차일은 기본 근무 시간표를 따라요.")
                 }
                 Section("알람 확인") {
                     Button { Task { await model.test() } } label: {

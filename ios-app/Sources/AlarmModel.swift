@@ -47,6 +47,16 @@ final class AlarmModel: ObservableObject {
         }
         change { $0.enabled = value }
     }
+    func enableBreaks(_ value: Bool) async {
+        if value {
+            guard snapshot?.validated() == true else {
+                error = "먼저 인터넷에 연결해 달력을 열어 주세요. 근무표를 확인한 뒤 휴게·식사 알람을 켤 수 있어요."
+                return
+            }
+            guard await authorize() else { return }
+        }
+        change { $0.breaksEnabled = value }
+    }
     private func authorize() async -> Bool {
         do {
             let state = try await AlarmManager.shared.requestAuthorization()

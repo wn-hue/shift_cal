@@ -130,4 +130,72 @@ final class ShiftPlannerTests: XCTestCase {
         XCTAssertEqual(ShiftPlanner.plans(snapshot, preferences: preferences, now: now).first?.date,
                        ShiftPlanner.date("2026-10-24")!.addingTimeInterval(440 * 60))
     }
+    func testBreakTimesMatchCompanyTableAndUseFiveMinuteLead() {
+        XCTAssertEqual(ShiftPlanner.breaks(night: false, round: 1).map(\.timeLabel), ["10:25", "11:55", "15:25", "17:25"])
+        XCTAssertEqual(ShiftPlanner.breaks(night: false, round: 2).map(\.timeLabel), ["10:40", "12:45", "15:40", "17:55"])
+        XCTAssertEqual(ShiftPlanner.breaks(night: true, round: 1).map(\.timeLabel), ["22:55", "다음 날 01:15", "다음 날 04:25", "다음 날 06:25"])
+        XCTAssertEqual(ShiftPlanner.breaks(night: true, round: 2).map(\.timeLabel), ["23:15", "다음 날 01:55", "다음 날 04:45", "다음 날 06:45"])
+        XCTAssertTrue(ShiftPlanner.breaks(night: false, round: 0).isEmpty)
+    }
+
+    func testBreakAlarmsAreIndependentOfWakeAlarmsAndKeepUniqueKeys() throws {
+        let snapshot = ShiftSnapshot(group: "C", days: [
+            ShiftDay(date: "2026-10-20", type: "DAY", origType: nil),
+            ShiftDay(date: "2026-10-21", type: "NIGHT", origType: nil),
+            ShiftDay(date: "2026-10-22", type: "OFF", origType: "DAY"),
+            ShiftDay(date: "2026-10-23", type: "LEAVE", origType: "NIGHT"),
+            ShiftDay(date: "2026-10-24", type: "UNPAID_OFF", origType: "DAY")])
+        var prefs = AlarmPreferences()
+        XCTAssertTrue(ShiftPlanner.plans(snapshot, preferences: prefs, now: now).isEmpty)
+        prefs.breaksEnabled = true
+        prefs.dayBreakRound = 2
+        prefs.nightBreakRound = 1
+        var plans = ShiftPlanner.plans(snapshot, preferences: prefs, now: now)
+        XCTAssertEqual(plans.count, 8)
+        XCTAssertEqual(plans[0].date, ShiftPlanner.date("2026-10-20")!.addingTimeInterval((10 * 60 + 40) * 60))
+        XCTAssertEqual(plans.last?.date, ShiftPlanner.date("2026-10-22")!.addingTimeInterval((6 * 60 + 25) * 60))
+        XCTAssertEqual(Set(plans.map(\.key)).count, plans.count)
+        prefs.enabled = true
+        plans = ShiftPlanner.plans(snapshot, preferences: prefs, now: now)
+        XCTAssertEqual(plans.count, 10)
+        XCTAssertTrue(plans.contains { $0.key == "2026-10-20" })
+        prefs.breaksEnabled = false
+        XCTAssertEqual(ShiftPlanner.plans(snapshot, preferences: prefs, now: now).count, 2)
+        let legacy = try JSONDecoder().decode(AlarmPreferences.self, from: Data(#"{"enabled":true,"dayMinutes":375,"nightMinutes":1110}"#.utf8))
+        XCTAssertFalse(legacy.breaksEnabled)
+        XCTAssertEqual(legacy.dayMinutes, 375)
+        let saved = try JSONDecoder().decode(AlarmPreferences.self, from: JSONEncoder().encode(prefs))
+        XCTAssertEqual(saved.dayBreakRound, 2)
+    }
+
+    func testPreviousNightBreaksSurviveMidnightAndExcludeExpiredTimes() {
+        var prefs = AlarmPreferences()
+        prefs.breaksEnabled = true
+        let midnight = ShiftPlanner.date("2026-10-21")!
+        let snapshot = ShiftSnapshot(group: "A", days: [ShiftDay(date: "2026-10-21", type: "OFF", origType: nil)],
+            previousDay: ShiftDay(date: "2026-10-20", type: "NIGHT", origType: nil))
+        let plans = ShiftPlanner.plans(snapshot, preferences: prefs, now: midnight)
+        XCTAssertEqual(plans.count, 3)
+        XCTAssertEqual(plans[0].date, midnight.addingTimeInterval(75 * 60))
+        XCTAssertEqual(ShiftPlanner.plans(snapshot, preferences: prefs, now: plans[0].date).count, 2)
+        XCTAssertTrue(plans.allSatisfy { $0.key.hasPrefix("2026-10-20:break:") })
+        let off = ShiftSnapshot(group: "A", days: snapshot.days, previousDay: ShiftDay(date: "2026-10-20", type: "LEAVE", origType: "NIGHT"))
+        XCTAssertTrue(ShiftPlanner.plans(off, preferences: prefs, now: midnight).isEmpty)
+    }
+
+    func testBreaksFollowHalfDayAndSpecialShiftAndStayWithinHorizon() {
+        var prefs = AlarmPreferences(); prefs.breaksEnabled = true
+        for type in ["HALF_PRE", "HALF_POST", "UNPAID_HALF_PRE", "UNPAID_HALF_POST", "NO_OT"] {
+            let snapshot = ShiftSnapshot(group: "B", days: [ShiftDay(date: "2026-10-20", type: type, origType: "NIGHT")])
+            XCTAssertEqual(ShiftPlanner.plans(snapshot, preferences: prefs, now: now).count, 4)
+        }
+        let end = ShiftPlanner.date("2026-11-19")!
+        let snapshot = ShiftSnapshot(group: "B", days: [
+            ShiftDay(date: "2026-11-18", type: "SPECIAL_NIGHT", origType: nil),
+            ShiftDay(date: "2026-11-19", type: "SPECIAL_DAY", origType: nil)])
+        let plans = ShiftPlanner.plans(snapshot, preferences: prefs, now: now)
+        XCTAssertEqual(plans.count, 1)
+        XCTAssertTrue(plans.allSatisfy { $0.date < end })
+    }
+
 }
