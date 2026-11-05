@@ -7,6 +7,7 @@ els.get('menu-leave-settings').querySelector=()=>buttons[1];
 let updated=0,view='calendar';const ctx={document:{getElementById:id=>els.get(id)},window:{},switchView:v=>{view=v;},updateLeaveStats:()=>updated++};vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(require.resolve('../settings-ui.js'),'utf8'),ctx);
 const api=ctx.window.SettingsUI,state={group:'C',hireDate:'',baseHourly:0,ordinaryHourly:0,year:2026,total:19,used:2.5,remain:16.5};
+api.refresh({...state,loaded:false});assert.equal(els.get('first-use-guide').hidden,true,'do not show missing-settings prompts before saved settings are loaded');
 api.refresh(state);assert.equal(els.get('first-use-guide').hidden,false);assert.equal(buttons[1].hidden,false);assert.equal(buttons[2].hidden,false);
 assert.equal(els.get('menu-leave-remain').textContent,'16.5일');assert.equal(els.get('menu-leave-year').textContent,'2026년');
 api.refresh({...state,hireDate:'2020-01-01'});assert.equal(buttons[1].hidden,true);assert.equal(buttons[2].hidden,false);

@@ -1690,6 +1690,7 @@
         let dayMemos = {};
         let syncedUnpaidDays = 0, syncedNightNoOT = 0, syncedSpecialDayNoOT = 0, syncedSpecialNightNoOT = 0;
 
+        let configLoaded = false;
         let config = {
             hireDate: '',
             totalLeave: 0,
@@ -2250,7 +2251,7 @@
             document.getElementById('stat-remain-leave').innerText = `${remain}일`;
             document.getElementById('val-leave-daily-rate').innerText = `${fmt(dailyRate)}원`;
             document.getElementById('val-total-leave-pay').innerText = `${fmt(totalLeavePay)}원`;
-            if (window.SettingsUI) SettingsUI.refresh({group:localStorage.getItem('shift_active_group'),hireDate:config.hireDate,baseHourly:config.baseHourly,ordinaryHourly:config.ordinaryHourly,year,total,used,remain});
+            if (window.SettingsUI) SettingsUI.refresh({loaded:configLoaded,group:localStorage.getItem('shift_active_group'),hireDate:config.hireDate,baseHourly:config.baseHourly,ordinaryHourly:config.ordinaryHourly,year,total,used,remain});
         }
 
         function saveLeaveConfig() {
@@ -2851,6 +2852,7 @@
             document.getElementById('wage-settings-title').textContent = (config.dutyPay > 0 || savedSeniority > 0) ? '시급 · 수당' : '시급';
             document.getElementById('inp-holiday-bonus').value = config.holidayBonus || 0;
             config.applyRetroPay = !!config.hireDate && parseInt(config.hireDate.slice(0,4),10) < 2020;
+            configLoaded = true;
         }
 
         function applyPayrollStatement(wages) {
@@ -3000,7 +3002,7 @@
     <script src="./app-menu.js?v=18"></script>
 <script src="./theme-header-layout.js?v=3"></script>
 <script src="./settings-page.js?v=drive-1"></script>
-    <script src="./settings-ui.js?v=10"></script>
+    <script src="./settings-ui.js?v=startup-ready-1"></script>
     <script src="./account-sync.js?v=drive-1"></script>
     <script src="./google-sync.js?v=drive-export-1"></script>
 <script src="planner-core.js?v=sms-confirm-1"></script><script src="shift-tools.js?v=designs-7"></script><script src="work-editor.js?v=4"></script>

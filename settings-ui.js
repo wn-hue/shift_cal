@@ -23,14 +23,15 @@
         const alarmGuide = $('iphone-alarm-guide-link');
         if (alarmGuide) alarmGuide.setAttribute('href', './iphone-alarms.html' + (selected ? '?group=' + selected : ''));
     }
-    function refresh({group,hireDate,baseHourly,ordinaryHourly,year,total,used,remain}) {
+    function refresh({loaded=true,group,hireDate,baseHourly,ordinaryHourly,year,total,used,remain}) {
         syncGroup(group);
         $('menu-leave-year').textContent = year + '년';
         for (const [key,value] of Object.entries({total,used,remain})) $('menu-leave-' + key).textContent = value + '일';
         const needsGroup = !['A','B','C'].includes(group);
         const needsHire = !hireDate, needsPay = !(baseHourly > 0 && ordinaryHourly > 0);
         const missing = [needsGroup && '교대조', needsHire && '정규직 전환일', needsPay && '시급'].filter(Boolean);
-        $('first-use-guide').hidden = missing.length === 0;
+        // Theme/calendar rendering can run before loadConfig reads saved settings.
+        $('first-use-guide').hidden = !loaded || missing.length === 0;
         $('first-use-copy').textContent = missing.length
             ? '하단 전체 메뉴에서 ' + missing.join('·') + '를 설정해 주세요.'
             : '내 근무표와 연차·예상 급여를 확인할 수 있어요.';
