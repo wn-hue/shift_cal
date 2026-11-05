@@ -41,7 +41,6 @@ struct AlarmPreferences: Codable {
     var enabled = false
     var dayMinutes = 6 * 60 + 30
     var nightMinutes = 18 * 60 + 30
-    var includeHalf = false
     var separateWeekendHolidays = false
     var weekendDayMinutes: Int?
     var weekendNightMinutes: Int?
@@ -49,17 +48,16 @@ struct AlarmPreferences: Codable {
     init() {}
 
     private enum CodingKeys: String, CodingKey {
-        case enabled, dayMinutes, nightMinutes, includeHalf
+        case enabled, dayMinutes, nightMinutes
         case separateWeekendHolidays, weekendDayMinutes, weekendNightMinutes
     }
 
-    // Old installations have only the first four fields. Preserve their times and enabled state.
+    // Ignore the retired half-day switch while preserving existing alarm times and enabled state.
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         enabled = try values.decodeIfPresent(Bool.self, forKey: .enabled) ?? false
         dayMinutes = try values.decodeIfPresent(Int.self, forKey: .dayMinutes) ?? 6 * 60 + 30
         nightMinutes = try values.decodeIfPresent(Int.self, forKey: .nightMinutes) ?? 18 * 60 + 30
-        includeHalf = try values.decodeIfPresent(Bool.self, forKey: .includeHalf) ?? false
         separateWeekendHolidays = try values.decodeIfPresent(Bool.self, forKey: .separateWeekendHolidays) ?? false
         weekendDayMinutes = try values.decodeIfPresent(Int.self, forKey: .weekendDayMinutes)
         weekendNightMinutes = try values.decodeIfPresent(Int.self, forKey: .weekendNightMinutes)
@@ -100,10 +98,9 @@ enum ShiftPlanner {
         guard let date = formatter.date(from: key), formatter.string(from: date) == key else { return nil }
         return date
     }
-    static func isNight(_ day: ShiftDay, includeHalf: Bool) -> Bool? {
+    static func isNight(_ day: ShiftDay) -> Bool? {
         var type = day.type
         if type.contains("HALF") {
-            guard includeHalf else { return nil }
             type = day.origType ?? "OFF"
         } else if type == "NO_OT" { type = day.origType ?? "OFF" }
         switch type {
@@ -119,7 +116,7 @@ enum ShiftPlanner {
               (0..<1440).contains(preferences.minutes(night: true, weekendOrHoliday: true)) else { return [] }
         let end = korea.date(byAdding: .day, value: 30, to: korea.startOfDay(for: now))!
         return snapshot.days.compactMap { day in
-            guard let night = isNight(day, includeHalf: preferences.includeHalf), let start = date(day.date) else { return nil }
+            guard let night = isNight(day), let start = date(day.date) else { return nil }
             let weekday = korea.component(.weekday, from: start)
             let weekendOrHoliday = weekday == 1 || weekday == 7 || day.isHoliday == true
             let minutes = preferences.minutes(night: night, weekendOrHoliday: weekendOrHoliday)

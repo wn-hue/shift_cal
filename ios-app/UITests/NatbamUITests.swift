@@ -34,6 +34,7 @@ final class NatbamUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.navigationBars["근무 알람"].waitForExistence(timeout: 20))
         XCTAssertTrue(app.switches["shiftAlarmToggle"].exists)
+        XCTAssertFalse(app.switches["반차일에도 알림"].exists)
         let test = app.buttons["testAlarmButton"]
         XCTAssertTrue(test.exists)
         // Permission belongs to iOS, not the web page. Handle both English/Korean simulator language.

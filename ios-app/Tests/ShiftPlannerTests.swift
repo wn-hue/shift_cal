@@ -5,21 +5,42 @@ final class ShiftPlannerTests: XCTestCase {
     let now = ShiftPlanner.date("2026-10-20")!
     func testTypesAndHalfDayPolicy() {
         for type in ["DAY", "SPECIAL_DAY", "SPECIAL_DAY_NO_OT"] {
-            XCTAssertEqual(ShiftPlanner.isNight(ShiftDay(date: "2026-10-20", type: type, origType: nil), includeHalf: false), false)
+            XCTAssertEqual(ShiftPlanner.isNight(ShiftDay(date: "2026-10-20", type: type, origType: nil)), false)
         }
         for type in ["NIGHT", "SPECIAL_NIGHT", "SPECIAL_NIGHT_NO_OT"] {
-            XCTAssertEqual(ShiftPlanner.isNight(ShiftDay(date: "2026-10-20", type: type, origType: nil), includeHalf: false), true)
+            XCTAssertEqual(ShiftPlanner.isNight(ShiftDay(date: "2026-10-20", type: type, origType: nil)), true)
         }
         for type in ["OFF", "LEAVE", "UNPAID_OFF"] {
-            XCTAssertNil(ShiftPlanner.isNight(ShiftDay(date: "2026-10-20", type: type, origType: "NIGHT"), includeHalf: true))
+            XCTAssertNil(ShiftPlanner.isNight(ShiftDay(date: "2026-10-20", type: type, origType: "NIGHT")))
         }
-        for type in ["HALF_PRE", "HALF_POST", "UNPAID_HALF_PRE", "UNPAID_HALF_POST"] {
+        for type in ["HALF_PRE", "HALF_POST", "HALF_LEAVE", "UNPAID_HALF_PRE", "UNPAID_HALF_POST", "UNPAID_HALF"] {
             let day = ShiftDay(date: "2026-10-20", type: type, origType: "NIGHT")
-            XCTAssertNil(ShiftPlanner.isNight(day, includeHalf: false))
-            XCTAssertEqual(ShiftPlanner.isNight(day, includeHalf: true), true)
+            XCTAssertEqual(ShiftPlanner.isNight(day), true)
+            XCTAssertEqual(ShiftPlanner.isNight(ShiftDay(date: day.date, type: type, origType: "DAY")), false)
         }
-        XCTAssertEqual(ShiftPlanner.isNight(ShiftDay(date: "2026-10-20", type: "NO_OT", origType: "NIGHT"), includeHalf: false), true)
+        XCTAssertEqual(ShiftPlanner.isNight(ShiftDay(date: "2026-10-20", type: "NO_OT", origType: "NIGHT")), true)
     }
+
+    func testRetiredHalfDaySwitchCannotSuppressHalfDayAlarms() throws {
+        for legacyValue in ["true", "false"] {
+            let saved = Data("{\"enabled\":true,\"dayMinutes\":375,\"nightMinutes\":1110,\"includeHalf\":\(legacyValue)}".utf8)
+            let preferences = try JSONDecoder().decode(AlarmPreferences.self, from: saved)
+            let snapshot = ShiftSnapshot(group: "C", days: [
+                ShiftDay(date: "2026-10-20", type: "HALF_PRE", origType: "DAY"),
+                ShiftDay(date: "2026-10-21", type: "HALF_POST", origType: "NIGHT"),
+                ShiftDay(date: "2026-10-22", type: "UNPAID_HALF_PRE", origType: "SPECIAL_DAY"),
+                ShiftDay(date: "2026-10-23", type: "UNPAID_HALF_POST", origType: "SPECIAL_NIGHT"),
+                ShiftDay(date: "2026-10-24", type: "OFF", origType: "DAY"),
+                ShiftDay(date: "2026-10-25", type: "LEAVE", origType: "NIGHT")])
+            let plans = ShiftPlanner.plans(snapshot, preferences: preferences, now: now)
+            XCTAssertEqual(plans.count, 4)
+            XCTAssertEqual(plans.map { ShiftPlanner.korea.component(.hour, from: $0.date) }, [6, 18, 6, 18])
+            XCTAssertEqual(plans.map { ShiftPlanner.korea.component(.minute, from: $0.date) }, [15, 30, 15, 30])
+            let resaved = try JSONSerialization.jsonObject(with: JSONEncoder().encode(preferences)) as? [String: Any]
+            XCTAssertNil(resaved?["includeHalf"])
+        }
+    }
+
     func testClockDatesExpiryAndDisabled() {
         let snapshot = ShiftSnapshot(group: "C", days: [
             ShiftDay(date: "2026-10-20", type: "DAY", origType: nil),
@@ -70,13 +91,11 @@ final class ShiftPlannerTests: XCTestCase {
         preferences.weekendDayMinutes = 420
         preferences.weekendNightMinutes = 1140
         var plans = ShiftPlanner.plans(snapshot, preferences: preferences, now: start)
-        XCTAssertEqual(plans.map(\.key), Array(snapshot.days.prefix(6)).map(\.date))
-        XCTAssertEqual(plans.map { ShiftPlanner.korea.component(.hour, from: $0.date) }, [5, 7, 19, 7, 17, 7])
+        XCTAssertEqual(plans.map(\.key), Array(snapshot.days.prefix(7)).map(\.date))
+        XCTAssertEqual(plans.map { ShiftPlanner.korea.component(.hour, from: $0.date) }, [5, 7, 19, 7, 17, 7, 19])
         XCTAssertEqual(plans[2].date, ShiftPlanner.date("2026-03-01")!.addingTimeInterval(1140 * 60))
         XCTAssertTrue(plans[3].title.contains("주말·공휴일"))
         XCTAssertTrue(plans[4].title.contains("평일"))
-        preferences.includeHalf = true
-        plans = ShiftPlanner.plans(snapshot, preferences: preferences, now: start)
         XCTAssertEqual(plans.count, 7)
         XCTAssertEqual(plans.last?.date, ShiftPlanner.date("2026-03-05")!.addingTimeInterval(1140 * 60))
         preferences.setSeparateWeekendHolidays(false)
@@ -89,7 +108,6 @@ final class ShiftPlannerTests: XCTestCase {
         let old = Data(#"{"enabled":true,"dayMinutes":310,"nightMinutes":1065,"includeHalf":true}"#.utf8)
         var preferences = try JSONDecoder().decode(AlarmPreferences.self, from: old)
         XCTAssertTrue(preferences.enabled)
-        XCTAssertTrue(preferences.includeHalf)
         XCTAssertFalse(preferences.separateWeekendHolidays)
         XCTAssertEqual(preferences.minutes(night: false, weekendOrHoliday: true), 310)
         preferences.setSeparateWeekendHolidays(true)

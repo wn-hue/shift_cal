@@ -28,8 +28,14 @@ const day = n => new Date(Date.parse(today+'T12:00:00Z')+n*86400000).toISOString
    assert.equal(await p.locator('#today-menu-today').isVisible(),false);
    const refresh=await p.locator('#today-menu-refresh').boundingBox(),title=await p.locator('#header-view-title').boundingBox();
    assert(refresh.x>title.x+title.width&&Math.abs((refresh.y+refresh.height/2)-(title.y+title.height/2))<5,'Refresh belongs in the top right header');
-   assert.equal(await p.locator('.meal-sides .meal-side-group').count(),12);
+   assert.equal(await p.locator('.meal-sides .meal-side-group').count(),8);
    assert.equal(await p.locator('.meal-extras').count(),0);
+   assert.equal(await p.locator('.meal-main .meal-addon').count(),4);
+   assert.match(await p.locator('.meal-main .meal-addon').first().textContent(),/Plus · 추가 제공/);
+   assert.equal(await p.locator('.meal-sides .meal-choice-label').count(),4);
+   assert.equal(await p.locator('.meal-sides').first().getAttribute('aria-label'),'조식 선택 메뉴');
+   assert.equal(await p.locator('.meal-sides .meal-addon').count(),0);
+   assert.equal(await p.locator('.all-page a[href="/origin-transfer.html"]').count(),0);
    const main=await p.locator('.meal-main').first().boundingBox(),side=await p.locator('.meal-sides').first().boundingBox();
    assert(side.x>=main.x+main.width&&Math.abs(main.y-side.y)<2,'Extra menus sit beside the main menu');
    for(const theme of ['current','toss','gpt','dark','test']){

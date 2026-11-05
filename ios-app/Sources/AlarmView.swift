@@ -25,9 +25,8 @@ struct AlarmView: View {
                         .font(.title3.bold()).padding(.vertical, 8)
                     Toggle("근무 알람", isOn: Binding(get: { model.preferences.enabled }, set: { value in Task { await model.enable(value) } }))
                         .accessibilityIdentifier("shiftAlarmToggle")
-                    Toggle("반차일에도 알림", isOn: Binding(get: { model.preferences.includeHalf }, set: { value in model.change { $0.includeHalf = value } }))
                 } footer: {
-                    Text("한국 시간 기준이에요. 휴무·연차·무급휴무는 제외해요. 반차일 알림을 켜면 해당 날짜의 주간·야간 시간에 울려요.")
+                    Text("한국 시간 기준이에요. 반차일에도 기본 근무의 주간·야간 시간에 울려요. 휴무·연차·무급휴무는 제외해요.")
                 }
                 Section(model.preferences.separateWeekendHolidays ? "평일 출근" : "출근 시간") {
                     DatePicker("주간 · 주특", selection: time(false), displayedComponents: .hourAndMinute)

@@ -103,16 +103,26 @@
             const heading = node('div','meal-card-heading');
             heading.appendChild(node('h2','',meal.name));
             card.appendChild(heading);
-            const body = node('div','meal-card-body'+(meal.groups.length > 1?' has-sides':''));
+            const choices = meal.groups.slice(1).filter(group => /간편식|별미공방/.test(group.title));
+            const additions = meal.groups.slice(1).filter(group => !/간편식|별미공방/.test(group.title));
+            const body = node('div','meal-card-body'+(choices.length?' has-sides':''));
             const main = node('section','meal-main');
             main.setAttribute('aria-label',meal.name+' '+meal.groups[0].title);
             main.appendChild(node('h3','meal-group-title',meal.groups[0].title));
             main.appendChild(list(meal.groups[0].items));
+            for (const group of additions) {
+                const section = node('section','meal-addon');
+                const plus = /^\s*(?:plus|\+)\s*$/i.test(group.title);
+                section.appendChild(node('h3','meal-group-title',group.title+(plus?' · 추가 제공':'')));
+                section.appendChild(list(group.items));
+                main.appendChild(section);
+            }
             body.appendChild(main);
-            if (meal.groups.length > 1) {
+            if (choices.length) {
                 const sides = node('aside','meal-sides');
-                sides.setAttribute('aria-label',meal.name+' 추가 메뉴');
-                for (const group of meal.groups.slice(1)) {
+                sides.setAttribute('aria-label',meal.name+' 선택 메뉴');
+                sides.appendChild(node('p','meal-choice-label','선택 메뉴'));
+                for (const group of choices) {
                     const section = node('section','meal-side-group');
                     section.appendChild(node('h3','meal-group-title',group.title));
                     section.appendChild(list(group.items));
