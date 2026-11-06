@@ -148,10 +148,10 @@ body[data-pref-theme] #view-payroll :is(#hero-regular-pay,#hero-bonus-pay) { fon
 #view-all :is(.menu-services,.all-menu-content) .menu-service-copy strong { font-size:16px; font-weight:550; min-width:0; word-break:keep-all; overflow-wrap:anywhere; }
 #view-all :is(.menu-services,.all-menu-content) .menu-service-copy small { flex:0 1 48%; font-size:12px; line-height:1.6; font-weight:550; color:var(--menu-blue); text-align:right; word-break:keep-all; overflow-wrap:anywhere; }
 #view-all .all-menu-content>.lab-entry { border:0; border-radius:24px; background:var(--ui-card); margin:0 0 20px; padding:20px 22px; }
-#view-all .all-account-card { background:transparent; border:0; padding:0 8px; margin-bottom:8px; }
+#view-all .all-account-card { background:transparent; border:0; padding:0 8px; margin-bottom:0; }
 #view-all .all-account-card summary { font-size:12px; min-height:44px; display:flex; align-items:center; }
 #view-all .all-account-card .account-hint { font-size:12px; line-height:1.75; }
-#view-all #onboarding-reopen { color:var(--ui-muted); font-size:12px; min-height:44px; padding:8px; }
+#view-all #onboarding-reopen { color:var(--ui-muted); font-size:12px; min-height:44px; padding:8px; margin-top:0; }
 #view-all :is(.all-shortcut,.life-entry,.lab-entry,.group-summary):active { background:var(--ui-field); }
 body[data-pref-theme="dark"] #view-all :is(.menu-services,.all-menu-content) :is(.menu-service-icon,.all-shortcut-icon) { background:var(--ui-field); color:var(--ui-blue); }
 
