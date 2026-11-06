@@ -940,7 +940,7 @@
 <link rel="stylesheet" href="./onboarding.css?v=reference-motion-1">
 <link rel="stylesheet" href="./onboarding-story.css?v=2">
 <link rel="stylesheet" href="./onboarding-wage.css?v=allowance-steps-1">
-<link rel="stylesheet" href="./mobile-surfaces.css?v=menu-help-spacing-13">
+<link rel="stylesheet" href="./mobile-surfaces.css?v=payroll-month-center-14">
 <link rel="stylesheet" href="./test-calendar.css?v=9">
 <link rel="stylesheet" href="./month-picker.css?v=1">
 <link rel="stylesheet" href="./memo-editor.css?v=3">
@@ -1021,15 +1021,11 @@
         <section id="view-payroll" class="view-page">
             <div class="gcal-topbar">
                 <div class="month-title-nav">
-                    <button class="nav-arrow-btn" onclick="changePayMonth(-1)" title="이전 달">◀</button>
-                    <button class="month-title-btn" id="pay-month-title-btn" onclick="openYearMonthPicker('payroll')">
-                        <span id="pay-month-title">2026년 9월 급여</span>
-                        <span class="dropdown-arrow">▾</span>
+                    <button class="nav-arrow-btn" onclick="changePayMonth(-1)" title="이전 달" aria-label="이전 달 급여">◀</button>
+                    <button class="month-title-btn" id="pay-month-title-btn" onclick="openYearMonthPicker('payroll')" aria-haspopup="dialog" aria-controls="modal-year-month-picker">
+                        <span id="pay-month-title">2026년 11월</span>
                     </button>
-                    <button class="nav-arrow-btn" onclick="changePayMonth(1)" title="다음 달">▶</button>
-                </div>
-                <div class="gcal-nav-group">
-                    <button class="gcal-chip-btn today-btn" onclick="goToPayToday()">이번달</button>
+                    <button class="nav-arrow-btn" onclick="changePayMonth(1)" title="다음 달" aria-label="다음 달 급여">▶</button>
                 </div>
             </div>
 
@@ -2466,7 +2462,7 @@
             const month = currentPayDate.getMonth();
             const payMonthNum = month + 1;
 
-            document.getElementById('pay-month-title').innerText = `${year}년 ${payMonthNum}월 급여`;
+            document.getElementById('pay-month-title').innerText = `${year}년 ${payMonthNum}월`;
             const startDate = new Date(year, month - 1, 16);
             const endDate = new Date(year, month, 15);
 
@@ -2987,7 +2983,7 @@
     <script src="./google-sync-core.js?v=drive-export-1-6"></script>
     <script src="./account-data-core.js?v=sms-confirm-1"></script>
     <script src="./app-motion.js?v=2"></script>
-    <script src="./calendar-ui.js?v=menu-no-heading-4"></script>
+    <script src="./calendar-ui.js?v=payroll-no-heading-5"></script>
     <script src="./group-schedule.js?v=8"></script>
     <script src="./calendar-stickers.js?v=7"></script>
     <script src="./today-menu.js?v=menu-no-heading-4"></script>

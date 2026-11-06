@@ -15,7 +15,7 @@ body[data-pref-theme="dark"] :is(#view-payroll,#view-menu,#view-all,#payroll-sms
 }
 body:not([data-pref-theme="dark"]):is([data-view="payroll"],[data-view="menu"],[data-view="all"]) { background:#f2f4f6; }
 body[data-pref-theme="dark"]:is([data-view="payroll"],[data-view="menu"],[data-view="all"]) { background:#17191d; }
-body:is([data-view="payroll"],[data-view="menu"]) .reference-header { padding:14px 4px 10px; margin-bottom:12px; background:transparent!important; }
+body:is([data-view="payroll"],[data-view="menu"]) .reference-header { display:none!important; }
 body:is([data-view="payroll"],[data-view="menu"]) .header-view-title { font-size:25px; font-weight:750; letter-spacing:-1px; }
 #view-payroll,#view-menu { padding:0 4px 28px; }
 :is(#view-payroll,#view-menu,#view-all) button { font-family:inherit; }
@@ -24,7 +24,7 @@ body:is([data-view="payroll"],[data-view="menu"]) .header-view-title { font-size
 
 /* Salary: one primary amount, quiet supporting numbers, and readable calculation rows. */
 #view-payroll :is(.card,.salary-hero) { border:0!important; border-radius:24px!important; padding:24px; margin-bottom:16px; background:var(--ui-card)!important; box-shadow:none; }
-#view-payroll .gcal-topbar { margin:0 0 18px; gap:8px; }
+#view-payroll .gcal-topbar { justify-content:center; margin:0 0 18px; gap:8px; }
 #view-payroll .month-title-nav { border:0; background:transparent!important; gap:2px; padding:0; }
 #view-payroll .month-title-btn { font-size:17px; font-weight:650; padding:8px 4px; }
 #view-payroll .nav-arrow-btn { border:0; background:transparent; width:32px; min-width:32px; min-height:44px; color:var(--ui-muted); font-size:11px; }
