@@ -104,3 +104,29 @@ body[data-pref-theme] #payroll-sms-dialog #wage-seniority-reset{padding:2px 0;mi
 #payroll-sms-dialog #wage-tax-import>summary small{font-size:11px;color:var(--ui-muted,#8b95a1)}
 #payroll-sms-dialog[data-guided=true] .wage-tax-settings{margin-top:0;padding:14px}
 #payroll-sms-dialog[data-guided=true] .guided-wage-import small{display:block;color:#8b95a1;font-size:11px;margin-top:5px;line-height:1.6}
+
+/* Shared two-option allowance sheet for the regular settings form. */
+#wage-amount-dialog{--ui-card:#fff;--ui-field:#f7f8fa;--ui-ink:#191f28;--ui-copy:#4e5968;--ui-muted:#6b7684;--ui-blue:#3182f6;--ui-blue-soft:#eaf3ff;--ui-line:#e5e8eb}
+body[data-pref-theme=dark] #wage-amount-dialog{--ui-card:#24272c;--ui-field:#2d3138;--ui-ink:#f3f4f5;--ui-copy:#e1e4e8;--ui-muted:#a5adb8;--ui-blue:#8bb8ff;--ui-blue-soft:#263b57;--ui-line:#35393f}
+body[data-pref-theme] #wage-amount-dialog[open]{display:flex;flex-direction:column;overflow:hidden!important}
+#wage-amount-dialog .wage-amount-content{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 2px 2px;scroll-padding:12px}
+#wage-amount-dialog h2{margin:0 0 8px;font-size:23px;line-height:1.45;letter-spacing:-.7px;color:var(--ui-ink)}
+#wage-amount-description{margin:0 0 20px;font-size:13px;line-height:1.65;color:var(--ui-muted);word-break:keep-all}
+.wage-amount-options{display:grid;gap:10px}
+body[data-pref-theme] #wage-amount-dialog .wage-amount-options button{display:grid;grid-template-columns:1fr 24px;align-items:center;gap:4px 12px;min-height:72px;width:100%;padding:14px 16px;border:1.5px solid transparent;border-radius:18px;background:var(--ui-field);color:var(--ui-ink);font:inherit;text-align:left;cursor:pointer;transition:background-color 180ms ease-out,border-color 180ms ease-out}
+.wage-amount-options strong{font-size:16px;font-weight:600}.wage-amount-options small{grid-row:2;font-size:12px;color:var(--ui-muted)}
+.wage-amount-options i{display:grid;place-items:center;grid-column:2;grid-row:1/3;width:22px;height:22px;border:1.5px solid var(--ui-line);border-radius:50%;color:transparent;font-size:13px;font-style:normal}
+body[data-pref-theme] #wage-amount-dialog .wage-amount-options [aria-pressed=true]{background:var(--ui-blue-soft);border-color:var(--ui-blue)}
+.wage-amount-options [aria-pressed=true] i{background:var(--ui-blue);border-color:var(--ui-blue);color:var(--ui-card)}
+#wage-amount-field{display:grid;gap:12px;margin:14px 0 0;padding:16px;border:1.5px solid var(--ui-line);border-radius:18px;background:var(--ui-field);font-size:13px;color:var(--ui-copy)}
+#wage-amount-field:focus-within{border-color:var(--ui-blue)}
+.wage-amount-value{display:flex;align-items:baseline;gap:8px}
+body[data-pref-theme] #wage-amount-input{box-sizing:border-box;width:100%;min-width:0;min-height:36px;padding:0;border:0!important;border-radius:0;background:transparent!important;color:var(--ui-ink);font:inherit;font-size:24px;font-weight:600;box-shadow:none;outline:none}
+.wage-amount-value small{flex:none;font-size:14px;color:var(--ui-muted)}
+#wage-amount-status{margin:10px 0 0;font-size:12px;line-height:1.6;color:#d64c62}#wage-amount-status:empty{display:none}
+body[data-pref-theme] #wage-amount-done{flex:none;width:100%;min-height:52px;margin:16px 0 0;border:0;border-radius:15px;background:var(--ui-blue);color:var(--ui-card);font:inherit;font-size:16px;font-weight:600;cursor:pointer}
+#wage-amount-dialog [hidden]{display:none!important}
+#wage-amount-dialog :is(button,input):focus-visible{outline:2px solid var(--ui-blue);outline-offset:2px}
+#payroll-sms-dialog:not([data-guided=true]) :is(.wage-mini-card,#wage-legacy-row),#payroll-sms-dialog:not([data-guided=true]) :is(.wage-mini-card,#wage-legacy-row) input{cursor:pointer}
+body[data-pref-theme] #wage-amount-dialog[data-sheet-resizing=true][open]{height:var(--sheet-resize-height)!important;overflow:hidden!important;transition:height 320ms cubic-bezier(.22,1,.36,1)!important}
+@media(prefers-reduced-motion:reduce){.wage-amount-options button{transition:none!important}body[data-pref-theme] #wage-amount-dialog[data-sheet-resizing=true][open]{transition:none!important}}

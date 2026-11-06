@@ -76,7 +76,7 @@
     api.reloadReference = () => {profile=loadProfile(storageKey);bonusProfile=loadProfile(bonusKey);render();};
     toggle.checked = false; toggle.addEventListener('change', render);
     const allowanceKeys=['qualification','job','family','duty','legacy'];
-    const allowanceLabels={qualification:'자격수당',job:'직무수당',family:'가족수당',duty:'직책수당',legacy:'기존 고정수당'};
+    const allowanceLabels={qualification:'자격수당',job:'직무수당',family:'가족수당',duty:'직책수당',legacy:'기타 고정수당'};
     const el=id=>document.getElementById(id), amountInputs=[manualBase,manualOrdinary,el('wage-seniority'),...allowanceKeys.map(k=>el('wage-'+k))];
     let draftSalary=null,draftBonus=null,seniorityOverride=false,automaticSeniority=0,onboardingMode=false;
     const money=n=>n.toLocaleString('ko-KR');
@@ -100,7 +100,7 @@
         el('wage-seniority').value=money(seniorityOverride?current.seniorityPayOverride:automaticSeniority);senioritySource();
         const savedParts=current.fixedAllowances,valid=savedParts&&allowanceKeys.every(k=>Number.isSafeInteger(savedParts[k])&&savedParts[k]>=0)&&Object.values(savedParts).reduce((a,b)=>a+b,0)===current.dutyPay;
         for(const key of allowanceKeys)el('wage-'+key).value=money(valid?savedParts[key]:key==='legacy'?current.dutyPay||0:0);
-        el('wage-legacy-row').hidden=!(Number(el('wage-legacy').value.replace(/,/g,''))>0);
+        el('wage-legacy-row').hidden=false;
         root.OnboardingWage?.prepare(options);dialog.showModal();root.OnboardingWage?.focus();
     };
     el('payroll-sms-open').addEventListener('click',()=>api.open());el('payroll-sms-close').addEventListener('click',()=>dialog.close());

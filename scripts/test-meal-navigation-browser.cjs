@@ -29,6 +29,7 @@ const day = n => new Date(Date.parse(today+'T12:00:00Z')+n*86400000).toISOString
    assert.equal(await p.locator('.reference-header').isVisible(),false,'No empty weekday title row remains');
    assert.equal(await p.locator('#bnav-menu').getAttribute('aria-label'),'오늘 메뉴');
    assert.equal(await p.locator('.meal-eyebrow').count(),0);
+   assert.equal(await p.locator('#today-menu-checked,.meal-footer,#view-menu > .meal-rating-note').count(),0,'No confirmation time or rating explanation footer');
    assert.equal(await p.locator('#today-menu-today,#today-menu-refresh,#today-menu-date').count(),0);
    const nav=await p.locator('.meal-navigation').boundingBox();
    const relative=await p.locator('#today-menu-relative').boundingBox();

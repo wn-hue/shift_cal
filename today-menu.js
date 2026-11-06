@@ -150,14 +150,12 @@
         $('today-menu-status').textContent = '';
         $('today-menu-empty').hidden = true;
         $('today-menu-note').hidden = false;
-        $('today-menu-checked').textContent = '확인 ' + new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(data.checkedAt));
     }
     function empty(message) {
         $('today-menu-cards').replaceChildren();
         $('today-menu-empty').hidden = false;
         $('today-menu-empty').textContent = message;
         $('today-menu-note').hidden = true;
-        $('today-menu-checked').textContent = '';
         $('today-menu-status').textContent = message;
     }
     async function load(force = false) {
@@ -178,7 +176,6 @@
         if (shownDate !== date) {
             $('today-menu-cards').replaceChildren();
             $('today-menu-note').hidden = true;
-            $('today-menu-checked').textContent = '';
         }
         loading(true, Boolean($('today-menu-cards').querySelector('.meal-card')));
         $('today-menu-panel').setAttribute('aria-busy','true');

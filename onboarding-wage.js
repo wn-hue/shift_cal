@@ -62,7 +62,7 @@
   if(!enabled){
    delete dialog.dataset.wageStep;
    $('payroll-sms-title').textContent='시급 설정';$('wage-import-intro').textContent='기본시급·통상시급과 받는 수당을 직접 입력해 주세요.';apply.textContent='설정 완료하기';
-   $('wage-legacy-row').firstChild.textContent='기존 고정수당 ';return;
+   $('wage-legacy-row').firstChild.textContent='기타 고정수당 ';return;
   }
   OnboardingAllowances.refresh();
   returnStage='base';stage=options?.importFirst?'import':'base';
