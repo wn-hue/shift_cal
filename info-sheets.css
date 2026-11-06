@@ -1,0 +1,18 @@
+body[data-pref-theme] .info-sheet-link{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;margin:0;padding:8px 0;border:0;border-radius:8px;background:transparent;color:var(--ui-blue,#3182f6);font:inherit;font-size:13px;font-weight:500;line-height:1.5;text-align:left;cursor:pointer}
+.info-sheet-link svg{flex:none;width:16px;height:16px}
+.info-sheet-link:focus-visible{outline:2px solid var(--ui-blue,#3182f6);outline-offset:3px}
+body[data-pref-theme] dialog.info-sheet{display:flex;flex-direction:column;gap:0;padding-inline:20px!important}
+body[data-pref-theme] dialog.info-sheet:not([open]),.info-sheet [hidden]{display:none!important}
+.info-sheet-content{min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.info-sheet h2{margin:4px 0 20px;font-size:20px;line-height:1.5;letter-spacing:-.5px;color:var(--ui-ink,#191f28)}
+.info-sheet h3{margin:20px 0 8px;font-size:14px;line-height:1.6;color:var(--ui-ink,#191f28)}
+.info-sheet .estimate-row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:12px 0;font-size:13px;line-height:1.6;color:var(--ui-copy,#4e5968)}
+.info-sheet .estimate-row strong{flex:none;white-space:nowrap;font-size:15px;color:var(--ui-ink,#191f28);font-variant-numeric:tabular-nums}
+.info-sheet .estimate-total-row{border-top:1px solid var(--ui-line,#e5e8eb)}
+.info-sheet .estimate-total-row strong{color:var(--ui-blue,#3182f6)}
+.info-sheet :is(.estimate-note,.info-sheet-copy){font-size:13px;line-height:1.8;color:var(--ui-copy,#4e5968);word-break:keep-all;overflow-wrap:anywhere}
+.info-sheet .estimate-note{margin:16px 0 8px}
+.info-sheet .estimate-disclaimer{margin:12px 0 4px;font-size:12px;line-height:1.7;color:var(--ui-muted,#6b7684);word-break:keep-all;overflow-wrap:anywhere}
+body[data-pref-theme] .info-sheet-done{flex:none;min-height:48px;width:100%;margin:20px 0 0;padding:12px;border:0;border-radius:14px;background:var(--ui-blue,#3182f6);color:var(--ui-card,#fff);font:inherit;font-size:16px;font-weight:600;cursor:pointer}
+#leave-settings-dialog>.info-sheet-link{margin:8px 0}
+@media(max-width:360px){body[data-pref-theme] dialog.info-sheet{padding-inline:16px!important}.info-sheet h2{font-size:18px}}

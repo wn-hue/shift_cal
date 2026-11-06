@@ -28,7 +28,13 @@ const url=process.env.TEST_URL||'http://127.0.0.1:8768/';
  assert.equal(await p.locator('#payroll-gross-toggle').isChecked(),false);assert.equal(await p.locator('#workday-adjustments').count(),1);assert.equal(await p.locator('.payroll-tools>details').count(),1);assert.equal(await p.locator('#inp-holiday-bonus').isVisible(),false);assert.equal(await p.locator('#payroll-estimate-card').evaluate(e=>getComputedStyle(e).borderTopWidth),'0px');
  assert.equal(await p.locator('.special-days label .payroll-shift-icon').count(),2);
  const gross=await number('hero-gross-pay');await p.locator('.estimate-toggle').click();await p.locator('#payroll-estimate-panel').waitFor({state:'visible'});
- assert.equal(await p.locator('#payroll-estimate-disclaimer').isVisible(),false,'Disclaimer is inside the collapsed deduction details');await p.locator('.estimate-breakdown>summary').click();assert.equal(await p.locator('#payroll-estimate-disclaimer').isVisible(),true);await p.locator('.estimate-breakdown>summary').click();assert.equal(await p.locator('#payroll-estimate-disclaimer').isVisible(),false);
+ assert.equal(await p.locator('#payroll-estimate-disclaimer').isVisible(),false,'Disclaimer stays inside the deduction sheet');
+ const layout=()=>p.evaluate(()=>({scroll:scrollY,cards:['.salary-month-viewport','.payroll-input-card','.wage-settings-card'].map(q=>{const r=document.querySelector(q).getBoundingClientRect();return {top:r.top+scrollY,height:r.height};})}));
+ const beforeDetails=await layout(),bonus=await p.locator('#payroll-bonus-hint').boundingBox(),entry=await p.locator('#payroll-deductions-open').boundingBox();assert(entry.y>=bonus.y+bonus.height,'Deduction entry follows the bonus policy');
+ if(width===390)await p.screenshot({path:'/tmp/work-routine-payroll-net-'+engine.name()+'.png',fullPage:true});
+ await p.locator('#payroll-deductions-open').click();await p.locator('#payroll-deductions-dialog').waitFor({state:'visible'});assert.equal(await p.locator('#payroll-estimate-disclaimer').isVisible(),true);assert.deepEqual(await layout(),beforeDetails,'Showing deduction details does not move the payroll cards');
+ if(width===390)await p.screenshot({path:'/tmp/work-routine-payroll-deductions-'+engine.name()+'.png'});
+ await p.locator('#payroll-deductions-dialog .info-sheet-done').click();await p.locator('#payroll-deductions-dialog').waitFor({state:'hidden'});assert.equal(await p.locator('#payroll-estimate-disclaimer').isVisible(),false);assert.deepEqual(await layout(),beforeDetails,'Closing details keeps the payroll layout and scroll position');
  assert.equal(await number('hero-gross-pay'),gross-Math.trunc(gross*.15+1e-7));assert.equal(await number('row-gross-pay'),await number('hero-gross-pay'));assert.match(await p.locator('#hero-pay-label').textContent(),/예상 실수령액/);assert.match(await p.locator('#hero-pay-basis').textContent(),/추정/);assert.equal(await p.locator('#payroll-gross-toggle').isChecked(),true);assert.equal(await p.locator('#payroll-estimate-action-label').textContent(),'세후');
  await p.locator('.estimate-toggle').click();assert.equal(await number('hero-gross-pay'),gross);assert.equal(await p.locator('#payroll-gross-toggle').isChecked(),false);assert.equal(await p.locator('#payroll-estimate-action-label').textContent(),'세전');
  // Every month and the year boundary retain automatic parity, without manual toggles.
@@ -36,11 +42,12 @@ const url=process.env.TEST_URL||'http://127.0.0.1:8768/';
   await p.evaluate(m=>{currentPayDate=new Date(2026,m,1);syncFromCalendar();},month);
   const on=(month+1)%2===0;assert.equal(await p.locator('#inp-bonus-check').isChecked(),on);assert.equal((await number('row-bonus-pay'))>0,on);
   await p.locator('#payroll-gross-toggle').check();
-  await p.locator('.estimate-breakdown').evaluate(e=>e.open=true);
+  await p.locator('#payroll-deductions-open').click();await p.locator('#payroll-deductions-dialog').waitFor({state:'visible'});
   assert.equal(await p.locator('#estimate-regular-row').isVisible(),on);assert.equal(await p.locator('#estimate-bonus-row').isVisible(),on);
   assert.equal(await p.locator('#estimate-total-label').textContent(),on?'전체 예상 공제액':'전체 공제');
   assert.equal(await p.locator('#estimate-total').textContent(),(await p.locator('#row-estimated-deduction').textContent()).replace('−','')+' 원');
   if(!on)assert.doesNotMatch(await p.locator('#payroll-estimate-basis').textContent(),/상여:/);
+  await p.locator('#payroll-deductions-dialog .info-sheet-done').click();await p.locator('#payroll-deductions-dialog').waitFor({state:'hidden'});
   await p.locator('#payroll-gross-toggle').uncheck();
   const sum=(await number('hero-regular-pay'))+(await number('hero-bonus-pay'));assert.equal(await number('hero-gross-pay'),sum);
  }
@@ -63,6 +70,6 @@ const url=process.env.TEST_URL||'http://127.0.0.1:8768/';
  if(width===390)await p.screenshot({path:'/tmp/work-routine-payroll-sheet-'+engine.name()+'.png'});
  await p.locator('#wage-amount-done').click();await p.waitForFunction(()=>!document.getElementById('wage-amount-dialog').open);assert(await p.locator('#payroll-sms-dialog').evaluate(e=>e.open));
  await p.locator('#payroll-sms-apply').click();await p.waitForFunction(()=>!document.getElementById('payroll-sms-dialog').open);assert.equal(await p.evaluate(()=>config.baseHourly),12000);assert.equal(await p.evaluate(()=>config.fixedAllowances.duty),70000);assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('shift_payroll_sms_reference_v1')).rate),.15);
- assert.deepEqual(errors,[]);await p.close();console.log('PASS',engine.name(),width,'flat order / named allowances / gross-net reconciliation / all 12 bonus months / year rollover / reload / 4 themes / two-option draft confirmation');
+ assert.deepEqual(errors,[]);await p.close();console.log('PASS',engine.name(),width,'rounded cards / stable deduction sheet / named allowances / gross-net reconciliation / all 12 bonus months / year rollover / reload / 4 themes / two-option draft confirmation');
  }}finally{await b.close();}
 }})().catch(e=>{console.error(e);process.exitCode=1;});
