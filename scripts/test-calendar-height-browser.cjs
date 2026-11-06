@@ -3,9 +3,9 @@ const assert=require('node:assert/strict');
 const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const url=process.env.TEST_URL||'http://127.0.0.1:8768/';
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
-async function geometry(p){return p.evaluate(()=>{const card=document.querySelector('.calendar-card').getBoundingClientRect(),nav=document.querySelector('.bottom-nav').getBoundingClientRect();return{gap:nav.top-card.bottom,top:card.top,bottom:card.bottom,nav:nav.top,grid:document.getElementById('calendar-grid').getBoundingClientRect().height,room:parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--theme-calendar-room')),overflow:document.documentElement.scrollWidth>innerWidth};});}
+async function geometry(p){return p.evaluate(()=>{const card=document.querySelector('.calendar-card').getBoundingClientRect(),nav=document.querySelector('.bottom-nav').getBoundingClientRect();return{gap:nav.top-card.bottom,top:card.top,bottom:card.bottom,nav:nav.top,grid:document.getElementById('calendar-grid').getBoundingClientRect().height,room:nav.top-(document.getElementById('calendar-grid').getBoundingClientRect().top+scrollY)-20,overflow:document.documentElement.scrollWidth>innerWidth};});}
 async function filled(p,label){
- await p.waitForFunction(()=>{const card=document.querySelector('.calendar-card').getBoundingClientRect(),nav=document.querySelector('.bottom-nav').getBoundingClientRect();return nav.top-card.bottom>=10&&nav.top-card.bottom<=14;},null,{timeout:3000}).catch(async()=>{assert.fail(label+': '+JSON.stringify(await geometry(p)));});
+ await p.waitForFunction(()=>{const card=document.querySelector('.calendar-card').getBoundingClientRect(),nav=document.querySelector('.bottom-nav').getBoundingClientRect();return nav.top-card.bottom>=6&&nav.top-card.bottom<=10;},null,{timeout:3000}).catch(async()=>{assert.fail(label+': '+JSON.stringify(await geometry(p)));});
  assert.equal((await geometry(p)).overflow,false,label+' has no horizontal overflow');
 }
 (async()=>{for(const engine of(process.env.HEIGHT_QUICK?[webkit]:[webkit,chromium])){
@@ -16,6 +16,7 @@ async function filled(p,label){
   await p.context().addCookies([{name:'__Host-work-routine-ready',value:'1',url:'https://20261104.xyz',secure:true,sameSite:'Lax'}]);
   await p.addInitScript(()=>{Object.defineProperty(navigator,'standalone',{value:true});localStorage.setItem('shift_origin_ready_v1','1');localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_onboarding_v1','{"status":"existing"}');localStorage.setItem('shift_salary_config_master','{"hireDate":"2015-01-01","baseHourly":11050,"ordinaryHourly":14482}');});
   await p.goto(url);await p.evaluate(()=>document.fonts.ready);await filled(p,'Initial calendar fills the available height');
+  await p.evaluate(()=>document.documentElement.style.setProperty('--theme-calendar-room','352px'));await filled(p,'Legacy grid minimum cannot shorten the viewport card');
   // Saved setup can hide a preceding guide after the first height measurement.
   await p.evaluate(()=>{const guide=document.getElementById('first-use-guide');guide.style.cssText='height:96px;min-height:96px;max-height:96px;margin:0;padding:0;overflow:hidden';guide.hidden=false;dispatchEvent(new Event('resize'));});await settle(p);await settle(p);
   await p.evaluate(()=>{document.getElementById('first-use-guide').hidden=true;});await filled(p,'Hiding the setup guide must expand the calendar again');
@@ -29,6 +30,7 @@ async function filled(p,label){
    for(const [month,rows] of [[1,4],[10,5],[4,6]]){
     await p.evaluate(m=>{currentCalDate=new Date(2026,m,1);renderCalendar();scrollTo(0,0);},month);await settle(p);
     assert.equal(await p.locator('#calendar-grid>.cal-day').count(),rows*7);
+    const tracks=await p.locator('#calendar-grid').evaluate(e=>({height:e.getBoundingClientRect().height,rows:getComputedStyle(e).gridTemplateRows.split(' ').map(parseFloat)}));assert(Math.abs(tracks.rows.reduce((a,b)=>a+b,0)-tracks.height)<2,'All date rows fill the entire calendar height');assert(Math.max(...tracks.rows)-Math.min(...tracks.rows)<1,'Date rows share the same height');
     const g=await geometry(p);if(g.room>=rows*88)await filled(p,theme+' '+rows+' weeks');
     else{await p.evaluate(()=>scrollTo(0,document.documentElement.scrollHeight));const end=await p.locator('#calendar-grid>.cal-day').last().boundingBox(),nav=await p.locator('.bottom-nav').boundingBox();assert(end.y+end.height<=nav.y+1,'Dense months keep the last row accessible: '+JSON.stringify({theme,rows,end,nav}));}
    }

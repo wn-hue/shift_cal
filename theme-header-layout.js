@@ -1,16 +1,22 @@
 /* Fit the home calendar card between the actual header and fixed navigation. */
 (()=>{'use strict';
- const header=document.querySelector('.reference-header'),grid=document.getElementById('calendar-grid'),nav=document.querySelector('.bottom-nav');
- if(!header||!grid||!nav)return;
- let previousHeight=0,previousRoom=0,frame=0,settleTimers=[];
+ const header=document.querySelector('.reference-header'),grid=document.getElementById('calendar-grid'),nav=document.querySelector('.bottom-nav'),card=grid?.closest('.calendar-card'),weekdays=document.querySelector('.cal-weekdays');
+ if(!header||!grid||!nav||!card||!weekdays)return;
+ let previousHeight=0,frame=0,settleTimers=[];
+ function size(name,value){const next=Math.round(value*100)/100+'px';if(card.style.getPropertyValue(name)!==next)card.style.setProperty(name,next);}
  function fit(){
   frame=0;
   const height=Math.ceil(header.getBoundingClientRect().height);
   if(height>0&&height!==previousHeight){previousHeight=height;document.documentElement.style.setProperty('--theme-header-height',height+'px');}
   if(document.body.dataset.view!=='calendar')return;
   if(window.visualViewport&&Math.abs(visualViewport.scale-1)>.01)return;
-  const room=Math.max(0,Math.floor(nav.getBoundingClientRect().top-(grid.getBoundingClientRect().top+window.scrollY)-24));
-  if(room!==previousRoom){previousRoom=room;document.documentElement.style.setProperty('--theme-calendar-room',room+'px');}
+  // Give the card a definite viewport-based height. Grid tracks on iOS must
+  // stretch inside that height rather than relying on a minimum grid height.
+  const navStyle=getComputedStyle(nav),dayStyle=getComputedStyle(weekdays),cardStyle=getComputedStyle(card);
+  size('--calendar-card-top',card.getBoundingClientRect().top+window.scrollY);
+  size('--calendar-nav-space',nav.getBoundingClientRect().height+(parseFloat(navStyle.bottom)||0)+8);
+  size('--calendar-weekday-space',weekdays.getBoundingClientRect().height+(parseFloat(dayStyle.marginTop)||0)+(parseFloat(dayStyle.marginBottom)||0));
+  size('--calendar-card-padding',parseFloat(cardStyle.paddingTop)+parseFloat(cardStyle.paddingBottom));
  }
  function schedule(){if(!frame)frame=requestAnimationFrame(fit);}
  function settle(){
