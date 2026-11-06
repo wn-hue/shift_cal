@@ -61,6 +61,11 @@ body[data-pref-theme] #payroll-sms-dialog .wage-paste-button{display:inline-flex
 .wage-import-help>summary small{font-size:11px;color:var(--ui-muted,#8b95a1)}
 .wage-help-body{padding:0 2px 12px;font-size:12px;line-height:1.8;color:var(--ui-muted,#6b7684)}
 .wage-help-body h3{font-size:13px;color:var(--ui-copy,#4e5968)}
+#payroll-sms-dialog .wage-explainer-list{display:grid;gap:6px;margin:0 0 12px;padding:0;list-style:none;font-size:12px;line-height:1.7;color:var(--ui-muted,#6b7684);text-align:left;word-break:keep-all;overflow-wrap:anywhere}
+#payroll-sms-dialog .wage-explainer-list li{display:flex;align-items:baseline;gap:6px}
+#payroll-sms-dialog .wage-explainer-list li::before{content:'·';flex:none;font-weight:700}
+#payroll-sms-dialog .wage-help-body .wage-explainer-list,#payroll-sms-dialog .wage-copy-note{margin-top:10px}
+#payroll-sms-dialog :is(#wage-paste-guide,.wage-help-body>p){overflow-wrap:anywhere;word-break:keep-all;text-align:left}
 #payroll-sms-dialog .sms-actions{position:sticky;bottom:0;display:block;padding:12px 0 2px;margin:0;background:var(--ui-card,#fff);z-index:1}
 body[data-pref-theme] #payroll-sms-dialog #payroll-sms-apply{display:block;width:100%;min-height:52px;font-size:16px;font-weight:600;margin:0;border-radius:15px}
 #payroll-sms-dialog [hidden]{display:none!important}

@@ -644,3 +644,101 @@ Object.assign(window.AppTranslations, {
  '매월 받는 수당 금액을 입력해 주세요.': {en:'Enter the allowance you receive each month.',zh:'请输入每月领取的津贴金额。',ja:'毎月受け取る手当の金額を入力してください。'},
  '수당 금액을 선택해 주세요.': {en:'Choose an allowance amount.',zh:'请选择津贴金额。',ja:'手当の金額を選んでください。'}
 });
+
+Object.assign(window.AppTranslations, {
+ "급여 문자로 공제 기준 설정": {
+  "en": "Set deductions from a salary message",
+  "zh": "用工资短信设置扣除依据",
+  "ja": "給与SMSで控除基準を設定"
+ },
+ "지급·공제 합계가 있는 급여 문자를 복사해 주세요.": {
+  "en": "Copy a salary message that includes total payments and deductions.",
+  "zh": "请复制包含应发和扣除合计的工资短信。",
+  "ja": "支給・控除合計が記載された給与SMSをコピーしてください。"
+ },
+ "붙여넣으면 내 공제 기준을 가져와요.": {
+  "en": "Paste it to import your deduction basis.",
+  "zh": "粘贴后即可导入个人扣除依据。",
+  "ja": "貼り付けると個人の控除基準を取り込めます。"
+ },
+ "복사한 급여 문자 붙여넣기": {
+  "en": "Paste copied salary message",
+  "zh": "粘贴已复制的工资短信",
+  "ja": "コピーした給与SMSを貼り付け"
+ },
+ "급여 문자를 붙여넣어 주세요": {
+  "en": "Paste your salary message",
+  "zh": "请粘贴工资短信",
+  "ja": "給与SMSを貼り付けてください"
+ },
+ "상여 문자도 등록하기": {
+  "en": "Add a bonus message too",
+  "zh": "也可添加奖金短信",
+  "ja": "賞与SMSも登録する"
+ },
+ "등록하면 내 상여 공제 기준으로 추정해요.": {
+  "en": "Import it to estimate using your bonus deduction basis.",
+  "zh": "添加后，按个人奖金扣除依据估算。",
+  "ja": "登録すると個人の賞与控除基準で推定します。"
+ },
+ "개인 기준이 없으면 약 2.41%로 추정해요.": {
+  "en": "Without a personal basis, deductions are estimated at about 2.41%.",
+  "zh": "没有个人依据时，按约2.41%估算。",
+  "ja": "個人の基準がなければ約2.41%で推定します。"
+ },
+ "복사한 상여 문자 붙여넣기": {
+  "en": "Paste copied bonus message",
+  "zh": "粘贴已复制的奖金短信",
+  "ja": "コピーした賞与SMSを貼り付け"
+ },
+ "상여 문자": {
+  "en": "Bonus message",
+  "zh": "奖金短信",
+  "ja": "賞与SMS"
+ },
+ "상여 문자를 붙여넣어 주세요": {
+  "en": "Paste your bonus message",
+  "zh": "请粘贴奖金短信",
+  "ja": "賞与SMSを貼り付けてください"
+ },
+ "이 기기에서 필요한 항목을 인식한 뒤, 입력칸의 원문은 바로 비워요.": {
+  "en": "The needed fields are read on this device, then the original text is cleared from the input.",
+  "zh": "在此设备上识别所需项目后，会立即清空输入框中的原文。",
+  "ja": "この端末で必要な項目を読み取った後、入力欄の原文はすぐに消去します。"
+ },
+ "이름·사번·계좌번호·원문과 지급·공제 합계는 저장하지 않아요.": {
+  "en": "Names, employee IDs, account numbers, original text and payment or deduction totals are not saved.",
+  "zh": "不保存姓名、工号、账号、原文及应发和扣除合计。",
+  "ja": "氏名・社員番号・口座番号・原文と支給・控除合計は保存しません。"
+ },
+ "공제 비율·월 보험료·기타 공제액만 저장해요.": {
+  "en": "Only deduction ratios, monthly insurance and other deduction amounts are saved.",
+  "zh": "仅保存扣除比例、每月保险费和其他扣除金额。",
+  "ja": "控除率・月額保険料・その他の控除額のみ保存します。"
+ },
+ "시급·수당은 직접 입력한 금액을 사용해요.": {
+  "en": "Hourly rates and allowances use the amounts you enter.",
+  "zh": "时薪和津贴使用手动输入的金额。",
+  "ja": "時給・手当は手入力した金額を使用します。"
+ },
+ "계정 연결 시 공제 설정도 본인 계정에 저장돼요.": {
+  "en": "When an account is connected, deduction settings are also saved to your account.",
+  "zh": "关联账户后，扣除设置也会保存到本人账户。",
+  "ja": "アカウント連携時は控除設定もご自身のアカウントに保存されます。"
+ },
+ "개인 기준이 없을 때만 기본 비율로 추정해요.": {
+  "en": "The default ratios are used only when no personal basis is saved.",
+  "zh": "仅在没有个人依据时使用默认比例估算。",
+  "ja": "個人の基準がない場合のみ既定の割合で推定します。"
+ },
+ "급여 약 18.09% · 상여 약 2.41% (세금·보험료 포함)": {
+  "en": "Salary about 18.09% · Bonus about 2.41% (including taxes and insurance)",
+  "zh": "工资约18.09% · 奖金约2.41%（含税费和保险费）",
+  "ja": "給与約18.09%・賞与約2.41%（税金・保険料を含む）"
+ },
+ "실제 공제액과 실수령액은 명세서와 다를 수 있어요.": {
+  "en": "Actual deductions and take-home pay may differ from your payslip.",
+  "zh": "实际扣除额和实发工资可能与工资单不同。",
+  "ja": "実際の控除額と手取り額は明細と異なる場合があります。"
+ }
+});
