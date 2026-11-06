@@ -31,6 +31,7 @@
     root.PayrollEstimate = api;
     if (typeof document === 'undefined') return;
     const toggle = document.getElementById('payroll-estimate-toggle'), panel = document.getElementById('payroll-estimate-panel');
+    const grossToggle = document.getElementById('payroll-gross-toggle');
     const text = document.getElementById('payroll-sms-text'), bonusText = document.getElementById('payroll-bonus-sms-text');
     const status = document.getElementById('payroll-sms-status'), preview = document.getElementById('payroll-sms-preview');
     const apply = document.getElementById('payroll-sms-apply'), dialog = document.getElementById('payroll-sms-dialog');
@@ -50,7 +51,7 @@
         const amount = toggle.checked ? result.net : result.gross;
         document.getElementById('hero-pay-label').textContent = toggle.checked ? '이번 달 예상 실수령액' : '이번 달 예상 급여';
         document.getElementById('hero-pay-basis').textContent = suffix;
-        document.getElementById('payroll-estimate-action-label').textContent = toggle.checked ? '세후 예상' : '세전';
+        grossToggle.checked = !toggle.checked;
         document.getElementById('hero-gross-pay').innerText = fmt(amount);
         for(const prefix of ['hero','payslip-modal']) {
             document.getElementById(prefix+'-regular-label').textContent='월 급여 ('+suffix+')';
@@ -77,6 +78,7 @@
     api.update = (gross, breakdown) => { parts=breakdown || {regular:gross,bonus:0,support:0}; render(); };
     api.reloadReference = () => {profile=loadProfile(storageKey);bonusProfile=loadProfile(bonusKey);render();};
     toggle.checked = false; toggle.addEventListener('change', render);
+    grossToggle.addEventListener('change', () => { toggle.checked = !grossToggle.checked; render(); });
     const allowanceKeys=['qualification','job','family','duty','legacy'];
     const allowanceLabels={qualification:'자격수당',job:'직무수당',family:'가족수당',duty:'직책수당',legacy:'기타 고정수당'};
     const el=id=>document.getElementById(id), amountInputs=[manualBase,manualOrdinary,el('wage-seniority'),...allowanceKeys.map(k=>el('wage-'+k))];

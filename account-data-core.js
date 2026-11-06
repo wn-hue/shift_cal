@@ -17,13 +17,16 @@
             if (!object(value)) throw Error('저장할 설정 형식을 확인하세요.');
             const safe = {};
             if (key === 'shift_salary_config_master') {
-                const allowed = ['hireDate','employmentMonth','totalLeave','leaveByYear','leaveManualYears','baseHourly','ordinaryHourly','baseHours','dutyPay','fixedAllowances','seniorityPay','seniorityPayOverride','applyRetroPay','holidayBonus'];
+                const allowed = ['hireDate','employmentMonth','totalLeave','leaveByYear','leaveManualYears','baseHourly','ordinaryHourly','baseHours','dutyPay','fixedAllowances','seniorityPay','seniorityPayOverride','applyRetroPay','holidayBonus','holidayWorkPay'];
                 if (Object.keys(value).some(k => !allowed.includes(k))) throw Error('알 수 없는 급여 설정입니다.');
                 for (const [k,v] of Object.entries(value)) {
                     if (k === 'employmentMonth') continue;
                     else if (k === 'hireDate') { if (v !== '' && !dateOK(v)) throw Error('입사일을 확인하세요.'); }
                     else if (k === 'applyRetroPay') { if (typeof v !== 'boolean') throw Error('수당 설정을 확인하세요.'); }
                     else if(k === 'seniorityPayOverride') { if(!Number.isSafeInteger(v)||v<0||v>1000000000)throw Error('근속수당 금액을 확인하세요.'); }
+                    else if(k === 'holidayWorkPay') {
+                        if(!object(v)||Object.keys(v).length>3||Object.keys(v).some(group=>!['A','B','C'].includes(group))||Object.values(v).some(days=>!object(days)||Object.keys(days).length>1000||Object.entries(days).some(([day,n])=>!dateOK(day)||!Number.isSafeInteger(n)||n<0||n>1000000000)))throw Error('명절근무수당의 날짜와 금액을 확인하세요.');
+                    }
                     else if(k === 'fixedAllowances') {
                         const keys=['qualification','job','family','duty','legacy'];
                         if(!object(v)||Object.keys(v).length!==5||!keys.every(n=>Number.isSafeInteger(v[n])&&v[n]>=0&&v[n]<=1000000000)||Object.values(v).reduce((a,b)=>a+b,0)!==value.dutyPay)throw Error('수당 금액을 확인하세요.');
@@ -110,7 +113,7 @@
     function meaningful(data) {
         return Object.entries(data).some(([key,v]) => {
             if (v === null || key === 'shift_active_group') return false;
-            if (key === 'shift_salary_config_master') return Object.hasOwn(v,'seniorityPayOverride') || ['hireDate','totalLeave','baseHourly','ordinaryHourly','dutyPay','seniorityPay','holidayBonus','applyRetroPay'].some(k => !!v[k]) || Object.values(v.leaveByYear || {}).some(n => n > 0) || (v.baseHours !== undefined && v.baseHours !== 209);
+            if (key === 'shift_salary_config_master') return Object.hasOwn(v,'seniorityPayOverride') || Object.values(v.holidayWorkPay||{}).some(days=>Object.keys(days).length>0) || ['hireDate','totalLeave','baseHourly','ordinaryHourly','dutyPay','seniorityPay','holidayBonus','applyRetroPay'].some(k => !!v[k]) || Object.values(v.leaveByYear || {}).some(n => n > 0) || (v.baseHours !== undefined && v.baseHours !== 209);
             return object(v) && Object.keys(v).length > 0;
         });
     }

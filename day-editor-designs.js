@@ -109,24 +109,27 @@
  function save(memoValue,options={}){
   if(!DayScheduler.canLeave())return false;
   const pending=ShiftTools.pending();if(pending&&pending.date!==selectedDateStr)return false;if(pending){const reason=validateDayOverride(selectedDateStr,pending.type);if(reason)return failSave(reason);}
+  const holidayConfig=window.HolidayWorkPay?.draftConfig(selectedDateStr);
+  if(holidayConfig){try{AccountDataCore.normalize({shift_salary_config_master:holidayConfig})}catch(error){return failSave(error.message);}}
   const val=typeof memoValue==='string'?memoValue.trim():$('modal-memo-input').value.trim();
   if(options.bundle){try{AccountDataCore.normalize(options.bundle)}catch(error){return failSave(error.message);}}
   if(options.memoItems&&(!DayMemosCore.valid(options.memoItems)||DayMemosCore.text(options.memoItems)!==val))return false;
   if(val.length>16000)return failSave('하루 메모는 총 16,000자까지 저장할 수 있어요.');
-  if(!saveFailed&&!options.bundle&&!options.memoItems&&!pending&&val===(dayMemos[selectedDateStr]||'').trim()){if(!options.keepOpen)closeModalDirect();return true;}
-  const keys=new Set(['shift_overrides_'+currentGroup,'shift_day_memos',...(options.memoItems?[DayMemosCore.key]:[]),...Object.keys(options.bundle||{})]);
-  const previousStorage=Object.fromEntries([...keys].map(key=>[key,localStorage.getItem(key)])),previousMemos=dayMemos,previousOverrides={...overrides};
-  function rollback(){dayMemos=previousMemos;overrides=previousOverrides;for(const [key,value] of Object.entries(previousStorage)){try{value===null?localStorage.removeItem(key):localStorage.setItem(key,value);}catch{}}if(pending&&!ShiftTools.pending())choose(pending.type);}
+  if(!saveFailed&&!holidayConfig&&!options.bundle&&!options.memoItems&&!pending&&val===(dayMemos[selectedDateStr]||'').trim()){if(!options.keepOpen)closeModalDirect();return true;}
+  const keys=new Set(['shift_overrides_'+currentGroup,'shift_day_memos',...(options.memoItems?[DayMemosCore.key]:[]),...Object.keys(options.bundle||{}),...(holidayConfig?['shift_salary_config_master']:[])]);
+  const previousStorage=Object.fromEntries([...keys].map(key=>[key,localStorage.getItem(key)])),previousMemos=dayMemos,previousOverrides={...overrides},previousConfig=config;
+  function rollback(){config=previousConfig;dayMemos=previousMemos;overrides=previousOverrides;for(const [key,value] of Object.entries(previousStorage)){try{value===null?localStorage.removeItem(key):localStorage.setItem(key,value);}catch{}}if(pending&&!ShiftTools.pending())choose(pending.type);}
   saving=true;try{
    if(options.bundle){for(const [key,value]of Object.entries(options.bundle))localStorage.setItem(key,JSON.stringify(value));dayMemos=options.bundle.shift_day_memos;}
    if(!ShiftTools.commit()){rollback();return false;}
+   if(holidayConfig){localStorage.setItem('shift_salary_config_master',JSON.stringify(holidayConfig));config=holidayConfig;}
    if(options.memoItems){let items;try{items=JSON.parse(localStorage.getItem(DayMemosCore.key)||'{}')}catch{items={}}
     if(Object.keys(options.memoItems).length)items[selectedDateStr]=options.memoItems;else delete items[selectedDateStr];
     localStorage.setItem(DayMemosCore.key,JSON.stringify(items));
    }
    const nextMemos={...dayMemos};if(val)nextMemos[selectedDateStr]=val;else delete nextMemos[selectedDateStr];
    localStorage.setItem('shift_day_memos',JSON.stringify(nextMemos));dayMemos=nextMemos;$('modal-memo-input').value=val;saveFailed=false;saveError.hidden=true;
-   window.AccountSync?.changed();window.GoogleSync?.changed(selectedDateStr);renderCalendar();if(options.keepOpen){week();if(options.stayPane)update();else showPane('memo');}else closeModalDirect();return true;
+   window.AccountSync?.changed();window.GoogleSync?.changed(selectedDateStr);renderCalendar();if(holidayConfig){syncFromCalendar();window.HolidayWorkPay?.didSave();}if(options.keepOpen){week();if(options.stayPane)update();else showPane('memo');}else closeModalDirect();return true;
   }catch(error){rollback();return failSave('저장하지 못했어요. 작성한 내용은 그대로 남아 있어요. 다시 시도해 주세요.');}finally{saving=false;}
  }
  $('apply-preview').onclick=save;$('design-done').onclick=save;saveMemoDirect=save;

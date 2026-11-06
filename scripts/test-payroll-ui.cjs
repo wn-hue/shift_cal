@@ -12,7 +12,7 @@ for(const match of html.matchAll(/<[^>]*\bid="([^"]+)"[^>]*>/g)){
 const ctx={document:{getElementById:elem,querySelector:()=>null},localStorage:{getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(k,String(v)),removeItem:k=>saved.delete(k)},TextEncoder,URLSearchParams,Date,alert:()=>{},confirm:()=>true,setTimeout:()=>0};
 ctx.window=ctx;vm.createContext(ctx);
 for(const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))if(match[1].trim())vm.runInContext(match[1],ctx);
-ctx.PayrollSMS=require('../payroll-sms.js');ctx.ShiftPlannerCore=require('../planner-core.js');
+ctx.HolidayWorkPayCore=require('../holiday-work-pay-core.js');ctx.PayrollSMS=require('../payroll-sms.js');ctx.ShiftPlannerCore=require('../planner-core.js');
 vm.runInContext(fs.readFileSync(require.resolve('../payroll-estimate.js'),'utf8'),ctx);
 const evaluate=code=>vm.runInContext(code,ctx),click=id=>{for(const f of elem(id).handlers.click||[])f()};
 evaluate(`currentPayDate=new Date(2026,9,1);currentCalDate=new Date(2026,9,1);config={hireDate:'2017-01-01',totalLeave:0,leaveByYear:{},baseHourly:10000,ordinaryHourly:12000,baseHours:209,dutyPay:0,seniorityPay:0,holidayBonus:0,applyRetroPay:false};`);

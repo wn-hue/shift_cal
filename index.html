@@ -966,7 +966,8 @@
 <link rel="stylesheet" href="./experimental-themes.css?v=5">
 <link rel="stylesheet" href="./beige-round-theme.css?v=1">
 <link rel="stylesheet" href="./viewport-lock.css?v=1">
-<link rel="stylesheet" href="./payroll-layout.css?v=visibility-2">
+<link rel="stylesheet" href="./payroll-layout.css?v=compact-3">
+<script src="./holiday-work-pay-core.js?v=1"></script>
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1038,7 +1039,7 @@
                     <div class="hero-amount" id="hero-gross-pay">0 원</div>
                     <label class="estimate-toggle" for="payroll-estimate-toggle">
                         <span id="payroll-estimate-action-label">세전</span>
-                        <input type="checkbox" id="payroll-estimate-toggle" role="switch" aria-label="세후 예상 금액으로 보기" aria-controls="payroll-estimate-panel">
+                        <input type="checkbox" id="payroll-gross-toggle" role="switch" aria-label="세전 금액으로 보기" aria-controls="payroll-estimate-panel" checked>
                     </label>
                 </div>
                 <p class="hero-pay-meta"><span id="hero-pay-basis">세전</span> · <span class="period-tag" id="pay-period-label">10.16–11.15 근무 기준</span></p>
@@ -1068,6 +1069,7 @@
                     </details>
                     <p class="estimate-disclaimer">세금·보험료와 실수령액은 추정치예요. 실제 명세서와 다를 수 있어요.</p>
                 </div>
+                <input type="checkbox" id="payroll-estimate-toggle" hidden>
                 <span id="payroll-estimate-state" hidden aria-hidden="true">OFF</span>
                 <div class="estimate-footer">
                     <span id="payroll-sms-applied" class="estimate-applied" role="status"></span>
@@ -1157,32 +1159,18 @@
 
             </div>
             <div class="payroll-tools">
-                <details class="workday-calculations">
-                    <summary>연장·무급 계산 결과 <span aria-hidden="true">⌄</span></summary>
-                <div class="workday-summary" aria-label="캘린더 계산 결과">
-                    <div><label for="disp-ot-hours">연장시간 · 1.5배</label><input type="text" id="disp-ot-hours" value="0.0h" readonly></div>
-                    <div><label for="disp-unpaid-days">무급 일수</label><input type="text" id="disp-unpaid-days" value="0일" readonly></div>
-                    <div><label for="disp-unpaid-deduction">무급 차감 예상액</label><input type="text" id="disp-unpaid-deduction" value="0원" readonly></div>
-                </div>
+                <details class="workday-calculations" id="workday-adjustments">
+                    <summary><span>근무 계산·조정<small id="workday-adjustment-value">연장·무급·잔업 제외</small></span><span aria-hidden="true">⌄</span></summary>
+                    <div class="workday-summary" aria-label="캘린더 계산 결과">
+                        <div><label for="disp-ot-hours">연장시간 · 1.5배</label><input type="text" id="disp-ot-hours" value="0.0h" readonly></div>
+                        <div><label for="inp-no-ot-days">잔업 제외 일수</label><input type="text" id="inp-no-ot-days" value="0" readonly></div>
+                        <div><label for="disp-unpaid-days">무급 일수</label><input type="text" id="disp-unpaid-days" value="0일" readonly></div>
+                        <div><label for="disp-unpaid-deduction">무급 차감 예상액</label><input type="text" id="disp-unpaid-deduction" value="0원" readonly></div>
+                        <div id="payroll-holiday-pay-row" hidden><span>명절근무수당</span><strong id="payroll-holiday-pay-total">0원</strong></div>
+                    </div>
+                    <p class="adjustment-hint">달력에서 변경한 근무가 자동으로 반영돼요.</p>
                 </details>
-                <details class="workday-adjustments" id="workday-adjustments">
-                    <summary><span>추가 조정<small id="workday-adjustment-value">연장 제외 · 명절수당</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
-                    <div class="workday-adjustment-fields">
-                    <div class="input-group">
-                        <label for="inp-no-ot-days">연장 제외 일수</label>
-                        <input type="text" id="inp-no-ot-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
-                    </div>
-                    <div class="input-group">
-                        <label for="inp-holiday-bonus">명절근무수당 (원)</label>
-                        <input type="number" id="inp-holiday-bonus" value="0" step="10000" min="0" oninput="calculatePayrollFromInputs()" placeholder="예: 50000">
-                    </div>
-                    </div>
-                    <p class="adjustment-hint">연장 제외는 달력 연동 · 하루 2.5시간 제외</p>
-                <div class="btn-action-group">
-                    <button class="btn-save" onclick="manualSaveData()">입력값 저장</button>
-                    <button class="btn-reset-data" onclick="resetDefaults()">초기화</button>
-                </div>
-                </details>
+                <input type="hidden" id="inp-holiday-bonus" value="0">
                 <input type="hidden" id="inp-hire-date" aria-label="정규직 전환일 (연차, 지원금 판정)">
 
 
@@ -2286,7 +2274,6 @@
         }
 
         function saveWageConfig() {
-            config.holidayBonus = parseFloat(document.getElementById('inp-holiday-bonus').value) || 0;
             saveConfig();
             updateLeaveStats();
             calculatePayrollFromInputs();
@@ -2564,14 +2551,17 @@
                 document.getElementById('work-' + name + '-count').setAttribute('data-positive', String(count > 0));
             }
             const noOtDays = parseFloat(document.getElementById('inp-no-ot-days').value) || 0;
-            const holidayBonus = parseFloat(document.getElementById('inp-holiday-bonus').value) || 0;
+            const holidayBonus = HolidayWorkPayCore.total(config, currentGroup, currentPayDate.getFullYear(), currentPayDate.getMonth(), HOLIDAYS, date => getActualShift(date, currentGroup));
+            document.getElementById('inp-holiday-bonus').value = holidayBonus;
+            document.getElementById('payroll-holiday-pay-row').hidden = !(holidayBonus > 0);
+            document.getElementById('payroll-holiday-pay-total').textContent = fmt(holidayBonus) + '원';
             const hasBonusCheck = document.getElementById('inp-bonus-check').checked;
             const adjustmentSummary = document.getElementById('workday-adjustment-value');
             if (adjustmentSummary) {
                 const adjustments = [];
                 if (noOtDays > 0) adjustments.push(`연장 제외 ${noOtDays}일`);
                 if (holidayBonus > 0) adjustments.push(`명절 ${holidayBonus.toLocaleString('ko-KR')}원`);
-                adjustmentSummary.textContent = adjustments.join(' · ') || '연장 제외 · 명절수당';
+                adjustmentSummary.textContent = adjustments.join(' · ') || '연장·무급·잔업 제외';
             }
 
             const B7 = config.baseHourly;
@@ -2865,7 +2855,6 @@
             document.getElementById('seniority-pay-setting').hidden = !(savedSeniority > 0);
             document.getElementById('wage-allowance-settings').hidden = !(config.dutyPay > 0 || savedSeniority > 0);
             document.getElementById('wage-settings-title').textContent = (config.dutyPay > 0 || savedSeniority > 0) ? '시급 · 수당' : '시급';
-            document.getElementById('inp-holiday-bonus').value = config.holidayBonus || 0;
             config.applyRetroPay = !!config.hireDate && parseInt(config.hireDate.slice(0,4),10) < 2020;
             configLoaded = true;
         }
@@ -3002,11 +2991,11 @@
         };
     </script>
     <script src="./payroll-sms.js?v=manual-tax-1"></script>
-    <script src="./payroll-estimate.js?v=visibility-2"></script>
+    <script src="./payroll-estimate.js?v=compact-3"></script>
     <script src="./calendar-integration.js?v=permissions-1"></script>
     <script src="./schedule-share.js?v=3"></script>
     <script src="./google-sync-core.js?v=drive-export-1-6"></script>
-    <script src="./account-data-core.js?v=sms-confirm-1"></script>
+    <script src="./account-data-core.js?v=holiday-pay-2"></script>
     <script src="./app-motion.js?v=2"></script>
     <script src="./calendar-ui.js?v=payroll-no-heading-5"></script>
     <script src="./group-schedule.js?v=8"></script>
@@ -3104,10 +3093,11 @@
 <script src="./sheet-interactions.js?v=surface-motion-2"></script>
 <script src="./day-memos-core.js?v=1"></script>
 <script src="./day-entry-core.js?v=1"></script>
-<script src="./day-editor-designs.js?v=10"></script>
+<script src="./day-editor-designs.js?v=holiday-pay-11"></script>
 <script src="./memo-composer.js?v=surface-motion-2"></script>
 <script src="./settings-options.js?v=2"></script>
 <script src="./wage-import-ui.js?v=flat-1"></script>
+<script src="./holiday-work-pay.js?v=1"></script>
 <script src="./app-i18n-data.js?v=allowance-steps-1"></script>
 <script src="./app-i18n-zh.js?v=3"></script>
 <script src="./app-i18n.js?v=9"></script>
