@@ -11,7 +11,7 @@ const url=process.env.TEST_URL||'http://127.0.0.1:8768/';
  await p.addInitScript(()=>{if(localStorage.getItem('shift_salary_config_master'))return;localStorage.setItem('shift_origin_ready_v1','1');localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_onboarding_v1','{"status":"existing"}');localStorage.setItem('shift_salary_config_master',JSON.stringify({hireDate:'2015-01-01',baseHourly:11050,ordinaryHourly:14482,baseHours:209,seniorityPayOverride:70000,dutyPay:70000,fixedAllowances:{duty:70000,qualification:0,family:0,job:0,legacy:0}}));localStorage.setItem('shift_payroll_sms_reference_v1','{"rate":0.15}');});
  await p.goto(url);await p.evaluate(()=>switchView('payroll'));
  const number=async id=>Number((await p.locator('#'+id).textContent()).replace(/[^0-9]/g,''));
- assert.match(await p.locator('#payroll-bonus-hint').textContent(),/짝수 달에만.*반영/);
+ assert.match(await p.locator('#payroll-bonus-hint').textContent(),/ⓘ.*짝수 달에.*반영/);
  assert.equal(await p.locator('.payroll-bonus-row,#lbl-bonus-check,#payroll-bonus-state,#payroll-bonus-amount').count(),0);assert(!(await p.locator('#inp-bonus-check').isVisible()));assert(await p.locator('#inp-bonus-check').isDisabled());assert(!(await p.locator('#inp-bonus-check').isChecked()));
  const geometry=await p.evaluate(()=>{const ids=['salary-hero-card','payroll-estimate-card'];return {overflow:document.documentElement.scrollWidth>innerWidth,work:document.querySelector('.payroll-input-card').getBoundingClientRect().top,wage:document.querySelector('.wage-settings-card').getBoundingClientRect().top,bonus:document.querySelector('.payroll-bonus').getBoundingClientRect().top,hero:document.getElementById('salary-hero-card').getBoundingClientRect().top,sections:ids.map(id=>getComputedStyle(document.getElementById(id)).borderRadius)};});
  assert(!geometry.overflow,JSON.stringify(geometry));assert(geometry.hero<geometry.bonus&&geometry.bonus<geometry.work&&geometry.work<geometry.wage);assert.deepEqual(geometry.sections,['0px','0px']);assert(await p.locator('.special-days').evaluate(e=>e.getBoundingClientRect().height<=40),'Special shifts remain one compact horizontal line');
@@ -23,21 +23,23 @@ const url=process.env.TEST_URL||'http://127.0.0.1:8768/';
  assert(Math.abs((metrics.units[0].numberBottom-metrics.units[0].unitBottom)-(metrics.units[1].numberBottom-metrics.units[1].unitBottom))<1,'Both ordinary counts share the same baseline treatment');
  await p.evaluate(()=>{document.getElementById('inp-day-days').value='0.5';document.getElementById('inp-night-days').value='12.5';document.getElementById('inp-daysp-days').value='2';calculatePayrollFromInputs();});
  assert.equal(await p.locator('#payroll-day-count').textContent(),'0.5');assert.equal(await p.locator('#payroll-night-count').textContent(),'12.5');assert.equal(await p.locator('#payroll-daysp-count').textContent(),'2');await p.evaluate(()=>syncFromCalendar());
- assert.equal(await p.locator('#payroll-gross-toggle').isChecked(),true);assert.equal(await p.locator('#workday-adjustments').count(),1);assert.equal(await p.locator('.payroll-tools>details').count(),1);assert.equal(await p.locator('#inp-holiday-bonus').isVisible(),false);assert.equal(await p.locator('#payroll-estimate-card').evaluate(e=>getComputedStyle(e).borderTopWidth),'0px');
+ assert.equal(await p.locator('#payroll-gross-toggle').isChecked(),false);assert.equal(await p.locator('#workday-adjustments').count(),1);assert.equal(await p.locator('.payroll-tools>details').count(),1);assert.equal(await p.locator('#inp-holiday-bonus').isVisible(),false);assert.equal(await p.locator('#payroll-estimate-card').evaluate(e=>getComputedStyle(e).borderTopWidth),'0px');
+ assert.equal(await p.locator('.special-days label .payroll-shift-icon').count(),2);
  const gross=await number('hero-gross-pay');await p.locator('.estimate-toggle').click();await p.locator('#payroll-estimate-panel').waitFor({state:'visible'});
- assert.equal(await number('hero-gross-pay'),gross-Math.trunc(gross*.15+1e-7));assert.equal(await number('row-gross-pay'),await number('hero-gross-pay'));assert.match(await p.locator('#hero-pay-label').textContent(),/예상 실수령액/);assert.match(await p.locator('#hero-pay-basis').textContent(),/추정/);assert.equal(await p.locator('#payroll-gross-toggle').isChecked(),false);assert.equal(await p.locator('#payroll-estimate-action-label').textContent(),'세후');
- await p.locator('.estimate-toggle').click();assert.equal(await number('hero-gross-pay'),gross);assert.equal(await p.locator('#payroll-gross-toggle').isChecked(),true);assert.equal(await p.locator('#payroll-estimate-action-label').textContent(),'세전');
+ assert.equal(await p.locator('#payroll-estimate-disclaimer').isVisible(),false,'Disclaimer is inside the collapsed deduction details');await p.locator('.estimate-breakdown>summary').click();assert.equal(await p.locator('#payroll-estimate-disclaimer').isVisible(),true);await p.locator('.estimate-breakdown>summary').click();assert.equal(await p.locator('#payroll-estimate-disclaimer').isVisible(),false);
+ assert.equal(await number('hero-gross-pay'),gross-Math.trunc(gross*.15+1e-7));assert.equal(await number('row-gross-pay'),await number('hero-gross-pay'));assert.match(await p.locator('#hero-pay-label').textContent(),/예상 실수령액/);assert.match(await p.locator('#hero-pay-basis').textContent(),/추정/);assert.equal(await p.locator('#payroll-gross-toggle').isChecked(),true);assert.equal(await p.locator('#payroll-estimate-action-label').textContent(),'세후');
+ await p.locator('.estimate-toggle').click();assert.equal(await number('hero-gross-pay'),gross);assert.equal(await p.locator('#payroll-gross-toggle').isChecked(),false);assert.equal(await p.locator('#payroll-estimate-action-label').textContent(),'세전');
  // Every month and the year boundary retain automatic parity, without manual toggles.
  for(let month=0;month<12;month++){
   await p.evaluate(m=>{currentPayDate=new Date(2026,m,1);syncFromCalendar();},month);
   const on=(month+1)%2===0;assert.equal(await p.locator('#inp-bonus-check').isChecked(),on);assert.equal((await number('row-bonus-pay'))>0,on);
-  await p.locator('#payroll-gross-toggle').uncheck();
+  await p.locator('#payroll-gross-toggle').check();
   await p.locator('.estimate-breakdown').evaluate(e=>e.open=true);
   assert.equal(await p.locator('#estimate-regular-row').isVisible(),on);assert.equal(await p.locator('#estimate-bonus-row').isVisible(),on);
   assert.equal(await p.locator('#estimate-total-label').textContent(),on?'전체 예상 공제액':'전체 공제');
   assert.equal(await p.locator('#estimate-total').textContent(),(await p.locator('#row-estimated-deduction').textContent()).replace('−','')+' 원');
   if(!on)assert.doesNotMatch(await p.locator('#payroll-estimate-basis').textContent(),/상여:/);
-  await p.locator('#payroll-gross-toggle').check();
+  await p.locator('#payroll-gross-toggle').uncheck();
   const sum=(await number('hero-regular-pay'))+(await number('hero-bonus-pay'));assert.equal(await number('hero-gross-pay'),sum);
  }
  await p.evaluate(()=>{changePayMonth(1,false);});assert.equal(await p.locator('#pay-month-title').textContent(),'2027년 1월');assert(!(await p.locator('#inp-bonus-check').isChecked()));

@@ -966,7 +966,7 @@
 <link rel="stylesheet" href="./experimental-themes.css?v=5">
 <link rel="stylesheet" href="./beige-round-theme.css?v=1">
 <link rel="stylesheet" href="./viewport-lock.css?v=1">
-<link rel="stylesheet" href="./payroll-layout.css?v=compact-3">
+<link rel="stylesheet" href="./payroll-layout.css?v=mode-icons-4">
 <script src="./holiday-work-pay-core.js?v=1"></script>
 </head>
 <body data-view="calendar">
@@ -1039,7 +1039,7 @@
                     <div class="hero-amount" id="hero-gross-pay">0 원</div>
                     <label class="estimate-toggle" for="payroll-gross-toggle">
                         <span id="payroll-estimate-action-label">세전</span>
-                        <input type="checkbox" id="payroll-gross-toggle" role="switch" aria-label="세전 금액으로 보기" aria-controls="payroll-estimate-panel" checked>
+                        <input type="checkbox" id="payroll-gross-toggle" role="switch" aria-label="세후 예상 금액으로 보기" aria-controls="payroll-estimate-panel">
                     </label>
                 </div>
                 <p class="hero-pay-meta"><span id="hero-pay-basis">세전</span> · <span class="period-tag" id="pay-period-label">10.16–11.15 근무 기준</span></p>
@@ -1066,8 +1066,8 @@
                         <div class="estimate-row" id="estimate-bonus-row" hidden><span>상여금 예상 공제</span><strong id="estimate-bonus-deduction">0 원</strong></div>
                         <div class="estimate-row"><span id="estimate-total-label">전체 공제</span><strong id="estimate-total">0 원</strong></div>
                         <p class="estimate-note" id="payroll-estimate-basis"></p>
+                        <p class="estimate-disclaimer" id="payroll-estimate-disclaimer">세금·보험료와 실수령액은 추정치예요. 실제 명세서와 다를 수 있어요.</p>
                     </details>
-                    <p class="estimate-disclaimer">세금·보험료와 실수령액은 추정치예요. 실제 명세서와 다를 수 있어요.</p>
                 </div>
                 <input type="checkbox" id="payroll-estimate-toggle" hidden>
                 <span id="payroll-estimate-state" hidden aria-hidden="true">OFF</span>
@@ -1078,7 +1078,7 @@
 
             <div class="payroll-bonus">
                 <input type="checkbox" id="inp-bonus-check" disabled hidden>
-                <p id="payroll-bonus-hint">상여는 짝수 달에만 자동으로 반영돼요.</p>
+                <p id="payroll-bonus-hint"><span class="payroll-bonus-symbol" aria-hidden="true">ⓘ</span><span>상여는 짝수 달에 자동으로 반영돼요.</span></p>
             </div>
             </div><!-- salary-month-viewport -->
             <div class="card payroll-input-card">
@@ -1102,11 +1102,11 @@
                 </div>
                 <div class="two-cols special-days">
                     <div class="input-group">
-                        <label for="work-daysp-count">주간 특근</label>
+                        <label for="work-daysp-count"><svg viewBox="0 0 24 24" class="payroll-shift-icon day" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/></svg>주간 특근</label>
                         <output class="work-day-count" id="work-daysp-count" aria-describedby="calendar-days-hint"><strong id="payroll-daysp-count">0</strong><span class="work-day-unit">일</span></output><input type="hidden" id="inp-daysp-days" value="0" readonly hidden>
                     </div>
                     <div class="input-group">
-                        <label for="work-nightsp-count">야간 특근</label>
+                        <label for="work-nightsp-count"><svg viewBox="0 0 24 24" class="payroll-shift-icon night" fill="currentColor" aria-hidden="true"><path d="M21 14.2A9.5 9.5 0 0 1 9.8 3 9.5 9.5 0 1 0 21 14.2Z"/></svg>야간 특근</label>
                         <output class="work-day-count" id="work-nightsp-count" aria-describedby="calendar-days-hint"><strong id="payroll-nightsp-count">0</strong><span class="work-day-unit">일</span></output><input type="hidden" id="inp-nightsp-days" value="0" readonly hidden>
                     </div>
                 </div>
@@ -2991,7 +2991,7 @@
         };
     </script>
     <script src="./payroll-sms.js?v=manual-tax-1"></script>
-    <script src="./payroll-estimate.js?v=deduction-4"></script>
+    <script src="./payroll-estimate.js?v=mode-5"></script>
     <script src="./calendar-integration.js?v=permissions-1"></script>
     <script src="./schedule-share.js?v=3"></script>
     <script src="./google-sync-core.js?v=drive-export-1-6"></script>
