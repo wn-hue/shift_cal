@@ -1,19 +1,19 @@
-/* Flat salary overview; shared calendar and other tab layouts stay independent. */
-body[data-view=payroll]:not([data-pref-theme=dark]){background:#fff}
-body[data-view=payroll][data-pref-theme=dark]{background:#24272c}
-body[data-view=payroll] .container{padding-inline:0}
+/* Compact salary cards; shared calendar and other tab layouts stay independent. */
+body[data-view=payroll]:not([data-pref-theme=dark]){background:#f2f4f6}
+body[data-view=payroll][data-pref-theme=dark]{background:#17191d}
+body[data-view=payroll] .container{padding-inline:16px}
 #view-payroll{padding:0 0 24px}
 #view-payroll [hidden]{display:none!important}
-body[data-pref-theme] #view-payroll :is(.card,.salary-hero){border:0!important;border-radius:0!important;box-shadow:none;padding:20px 24px;margin:0;background:var(--ui-card)!important}
-#view-payroll .gcal-topbar{padding:4px 24px 12px;margin:0;background:var(--ui-card)}
-#view-payroll .salary-month-viewport{margin:0;border-radius:0;background:var(--ui-card)}
-body[data-pref-theme] #view-payroll .salary-hero{padding:12px 24px 16px}
+body[data-pref-theme] #view-payroll :is(.card,.salary-hero){border:0!important;border-radius:24px!important;box-shadow:none;padding:18px 20px;margin:0 0 14px;background:var(--ui-card)!important}
+#view-payroll .gcal-topbar{padding:4px 4px 0;margin:0 0 12px;background:transparent}
+#view-payroll .salary-month-viewport{margin:0 0 14px;border-radius:24px;background:var(--ui-card);overflow:hidden}
+body[data-pref-theme] #view-payroll .salary-hero{border-radius:0!important;padding:20px 20px 16px;margin:0!important}
 #view-payroll .salary-hero>.hero-label{margin:0 0 8px;color:var(--ui-ink)!important;font-size:16px;font-weight:650;line-height:1.5}
 #view-payroll .salary-hero>.hero-label::before{display:none}
 body[data-pref-theme] #view-payroll #hero-gross-pay{color:var(--ui-ink)!important;font-size:clamp(28px,8vw,34px);font-weight:750;line-height:1.3;letter-spacing:-1px;margin:0}
 #view-payroll .hero-pay-meta{margin:8px 0 0;font-size:12px;color:var(--ui-muted);line-height:1.6}
 #view-payroll .period-tag{display:inline;font-size:inherit;padding:0;background:transparent!important;color:inherit!important}
-body[data-pref-theme] #view-payroll #payroll-estimate-card{padding:0 24px 8px;border:0!important;box-shadow:none}
+body[data-pref-theme] #view-payroll #payroll-estimate-card{padding:0 20px 8px;margin:0;border:0!important;border-radius:0!important;box-shadow:none}
 #view-payroll .hero-pay-row{display:grid;grid-template-columns:minmax(0,1fr) 60px;align-items:center;gap:12px}
 #view-payroll .estimate-toggle{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:60px;padding:4px 0;margin:0;border:0;border-radius:8px;background:transparent;color:var(--ui-muted);font-size:11px;font-weight:550;line-height:1.3;cursor:pointer}
 #view-payroll .estimate-toggle:has(:checked){color:var(--ui-blue)}
@@ -28,9 +28,9 @@ body[data-pref-theme] #view-payroll #payroll-estimate-card:has(#payroll-estimate
 #view-payroll .estimate-amounts{display:none}
 #view-payroll .estimate-footer{margin:0}
 #view-payroll .estimate-footer:has(:empty){display:none}
-#view-payroll .payroll-bonus{padding:0 24px 16px}
+#view-payroll .payroll-bonus{padding:0 20px 18px}
 #view-payroll #payroll-bonus-hint{display:flex;align-items:baseline;gap:5px;margin:0;font-size:11px;line-height:1.6;word-break:keep-all;color:var(--ui-muted)}
-body[data-pref-theme] #view-payroll :is(.payroll-input-card,.wage-settings-card){border-top:8px solid var(--ui-field)!important;padding:14px 24px 16px}
+body[data-pref-theme] #view-payroll :is(.payroll-input-card,.wage-settings-card){border:0!important;padding:14px 20px 16px}
 #view-payroll .card-header{margin:0 0 6px;min-height:38px;font-size:16px;font-weight:650}
 #view-payroll .card-header>span:first-child::before{display:none}
 body[data-pref-theme] #view-payroll :is(.calendar-reflect-button,.wage-edit-button){display:inline-flex;align-items:center;min-height:44px;margin:0 -4px 0 0;padding:4px;background:transparent!important;border:0;border-radius:6px;color:var(--ui-blue)!important;font-size:12px;font-weight:600}
@@ -63,8 +63,8 @@ body[data-pref-theme] #view-payroll #wage-allowance-settings input[readonly]{wid
 body[data-pref-theme] #view-payroll #wage-allowance-settings input[readonly]{color:var(--ui-blue)!important}
 #view-payroll .wage-settings-card:not(:has(#wage-allowance-settings:not([hidden]))) .wage-rates{grid-column:1/-1;grid-template-columns:repeat(2,minmax(0,1fr))}
 #view-payroll .wage-help{display:none}
-#view-payroll .payroll-tools{padding:0 24px;background:var(--ui-card)}
-#view-payroll .payroll-tools>details{margin:0;border:0;border-top:1px solid var(--ui-line)}
+#view-payroll .payroll-tools{padding:4px 20px 0;background:var(--ui-card);border-radius:24px 24px 0 0}
+#view-payroll .payroll-tools>details{margin:0;border:0}
 #view-payroll .payroll-tools summary{font-size:13px;min-height:44px;line-height:1.6}
 #view-payroll .payroll-tools summary small{margin-left:8px;color:var(--ui-muted);font-size:10px;font-weight:400}
 #view-payroll .workday-summary #payroll-holiday-pay-row{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--ui-copy)}
@@ -72,7 +72,7 @@ body[data-pref-theme] #view-payroll #wage-allowance-settings input[readonly]{col
 #view-payroll .payroll-tools :is(.btn-save,.btn-reset-data){min-height:44px;padding:8px 14px;font-size:13px}
 #view-payroll .payroll-tools .input-group{position:relative}
 #view-payroll .payroll-tools .work-input-unit{position:absolute;right:12px;bottom:12px;font-size:12px;color:var(--ui-muted)}
-body[data-pref-theme] #view-payroll #payroll-payment-details{padding:0 24px}
+body[data-pref-theme] #view-payroll #payroll-payment-details{padding:0 20px 4px;margin:0 0 14px;border-radius:0 0 24px 24px!important}
 #view-payroll #payroll-payment-details>summary{border-top:1px solid var(--ui-line);min-height:48px;font-size:14px}
 #view-payroll .payroll-disclosure-state :is(.when-open,.when-closed){display:none}
 
@@ -97,8 +97,9 @@ body[data-pref-theme] #wage-amount-dialog .wage-amount-options button{border:0;b
 body[data-pref-theme] #wage-amount-dialog .wage-amount-options [aria-pressed=true]{background:var(--ui-blue-soft)}
 #wage-amount-dialog .wage-amount-options{gap:4px}
 @media(max-width:360px){
- body[data-pref-theme] #view-payroll :is(.card,.salary-hero),body[data-pref-theme] #view-payroll .salary-hero{padding-inline:20px}
- body[data-pref-theme] #view-payroll #payroll-estimate-card,#view-payroll .payroll-bonus,#view-payroll .payroll-tools,body[data-pref-theme] #view-payroll #payroll-payment-details{padding-inline:20px}
+ body[data-view=payroll] .container{padding-inline:12px}
+ body[data-pref-theme] #view-payroll :is(.card,.salary-hero),body[data-pref-theme] #view-payroll .salary-hero{padding-inline:14px}
+ body[data-pref-theme] #view-payroll #payroll-estimate-card,#view-payroll .payroll-bonus,#view-payroll .payroll-tools,body[data-pref-theme] #view-payroll #payroll-payment-details{padding-inline:14px}
  #payroll-sms-dialog:not([data-guided=true]) .wage-allowance-toggle-row{flex-direction:row;align-items:center}
  body[data-pref-theme] #payroll-sms-dialog:not([data-guided=true]) .wage-allowance-toggle-row input:not([type=checkbox]){font-size:15px!important;text-align:right}
 }
@@ -129,7 +130,7 @@ body[data-pref-theme] #holiday-work-pay-done{flex:none;width:100%;min-height:52p
 #view-payroll .payroll-bonus-symbol{flex:none;font-size:12px;line-height:1}
 
 @media(max-width:360px){
- body[data-pref-theme] #view-payroll .payroll-input-card :is(.regular-days,.special-days) .input-group{padding-inline:10px;gap:4px}
+ body[data-pref-theme] #view-payroll .payroll-input-card :is(.regular-days,.special-days) .input-group{padding-inline:8px;gap:4px}
  #view-payroll .payroll-input-card .regular-days label{font-size:12px}
  #view-payroll .regular-days .work-day-count strong{font-size:15px}
 }
