@@ -966,6 +966,7 @@
 <link rel="stylesheet" href="./experimental-themes.css?v=5">
 <link rel="stylesheet" href="./beige-round-theme.css?v=1">
 <link rel="stylesheet" href="./viewport-lock.css?v=1">
+<link rel="stylesheet" href="./payroll-layout.css?v=flat-1">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1032,10 +1033,10 @@
             <!-- 총지급액 히어로 카드 (좌/우 스와이프 지원) -->
             <div class="salary-month-viewport">
             <div class="salary-hero" id="salary-hero-card" title="좌우로 스와이프하여 이전/다음 달 급여 이동">
-                <div class="period-tag" id="pay-period-label">산정기간: 2026-08-16 ~ 2026-09-15</div>
-                <div class="hero-label" id="hero-pay-label">총 지급액 (세전 합계)</div>
+                <div class="hero-label" id="hero-pay-label">이번 달 예상 급여</div>
                 <div class="hero-amount" id="hero-gross-pay">0 원</div>
-                <div class="hero-subgrid">
+                <p class="hero-pay-meta"><span id="hero-pay-basis">세전</span> · <span class="period-tag" id="pay-period-label">10.16–11.15 근무 기준</span></p>
+                <div class="hero-subgrid" hidden>
                     <div>
                         <div class="hero-label" id="hero-regular-label">월 급여 (세전)</div>
                         <div class="sub-val" id="hero-regular-pay" style="color: #38bdf8;">0 원</div>
@@ -1049,9 +1050,10 @@
 
             <div class="card payroll-summary" id="payroll-estimate-card">
                 <label class="estimate-toggle" for="payroll-estimate-toggle">
-                    <span><span class="estimate-title">예상 실수령액</span><span class="estimate-caption">세금·보험료를 추정해요</span></span>
-                    <span class="estimate-switch"><span id="payroll-estimate-state" class="estimate-state" aria-hidden="true">OFF</span><input type="checkbox" id="payroll-estimate-toggle" role="switch" aria-label="예상 실수령액 계산" aria-controls="payroll-estimate-panel"></span>
+                    <input type="checkbox" id="payroll-estimate-toggle" role="switch" aria-label="예상 실수령액 계산" aria-controls="payroll-estimate-panel">
+                    <span id="payroll-estimate-action-label">예상 실수령액 보기</span>
                 </label>
+                <p class="estimate-caption">세금과 보험료를 반영한 추정치예요.</p>
                 <div id="payroll-estimate-panel" hidden>
                     <div class="estimate-amounts" aria-live="polite">
                         <div class="estimate-row estimate-net"><span>예상 실수령액</span><span id="estimate-net">0 원</span></div>
@@ -1065,15 +1067,54 @@
                     </details>
                     <p class="estimate-disclaimer">세금·보험료와 실수령액은 추정치예요. 실제 명세서와 다를 수 있어요.</p>
                 </div>
+                <span id="payroll-estimate-state" hidden aria-hidden="true">OFF</span>
                 <div class="estimate-footer">
                     <span id="payroll-sms-applied" class="estimate-applied" role="status"></span>
                 </div>
             </div>
 
+            <div class="payroll-bonus">
+                <div class="payroll-bonus-row">
+                    <div><span id="lbl-bonus-check">상여 포함</span><small id="payroll-bonus-state">자동 OFF</small></div>
+                    <strong id="payroll-bonus-amount">0원</strong>
+                    <input type="checkbox" id="inp-bonus-check" role="switch" disabled aria-label="짝수 달 상여 자동 적용" aria-describedby="payroll-bonus-hint">
+                </div>
+                <p id="payroll-bonus-hint">상여는 짝수 달에 자동으로 켜지고, 홀수 달에는 꺼져요.</p>
+            </div>
             </div><!-- salary-month-viewport -->
+            <div class="card payroll-input-card">
+                <div class="card-header">
+                    <span>근무 내역</span>
+                    <div style="display:flex; gap:8px; align-items:center;">
+
+                        <button type="button" class="calendar-reflect-button" onclick="switchView('calendar')">달력에서 변경</button>
+                    </div>
+                </div>
+                <p id="calendar-days-hint" class="calendar-days-hint">달력의 근무가 자동으로 반영돼요.</p>
+                <div class="two-cols regular-days">
+                    <div class="input-group">
+                        <label for="inp-day-days"><svg viewBox="0 0 24 24" class="payroll-shift-icon day" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/></svg>주간 근무</label>
+                        <input type="text" id="inp-day-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
+                    </div>
+                    <div class="input-group">
+                        <label for="inp-night-days"><svg viewBox="0 0 24 24" class="payroll-shift-icon night" fill="currentColor" aria-hidden="true"><path d="M21 14.2A9.5 9.5 0 0 1 9.8 3 9.5 9.5 0 1 0 21 14.2Z"/></svg>야간 근무</label>
+                        <input type="text" id="inp-night-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
+                    </div>
+                </div>
+                <div class="two-cols special-days">
+                    <div class="input-group">
+                        <label for="inp-daysp-days">주간 특근</label>
+                        <input type="text" id="inp-daysp-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
+                    </div>
+                    <div class="input-group">
+                        <label for="inp-nightsp-days">야간 특근</label>
+                        <input type="text" id="inp-nightsp-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
+                    </div>
+                </div>
+            </div>
             <div class="card wage-settings-card">
                 <div class="card-header">
-                    <span id="wage-settings-title">시급</span><button type="button" class="sms-open-btn wage-edit-button" onclick="document.getElementById('payroll-sms-open').click()">시급 설정 <span aria-hidden="true">›</span></button>
+                    <span id="wage-settings-title">시급</span><button type="button" class="sms-open-btn wage-edit-button" onclick="document.getElementById('payroll-sms-open').click()">설정</button>
                 </div>
                 <div class="two-cols wage-rates">
                     <div class="input-group">
@@ -1086,6 +1127,10 @@
                     </div>
                 </div>
                 <div id="wage-allowance-settings" class="two-cols" hidden>
+                    <div id="seniority-pay-setting" class="input-group" hidden>
+                        <label for="input-seniority-pay">근속수당</label>
+                        <input type="text" id="input-seniority-pay" value="0원" readonly aria-describedby="wage-sms-hint">
+                    </div>
                     <div id="duty-pay-setting" class="input-group" hidden>
                         <label for="input-duty-pay">고정수당</label>
                         <input type="text" id="input-duty-pay" value="0원" readonly aria-describedby="wage-sms-hint">
@@ -1110,43 +1155,11 @@
                         <label for="display-allowance-legacy">고정수당</label>
                         <input type="text" id="display-allowance-legacy" value="0원" readonly aria-describedby="wage-sms-hint">
                     </div>
-                    <div id="seniority-pay-setting" class="input-group" hidden>
-                        <label for="input-seniority-pay">근속수당</label>
-                        <input type="text" id="input-seniority-pay" value="0원" readonly aria-describedby="wage-sms-hint">
-                    </div>
                 </div>
                 <details class="wage-help"><summary>시급과 수당은 어떻게 반영되나요?</summary><p id="wage-sms-hint" class="account-hint">시급과 수당은 직접 입력해요. 근속수당은 입사일 기준 금액을 확인하고 수정할 수 있어요. 문자 붙여넣기는 개인 세금·보험료 추정에만 사용해요.</p></details>
 
             </div>
-            <div class="card payroll-input-card">
-                <div class="card-header">
-                    <span>근무일수</span>
-                    <div style="display:flex; gap:8px; align-items:center;">
-
-                        <button type="button" class="calendar-reflect-button" onclick="switchView('calendar')">달력에서 변경</button>
-                    </div>
-                </div>
-                <p id="calendar-days-hint" class="calendar-days-hint">달력의 근무가 자동으로 반영돼요.</p>
-                <div class="two-cols regular-days">
-                    <div class="input-group">
-                        <label for="inp-day-days">주간</label>
-                        <input type="text" id="inp-day-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
-                    </div>
-                    <div class="input-group">
-                        <label for="inp-night-days">야간</label>
-                        <input type="text" id="inp-night-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
-                    </div>
-                </div>
-                <div class="two-cols special-days">
-                    <div class="input-group">
-                        <label for="inp-daysp-days">주간 특근</label>
-                        <input type="text" id="inp-daysp-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
-                    </div>
-                    <div class="input-group">
-                        <label for="inp-nightsp-days">야간 특근</label>
-                        <input type="text" id="inp-nightsp-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
-                    </div>
-                </div>
+            <div class="payroll-tools">
                 <details class="workday-calculations">
                     <summary>연장·무급 계산 결과 <span aria-hidden="true">⌄</span></summary>
                 <div class="workday-summary" aria-label="캘린더 계산 결과">
@@ -1168,18 +1181,14 @@
                     </div>
                     </div>
                     <p class="adjustment-hint">연장 제외는 달력 연동 · 하루 2.5시간 제외</p>
-                </details>
-                <input type="hidden" id="inp-hire-date" aria-label="정규직 전환일 (연차, 지원금 판정)">
-
-                <div class="toggle-box" onclick="toggleBonusCheck(event)">
-                    <label id="lbl-bonus-check">상여금 포함</label>
-                    <input type="checkbox" id="inp-bonus-check" onchange="calculatePayrollFromInputs()">
-                </div>
-
                 <div class="btn-action-group">
                     <button class="btn-save" onclick="manualSaveData()">입력값 저장</button>
                     <button class="btn-reset-data" onclick="resetDefaults()">초기화</button>
                 </div>
+                </details>
+                <input type="hidden" id="inp-hire-date" aria-label="정규직 전환일 (연차, 지원금 판정)">
+
+
             </div>
 
             <details class="card payroll-disclosure" id="payroll-payment-details">
@@ -1480,7 +1489,7 @@
         <label id="wage-amount-field" for="wage-amount-input" hidden><span>월 수당 금액</span><span class="wage-amount-value"><input id="wage-amount-input" type="text" inputmode="numeric" autocomplete="off" maxlength="13" placeholder="금액 입력" aria-describedby="wage-amount-status"><small>원</small></span></label>
         <p id="wage-amount-status" role="alert"></p>
       </div>
-      <button type="button" id="wage-amount-done" hidden>입력 완료</button>
+      <button type="button" id="wage-amount-done">선택 완료</button>
     </dialog>
 
     <!-- 모달: 연/월 선택 피커 (캘린더 & 급여계산기 공용) -->
@@ -2482,7 +2491,8 @@
 
             const startStr = toDateKey(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
             const endStr = toDateKey(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-            document.getElementById('pay-period-label').innerText = `산정기간: ${startStr} ~ ${endStr}`;
+            document.getElementById('pay-period-label').innerText = `${startDate.getMonth()+1}.${startDate.getDate()}–${endDate.getMonth()+1}.${endDate.getDate()} 근무 기준`;
+            document.getElementById('pay-period-label').setAttribute('aria-label', `산정기간 ${startStr}부터 ${endStr}까지`);
 
             let E2 = 0, E3 = 0, E4 = 0, E5 = 0, noOtDays = 0, unpaidCount = 0;
             syncedNightNoOT=0;syncedSpecialDayNoOT=0;syncedSpecialNightNoOT=0;
@@ -2542,6 +2552,7 @@
             document.getElementById('inp-no-ot-days').value = noOtDays;
 
             document.getElementById('inp-bonus-check').checked = (payMonthNum % 2 === 0);
+            document.getElementById('payroll-bonus-state').textContent = payMonthNum % 2 === 0 ? '자동 ON' : '자동 OFF';
             calculatePayrollFromInputs();
             updateLeaveStats();
         }
@@ -2991,7 +3002,7 @@
         };
     </script>
     <script src="./payroll-sms.js?v=manual-tax-1"></script>
-    <script src="./payroll-estimate.js?v=allowance-picker-2"></script>
+    <script src="./payroll-estimate.js?v=flat-1"></script>
     <script src="./calendar-integration.js?v=permissions-1"></script>
     <script src="./schedule-share.js?v=3"></script>
     <script src="./google-sync-core.js?v=drive-export-1-6"></script>
@@ -3096,7 +3107,7 @@
 <script src="./day-editor-designs.js?v=10"></script>
 <script src="./memo-composer.js?v=surface-motion-2"></script>
 <script src="./settings-options.js?v=2"></script>
-<script src="./wage-import-ui.js?v=allowance-switches-3"></script>
+<script src="./wage-import-ui.js?v=flat-1"></script>
 <script src="./app-i18n-data.js?v=allowance-steps-1"></script>
 <script src="./app-i18n-zh.js?v=3"></script>
 <script src="./app-i18n.js?v=9"></script>

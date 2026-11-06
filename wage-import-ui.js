@@ -13,7 +13,7 @@ info.addEventListener('click',()=>{document.getElementById('wage-tax-import').op
  const field=$('wage-amount-field'),amount=$('wage-amount-input'),done=$('wage-amount-done'),status=$('wage-amount-status');
  const preset=$('wage-amount-preset'),custom=$('wage-amount-custom');
  const categories=[['seniority','근속수당'],['duty','직책수당'],['qualification','자격수당'],['family','가족수당'],['job','직무수당'],['legacy','기타 고정수당']];
- let target=null,source=null,label='',presetAmount=70000;
+ let target=null,source=null,label='',presetAmount=70000,choice='preset';
  const switches=new Map();
  const refresh=()=>{if(parent.dataset.guided==='true')return;for(const [key]of categories){const input=$('wage-'+key),toggle=switches.get(key);if(toggle)toggle.checked=value(input)>0;}};
  const value=input=>Number(input.value.replace(/,/g,''))||0;
@@ -21,26 +21,31 @@ info.addEventListener('click',()=>{document.getElementById('wage-tax-import').op
   if(!parent.open||parent.dataset.guided==='true'||picker.open)return;
   target=input;source=card;label=name;presetAmount=70000;
   const current=value(input);
-  $('wage-amount-title').textContent=name+'은 얼마인가요?';
-  $('wage-amount-description').textContent='7만원을 선택하거나 다른 금액을 직접 입력해 주세요.';
+  $('wage-amount-title').textContent=name+'을 설정해요';
+  $('wage-amount-description').textContent='매월 받는 금액을 골라주세요.';
   $('wage-amount-preset-label').textContent='7만원';
   $('wage-amount-preset-hint').textContent='매월 70,000원';
-  preset.setAttribute('aria-pressed',String(current===presetAmount));custom.setAttribute('aria-pressed',String(current>0&&current!==presetAmount));
+  choice=current>0&&current!==presetAmount?'custom':'preset';
+  preset.setAttribute('aria-pressed',String(choice==='preset'));custom.setAttribute('aria-pressed',String(choice==='custom'));
   amount.value=current===0?'':input.value;amount.setAttribute('aria-label',name+' 금액');amount.removeAttribute('aria-invalid');
-  field.hidden=done.hidden=true;status.textContent='';picker.showModal();
+  field.hidden=choice!=='custom';done.hidden=false;status.textContent='';picker.showModal();
  }
  function setDraft(n){
   if(!target||!parent.open)return;
   target.value=n.toLocaleString('ko-KR');target.dispatchEvent(new Event('input',{bubbles:true}));
   picker.close();
  }
- preset.addEventListener('click',()=>setDraft(presetAmount));
+ preset.addEventListener('click',()=>{
+  choice='preset';preset.setAttribute('aria-pressed','true');custom.setAttribute('aria-pressed','false');
+  const hide=()=>{field.hidden=true;status.textContent='';};
+  if(window.AppSheets?.resize)AppSheets.resize(picker,hide);else hide();
+ });
  custom.addEventListener('click',()=>{
-  const reveal=()=>{preset.setAttribute('aria-pressed','false');custom.setAttribute('aria-pressed','true');field.hidden=done.hidden=false;};
+  const reveal=()=>{choice='custom';preset.setAttribute('aria-pressed','false');custom.setAttribute('aria-pressed','true');field.hidden=false;};
   if(window.AppSheets?.resize)AppSheets.resize(picker,reveal);else reveal();
   amount.focus({preventScroll:true});amount.select();field.scrollIntoView({block:'nearest'});
  });
- function apply(){const n=PayrollEstimate.validateAllowance(amount,label);if(n===null){status.textContent=$('wage-manual-status').textContent;return;}status.textContent='';setDraft(n);}
+ function apply(){if(choice==='preset'){setDraft(presetAmount);return;}const n=PayrollEstimate.validateAllowance(amount,label);if(n===null){status.textContent=$('wage-manual-status').textContent;return;}status.textContent='';setDraft(n);}
  done.addEventListener('click',apply);
  amount.addEventListener('input',()=>{if(/^\d+$/.test(amount.value))amount.value=amount.value.replace(/^0+(?=\d)/,'');amount.removeAttribute('aria-invalid');status.textContent='';});
  amount.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();apply();}});
@@ -72,7 +77,7 @@ info.addEventListener('click',()=>{document.getElementById('wage-tax-import').op
  }
  function normalRows(){
   if(!parent.open||parent.dataset.guided==='true')return;
-  for(const [key,name]of categories){const card=$('wage-'+key).closest('label,.wage-mini-card'),labelNode=key==='legacy'?card:card.firstElementChild;labelNode.firstChild.textContent=key==='legacy'?'기타 ':name.replace(/수당$/,'');}
+  for(const [key,name]of categories){const card=$('wage-'+key).closest('label,.wage-mini-card'),labelNode=key==='legacy'?card:card.firstElementChild;labelNode.firstChild.textContent=key==='legacy'?'기타수당 ':name;}
   refresh();
  }
  new MutationObserver(normalRows).observe(parent,{attributes:true,attributeFilter:['open','data-guided']});

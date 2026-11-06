@@ -48,7 +48,10 @@
         document.getElementById('payroll-estimate-basis').textContent = basis('급여',profile) + ' · ' + basis('상여',bonusProfile);
         const result = estimatePayments(parts,profile,bonusProfile), suffix = toggle.checked ? '세후 추정' : '세전';
         const amount = toggle.checked ? result.net : result.gross;
-        document.getElementById('hero-pay-label').textContent = toggle.checked ? '총 지급액 (세후 추정)' : '총 지급액 (세전 합계)';
+        document.getElementById('hero-pay-label').textContent = toggle.checked ? '이번 달 예상 실수령액' : '이번 달 예상 급여';
+        document.getElementById('hero-pay-basis').textContent = suffix;
+        document.getElementById('payroll-estimate-action-label').textContent = toggle.checked ? '세전 급여로 보기' : '예상 실수령액 보기';
+        document.getElementById('payroll-bonus-amount').textContent = (toggle.checked ? result.bonus.net : result.bonus.gross).toLocaleString('ko-KR') + '원';
         document.getElementById('hero-gross-pay').innerText = fmt(amount);
         for(const prefix of ['hero','payslip-modal']) {
             document.getElementById(prefix+'-regular-label').textContent='월 급여 ('+suffix+')';
