@@ -56,6 +56,7 @@ const url=process.env.TEST_URL||'http://127.0.0.1:8768/';
  for(let i=0;i<3;i++){
   await p.locator('#workday-adjustments>summary').click();
   assert.equal(await p.locator('#workday-adjustments').evaluate(e=>e.open),true);
+  const bottom=await p.evaluate(()=>{const card=document.querySelector('.payroll-tools'),r=card.getBoundingClientRect(),hint=card.querySelector('.adjustment-hint').getBoundingClientRect(),next=document.getElementById('payroll-payment-details').getBoundingClientRect();return {radius:getComputedStyle(card).borderBottomLeftRadius,padding:r.bottom-hint.bottom,gap:next.top-r.bottom};});assert.equal(bottom.radius,'24px');assert(bottom.padding>=15,'Expanded calculation card contains its final explanation');assert(bottom.gap>=12,'Calculation and payment details are complete, separate rounded cards');
   assert.equal(await p.locator('#workday-adjustments>summary>span').first().evaluate(e=>getComputedStyle(e).transform),'none','Disclosure label remains upright');
   assert.notEqual(await p.locator('.workday-chevron').evaluate(e=>getComputedStyle(e).transform),'none','Only the chevron rotates');
   if(i===0&&width===390)await p.screenshot({path:'/tmp/payroll-calculations-upright-'+engine.name()+'.png',fullPage:true});

@@ -93,7 +93,7 @@
         text.value='';bonusText.value='';draftSalary=draftBonus=null;seniorityOverride=false;
         updateTaxSummary();
         for(const input of amountInputs){input.value='';input.setAttribute('aria-invalid','false');input.classList.remove('wage-filled');}
-        for(const id of ['wage-tax-import','wage-paste-fallback','wage-bonus-input','wage-import-help','wage-import-review'])el(id).open=false;
+        for(const id of ['wage-tax-import','wage-paste-fallback','wage-bonus-input','wage-bonus-paste-fallback','wage-import-help','wage-import-review'])el(id).open=false;
         el('wage-import-review').hidden=true;el('wage-legacy-row').hidden=true;
         el('payroll-sms-recognized').hidden=true;el('payroll-sms-recognized').textContent='';el('wage-bonus-status').textContent='';
         el('wage-import-info').setAttribute('aria-expanded','false');preview.textContent='';status.textContent='';manualStatus.textContent='';apply.disabled=false;
@@ -138,7 +138,7 @@
             preview.textContent=[draftSalary?basis('급여',draftSalary):'',draftBonus?basis('상여',draftBonus):'',...parsed.warnings].filter(Boolean).join('\n');
             el('wage-import-review').hidden=!preview.textContent;
             message.textContent='세금·보험료와 실수령액은 추정치예요. 시급과 수당은 직접 입력한 금액을 유지해요.';
-            el('wage-paste-fallback').open=false;ok=true;return true;
+            el(isBonus?'wage-bonus-paste-fallback':'wage-paste-fallback').open=false;ok=true;return true;
         }catch(error){
             // A failed optional import never replaces a saved personal profile or blocks manual entry.
             if(isBonus)draftBonus=null;else draftSalary=null;

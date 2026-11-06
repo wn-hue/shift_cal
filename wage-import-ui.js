@@ -2,8 +2,21 @@
 (()=>{'use strict';const dialog=document.getElementById('payroll-sms-dialog'),status=document.getElementById('payroll-sms-status'),help=document.getElementById('wage-import-help'),info=document.getElementById('wage-import-info');let revision=0;
 function busy(button,value){button.disabled=value;button.setAttribute('aria-busy',String(value));if(value){if(!button.querySelector('.wage-progress-dots')){const dots=document.createElement('span');dots.className='wage-progress-dots';dots.setAttribute('aria-hidden','true');dots.innerHTML='<i></i><i></i><i></i>';button.append(dots);}}else button.querySelector('.wage-progress-dots')?.remove();}
 const invalidate=()=>{++revision;for(const button of dialog.querySelectorAll('[data-wage-paste]'))busy(button,false);};dialog.addEventListener('close',()=>{if(!dialog.open)invalidate();});dialog.addEventListener('wage-draft-reset',invalidate);dialog.addEventListener('wage-draft-navigation',invalidate);dialog.addEventListener('input',invalidate);dialog.addEventListener('paste',invalidate);
-for(const button of dialog.querySelectorAll('[data-wage-paste]'))button.addEventListener('click',async()=>{const token=++revision;busy(button,true);try{if(!navigator.clipboard?.readText)throw Error();const value=await navigator.clipboard.readText();if(token!==revision||!dialog.open||dialog.dataset.sheetClosing==='true')return;if(!value.trim()){status.textContent='복사한 문자가 없어요. 급여 문자를 먼저 복사해 주세요.';return;}PayrollEstimate.importText(button.dataset.wagePaste==='payroll-bonus-sms-text'?'bonus':'salary',value);}catch{if(token!==revision||!dialog.open||dialog.dataset.sheetClosing==='true')return;status.textContent='아래 입력칸을 길게 눌러 붙여넣어 주세요.';const target=document.getElementById(button.dataset.wagePaste);if(target.id==='payroll-sms-text')document.getElementById('wage-paste-fallback').open=true;target.focus({preventScroll:true});target.scrollIntoView({block:'nearest'});}finally{if(token===revision)busy(button,false);}});
-info.addEventListener('click',()=>{document.getElementById('wage-tax-import').open=true;help.open=!help.open;if(help.open)help.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});});help.addEventListener('toggle',()=>info.setAttribute('aria-expanded',String(help.open)));
+for(const button of dialog.querySelectorAll('[data-wage-paste]'))button.addEventListener('click',async()=>{
+ const token=++revision,isBonus=button.dataset.wagePaste==='payroll-bonus-sms-text',message=isBonus?document.getElementById('wage-bonus-status'):status;
+ const target=document.getElementById(button.dataset.wagePaste),fallback=document.getElementById(isBonus?'wage-bonus-paste-fallback':'wage-paste-fallback');
+ message.textContent='';busy(button,true);
+ try{
+  if(!navigator.clipboard?.readText)throw Error();const value=await navigator.clipboard.readText();
+  if(token!==revision||!dialog.open||dialog.dataset.sheetClosing==='true')return;
+  if(!value.trim()){message.textContent=isBonus?'복사한 문자가 없어요. 상여 문자를 먼저 복사해 주세요.':'복사한 문자가 없어요. 급여 문자를 먼저 복사해 주세요.';return;}
+  PayrollEstimate.importText(isBonus?'bonus':'salary',value);
+ }catch{
+  if(token!==revision||!dialog.open||dialog.dataset.sheetClosing==='true')return;
+  message.textContent='아래 입력칸을 길게 눌러 붙여넣어 주세요.';fallback.open=true;target.focus({preventScroll:true});target.scrollIntoView({block:'nearest'});
+ }finally{if(token===revision)busy(button,false);}
+});
+info.addEventListener('click',()=>{help.open=!help.open;if(help.open)help.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});});help.addEventListener('toggle',()=>info.setAttribute('aria-expanded',String(help.open)));
 })();
 
 /* The regular wage form uses the same two-card amount choice as first setup.

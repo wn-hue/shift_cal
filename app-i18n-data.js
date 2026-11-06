@@ -742,3 +742,31 @@ Object.assign(window.AppTranslations, {
   "ja": "実際の控除額と手取り額は明細と異なる場合があります。"
  }
 });
+
+Object.assign(window.AppTranslations, {
+ "상여 문자로 공제 기준 설정": {
+  "en": "Set deductions from a bonus message",
+  "zh": "用奖金短信设置扣除依据",
+  "ja": "賞与SMSで控除基準を設定"
+ },
+ "지급·공제 합계가 있는 상여 문자를 복사해 주세요.": {
+  "en": "Copy a bonus message that includes total payments and deductions.",
+  "zh": "请复制包含应发和扣除合计的奖金短信。",
+  "ja": "支給・控除合計が記載された賞与SMSをコピーしてください。"
+ },
+ "붙여넣으면 내 상여 공제 기준을 가져와요.": {
+  "en": "Paste it to import your bonus deduction basis.",
+  "zh": "粘贴后即可导入个人奖金扣除依据。",
+  "ja": "貼り付けると個人の賞与控除基準を取り込めます。"
+ },
+ "개인 기준이 없으면 약 18.09%로 추정해요.": {
+  "en": "Without a personal basis, deductions are estimated at about 18.09%.",
+  "zh": "没有个人依据时，按约18.09%估算。",
+  "ja": "個人の基準がなければ約18.09%で推定します。"
+ },
+ "복사한 문자가 없어요. 상여 문자를 먼저 복사해 주세요.": {
+  "en": "No message has been copied. Copy your bonus message first.",
+  "zh": "没有已复制的短信，请先复制奖金短信。",
+  "ja": "コピーしたメッセージがありません。先に賞与SMSをコピーしてください。"
+ }
+});
