@@ -130,3 +130,21 @@ body[data-pref-theme] #wage-amount-done{flex:none;width:100%;min-height:52px;mar
 #payroll-sms-dialog:not([data-guided=true]) :is(.wage-mini-card,#wage-legacy-row),#payroll-sms-dialog:not([data-guided=true]) :is(.wage-mini-card,#wage-legacy-row) input{cursor:pointer}
 body[data-pref-theme] #wage-amount-dialog[data-sheet-resizing=true][open]{height:var(--sheet-resize-height)!important;overflow:hidden!important;transition:height 320ms cubic-bezier(.22,1,.36,1)!important}
 @media(prefers-reduced-motion:reduce){.wage-amount-options button{transition:none!important}body[data-pref-theme] #wage-amount-dialog[data-sheet-resizing=true][open]{transition:none!important}}
+
+/* Six consistent allowance rows; the original amount fields remain the draft. */
+#payroll-sms-dialog:not([data-guided=true]) .wage-mini-cards{display:grid;grid-template-columns:1fr;gap:0;margin:0}
+#payroll-sms-dialog:not([data-guided=true]) .wage-allowance-toggle-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(76px,104px) 44px;align-items:center;gap:12px;min-height:52px;margin:0;padding:4px 0;border:0;border-bottom:1px solid var(--ui-line,#e5e8eb);border-radius:0;background:transparent;font-size:14px}
+#payroll-sms-dialog:not([data-guided=true]) .wage-allowance-toggle-row>span:first-child{max-width:none;min-width:0}
+#payroll-sms-dialog:not([data-guided=true]) #wage-legacy-row{margin:0 0 18px;border-bottom:0}
+#payroll-sms-dialog:not([data-guided=true]) #wage-legacy-row>small,#payroll-sms-dialog:not([data-guided=true]) #wage-seniority-source{display:none}
+#payroll-sms-dialog:not([data-guided=true]) .wage-allowance-toggle-row .wage-value{max-width:none;min-width:0}
+#payroll-sms-dialog:not([data-guided=true]) .wage-allowance-toggle-row .wage-value input{font-size:16px!important;text-align:right}
+#payroll-sms-dialog .wage-allowance-switch{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;cursor:pointer}
+body[data-pref-theme] #payroll-sms-dialog .wage-allowance-switch input{appearance:none;position:relative;flex:none;box-sizing:border-box;width:44px;min-width:44px;height:44px;min-height:44px;margin:0;padding:0;border:0;border-radius:999px;background:transparent;box-shadow:none;cursor:pointer}
+body[data-pref-theme] #payroll-sms-dialog .wage-allowance-switch input::before{content:'';position:absolute;top:9px;left:0;width:44px;height:26px;border-radius:999px;background:#d1d6db;transition:background-color 180ms ease-out}
+body[data-pref-theme] #payroll-sms-dialog .wage-allowance-switch input::after{content:'';position:absolute;top:12px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0002;transition:transform 180ms ease-out}
+body[data-pref-theme] #payroll-sms-dialog .wage-allowance-switch input:checked::before{background:var(--ui-blue,#3182f6)}
+body[data-pref-theme] #payroll-sms-dialog .wage-allowance-switch input:checked::after{transform:translateX(18px)}
+#payroll-sms-dialog .wage-allowance-switch input:focus-visible{outline:2px solid var(--ui-blue,#3182f6);outline-offset:3px}
+#payroll-sms-dialog[data-guided=true] .wage-allowance-switch{display:none}
+@media(prefers-reduced-motion:reduce){#payroll-sms-dialog .wage-allowance-switch input::before,#payroll-sms-dialog .wage-allowance-switch input::after{transition:none!important}}
