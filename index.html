@@ -966,7 +966,7 @@
 <link rel="stylesheet" href="./experimental-themes.css?v=5">
 <link rel="stylesheet" href="./beige-round-theme.css?v=1">
 <link rel="stylesheet" href="./viewport-lock.css?v=1">
-<link rel="stylesheet" href="./payroll-layout.css?v=flat-1">
+<link rel="stylesheet" href="./payroll-layout.css?v=visibility-2">
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1034,7 +1034,13 @@
             <div class="salary-month-viewport">
             <div class="salary-hero" id="salary-hero-card" title="좌우로 스와이프하여 이전/다음 달 급여 이동">
                 <div class="hero-label" id="hero-pay-label">이번 달 예상 급여</div>
-                <div class="hero-amount" id="hero-gross-pay">0 원</div>
+                <div class="hero-pay-row">
+                    <div class="hero-amount" id="hero-gross-pay">0 원</div>
+                    <label class="estimate-toggle" for="payroll-estimate-toggle">
+                        <span id="payroll-estimate-action-label">세전</span>
+                        <input type="checkbox" id="payroll-estimate-toggle" role="switch" aria-label="세후 예상 금액으로 보기" aria-controls="payroll-estimate-panel">
+                    </label>
+                </div>
                 <p class="hero-pay-meta"><span id="hero-pay-basis">세전</span> · <span class="period-tag" id="pay-period-label">10.16–11.15 근무 기준</span></p>
                 <div class="hero-subgrid" hidden>
                     <div>
@@ -1049,11 +1055,6 @@
             </div>
 
             <div class="card payroll-summary" id="payroll-estimate-card">
-                <label class="estimate-toggle" for="payroll-estimate-toggle">
-                    <input type="checkbox" id="payroll-estimate-toggle" role="switch" aria-label="예상 실수령액 계산" aria-controls="payroll-estimate-panel">
-                    <span id="payroll-estimate-action-label">예상 실수령액 보기</span>
-                </label>
-                <p class="estimate-caption">세금과 보험료를 반영한 추정치예요.</p>
                 <div id="payroll-estimate-panel" hidden>
                     <div class="estimate-amounts" aria-live="polite">
                         <div class="estimate-row estimate-net"><span>예상 실수령액</span><span id="estimate-net">0 원</span></div>
@@ -1074,12 +1075,8 @@
             </div>
 
             <div class="payroll-bonus">
-                <div class="payroll-bonus-row">
-                    <div><span id="lbl-bonus-check">상여 포함</span><small id="payroll-bonus-state">자동 OFF</small></div>
-                    <strong id="payroll-bonus-amount">0원</strong>
-                    <input type="checkbox" id="inp-bonus-check" role="switch" disabled aria-label="짝수 달 상여 자동 적용" aria-describedby="payroll-bonus-hint">
-                </div>
-                <p id="payroll-bonus-hint">상여는 짝수 달에 자동으로 켜지고, 홀수 달에는 꺼져요.</p>
+                <input type="checkbox" id="inp-bonus-check" disabled hidden>
+                <p id="payroll-bonus-hint">상여는 짝수 달에만 자동으로 반영돼요.</p>
             </div>
             </div><!-- salary-month-viewport -->
             <div class="card payroll-input-card">
@@ -1093,22 +1090,22 @@
                 <p id="calendar-days-hint" class="calendar-days-hint">달력의 근무가 자동으로 반영돼요.</p>
                 <div class="two-cols regular-days">
                     <div class="input-group">
-                        <label for="inp-day-days"><svg viewBox="0 0 24 24" class="payroll-shift-icon day" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/></svg>주간 근무</label>
-                        <input type="text" id="inp-day-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
+                        <label for="work-day-count"><svg viewBox="0 0 24 24" class="payroll-shift-icon day" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/></svg>주간 근무</label>
+                        <output class="work-day-count" id="work-day-count" aria-describedby="calendar-days-hint"><strong id="payroll-day-count">0</strong><span class="work-day-unit">일</span></output><input type="hidden" id="inp-day-days" value="0" readonly hidden>
                     </div>
                     <div class="input-group">
-                        <label for="inp-night-days"><svg viewBox="0 0 24 24" class="payroll-shift-icon night" fill="currentColor" aria-hidden="true"><path d="M21 14.2A9.5 9.5 0 0 1 9.8 3 9.5 9.5 0 1 0 21 14.2Z"/></svg>야간 근무</label>
-                        <input type="text" id="inp-night-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
+                        <label for="work-night-count"><svg viewBox="0 0 24 24" class="payroll-shift-icon night" fill="currentColor" aria-hidden="true"><path d="M21 14.2A9.5 9.5 0 0 1 9.8 3 9.5 9.5 0 1 0 21 14.2Z"/></svg>야간 근무</label>
+                        <output class="work-day-count" id="work-night-count" aria-describedby="calendar-days-hint"><strong id="payroll-night-count">0</strong><span class="work-day-unit">일</span></output><input type="hidden" id="inp-night-days" value="0" readonly hidden>
                     </div>
                 </div>
                 <div class="two-cols special-days">
                     <div class="input-group">
-                        <label for="inp-daysp-days">주간 특근</label>
-                        <input type="text" id="inp-daysp-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
+                        <label for="work-daysp-count">주간 특근</label>
+                        <output class="work-day-count" id="work-daysp-count" aria-describedby="calendar-days-hint"><strong id="payroll-daysp-count">0</strong><span class="work-day-unit">일</span></output><input type="hidden" id="inp-daysp-days" value="0" readonly hidden>
                     </div>
                     <div class="input-group">
-                        <label for="inp-nightsp-days">야간 특근</label>
-                        <input type="text" id="inp-nightsp-days" value="0" readonly aria-describedby="calendar-days-hint"><span class="work-input-unit" aria-hidden="true">일</span>
+                        <label for="work-nightsp-count">야간 특근</label>
+                        <output class="work-day-count" id="work-nightsp-count" aria-describedby="calendar-days-hint"><strong id="payroll-nightsp-count">0</strong><span class="work-day-unit">일</span></output><input type="hidden" id="inp-nightsp-days" value="0" readonly hidden>
                     </div>
                 </div>
             </div>
@@ -2552,7 +2549,6 @@
             document.getElementById('inp-no-ot-days').value = noOtDays;
 
             document.getElementById('inp-bonus-check').checked = (payMonthNum % 2 === 0);
-            document.getElementById('payroll-bonus-state').textContent = payMonthNum % 2 === 0 ? '자동 ON' : '자동 OFF';
             calculatePayrollFromInputs();
             updateLeaveStats();
         }
@@ -2563,6 +2559,10 @@
             const E3 = parseFloat(document.getElementById('inp-night-days').value) || 0;
             const E4 = parseFloat(document.getElementById('inp-daysp-days').value) || 0;
             const E5 = parseFloat(document.getElementById('inp-nightsp-days').value) || 0;
+            for (const [name, count] of [['day', E2], ['night', E3], ['daysp', E4], ['nightsp', E5]]) {
+                document.getElementById('payroll-' + name + '-count').textContent = count.toLocaleString('ko-KR', {maximumFractionDigits:1});
+                document.getElementById('work-' + name + '-count').setAttribute('data-positive', String(count > 0));
+            }
             const noOtDays = parseFloat(document.getElementById('inp-no-ot-days').value) || 0;
             const holidayBonus = parseFloat(document.getElementById('inp-holiday-bonus').value) || 0;
             const hasBonusCheck = document.getElementById('inp-bonus-check').checked;
@@ -3002,7 +3002,7 @@
         };
     </script>
     <script src="./payroll-sms.js?v=manual-tax-1"></script>
-    <script src="./payroll-estimate.js?v=flat-1"></script>
+    <script src="./payroll-estimate.js?v=visibility-2"></script>
     <script src="./calendar-integration.js?v=permissions-1"></script>
     <script src="./schedule-share.js?v=3"></script>
     <script src="./google-sync-core.js?v=drive-export-1-6"></script>
