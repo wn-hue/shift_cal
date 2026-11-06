@@ -36,15 +36,15 @@ body[data-pref-theme] #view-payroll :is(.payroll-input-card,.wage-settings-card)
 body[data-pref-theme] #view-payroll :is(.calendar-reflect-button,.wage-edit-button){display:inline-flex;align-items:center;min-height:44px;margin:0 -4px 0 0;padding:4px;background:transparent!important;border:0;border-radius:6px;color:var(--ui-blue)!important;font-size:12px;font-weight:600}
 #view-payroll #calendar-days-hint{display:none}
 #view-payroll .payroll-input-card .regular-days{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:0;padding:2px;border-radius:16px;background:var(--ui-field)}
-body[data-pref-theme] #view-payroll .payroll-input-card .regular-days .input-group{display:grid;grid-template-columns:1fr;align-content:start;gap:8px;min-width:0;min-height:78px;padding:10px 14px;border:0;border-radius:0;background:transparent}
+body[data-pref-theme] #view-payroll .payroll-input-card .regular-days .input-group{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:6px;min-width:0;min-height:46px;padding:10px 14px;border:0;border-radius:0;background:transparent}
 body[data-pref-theme] #view-payroll .regular-days .input-group+.input-group{border-left:1px solid var(--ui-line)}
-#view-payroll .payroll-input-card .regular-days label{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;font-weight:550;color:var(--ui-copy);white-space:nowrap;line-height:20px}
+#view-payroll .payroll-input-card .regular-days label{display:flex;align-items:center;gap:4px;margin:0;font-size:13px;font-weight:550;color:var(--ui-copy);white-space:nowrap;line-height:20px}
 #view-payroll .payroll-shift-icon{flex:none;width:19px;height:19px}
 #view-payroll .payroll-shift-icon.day{color:#ffb200}
 #view-payroll .payroll-shift-icon.night{color:#31558f}
 body[data-pref-theme=dark] #view-payroll .payroll-shift-icon.night{color:#a6bfff}
 #view-payroll .work-day-count{display:flex;align-items:baseline;justify-content:flex-end;gap:4px;min-width:0;margin:0;padding:0;font-variant-numeric:tabular-nums;line-height:1}
-#view-payroll .regular-days .work-day-count strong{color:var(--ui-blue);font-size:23px;font-weight:700;line-height:1;letter-spacing:-.5px}
+#view-payroll .regular-days .work-day-count strong{color:var(--ui-blue);font-size:16px;font-weight:700;line-height:1;letter-spacing:-.5px}
 #view-payroll .work-day-unit{color:var(--ui-muted);font-size:12px;font-weight:450;line-height:1}
 #view-payroll .payroll-input-card .special-days{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:4px 0 0;padding:0 2px}
 body[data-pref-theme] #view-payroll .payroll-input-card .special-days .input-group{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:6px;width:auto;min-width:0;min-height:36px;padding:0 14px;border:0;border-radius:0;background:transparent}
@@ -125,5 +125,11 @@ body[data-pref-theme] #holiday-work-pay-input{width:100%;min-width:0;margin:0;pa
 body[data-pref-theme] #holiday-work-pay-done{flex:none;width:100%;min-height:52px;margin:16px 0 0;padding:12px;border:0;border-radius:15px;background:var(--ui-blue);color:var(--ui-card);font:inherit;font-size:16px;font-weight:600;cursor:pointer}
 #holiday-work-pay-dialog :is(button,input):focus-visible{outline:2px solid var(--ui-blue);outline-offset:2px}
 
-#view-payroll .special-days .payroll-shift-icon{width:15px;height:15px}
+#view-payroll :is(.regular-days,.special-days) .payroll-shift-icon{width:15px;height:15px}
 #view-payroll .payroll-bonus-symbol{flex:none;font-size:12px;line-height:1}
+
+@media(max-width:360px){
+ body[data-pref-theme] #view-payroll .payroll-input-card :is(.regular-days,.special-days) .input-group{padding-inline:10px;gap:4px}
+ #view-payroll .payroll-input-card .regular-days label{font-size:12px}
+ #view-payroll .regular-days .work-day-count strong{font-size:15px}
+}
