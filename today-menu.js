@@ -25,8 +25,6 @@
     const offset = date => Math.round((Date.parse(date)-Date.parse(today()))/86400000);
     const moveDate = (date, days) => new Date(Date.parse(date+'T12:00:00Z')+days*86400000).toISOString().slice(0,10);
     function updateNavigation(date) {
-        if (document.body.dataset.view === 'menu') $('header-view-title').textContent = title(date);
-        $('view-menu').setAttribute('aria-label', title(date));
         const days = offset(date);
         if ($('today-menu-relative')) $('today-menu-relative').textContent = days===0?'오늘':days===1?'내일':days===-1?'어제':days>0?days+'일 뒤':Math.abs(days)+'일 전';
         if ($('today-menu-prev')) $('today-menu-prev').disabled = days<=-31;
@@ -90,10 +88,6 @@
         return request;
     }
 
-    function title(date = selected()) {
-        const weekday = new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',weekday:'long'}).format(new Date(date + 'T12:00:00+09:00'));
-        return weekday + ' 메뉴';
-    }
     function dateLabel(date) {
         return new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',weekday:'long'}).format(new Date(date + 'T12:00:00+09:00'));
     }
@@ -222,5 +216,5 @@
             && !document.querySelector('dialog[open],.modal-overlay.active')
             && !event.target.closest('.bottom-nav,.app-header,#lost-found-dialog,#commute-dialog')
     });
-    window.TodayMenu = {load,changeDate,title};
+    window.TodayMenu = {load,changeDate};
 })();

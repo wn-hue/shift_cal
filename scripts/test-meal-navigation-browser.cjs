@@ -25,7 +25,8 @@ const day = n => new Date(Date.parse(today+'T12:00:00Z')+n*86400000).toISOString
    await p.addInitScript(()=>localStorage.setItem('shift_active_group','C'));
    await p.goto(process.env.CHECK_URL||'http://127.0.0.1:8768');await p.evaluate(()=>switchView('menu'));
    await p.waitForFunction(()=>document.querySelectorAll('.meal-rating').length===4);
-   assert.equal(await p.locator('#header-view-title').textContent(),new Intl.DateTimeFormat('ko-KR',{weekday:'long',timeZone:'Asia/Seoul'}).format(new Date(today+'T12:00:00+09:00'))+' 메뉴');
+   assert.equal(await p.locator('#header-view-title').isVisible(),false);
+   assert.equal(await p.locator('.reference-header').isVisible(),false,'No empty weekday title row remains');
    assert.equal(await p.locator('#bnav-menu').getAttribute('aria-label'),'오늘 메뉴');
    assert.equal(await p.locator('.meal-eyebrow').count(),0);
    assert.equal(await p.locator('#today-menu-today,#today-menu-refresh,#today-menu-date').count(),0);
@@ -58,6 +59,7 @@ const day = n => new Date(Date.parse(today+'T12:00:00Z')+n*86400000).toISOString
    await p.getByRole('button',{name:'다음 날 식단',exact:true}).click();
    await p.waitForFunction(date=>document.querySelector('.meal-items')?.textContent.includes(date),day(1));
    assert.equal(requests,1,'The next day is already in the saved PDF schedule');
+   assert.equal(await p.locator('.reference-header').isVisible(),false);
    assert.equal(await p.locator('#today-menu-relative').textContent(),'내일');
    assert.equal(await p.locator('.meal-rating').count(),0,'Tomorrow never displays today’s vote controls');
    await p.getByRole('button',{name:'다음 날 식단',exact:true}).click();

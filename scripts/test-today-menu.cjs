@@ -141,7 +141,7 @@ async function main() {
     vm.runInContext(fs.readFileSync(require.resolve('../today-menu.js'),'utf8'),ctx);
     await ctx.TodayMenu.load();const beforeNext=requests;
     await ctx.TodayMenu.changeDate(1);assert.equal(requests,beforeNext,'Tomorrow uses the saved schedule without a request');
-    assert.equal(elements.get('header-view-title').textContent,'토요일 메뉴');
+    assert.equal(elements.get('today-menu-relative').textContent,'내일');
     vm.runInContext(fs.readFileSync(require.resolve('../today-menu.js'),'utf8'),ctx);
     await ctx.TodayMenu.changeDate(1);assert.equal(requests,beforeNext,'Reload also restores the whole schedule');
     console.log('PASS: Whole-schedule download/cache, safe text rendering, 03:00 Korean rollover, offline recovery.');

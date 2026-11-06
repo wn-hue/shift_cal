@@ -1,5 +1,5 @@
 /* Centered date navigation and parallel menu columns. */
-body[data-view=menu] .reference-header{align-items:center;margin-bottom:8px}
+body[data-view=menu] .reference-header{display:none!important}
 #view-menu .meal-date-card{padding:0 4px 16px!important;margin-bottom:4px!important}
 #view-menu .meal-navigation{justify-content:center;gap:8px;margin-top:0}
 #view-menu #today-menu-relative{flex:none;min-width:76px;text-align:center;font-size:22px;font-weight:700;letter-spacing:-.6px;color:var(--ui-text,#333d4b)}

@@ -5,8 +5,8 @@
         document.body.dataset.view=view;
         $('cal-month-title-btn').hidden=view!=='calendar';
         $('group-month-title').hidden=view!=='groups';
-        $('header-view-title').hidden=view==='calendar'||view==='groups';
-        $('header-view-title').textContent=view==='all'?'전체':view==='payroll'?'급여 계산기':view==='menu'?(window.TodayMenu?.title?.() || '식단'):view==='groups'?'조별 근무':'시급 · 연차';
+        $('header-view-title').hidden=view==='calendar'||view==='groups'||view==='menu';
+        $('header-view-title').textContent=view==='all'?'전체':view==='payroll'?'급여 계산기':view==='menu'?'':view==='groups'?'조별 근무':'시급 · 연차';
         $('header-calendar-actions').hidden=view!=='calendar';
         for (const [name,id] of [['calendar','bnav-cal'],['groups','bnav-groups'],['payroll','bnav-pay'],['menu','bnav-menu'],['all','account-menu-button']]) {
             $(id).setAttribute('aria-current',view===name?'page':'false');
