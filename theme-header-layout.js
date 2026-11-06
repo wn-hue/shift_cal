@@ -2,7 +2,7 @@
 (()=>{'use strict';
  const header=document.querySelector('.reference-header'),grid=document.getElementById('calendar-grid'),nav=document.querySelector('.bottom-nav');
  if(!header||!grid||!nav)return;
- let previousHeight=0,previousRoom=0,frame=0;
+ let previousHeight=0,previousRoom=0,frame=0,settleTimers=[];
  function fit(){
   frame=0;
   const height=Math.ceil(header.getBoundingClientRect().height);
@@ -13,8 +13,18 @@
   if(room!==previousRoom){previousRoom=room;document.documentElement.style.setProperty('--theme-calendar-room',room+'px');}
  }
  function schedule(){if(!frame)frame=requestAnimationFrame(fit);}
- if(window.ResizeObserver){const observer=new ResizeObserver(schedule);for(const element of[header,nav,document.querySelector('.cal-weekdays')])if(element)observer.observe(element);}
+ function settle(){
+  schedule();requestAnimationFrame(schedule);
+  settleTimers.forEach(clearTimeout);settleTimers=[setTimeout(schedule,160),setTimeout(schedule,520)];
+ }
+ // A preceding setup guide can disappear after saved settings load. Its position
+ // change also needs a fit, even if the header and navigation keep the same size.
+ if(window.ResizeObserver){const observer=new ResizeObserver(schedule);for(const element of[header,nav,grid.closest('.calendar-card'),document.querySelector('.container'),document.querySelector('.cal-weekdays')])if(element)observer.observe(element);}
  new MutationObserver(schedule).observe(document.body,{attributes:true,attributeFilter:['data-pref-theme','data-beige-round','data-view','data-ui-language']});
+ // mobile-layout updates the visible viewport after standalone Safari settles.
+ new MutationObserver(schedule).observe(document.documentElement,{attributes:true,attributeFilter:['style']});
  window.addEventListener('resize',schedule,{passive:true});window.visualViewport?.addEventListener('resize',schedule,{passive:true});
- document.fonts?.ready.then(schedule);schedule();
+ window.addEventListener('load',settle);window.addEventListener('pageshow',settle);window.addEventListener('orientationchange',settle);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)settle();});
+ document.fonts?.ready.then(settle);settle();
 })();
