@@ -71,8 +71,8 @@ ctx.PayrollEstimate.open();elem('wage-manual-base').value='22000';assert.equal(c
 assert.equal(evaluate('config.baseHourly'),22000);assert.equal(saved.get('shift_payroll_sms_reference_v1'),before);assert.equal(saved.get('shift_bonus_sms_reference_v1'),bonusBefore);
 ctx.PayrollEstimate.clearDraft();
 elem('payroll-sms-text').value='another private draft';ctx.PayrollEstimate.open();elem('payroll-sms-dialog').close();assert.equal(elem('payroll-sms-text').value,'');
-evaluate('renderCalendar=()=>{};resetDefaults()');assert.equal(saved.get('shift_payroll_sms_reference_v1'),undefined);assert.equal(saved.get('shift_bonus_sms_reference_v1'),undefined);assert.equal(evaluate('config.baseHourly'),0);assert.match(elem('payroll-estimate-basis').textContent,/상여:.*기준 명세서.*2.41%/);
-assert.match(elem('payroll-estimate-basis').textContent,/18\.09%/);
+evaluate('renderCalendar=()=>{};resetDefaults()');assert.equal(saved.get('shift_payroll_sms_reference_v1'),undefined);assert.equal(saved.get('shift_bonus_sms_reference_v1'),undefined);assert.equal(evaluate('config.baseHourly'),0);assert.doesNotMatch(elem('payroll-estimate-basis').textContent,/상여:/);
+assert.match(elem('payroll-estimate-basis').textContent,/전체 공제:.*18\.09%/);
 assert.equal(/inp-retro-check|disp-retro-status|toggleRetroCheck|근속수당 가산/.test(html),false);
 for(const id of ['input-base-hourly','input-ordinary-hourly','input-duty-pay','input-seniority-pay'])assert.match(html.match(new RegExp('<input[^>]+id="'+id+'"[^>]*>'))[0],/\breadonly\b/);
 assert.equal(/calendar-export|내 변경사항 포함해서 가져오기|하루 일정\(ICS\)|input-base-hours/.test(html),false);
@@ -154,3 +154,12 @@ for(const profile of [{rate:0},{rate:.12},{rate:.15,model:'monthly-insurance',fi
  saved.set('shift_payroll_sms_reference_v1',JSON.stringify(profile));ctx.PayrollEstimate.reloadReference();const expected=ctx.PayrollEstimate.estimate(4000000,profile);ctx.PayrollEstimate.open();click('payroll-sms-apply');assert.deepEqual(JSON.parse(saved.get('shift_payroll_sms_reference_v1')),profile);assert.deepEqual(JSON.parse(JSON.stringify(ctx.PayrollEstimate.forParts({regular:4000000,bonus:0}).regular)),JSON.parse(JSON.stringify(expected)));
 }
 console.log('PASS named seniority, explicit zero, automatic reset and existing personal profile preservation');
+
+// A non-bonus month has one deduction total, including any new-hire support.
+ctx.PayrollEstimate.update(2000000,{regular:1700000,support:300000,bonus:0});
+assert.equal(elem('estimate-regular-row').hidden,true);assert.equal(elem('estimate-bonus-row').hidden,true);assert.equal(elem('estimate-total-label').textContent,'전체 공제');
+assert.doesNotMatch(elem('payroll-estimate-basis').textContent,/상여:/);
+const withoutBonus=ctx.PayrollEstimate.forParts({regular:1700000,support:300000,bonus:0});assert.equal(Number(elem('estimate-total').textContent.replace(/[^0-9]/g,'')),withoutBonus.total);
+ctx.PayrollEstimate.update(3000000,{regular:2000000,support:0,bonus:1000000});
+assert.equal(elem('estimate-regular-row').hidden,false);assert.equal(elem('estimate-bonus-row').hidden,false);assert.match(elem('payroll-estimate-basis').textContent,/급여:.*상여:/);
+console.log('PASS one overall deduction for salary/support without bonus, distinct bonus breakdown when present, and unchanged totals');

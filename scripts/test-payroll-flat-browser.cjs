@@ -25,16 +25,31 @@ const url=process.env.TEST_URL||'http://127.0.0.1:8768/';
  assert.equal(await p.locator('#payroll-day-count').textContent(),'0.5');assert.equal(await p.locator('#payroll-night-count').textContent(),'12.5');assert.equal(await p.locator('#payroll-daysp-count').textContent(),'2');await p.evaluate(()=>syncFromCalendar());
  assert.equal(await p.locator('#payroll-gross-toggle').isChecked(),true);assert.equal(await p.locator('#workday-adjustments').count(),1);assert.equal(await p.locator('.payroll-tools>details').count(),1);assert.equal(await p.locator('#inp-holiday-bonus').isVisible(),false);assert.equal(await p.locator('#payroll-estimate-card').evaluate(e=>getComputedStyle(e).borderTopWidth),'0px');
  const gross=await number('hero-gross-pay');await p.locator('.estimate-toggle').click();await p.locator('#payroll-estimate-panel').waitFor({state:'visible'});
- assert.equal(await number('hero-gross-pay'),gross-Math.trunc(gross*.15+1e-7));assert.equal(await number('row-gross-pay'),await number('hero-gross-pay'));assert.match(await p.locator('#hero-pay-label').textContent(),/예상 실수령액/);assert.match(await p.locator('#hero-pay-basis').textContent(),/추정/);assert.equal(await p.locator('#payroll-gross-toggle').isChecked(),false);
- await p.locator('.estimate-toggle').click();assert.equal(await number('hero-gross-pay'),gross);assert.equal(await p.locator('#payroll-gross-toggle').isChecked(),true);
+ assert.equal(await number('hero-gross-pay'),gross-Math.trunc(gross*.15+1e-7));assert.equal(await number('row-gross-pay'),await number('hero-gross-pay'));assert.match(await p.locator('#hero-pay-label').textContent(),/예상 실수령액/);assert.match(await p.locator('#hero-pay-basis').textContent(),/추정/);assert.equal(await p.locator('#payroll-gross-toggle').isChecked(),false);assert.equal(await p.locator('#payroll-estimate-action-label').textContent(),'세후');
+ await p.locator('.estimate-toggle').click();assert.equal(await number('hero-gross-pay'),gross);assert.equal(await p.locator('#payroll-gross-toggle').isChecked(),true);assert.equal(await p.locator('#payroll-estimate-action-label').textContent(),'세전');
  // Every month and the year boundary retain automatic parity, without manual toggles.
  for(let month=0;month<12;month++){
   await p.evaluate(m=>{currentPayDate=new Date(2026,m,1);syncFromCalendar();},month);
   const on=(month+1)%2===0;assert.equal(await p.locator('#inp-bonus-check').isChecked(),on);assert.equal((await number('row-bonus-pay'))>0,on);
+  await p.locator('#payroll-gross-toggle').uncheck();
+  await p.locator('.estimate-breakdown').evaluate(e=>e.open=true);
+  assert.equal(await p.locator('#estimate-regular-row').isVisible(),on);assert.equal(await p.locator('#estimate-bonus-row').isVisible(),on);
+  assert.equal(await p.locator('#estimate-total-label').textContent(),on?'전체 예상 공제액':'전체 공제');
+  assert.equal(await p.locator('#estimate-total').textContent(),(await p.locator('#row-estimated-deduction').textContent()).replace('−','')+' 원');
+  if(!on)assert.doesNotMatch(await p.locator('#payroll-estimate-basis').textContent(),/상여:/);
+  await p.locator('#payroll-gross-toggle').check();
   const sum=(await number('hero-regular-pay'))+(await number('hero-bonus-pay'));assert.equal(await number('hero-gross-pay'),sum);
  }
  await p.evaluate(()=>{changePayMonth(1,false);});assert.equal(await p.locator('#pay-month-title').textContent(),'2027년 1월');assert(!(await p.locator('#inp-bonus-check').isChecked()));
  await p.reload();await p.evaluate(()=>switchView('payroll'));assert(!(await p.locator('#inp-bonus-check').isChecked()));assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('shift_payroll_sms_reference_v1')).rate),.15);
+ for(let i=0;i<3;i++){
+  await p.locator('#workday-adjustments>summary').click();
+  assert.equal(await p.locator('#workday-adjustments').evaluate(e=>e.open),true);
+  assert.equal(await p.locator('#workday-adjustments>summary>span').first().evaluate(e=>getComputedStyle(e).transform),'none','Disclosure label remains upright');
+  assert.notEqual(await p.locator('.workday-chevron').evaluate(e=>getComputedStyle(e).transform),'none','Only the chevron rotates');
+  if(i===0&&width===390)await p.screenshot({path:'/tmp/payroll-calculations-upright-'+engine.name()+'.png',fullPage:true});
+  await p.locator('#workday-adjustments>summary').click();
+ }
  for(const theme of ['current','toss','gpt','dark']){await p.evaluate(t=>{document.body.dataset.prefTheme=t;},theme);assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
  await p.evaluate(()=>{document.body.dataset.prefTheme='current';scrollTo(0,0);});
  if(width===390)await p.screenshot({path:'/tmp/work-routine-payroll-flat-'+engine.name()+'.png',fullPage:true});

@@ -46,12 +46,16 @@
         panel.hidden = !toggle.checked;
         updateTaxSummary();
         document.getElementById('payroll-estimate-state').textContent = toggle.checked ? 'ON' : 'OFF';
-        document.getElementById('payroll-estimate-basis').textContent = basis('급여',profile) + ' · ' + basis('상여',bonusProfile);
         const result = estimatePayments(parts,profile,bonusProfile), suffix = toggle.checked ? '세후 추정' : '세전';
+        const hasBonus = result.bonus.gross > 0;
+        document.getElementById('estimate-regular-row').hidden = !hasBonus;
+        document.getElementById('estimate-total-label').textContent = hasBonus ? '전체 예상 공제액' : '전체 공제';
+        document.getElementById('payroll-estimate-basis').textContent = hasBonus ? basis('급여',profile) + ' · ' + basis('상여',bonusProfile) : basis('전체 공제',profile);
         const amount = toggle.checked ? result.net : result.gross;
         document.getElementById('hero-pay-label').textContent = toggle.checked ? '이번 달 예상 실수령액' : '이번 달 예상 급여';
         document.getElementById('hero-pay-basis').textContent = suffix;
         grossToggle.checked = !toggle.checked;
+        document.getElementById('payroll-estimate-action-label').textContent = toggle.checked ? '세후' : '세전';
         document.getElementById('hero-gross-pay').innerText = fmt(amount);
         for(const prefix of ['hero','payslip-modal']) {
             document.getElementById(prefix+'-regular-label').textContent='월 급여 ('+suffix+')';
