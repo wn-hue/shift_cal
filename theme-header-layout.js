@@ -1,4 +1,4 @@
-/* Fit experimental calendars between the actual header and fixed navigation. */
+/* Fit the home calendar card between the actual header and fixed navigation. */
 (()=>{'use strict';
  const header=document.querySelector('.reference-header'),grid=document.getElementById('calendar-grid'),nav=document.querySelector('.bottom-nav');
  if(!header||!grid||!nav)return;
@@ -7,9 +7,9 @@
   frame=0;
   const height=Math.ceil(header.getBoundingClientRect().height);
   if(height>0&&height!==previousHeight){previousHeight=height;document.documentElement.style.setProperty('--theme-header-height',height+'px');}
-  if(document.body.dataset.view!=='calendar'||!(['test1','test3','test4'].includes(document.body.dataset.prefTheme)||document.body.hasAttribute('data-beige-round')))return;
+  if(document.body.dataset.view!=='calendar')return;
   if(window.visualViewport&&Math.abs(visualViewport.scale-1)>.01)return;
-  const room=Math.max(0,Math.floor(nav.getBoundingClientRect().top-(grid.getBoundingClientRect().top+window.scrollY)-20));
+  const room=Math.max(0,Math.floor(nav.getBoundingClientRect().top-(grid.getBoundingClientRect().top+window.scrollY)-24));
   if(room!==previousRoom){previousRoom=room;document.documentElement.style.setProperty('--theme-calendar-room',room+'px');}
  }
  function schedule(){if(!frame)frame=requestAnimationFrame(fit);}
