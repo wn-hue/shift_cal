@@ -69,7 +69,12 @@ async function browserLogin() {
         sessionStorage: {setItem(key, value) { assert.equal(key, 'origin-auth-flow'); saved = JSON.parse(value); }}
     };
     vm.runInNewContext(script, context);
-    await click({target: {closest: () => ({href: target + loginPath})}, preventDefault() {}, stopImmediatePropagation() {}});
+    let disabledPrevented = false;
+    await click({target: {closest: () => ({href: target + loginPath, getAttribute: () => 'true'})}, preventDefault() { disabledPrevented = true; }, stopImmediatePropagation() {}});
+    assert(disabledPrevented);
+    assert.equal(assigned, undefined, 'unconfigured Apple login must not start an OAuth redirect');
+    assert.equal(saved, undefined, 'disabled login must not overwrite a pending account flow');
+    await click({target: {closest: () => ({href: target + loginPath, getAttribute: () => null})}, preventDefault() {}, stopImmediatePropagation() {}});
     assert.equal(saved.intent, 'account', 'Apple return triggers the account restore screen');
     const entry = new URL(assigned);
     assert.equal(entry.origin, source);

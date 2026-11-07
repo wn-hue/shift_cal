@@ -2,6 +2,7 @@
     'use strict';
     const C=AccountDataCore, $=id=>document.getElementById(id);
     const ownerKey='shift_account_owner_v1', basePrefix='shift_account_base_v1_', cachePrefix='shift_account_cache_v1_';
+    const deletionPrefix='shift_account_deletion_epoch_v1_', liveLinksKey='shift_live_links_v2';
     // Minimize previously cached references without touching unrelated storage.
     for (let i=0;i<localStorage.length;i++) {
         const key=localStorage.key(i);
@@ -9,7 +10,14 @@
         try { localStorage.setItem(key,JSON.stringify(C.normalize(JSON.parse(localStorage.getItem(key))))); } catch(_) {}
     }
     let auth=null, baseline=null, parents=[], busy=false, suppressed=false, timer=null, pending=null, epoch=0, renderedOwner, cloudFound=false;
-    const api=window.AccountSync={ready:false,changed,sessionChanged:init,disconnected,prepareLogout};
+    const api=window.AccountSync={ready:false,changed,sessionChanged:()=>init(),disconnected,prepareLogout};
+    const deletionBlocksSync=state=>state?.deletionPending||state?.deletionCheckUnavailable;
+    const validDeletionEpoch=value=>Number.isSafeInteger(value)&&value>0;
+    function hasUnappliedDeletion(state) {
+        if(!state?.connected || !validDeletionEpoch(state.deletionEpoch))return false;
+        const applied=Number(localStorage.getItem(deletionPrefix+state.user.id));
+        return !validDeletionEpoch(applied)||applied<state.deletionEpoch;
+    }
     function openManager() {
         switchView('all');const dialog=$('account-login-dialog');if(dialog&&!dialog.open)dialog.showModal?.();
     }
@@ -58,7 +66,7 @@
         const owner=connected?auth.user.id:null;
         if(owner!==renderedOwner){renderedOwner=owner;if(typeof CustomEvent==='function')window.dispatchEvent(new CustomEvent('shift-account-changed',{detail:{owner}}));}
         $('account-email').textContent=connected?auth.user.email:'전에 쓰던 Google 계정으로 로그인하면 근무표, 메모, 설정을 불러와요.';
-        $('account-login').hidden=!!auth?.cloudConnected;
+        $('account-login').hidden=!!auth?.cloudConnected||!!deletionBlocksSync(auth);
         if($('apple-login'))$('apple-login').hidden=connected;
         if($('apple-login-status') && connected)$('apple-login-status').textContent='';
         $('account-login').setAttribute('aria-label',connected?'Google Drive 저장 연결':'Google로 로그인하고 저장하기');
@@ -73,7 +81,7 @@
         return data;
     }
     function changed() {
-        if(suppressed)return;
+        if(suppressed || deletionBlocksSync(auth))return;
         if(auth?.connected && localStorage.getItem(ownerKey)!==auth.user.id){init();return;}
         if(auth?.connected) {
             try { localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(snapshot())); }catch(_){}
@@ -87,12 +95,39 @@
         $('account-conflict-dialog').close();notifyReady();
         if(window.GoogleSync)GoogleSync.groupChanged();
     }
-    function disconnected({keepRecoveryCopy=true}={}) {
-        if(window.PayrollEstimate?.clearDraft)PayrollEstimate.clearDraft();
-        if(keepRecoveryCopy&&auth?.connected)localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(snapshot()));
+    function clearWorkingData() {
+        restore(C.normalize({}));localStorage.removeItem(ownerKey);
+    }
+    function finishDisconnect() {
         ++epoch;clearTimeout(timer);pending=null;baseline=null;
-        restore(C.normalize({}));localStorage.removeItem(ownerKey);auth=null;api.ready=true;renderAuth();
+        auth=null;api.ready=true;renderAuth();
+    }
+    function disconnected() {
+        if(window.PayrollEstimate?.clearDraft)PayrollEstimate.clearDraft();
+        if(auth?.connected)localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(snapshot()));
+        clearWorkingData();finishDisconnect();
         status('로그아웃했어요. 계정에 저장한 기록은 남아 있어요.');
+    }
+    function discardDeletedAccount(account, deletionEpoch) {
+        const ownsWorkingCopy=localStorage.getItem(ownerKey)===account;
+        try {
+            if(ownsWorkingCopy) {
+                if(window.PayrollEstimate?.clearDraft)PayrollEstimate.clearDraft();
+                clearWorkingData();
+            }
+        } finally {
+            localStorage.removeItem(cachePrefix+account);
+            localStorage.removeItem(basePrefix+account);
+            let links;
+            try{links=JSON.parse(localStorage.getItem(liveLinksKey)||'{}');}catch{}
+            if(links && typeof links==='object' && !Array.isArray(links) && Object.hasOwn(links,account)) {
+                delete links[account];
+                localStorage.setItem(liveLinksKey,JSON.stringify(links));
+            }
+        }
+        // Mark the epoch only after the working copy and recovery data are gone.
+        if(validDeletionEpoch(deletionEpoch))localStorage.setItem(deletionPrefix+account,String(deletionEpoch));
+        return ownsWorkingCopy;
     }
     function showConflict(versions,message) {
         pending={versions};api.ready=false;status(message,'warning');
@@ -109,6 +144,7 @@
         if(busy || !pending)return;
         setBusy(true);const generation=epoch;
         try {
+            if(!await refreshCloudSession(generation) || generation!==epoch)return;
             const localAtStart=snapshot(), selected=C.normalize(data||localAtStart);
             localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(localAtStart));
             const result=await request('cloud-write',{revision:crypto.randomUUID().replace(/-/g,''),parents:pending.versions.map(v=>v.revision),data:selected});
@@ -125,17 +161,24 @@
             if(e.code==='CLOUD_CONFLICT'){pending=null;$('account-conflict-dialog').close();}
         } finally {setBusy(false);if(generation===epoch && !pending)sync();}
     }
+    async function refreshCloudSession(generation) {
+        const live=await request('status',null,true);
+        if(generation!==epoch)return false;
+        if(!live.connected || live.user.id!==auth.user.id || !live.cloudConnected || deletionBlocksSync(live) || hasUnappliedDeletion(live)) {
+            setBusy(false);await init(live);return false;
+        }
+        auth=live;
+        return true;
+    }
     async function sync() {
         if(busy || pending)return;
+        if(deletionBlocksSync(auth)){if(navigator.onLine)await init();return;}
         if(!auth?.cloudConnected){status('로그인 후 계정 저장을 연결해 주세요.','warning');return;}
         if(!navigator.onLine){status('인터넷에 연결한 뒤 다시 저장해 주세요.','warning');return;}
         setBusy(true);const generation=epoch;
         status('시급, 연차, 메모와 근무 변경을 확인하고 있어요…','progress');
         try {
-            const live=await request('status',null,true);
-            if(generation!==epoch)return;
-            if(!live.connected || live.user.id!==auth.user.id || !live.cloudConnected){setBusy(false);await init();return;}
-            auth=live;
+            if(!await refreshCloudSession(generation) || generation!==epoch)return;
             const {versions}=await request('cloud-read');
             if(generation!==epoch)return;
             cloudFound=versions.some(v=>C.meaningful(v.data));
@@ -178,15 +221,22 @@
             }
         }
     }
-    async function init() {
+    async function init(knownStatus) {
         const generation=++epoch;clearTimeout(timer);api.ready=false;pending=null;cloudFound=false;
         if($('account-conflict-dialog').open)$('account-conflict-dialog').close();
         try {
-            const live=await request('status',null,true);
+            const live=knownStatus||await request('status',null,true);
             if(generation!==epoch)return;
             auth=live;
-            renderAuth();baseline=null;
+            baseline=null;
+            if(!deletionBlocksSync(auth) && hasUnappliedDeletion(auth)) {
+                discardDeletedAccount(auth.user.id,auth.deletionEpoch);
+                renderedOwner=undefined;
+            }
+            renderAuth();
             if(!auth.connected){api.ready=true;status('기기에 저장 중');return;}
+            if(auth.deletionPending){status('계정 삭제가 진행 중이에요. 계정 데이터 삭제를 눌러 다시 시도해 주세요.','warning');return;}
+            if(auth.deletionCheckUnavailable){status('계정 상태를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.','warning');return;}
             const owner=localStorage.getItem(ownerKey);
             const cached=JSON.parse(localStorage.getItem(cachePrefix+auth.user.id)||'null');
             const saved=JSON.parse(localStorage.getItem(basePrefix+auth.user.id)||'null');
@@ -218,6 +268,7 @@
     async function prepareLogout() {
         if(!auth?.connected)return;
         if(busy)throw Error('계정에 저장하고 있어요. 저장이 끝나면 다시 로그아웃해 주세요.');
+        if(localStorage.getItem(ownerKey)!==auth.user.id)return;
         localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(snapshot()));
         if(!auth.cloudConnected)return;
         if(!navigator.onLine)throw Error('아직 계정에 저장하지 못한 내용이 있어요. 인터넷에 연결해 저장한 뒤 로그아웃해 주세요.');
@@ -227,27 +278,23 @@
     }
     $('account-logout').addEventListener('click',async()=>{
         if(busy)return;
+        const account=auth?.user?.id;
         try {
             await prepareLogout();
-            await request('logout');disconnected();
+            await request('logout');
+            if(account && localStorage.getItem(ownerKey)===account)disconnected();
+            else await init();
             if(window.GoogleSync)GoogleSync.refreshStatus();
         }catch(e){status(e.message);}
     });
     async function deleteAccount() {
-        if(busy || !auth?.connected || !confirm('계정에 저장된 근무 변경·메모·급여 기준·연차를 삭제하고 로그아웃할까요? 공유 링크는 공유 화면에서 별도로 종료하세요.'))return;
+        if(busy || !auth?.connected || !confirm('계정에 저장한 기록, 내가 올린 분실물 글, 공유한 근무표 링크를 삭제하고 로그아웃할까요? Google 캘린더에 이미 보낸 일정은 남아요.'))return;
         const deletedAccount=auth.user.id;
         setBusy(true);
         try {
-            await request('cloud-delete',{});
-            const ownsWorkingCopy=localStorage.getItem(ownerKey)===deletedAccount;
-            try {
-                if(ownsWorkingCopy)disconnected({keepRecoveryCopy:false});
-            } finally {
-                // A later sign-in can restore either of these copies before reading cloud storage.
-                localStorage.removeItem(cachePrefix+deletedAccount);
-                localStorage.removeItem(basePrefix+deletedAccount);
-            }
-            if(!ownsWorkingCopy)await init();
+            const result=await request('cloud-delete',{});
+            if(discardDeletedAccount(deletedAccount,result.deletionEpoch))finishDisconnect();
+            else await init();
             status('계정에 저장한 기록을 지웠어요.','success');
         } catch(error) {
             status(error.message,'error');

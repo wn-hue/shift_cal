@@ -13,6 +13,12 @@ export function createObjectStore(db,{readOnly=false}={}) {
  const metadata=row=>({url:'https://objects.internal/'+row.path.split('/').map(encodeURIComponent).join('/'),pathname:row.path,etag:row.version,contentType:row.content_type,size:row.size??new TextEncoder().encode(row.body).length});
  const writable=()=>{if(readOnly)throw Error('MIGRATION_READ_ONLY');};
  return {
+  async list({prefix='',cursor='',limit=1000}={}) {
+   if(typeof prefix!=='string'||typeof cursor!=='string'||!Number.isSafeInteger(limit)||limit<1||limit>1000)throw Error('Invalid object listing');
+   const {results}=await db.prepare('SELECT path,version,content_type,length(CAST(body AS BLOB)) AS size FROM objects WHERE path>? AND substr(path,1,length(?))=? ORDER BY path LIMIT ?').bind(cursor,prefix,prefix,limit+1).all();
+   const page=results.slice(0,limit),hasMore=results.length>limit;
+   return {blobs:page.map(metadata),hasMore,cursor:hasMore?page.at(-1).path:undefined};
+  },
   async head(value){const path=pathname(value),row=await db.prepare('SELECT path,version,content_type,length(CAST(body AS BLOB)) AS size FROM objects WHERE path=?').bind(path).first();if(!row)throw new BlobNotFoundError();return metadata(row);},
   async get(value){const path=pathname(value),row=await db.prepare('SELECT * FROM objects WHERE path=?').bind(path).first();return row?{stream:new Response(row.body).body,blob:metadata(row)}:null;},
   async put(value,body,options={}){

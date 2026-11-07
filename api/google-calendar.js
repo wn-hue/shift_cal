@@ -2,6 +2,7 @@
 const crypto = require('node:crypto');
 const AccountDrive = require('../lib/account-drive.js');
 const Permissions = require('../lib/google-permissions.js');
+const AccountErasure = require('../lib/account-erasure.js');
 const SESSION = '__Host-shiftcal-google';
 const FLOW = '__Host-shiftcal-google-flow';
 const API = 'https://www.googleapis.com/calendar/v3';
@@ -52,7 +53,7 @@ async function request(url, options = {}) {
     const text = await response.text();
     let data = {}; try { data = text ? JSON.parse(text) : {}; } catch {}
     if (!response.ok) {
-        const code = data.error === 'invalid_grant' ? 'RECONNECT' : data.error?.errors?.[0]?.reason || String(response.status);
+        const code = data.error === 'invalid_grant' ? 'RECONNECT' : data.error === 'invalid_token' ? 'INVALID_TOKEN' : data.error?.errors?.[0]?.reason || String(response.status);
         const msg = code === 'RECONNECT' ? '구글 연결이 만료되었습니다. 다시 연결하세요.' :
             response.status === 403 ? '구글 캘린더 접근 권한 또는 Calendar API 설정을 확인하세요.' :
             response.status === 412 ? '다른 곳에서 일정이 수정되었습니다. 다시 불러와 확인하세요.' : '구글 캘린더 요청을 완료하지 못했습니다.';
@@ -60,11 +61,19 @@ async function request(url, options = {}) {
     }
     return data;
 }
-async function getToken(session, cfg) {
+async function getTokenGrant(session, cfg) {
     const data = await request('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ client_id: cfg.clientId, client_secret: cfg.clientSecret, refresh_token: session.refresh, grant_type: 'refresh_token' }) });
     if (!data.access_token) throw new ApiError(401, 'RECONNECT', '구글 계정을 다시 연결하세요.');
-    return data.access_token;
+    return data;
+}
+async function getToken(session, cfg) { return (await getTokenGrant(session,cfg)).access_token; }
+async function revokeGoogle(session) {
+    try {
+        await request('https://oauth2.googleapis.com/revoke',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({token:session.refresh})});
+    } catch (error) {
+        if (error.status !== 400 || error.code !== 'INVALID_TOKEN') throw error;
+    }
 }
 function google(token, path, method = 'GET', body, etag) {
     const headers = { Authorization: `Bearer ${token}` };
@@ -188,8 +197,17 @@ async function handler(req, res) {
     const action = url.searchParams.get('action') || 'status';
     let session = cfg.secret ? unseal(cookies(req)[SESSION], cfg.secret) : null;
     try {
-        if (action === 'status' && req.method === 'GET') return json(res,200,{configured:!cfg.missing.length,missing:cfg.missing,connected:!!session,calendarConnected:Permissions.calendarConnected(session),cloudConnected:!!session?.drive,provider:"google",
-            ...(session ? {user:{id:session.sub,email:session.email},csrf:session.csrf} : {}), ...(cfg.origin ? {redirectUri:cfg.oauthOrigin+'/api/google-calendar?action=callback'} : {})});
+        if (action === 'status' && req.method === 'GET') {
+            const deletion = await AccountErasure.access(session && {...session,provider:'google'},cfg.secret,{allowUnavailable:true});
+            const connected = !!session && deletion.state !== 'expired';
+            const active = connected && deletion.state === 'active';
+            return json(res,200,{configured:!cfg.missing.length,missing:cfg.missing,connected,calendarConnected:active&&Permissions.calendarConnected(session),cloudConnected:active&&!!session.drive,provider:'google',
+                ...(connected ? {user:{id:session.sub,email:session.email},csrf:session.csrf} : {}),
+                ...(deletion.deletionEpoch ? {deletionEpoch:deletion.deletionEpoch} : {}),
+                ...(deletion.state === 'pending' ? {deletionPending:true} : {}),
+                ...(deletion.state === 'unavailable' ? {deletionCheckUnavailable:true} : {}),
+                ...(cfg.origin ? {redirectUri:cfg.oauthOrigin+'/api/google-calendar?action=callback'} : {})});
+        }
         if (cfg.missing.length) throw new ApiError(503,'SETUP','관리자가 구글 연동 설정을 완료해야 합니다.');
         if (action === 'login' && req.method === 'GET') {
             if(cfg.oauthOrigin!==cfg.origin&&req.headers['x-work-routine-origin']!==cfg.oauthOrigin)return redirect(res,cfg.oauthOrigin+'/api/google-calendar'+url.search);
@@ -221,7 +239,7 @@ async function handler(req, res) {
             if (!user.sub || !user.email || !user.email_verified) throw new ApiError(403,'USER','구글 계정을 확인할 수 없습니다.');
             const refresh = data.refresh_token || (session?.sub === user.sub ? session.refresh : null);
             if (!refresh) throw new ApiError(401,'RECONNECT','지속 연결 권한을 받지 못했습니다. 다시 연결하세요.');
-            session = { sub:user.sub,email:user.email,refresh,...Permissions.granted(scopes,flow,session,session?.sub===user.sub),csrf:crypto.randomBytes(24).toString('base64url'),exp:Date.now()+30*86400000 };
+            session = { sub:user.sub,email:user.email,refresh,...Permissions.granted(scopes,flow,session,session?.sub===user.sub),driveAuthorized:scopes.has(Permissions.scopes.storage),csrf:crypto.randomBytes(24).toString('base64url'),issuedAt:Date.now(),exp:Date.now()+30*86400000 };
             const cookie = seal(session,cfg.secret);
             if (cookie.length > 3700) throw new ApiError(502,'SESSION_SIZE','로그인 정보를 저장하지 못했습니다.');
             setCookie(res,SESSION,cookie,30*86400);
@@ -236,15 +254,30 @@ async function handler(req, res) {
         let body = req.body;
         if (typeof body === 'string') { if (body.length > 250000) throw new ApiError(413,'BODY','요청이 너무 큽니다.'); try { body = JSON.parse(body); } catch { throw new ApiError(400,'JSON','요청 형식을 확인하세요.'); } }
         if (!body || typeof body !== 'object' || JSON.stringify(body).length > 250000) throw new ApiError(400,'BODY','요청 데이터를 확인하세요.');
+        const account = {...session,provider:'google'};
+        if (action === 'cloud-delete') {
+            const result = await AccountErasure.erase(account,cfg.secret,{
+                async erasePrivateData(needsDrive) {
+                    const grant = await getTokenGrant(session,cfg);
+                    const hasDrive = (grant.scope || '').split(' ').includes(Permissions.scopes.storage);
+                    if (needsDrive || hasDrive) await AccountDrive.remove(grant.access_token);
+                },
+                revoke: () => revokeGoogle(session)
+            });
+            setCookie(res,SESSION,'',0);
+            return json(res,200,result);
+        }
+        const access = ['calendar-disconnect','cloud-read','cloud-write','calendar','read','write'].includes(action) ?
+            await AccountErasure.requireActive(account,cfg.secret) : null;
         if(action==='calendar-disconnect'){
             session={...session,calendar:false};setCookie(res,SESSION,seal(session,cfg.secret),Math.max(0,Math.floor((session.exp-Date.now())/1000)));
             return json(res,200,{ok:true});
         }
-        if (action === 'cloud-read' || action === 'cloud-write' || action === 'cloud-delete') {
+        if (action === 'cloud-read' || action === 'cloud-write') {
             if (!session.drive) throw new ApiError(403,'DRIVE_PERMISSION','계정 저장 권한을 추가해주세요.');
             const token = await getToken(session,cfg);
-            if(action==='cloud-delete'){await AccountDrive.remove(token);await request('https://oauth2.googleapis.com/revoke',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({token:session.refresh})});setCookie(res,SESSION,'',0);return json(res,200,{ok:true});}
-            return json(res,200,action === 'cloud-read' ? await AccountDrive.read(token) : await AccountDrive.write(token,body));
+            return json(res,200,action === 'cloud-read' ? await AccountDrive.read(token,access.deletionEpoch) :
+                await AccountDrive.write(token,body,{deletionEpoch:access.deletionEpoch,requireActive:()=>AccountErasure.requireActive(account,cfg.secret)}));
         }
         if (action === 'external-list' || action === 'external-read') throw new ApiError(410,'FEATURE_REMOVED','기존 Google 일정 가져오기는 종료되었습니다.');
         if(!['calendar','read','write'].includes(action))throw new ApiError(400,'ACTION','지원하지 않는 요청입니다.');

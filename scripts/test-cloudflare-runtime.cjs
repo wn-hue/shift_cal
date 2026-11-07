@@ -12,6 +12,14 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
   const db=await mf.getD1Database('STATE');await db.exec(fs.readFileSync('cloudflare/migrations/0001_objects.sql','utf8').split('\n').filter(s=>!s.startsWith('--')).join(' '));
   const {createObjectStore,BlobPreconditionFailedError,BlobAlreadyExistsError}=await import(pathToFileURL(path.resolve('cloudflare/d1-store.mjs'))),store=createObjectStore(db);
   assert.equal(await store.get('missing.json'),null);
+  for(const key of ['schedules/one.json','schedules/two.json','schedule-archive.json'])await store.put(key,'{}');
+  const first=await store.list({prefix:'schedules/',limit:1});
+  assert.deepEqual(first.blobs.map(blob=>blob.pathname),['schedules/one.json']);
+  assert.equal(first.hasMore,true);
+  await store.del(first.blobs[0].pathname,{ifMatch:first.blobs[0].etag});
+  const next=await store.list({prefix:'schedules/',limit:1,cursor:first.cursor});
+  assert.deepEqual(next.blobs.map(blob=>blob.pathname),['schedules/two.json']);
+  assert.equal(next.hasMore,false);
   const doc={data:{baseHourly:11050,ordinaryHourly:14482,seniorityPayOverride:70000,dutyPay:70000,memo:'개인 메모',rate:.17012},revision:'existing-version'},raw=JSON.stringify(doc),key='accounts/apple/existing-owner.json';
   const initial=await store.put(key,raw),meta=await store.head(key),read=await store.get(meta.url+'?version='+meta.etag);assert.equal(await new Response(read.stream).text(),raw);assert.equal(initial.etag,meta.etag);
   await assert.rejects(store.put(key,'{}'),BlobAlreadyExistsError);

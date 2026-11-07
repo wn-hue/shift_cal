@@ -1,11 +1,14 @@
 'use strict';
 const crypto=require('node:crypto');
 const google=require('./google-calendar.js'),apple=require('./apple-account.js');
+const AccountErasure=require('../lib/account-erasure.js');
 const {seal,unseal}=google._test;
 module.exports=async(req,res)=>{res.setHeader('Cache-Control','no-store');const reply=(code,value)=>{res.statusCode=code;res.setHeader('Content-Type','application/json');res.end(JSON.stringify(value));};try{if(req.method!=='POST')return reply(405,{message:'지원하지 않는 요청입니다.'});let body=req.body;if(typeof body==='string'){if(body.length>250000)return reply(413,{message:'요청이 너무 큽니다.'});body=JSON.parse(body);}const secret=process.env.GOOGLE_CALENDAR_SESSION_SECRET;if(!secret)return reply(503,{message:'계정 설정이 필요합니다.'});const action=new URL(req.url,'https://local.invalid').searchParams.get('action');if(action==='exchange'){const ticket=unseal(body?.ticket,secret);if(!ticket||!/^[a-f0-9]{64}$/.test(body?.verifier||'')||crypto.createHash('sha256').update(body.verifier).digest('hex')!==ticket.challenge||ticket.state!==body.state)return reply(401,{message:'앱 로그인 요청이 만료되었습니다.'});const user=unseal(ticket.session,secret);if(!user)return reply(401,{message:'다시 로그인해 주세요.'});return reply(200,{token:seal({session:ticket.session,provider:ticket.provider,exp:user.exp},secret),user:{id:user.sub,email:user.email||'Apple 계정'}});}const authorization=req.headers.authorization||'';if(!authorization.startsWith('Bearer '))return reply(401,{message:'로그인해 주세요.'});const bearer=unseal(authorization.slice(7),secret),user=bearer&&unseal(bearer.session,secret);if(!user)return reply(401,{message:'로그인이 만료되었습니다. 다시 연결해 주세요.'});if(action==='web-session'){
 // A PKCE-verified native bearer may establish the same HttpOnly web session.
 // No session secret is returned to page JavaScript or localStorage.
 if(!['google','apple'].includes(bearer.provider)||!Number.isFinite(bearer.exp)||!Number.isFinite(user.exp)||user.exp<=Date.now())return reply(401,{message:'다시 로그인해 주세요.'});
+const deletion=await AccountErasure.access({...user,provider:bearer.provider},secret,{allowUnavailable:true});
+if(deletion.state==='expired')return reply(401,{message:'계정을 삭제했어요. 다시 로그인해 주세요.'});
 const name=bearer.provider==='apple'?'__Host-shiftcal-apple':'__Host-shiftcal-google';
 const other=bearer.provider==='apple'?'__Host-shiftcal-google':'__Host-shiftcal-apple';
 const seconds=Math.max(0,Math.floor((Math.min(user.exp,bearer.exp)-Date.now())/1000));

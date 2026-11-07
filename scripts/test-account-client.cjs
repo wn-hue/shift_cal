@@ -7,17 +7,17 @@ const flush=async()=>{for(let n=0;n<12;n++)await new Promise(resolve=>setImmedia
 function device(server,{local={},user='A',connected=true,cloudConnected=true,provider='google'}={}) {
     const saved=new Map(Object.entries(local)),elements=new Map(),events={},timers=new Map();let timerId=0;
     function element(id){if(!elements.has(id))elements.set(id,{textContent:'',hidden:false,open:false,attributes:{},setAttribute(k,v){this.attributes[k]=v},handlers:{},children:[],addEventListener(k,f){this.handlers[k]=f;},replaceChildren(){this.children=[];},append(x){this.children.push(x);},close(){this.open=false;},showModal(){this.open=true;}});return elements.get(id);}
-    const d={user,connected,cloudConnected,provider,disabled:false,reconnect:false,beforeWrite:null,beforeDelete:null,deleteFailure:false,confirmDeletion:true,calls:[],saved,element};
+    const d={user,connected,cloudConnected,provider,disabled:false,reconnect:false,beforeWrite:null,beforeDelete:null,deleteFailure:false,confirmDeletion:true,deletionEpoch:null,deletionPending:false,deletionCheckUnavailable:false,calls:[],saved,element};
     const ctx={AccountDataCore:C,navigator:{onLine:true},crypto,URLSearchParams,Date,console,location:{search:''},switchView:v=>{d.view=v;},
         localStorage:{getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(k,String(v)),removeItem:k=>saved.delete(k)},
         document:{hidden:false,getElementById:element,createElement:()=>element('new'+Math.random()),addEventListener:(k,f)=>events[k]=f},
         addEventListener:(k,f)=>events[k]=f,
         setTimeout:(f,delay)=>{const id=++timerId;timers.set(id,{f,delay});return id;},clearTimeout:id=>timers.delete(id),setInterval:()=>0,
-        refreshAccountData:()=>{},GoogleSync:{groupChanged:()=>{},refreshStatus:()=>{}},confirm:()=>d.confirmDeletion,
+        refreshAccountData:()=>{},GoogleSync:{groupChanged:()=>{},refreshStatus:()=>{}},confirm:message=>{d.confirmation=message;return d.confirmDeletion;},
         fetch:async(url,options)=>{
             const action=new URL(url,'https://shift.example').searchParams.get('action');d.calls.push(action);
             const result=(body,status=200)=>({ok:status===200,status,json:async()=>clone(body)});
-            if(action==='status')return result({connected:d.connected,cloudConnected:d.cloudConnected,provider:d.provider,user:{id:d.user,email:d.user+'@example.com'},csrf:d.user+'-csrf'});
+            if(action==='status')return result({connected:d.connected,cloudConnected:d.cloudConnected&&!d.deletionPending&&!d.deletionCheckUnavailable,provider:d.provider,user:{id:d.user,email:d.user+'@example.com'},csrf:d.user+'-csrf',...(d.connected&&d.deletionEpoch?{deletionEpoch:d.deletionEpoch}:{}),deletionPending:d.deletionPending,deletionCheckUnavailable:d.deletionCheckUnavailable});
             if(action==='logout'){d.connected=false;d.cloudConnected=false;return result({ok:true});}
             if(d.reconnect)return result({error:'RECONNECT',message:'Reconnect'},401);
             if(d.disabled)return result({error:'DRIVE_SETUP',message:'Enable Google Drive API'},403);
@@ -27,7 +27,7 @@ function device(server,{local={},user='A',connected=true,cloudConnected=true,pro
                 if(d.deleteFailure)return result({error:'CLOUD_ERROR',message:'Delete failed'},502);
                 const owner=d.user;
                 if(d.beforeDelete)await d.beforeDelete();
-                delete server[owner];d.connected=false;d.cloudConnected=false;return result({ok:true});
+                delete server[owner];d.connected=false;d.cloudConnected=false;d.deletionEpoch=Date.now();return result({ok:true,deletionEpoch:d.deletionEpoch});
             }
             const input=JSON.parse(options.body);assert.equal(action,'cloud-write');
             if(d.beforeWrite)await d.beforeWrite();
@@ -107,17 +107,21 @@ async function run(){
     // Confirmed deletion removes the local recovery copies that ordinary logout keeps.
     const otherAccount=JSON.stringify(memo({'2026-10-09':'other account'}));
     const deletingServer={A:[version(payroll)],B:[version(JSON.parse(otherAccount))]};
+    const liveLinks={A:{'C/2026-10':'deleted-link'},B:{'A/2026-10':'other-link'}};
     const deleting=device(deletingServer,{local:{
-        shift_account_base_v1_B:otherAccount,shift_account_cache_v1_B:otherAccount,shift_display_language:'ja'
+        shift_account_base_v1_B:otherAccount,shift_account_cache_v1_B:otherAccount,shift_display_language:'ja',
+        shift_live_links_v2:JSON.stringify(liveLinks)
     }});
     await deleting.start();
     deleting.change('shift_day_memos',{'2026-10-12':'unsaved edit'});
     const beforeDelete=clone(deleting.snapshot());
     deleting.confirmDeletion=false;await deleting.click('account-delete');
     assert(!deleting.calls.includes('cloud-delete'));
+    assert.match(deleting.confirmation,/분실물 글.*공유한 근무표 링크.*Google 캘린더/);
     deleting.confirmDeletion=true;deleting.deleteFailure=true;await deleting.click('account-delete');
     assert.deepEqual(deleting.snapshot(),beforeDelete,'Failed deletion keeps the device copy');
     assert.equal(deleting.saved.get('shift_account_cache_v1_A'),JSON.stringify(beforeDelete));
+    assert.deepEqual(JSON.parse(deleting.saved.get('shift_live_links_v2')),liveLinks);
     assert.deepEqual(deletingServer.A[0].data,payroll);
     deleting.deleteFailure=false;
     deleting.beforeDelete=async()=>{await deleting.tick();await deleting.click('account-sync-now');};
@@ -129,11 +133,16 @@ async function run(){
     assert.equal(deleting.saved.get('shift_account_cache_v1_B'),otherAccount);
     assert.equal(deleting.saved.get('shift_account_base_v1_B'),otherAccount);
     assert.equal(deleting.saved.get('shift_display_language'),'ja');
+    assert.deepEqual(JSON.parse(deleting.saved.get('shift_live_links_v2')),{B:liveLinks.B});
+    assert.equal(deleting.saved.get('shift_account_deletion_epoch_v1_A'),String(deleting.deletionEpoch));
     assert.deepEqual(deletingServer.B[0].data,JSON.parse(otherAccount));
     deleting.connected=true;deleting.cloudConnected=true;await deleting.ctx.AccountSync.sessionChanged();await flush();
     assert.deepEqual(deleting.snapshot(),blank,'Re-login does not restore deleted account records');
     assert(!deleting.calls.includes('cloud-write'),'Neither a pending save nor re-login should upload the deleted account copy');
     assert.equal(deletingServer.A,undefined);
+    deleting.change('shift_day_memos',{'2026-10-12':'new record after deletion'});
+    await deleting.tick();
+    assert.equal(deletingServer.A[0].data.shift_day_memos['2026-10-12'],'new record after deletion','An applied epoch does not clear newer records');
     // If a different account took over the working copy during the request, keep its records.
     const switched=device({A:[version(payroll)]});await switched.start();
     switched.beforeDelete=()=>{
@@ -145,6 +154,42 @@ async function run(){
     assert.deepEqual(switched.snapshot(),JSON.parse(otherAccount));
     assert.equal(switched.saved.get('shift_account_owner_v1'),'B');
     assert.equal(switched.saved.has('shift_account_base_v1_A'),false);
+    const deletionEpoch=Date.now();
+    const staleRecovery={shift_account_base_v1_A:JSON.stringify(payroll),shift_account_cache_v1_A:JSON.stringify(payroll),shift_live_links_v2:JSON.stringify(liveLinks)};
+    const returning=device({}, {local:staleRecovery});
+    returning.deletionEpoch=deletionEpoch;await returning.start();
+    assert.deepEqual(returning.snapshot(),blank,'Fresh sign-in discards deleted account caches before restoring');
+    assert(!returning.calls.includes('cloud-write'));
+    assert.deepEqual(JSON.parse(returning.saved.get('shift_live_links_v2')),{B:liveLinks.B});
+    const otherOwner=device({}, {cloudConnected:false,local:{
+        ...staleRecovery,shift_account_owner_v1:'B',shift_day_memos:JSON.stringify({'2026-10-09':'other account'})
+    }});
+    otherOwner.deletionEpoch=deletionEpoch;await otherOwner.start();
+    assert.deepEqual(JSON.parse(otherOwner.saved.get('shift_account_cache_v1_B')),JSON.parse(otherAccount));
+    const unowned=device({}, {cloudConnected:false,local:{...staleRecovery,shift_day_memos:JSON.stringify({'2026-10-13':'guest note'})}});
+    unowned.deletionEpoch=deletionEpoch;await unowned.start();
+    assert.equal(unowned.snapshot().shift_day_memos['2026-10-13'],'guest note','Fresh deletion preserves unowned work');
+    // A same-user cookie refresh can reveal a deletion during an autosave.
+    const refreshedServer={A:[version(payroll)]},refreshed=device(refreshedServer);await refreshed.start();
+    refreshed.change('shift_day_memos',{'2026-10-12':'stale local edit'});
+    delete refreshedServer.A;refreshed.deletionEpoch=deletionEpoch;
+    await refreshed.tick();
+    assert.deepEqual(refreshed.snapshot(),blank);
+    assert(!refreshed.calls.includes('cloud-write'),'Autosave must apply the epoch before it reads or writes deleted data');
+    const unavailable=device({}, {local:staleRecovery});
+    unavailable.deletionCheckUnavailable=true;await unavailable.start();
+    assert.equal(unavailable.ctx.AccountSync.ready,false);
+    assert(!unavailable.calls.includes('cloud-read'));
+    assert.equal(unavailable.saved.get('shift_account_cache_v1_A'),JSON.stringify(payroll));
+    unavailable.deletionCheckUnavailable=false;unavailable.deletionEpoch=deletionEpoch;await unavailable.event('online');
+    assert.equal(unavailable.ctx.AccountSync.ready,true);
+    assert.deepEqual(unavailable.snapshot(),blank);
+    const pendingDeletion=device({}, {local:{...staleRecovery,shift_day_memos:JSON.stringify({'2026-10-13':'guest note'})}});
+    pendingDeletion.deletionPending=true;await pendingDeletion.start();
+    assert.equal(pendingDeletion.ctx.AccountSync.ready,false);
+    assert.equal(pendingDeletion.element('account-delete').hidden,false,'An interrupted deletion can be retried');
+    await pendingDeletion.click('account-logout');
+    assert.equal(pendingDeletion.snapshot().shift_day_memos['2026-10-13'],'guest note');
     // An older affected client can recover the intact per-account device cache.
     const recovery=device({A:[version(blank)]},{local:{shift_account_owner_v1:'A',shift_account_base_v1_A:JSON.stringify(blank),shift_account_cache_v1_A:JSON.stringify(payroll)}});
     await recovery.start();assert.deepEqual(recovery.snapshot(),payroll);
