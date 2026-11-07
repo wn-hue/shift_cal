@@ -9,7 +9,25 @@ const url=process.env.TEST_URL||'http://127.0.0.1:8768/';
  await p.route('**/api/**',r=>r.fulfill({json:{configured:false}}));
  await p.context().addCookies([{name:'__Host-work-routine-ready',value:'1',url:'https://20261104.xyz',secure:true,sameSite:'Lax'}]);
  await p.addInitScript(()=>{if(localStorage.getItem('shift_salary_config_master'))return;localStorage.setItem('shift_origin_ready_v1','1');localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_onboarding_v1','{"status":"existing"}');localStorage.setItem('shift_salary_config_master',JSON.stringify({hireDate:'2015-01-01',baseHourly:11050,ordinaryHourly:14482,baseHours:209,seniorityPayOverride:70000,dutyPay:70000,fixedAllowances:{duty:70000,qualification:0,family:0,job:0,legacy:0}}));localStorage.setItem('shift_payroll_sms_reference_v1','{"rate":0.15}');});
- await p.goto(url);await p.evaluate(()=>switchView('payroll'));
+ await p.goto(url);
+ const navigationAppearance = () => p.locator('.bottom-nav').evaluate(nav => {
+  const frame = element => {
+   const {x, y, width, height} = element.getBoundingClientRect();
+   return [x, y, width, height];
+  };
+  const capsule = nav.querySelector('.nav-capsule');
+  const selection = getComputedStyle(nav.querySelector('.nav-item.active .nav-visual'));
+  return {
+   capsule: frame(capsule),
+   radius: getComputedStyle(capsule).borderRadius,
+   buttons: [...nav.querySelectorAll('.nav-item')].map(frame),
+   background: getComputedStyle(nav).backgroundColor,
+   selection: [selection.color, selection.backgroundColor],
+  };
+ });
+ const calendarNavigation = await navigationAppearance();
+ await p.locator('#bnav-pay').tap();
+ assert.deepEqual(await navigationAppearance(), calendarNavigation, 'Payroll uses the same bottom tab positions, capsule and selected colors as the calendar');
  const number=async id=>Number((await p.locator('#'+id).textContent()).replace(/[^0-9]/g,''));
  assert.match(await p.locator('#payroll-bonus-hint').textContent(),/ⓘ.*짝수 달에.*반영/);
  assert.equal(await p.locator('.payroll-bonus-row,#lbl-bonus-check,#payroll-bonus-state,#payroll-bonus-amount').count(),0);assert(!(await p.locator('#inp-bonus-check').isVisible()));assert(await p.locator('#inp-bonus-check').isDisabled());assert(!(await p.locator('#inp-bonus-check').isChecked()));
@@ -62,7 +80,15 @@ const url=process.env.TEST_URL||'http://127.0.0.1:8768/';
   if(i===0&&width===390)await p.screenshot({path:'/tmp/payroll-calculations-upright-'+engine.name()+'.png',fullPage:true});
   await p.locator('#workday-adjustments>summary').click();
  }
- for(const theme of ['current','toss','gpt','dark']){await p.evaluate(t=>{document.body.dataset.prefTheme=t;},theme);assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
+ for(const theme of ['current','toss','gpt','dark']){
+  await p.evaluate(t=>{document.body.dataset.prefTheme=t;},theme);
+  assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  const payrollNavigation = await navigationAppearance();
+  await p.locator('#account-menu-button').tap();
+  assert.deepEqual(await navigationAppearance(), payrollNavigation, `${theme}: entering All does not shift or recolor the tab bar`);
+  await p.locator('#bnav-pay').tap();
+  assert.deepEqual(await navigationAppearance(), payrollNavigation, `${theme}: returning to Payroll keeps the shared navigation`);
+ }
  await p.evaluate(()=>{document.body.dataset.prefTheme='current';scrollTo(0,0);});
  if(width===390)await p.screenshot({path:'/tmp/work-routine-payroll-flat-'+engine.name()+'.png',fullPage:true});
  await p.locator('.wage-edit-button').click();await p.locator('#payroll-sms-dialog').waitFor({state:'visible'});

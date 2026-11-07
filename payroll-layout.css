@@ -77,14 +77,6 @@ body[data-pref-theme] #view-payroll #payroll-payment-details{padding:0 20px 4px;
 #view-payroll #payroll-payment-details>summary{border-top:0;min-height:48px;font-size:14px}
 #view-payroll .payroll-disclosure-state :is(.when-open,.when-closed){display:none}
 
-/* The reviewed design uses a quiet, full-width navigation bar on this tab. */
-body[data-pref-theme][data-view=payroll] .bottom-nav{padding:0 0 env(safe-area-inset-bottom);background:var(--nav-surface)!important;border-top:1px solid var(--nav-line)!important}
-body[data-view=payroll] .bottom-nav .nav-capsule{max-width:640px;grid-template-columns:repeat(5,minmax(0,1fr));padding:2px 12px;border:0;border-radius:0;box-shadow:none}
-body[data-pref-theme][data-view=payroll] .bottom-nav .nav-item,
-body[data-pref-theme][data-view=payroll] .bottom-nav .nav-item .nav-visual{min-height:60px;border-radius:0}
-body[data-pref-theme][data-view=payroll] .bottom-nav .nav-item.active .nav-visual{background:transparent!important;color:#3182f6!important;border-radius:0}
-body[data-pref-theme=dark][data-view=payroll] .bottom-nav .nav-item.active .nav-visual{color:#8bb8ff!important}
-
 /* Normal settings remain the same single draft; onboarding keeps its guided flow. */
 #payroll-sms-dialog:not([data-guided=true]) .wage-main-cards{grid-template-columns:1fr;gap:6px}
 #payroll-sms-dialog:not([data-guided=true]) .wage-main-cards>label{flex-direction:row;align-items:center;justify-content:space-between;gap:12px;min-height:56px;padding:8px 0;border:0;border-bottom:1px solid var(--ui-line);border-radius:0;background:transparent;font-size:15px}
