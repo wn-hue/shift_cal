@@ -70,8 +70,8 @@
   if(!value&&(m=s.match(/^(.+) · 현재 근무와 비교한 세전 추정입니다\. 저장 전까지 근무는 바뀌지 않습니다\.$/)))value=m[1]+copy(' · Gross estimate compared with your current shift. No shift changes until saved.',' · 与当前班次相比的税前预估，保存前不会更改班次。','・現在の勤務と比較した税引前の推定です。保存するまで勤務は変わりません。');
   if(!value&&(m=s.match(/^산정기간: (.+)$/)))value=copy('Pay period: ','计算期间：','算定期間：')+m[1];
   if(!value&&(m=s.match(/^(\d+)월 급여명세서 발송일$/)))value=copy(`Month ${m[1]} payslip notice`,`${m[1]}月工资单发送日`,`${m[1]}月の給与明細送付日`);
-  if(!value&&(m=s.match(/^([ABC])조 근무표가 표시돼요\. 근무조는 자동으로 저장돼요\.$/)))value=copy('Showing Team '+m[1]+' schedule. Your team is saved automatically.', '已显示'+m[1]+'组班表。班组会自动保存。',m[1]+'組の勤務表を表示します。勤務グループは自動で保存されます。');
-  if(!value&&(m=s.match(/^전체 메뉴에서 다음 항목을 설정해 주세요\. (.+)$/)))value=copy('Set up the following in the All menu: ','请在“全部”菜单中设置以下项目：','「全体」メニューで次の項目を設定してください。')+m[1].split(' · ').map(item=>t(item)).join(' · ');
+  if(!value&&(m=s.match(/^([ABC])조 근무표가 표시돼요\. 근무조는 자동으로 저장돼요\.$/)))value=copy('Showing Team '+m[1]+'’s schedule. Your team is saved automatically.','已显示'+m[1]+'组班表。班组会自动保存。',m[1]+'組の勤務表を表示します。勤務グループは自動で保存されます。');
+  if(!value&&(m=s.match(/^전체 메뉴에서 다음 항목을 설정해 주세요\. (.+)$/)))value=copy('Set up the following in the All menu: ','请在“全部”菜单中设置以下项目：','「すべて」メニューで次の項目を設定してください。')+m[1].split(' · ').map(item=>t(item)).join(' · ');
   if(!value&&(m=s.match(/^([ABC])조 (?!·)(.+)$/)))value=t(m[1]+'조')+' '+t(m[2]);
   if(!value&&(m=s.match(/^([ABC])조 · (.+)에 맞춰 자동 설정$/)))value=t(m[1]+'조')+' · '+copy('Automatically matched to ','自动匹配','自動設定：')+t(m[2]);
   if(!value&&(m=s.match(/^(\d{4})년 (\d+)월 (\d+)번째 주 조별 근무$/)))value=copy(`${m[1]}.${m[2]} · Week ${m[3]} teams`,`${m[1]}年${m[2]}月 · 第${m[3]}周各组班次`,`${m[1]}年${m[2]}月・第${m[3]}週のグループ勤務`);

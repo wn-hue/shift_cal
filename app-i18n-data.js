@@ -602,7 +602,6 @@ Apple 계정으로 계속하기|Continue with Apple|使用 Apple 继续|Appleで
 잔업을 뺀 날|Days without overtime|取消延时加班的天数|残業を外した日数
 무급으로 줄어드는 금액|Estimated unpaid deduction|无薪休假预估扣款|無給による見込み減額
 정규직 전환일 (연차·지원금 계산)|Permanent employment start date (leave and support payment)|转正日期（计算年假和补助金）|正社員への転換日（有休・支援金の計算）
-근무조를 선택해 주세요.|Choose your shift team.|请选择班组。|勤務グループを選んでください。
 저장한 내용 이어 쓰기|Continue with saved data|继续使用已保存的记录|保存した内容を引き継ぐ
 근무표, 메모, 시급과 연차 설정을 Google Drive에 저장해요. 다른 기기에서도 같은 Google 계정으로 로그인하면 이어서 쓸 수 있어요.|Save your shifts, notes, hourly pay and leave settings in Google Drive. Sign in with the same Google account to continue on another device.|将班表、备忘、时薪和年假设置保存到 Google Drive。在其他设备登录同一个 Google 账户即可继续使用。|勤務表、メモ、時給と有休の設定をGoogle Driveに保存します。別の端末でも同じGoogleアカウントでログインすれば続きから使えます。
 처음 설정 다시 보기|View setup again|重新查看初始设置|初期設定をもう一度見る
@@ -639,7 +638,7 @@ Apple 계정으로 계속하기|Continue with Apple|使用 Apple 继续|Appleで
 한 달에 무급휴무 1번 또는 무급반차 2번까지 쓸 수 있어요.|You can take one unpaid day or up to two unpaid half-days per month.|每月可休1天无薪假，或最多2次无薪半天假。|1か月に無給休暇を1日、または無給の半休を2回まで取得できます。
 입력한 값을 초기화했어요.|Your entries were reset.|已重置输入内容。|入力した値をリセットしました。
 입사일 (정규직 기준)|Start date (permanent employment)|入职日期（正式员工）|入社日（正社員基準）
-계약직이라면 처음 입사한 날을 골라 주세요. 정규직으로 전환되면 전체 → 연차 설정에서 날짜를 바꿀 수 있어요.|If you’re a contract employee, choose the day you first joined. After becoming permanent, you can change it in All → Leave settings.|合同员工请选择首次入职日期。转正后可在“全部 → 年假设置”中更改。|契約社員の方は最初に入社した日を選んでください。正社員への転換後に「全体 → 有休設定」で変更できます。
+계약직이라면 처음 입사한 날을 골라 주세요. 정규직으로 전환되면 전체 → 연차 설정에서 날짜를 바꿀 수 있어요.|If you’re a contract employee, choose the day you first joined. After becoming permanent, you can change it in All → Annual leave.|合同员工请选择首次入职日期。转正后可在“全部 → 年假设置”中更改。|契約社員の方は最初に入社した日を選んでください。正社員への転換後に「すべて → 有休設定」で変更できます。
 받는 수당이 있을 때만 금액을 입력해 주세요.|Enter an amount only if you receive the allowance.|只有领取津贴时才需要输入金额。|受け取っている手当がある場合のみ金額を入力してください。
 위아래로 넘겨 날짜를 골라 주세요. 키보드 방향키로도 바꿀 수 있어요.|Swipe up or down to choose a date. You can also use the arrow keys.|上下滑动选择日期，也可使用键盘方向键。|上下にスワイプして日付を選びます。キーボードの矢印キーでも変更できます。
 입사일을 알려 주세요|When did you join?|请选择入职日期|入社日を教えてください
@@ -768,7 +767,7 @@ Google 캘린더 연결을 끊었어요. Google Drive 저장은 계속 쓸 수 �
 제보와 만차 알림을 껐어요.|Reporting and full-lot alerts are off.|已关闭上报和满位提醒。|状況報告と満車通知をオフにしました。
 교대 시간 한마디|Shift check-in|交接班留言|交替時のひとこと
 이 기기에 저장하지 못했어요. 화면을 닫으면 바꾼 내용이 사라질 수 있어요.|Couldn’t save on this device. Changes may be lost when you close the screen.|未能保存到此设备。关闭页面后，更改可能会丢失。|この端末に保存できませんでした。画面を閉じると変更内容が失われることがあります。
-여기서 쓴 글과 설정은 이 기기에만 저장돼요. 다른 이용자에게 보내지 않아요. 식단 평가는 오늘 메뉴에서, 통근버스·주차장·분실물은 전체 메뉴에서 이용할 수 있어요.|Your posts and settings here are saved only on this device. They aren’t sent to other users. Find meal ratings in Today’s Menu, and shuttle buses, parking and lost & found in the All menu.|这里的发帖和设置仅保存在此设备上，不会发送给其他用户。请在今日菜单中查看餐点评价，在全部菜单中使用通勤班车、停车场和失物招领。|ここで書いた投稿や設定は、この端末だけに保存されます。他の利用者には送信されません。献立評価は「今日のメニュー」、通勤バス・駐車場・落とし物は「すべて」のメニューから利用できます。
+여기서 쓴 글과 설정은 이 기기에만 저장돼요. 다른 이용자에게 보내지 않아요. 식단 평가는 오늘 메뉴에서, 통근버스·주차장·분실물은 전체 메뉴에서 이용할 수 있어요.|Your posts and settings here are saved only on this device. They aren’t sent to other users. Find meal ratings in Today’s menu, and shuttle buses, parking and lost & found in the All menu.|这里的发帖和设置仅保存在此设备上，不会发送给其他用户。请在今日菜单中查看餐点评价，在全部菜单中使用通勤班车、停车场和失物招领。|ここで書いた投稿や設定は、この端末だけに保存されます。他の利用者には送信されません。献立評価は「今日の献立」、通勤バス・駐車場・落とし物は「すべて」のメニューから利用できます。
 예시 보기 (작성 시간 제한 없이)|Show examples (no posting time limit)|查看示例（不限发帖时间）|例を見る（投稿時間の制限なし）
 테스트 기록 지우기|Clear test history|清除试用记录|試用の記録を消す
 누가 글을 볼 수 있는지 예시로 보여 드려요. 아직 실제 소속이나 열람 권한은 확인하지 않아요. 회사의 공식 승인은 별도로 받아야 해요.|The example shows who could view a post. We don’t verify team membership or viewing permissions yet. You’ll still need official company approval.|示例展示哪些人可以查看帖子。此功能尚未验证实际归属或查看权限。仍需另行获得公司的正式批准。|誰が投稿を閲覧できるかを例で示します。実際の所属や閲覧権限はまだ確認しません。会社の正式な承認は別途必要です。
@@ -778,7 +777,8 @@ Google 캘린더 연결을 끊었어요. Google Drive 저장은 계속 쓸 수 �
 오전 7~9시와 오후 7~9시(한국 시간)에 글을 쓸 수 있어요. 함께 보기에서 출근·퇴근 글을 모아 볼 수 있어요. 글과 응원은 이 기기에만 저장돼요.|You can post from 7 to 9 a.m. and 7 to 9 p.m. Korea time. Show both brings together posts from people arriving and leaving. Posts and reactions are saved only on this device.|韩国时间上午7～9点和晚上7～9点可以发帖。选择一起查看，就能同时看到上班和下班的留言。帖子和鼓励仅保存在此设备上。|韓国時間の午前7〜9時と午後7〜9時に投稿できます。「まとめて見る」では出勤と退勤の投稿を一緒に見られます。投稿や応援はこの端末だけに保存されます。
 지금은 글을 읽을 수 있어요. 오전 7~9시와 오후 7~9시(한국 시간)에 글을 쓸 수 있어요.|You can read posts now. Posting opens from 7 to 9 a.m. and 7 to 9 p.m. Korea time.|现在可以阅读帖子。韩国时间上午7～9点和晚上7～9点可以发帖。|今は投稿を読めます。韓国時間の午前7〜9時と午後7〜9時に投稿できます。
 출근 중인가요, 퇴근 중인가요?|Are you arriving for work or heading home?|你是在上班路上，还是下班路上？|出勤中ですか、退勤中ですか？
-이 기기의 글, 설정, 검토 결과를 지울까요? 식단 평가는 그대로 남아요. 평가를 취소하려면 오늘 메뉴에서 선택한 버튼을 다시 눌러 주세요.|Clear posts, settings and review choices from this device? Your meal ratings will stay. To undo a rating, tap your selected button again in Today’s Menu.|要清除此设备上的帖子、设置和试用反馈吗？餐点评价会保留。要撤销评价，请在今日菜单中再次点按已选按钮。|この端末の投稿、設定、検討結果を消しますか？献立の評価は残ります。評価を取り消すには「今日のメニュー」で選んだボタンをもう一度タップしてください。
+이 기기의 글, 설정, 검토 결과를 지울까요? 식단 평가는 그대로 남아요. 평가를 취소하려면 오늘 메뉴에서 선택한 버튼을 다시 눌러 주세요.|Clear posts, settings and review choices from this device? Your meal ratings will stay. To undo a rating, tap your selected button again in Today’s menu.|要清除此设备上的帖子、设置和试用反馈吗？餐点评价会保留。要撤销评价，请在今日菜单中再次点按已选按钮。|この端末の投稿、設定、検討結果を消しますか？献立の評価は残ります。評価を取り消すには「今日の献立」で選んだボタンをもう一度タップしてください。
+함께 보기|Show both|一起查看|まとめて見る
 최신 식단을 확인하고 있어요|Checking the latest menu|正在检查最新菜单|最新の献立を確認しています
 식단을 불러오고 있어요|Loading the menu|正在加载菜单|献立を読み込んでいます
 식당 응답이 늦어지고 있어요.|The cafeteria is taking longer to respond.|食堂响应较慢。|食堂からの応答に時間がかかっています。
@@ -831,6 +831,8 @@ Google 캘린더 연결을 끊었어요. Google Drive 저장은 계속 쓸 수 �
 이 기기에 남은 테스트 글|Test posts on this device|此设备上的测试帖子|この端末に残っている試用投稿
 물건을 받으러 갈 때는 본인 물건의 특징을 설명해 주세요. 신고·차단이나 개인정보 삭제는|When collecting an item, describe what makes it yours. For reports, blocking or personal data deletion, contact|领取物品时，请说明物品的特征。举报、屏蔽或删除个人信息，请联系|受け取るときは、ご自身の品物の特徴を説明してください。通報・ブロックや個人情報の削除については、
 으로 문의해 주세요.|.|。|にお問い合わせください。
+앱 지원|App Support|应用支持|アプリサポート
+게시물 등록|Publish post|发布信息|投稿する
 조건에 맞는 글이 없어요. 다른 검색어를 입력하거나 필터를 바꿔 보세요.|No posts match. Try a different search term or change your filters.|没有符合条件的帖子。请更换搜索词或调整筛选条件。|条件に合う投稿がありません。別の検索語を入力するか、絞り込み条件を変えてみてください。
 주운 물건을 알려요|Share what you found|告诉大家你捡到了什么|拾った物を知らせる
 글쓰기를 그만둘까요? 지금까지 쓴 내용은 저장되지 않아요.|Stop writing? What you’ve written so far won’t be saved.|要停止编辑吗？目前输入的内容不会保存。|投稿の作成をやめますか？ここまで入力した内容は保存されません。
@@ -849,7 +851,7 @@ Google 캘린더 연결을 끊었어요. Google Drive 저장은 계속 쓸 수 �
 누구나 글을 볼 수 있어요. 글을 올리거나 관리·신고하려면 Google 또는 Apple로 로그인해 주세요.|Anyone can view posts. Sign in with Google or Apple to post, manage your posts or report one.|任何人都可以查看帖子。要发布、管理或举报帖子，请使用 Google 或 Apple 登录。|投稿は誰でも閲覧できます。投稿の作成・管理や通報をするには、Google または Apple でログインしてください。
 글을 삭제할까요? 삭제한 글은 되돌릴 수 없어요.|Delete this post? You can’t recover it once it’s deleted.|要删除这个帖子吗？删除后无法恢复。|投稿を削除しますか？削除した投稿は復元できません。
 글쓰기에 불러오기|Load into editor|加载到编辑区|編集欄に読み込む
-테스트 글을 불러왔어요. 게시물 등록을 누르면 앱에 공개돼요.|Test post loaded. Tap Publish post to make it visible in the app.|已加载测试帖子。点击发布帖子后，帖子会在应用中公开。|試用投稿を読み込みました。「投稿する」をタップするとアプリ内に公開されます。
+테스트 글을 불러왔어요. 게시물 등록을 누르면 앱에 공개돼요.|Test post loaded. Tap Publish post to make it visible in the app.|已加载测试帖子。点击“发布信息”后，帖子会在应用中公开。|試用投稿を読み込みました。「投稿する」をタップするとアプリ内に公開されます。
 `.trim().split('\n').map(line=>{const [ko,en,zh,ja]=line.split('|');return [ko,{en,zh,ja}]}));
 
 Object.assign(window.AppTranslations, {
