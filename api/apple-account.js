@@ -3,6 +3,7 @@ const crypto=require('node:crypto');
 const {get,put,del,head,BlobNotFoundError}=require('@vercel/blob');
 const C=require('../account-data-core.js');
 const AccountErasure=require('../lib/account-erasure.js');
+const {notification}=require('../lib/apple-notification.js');
 const {isConflict}=require('../lib/blob-json-store.js');
 const {trusted}=require('../lib/app-origins.js');
 const nativeAuth=require('../lib/native-auth.js');
@@ -98,24 +99,38 @@ async function handler(req, res) {
     };
     const cfg = config();
     const url = new URL(req.url, 'https://local.invalid');
-    const action = url.searchParams.get('action') || 'status';
+    const action = url.searchParams.get('action') ?? (req.method === 'POST' ? 'notification' : 'status');
+    const audience = process.env.APPLE_NOTIFICATION_AUDIENCE;
+    const notificationAudience = /^[A-Za-z0-9.-]{1,255}$/.test(audience||'') ? audience : undefined;
     const user = session(req);
     const callbackUri = cfg.origin + APPLE_PATH + '?action=callback';
     const forwardedOrigin = req.headers['x-work-routine-origin'];
     let verifiedFlow;
     try {
+        if (action === 'notification') {
+            const event = await notification(req,cfg.secret?.length >= 32 ? notificationAudience : undefined);
+            if (event.type === 'consent-revoked' || event.type === 'account-deleted') {
+                const account = {provider:'apple',sub:'apple:'+event.sub};
+                await AccountErasure.eraseFromAppleNotification(account,cfg.secret,event.eventAt,()=>erasePrivateData(account));
+            }
+            // The app has no outbound account mail or forwarding preference to change.
+            return reply(200,{ok:true});
+        }
         if (action === 'status' && req.method === 'GET') {
             const deletion = await AccountErasure.access(user,cfg.secret,{allowUnavailable:true});
             const connected = !!user && deletion.state !== 'expired';
-            return reply(200, {configured: !cfg.missing.length, connected, cloudConnected: connected && deletion.state === 'active', provider: 'apple',
+            const missing = notificationAudience ? cfg.missing : [...cfg.missing,'APPLE_NOTIFICATION_AUDIENCE'];
+            return reply(200, {configured: !missing.length, connected, cloudConnected: connected && deletion.state === 'active', provider: 'apple',
                 ...(connected ? {user: {id: user.sub, email: user.email || 'Apple 계정'}, csrf: user.csrf} : {}),
+                ...(deletion.state === 'expired' && deletion.deletionEpoch ? {deletedAccount:user.sub} : {}),
                 ...(deletion.deletionEpoch ? {deletionEpoch: deletion.deletionEpoch} : {}),
                 ...(deletion.state === 'pending' ? {deletionPending: true} : {}),
                 ...(deletion.state === 'unavailable' ? {deletionCheckUnavailable: true} : {}),
-                missing: cfg.missing});
+                missing});
         }
         if (cfg.missing.length) throw error(503, 'APPLE_SETUP', 'Apple 개발자 계정과 로그인 서비스 설정이 필요합니다.');
         if (action === 'login' && req.method === 'GET') {
+            if (!notificationAudience) throw error(503,'APPLE_NOTIFICATION_SETUP','Apple 알림 설정이 필요해요.');
             const handoff = nativeAuth.flow(url);
             if (forwardedOrigin && forwardedOrigin !== cfg.origin) {
                 if (!trusted(forwardedOrigin) || !handoff.nativeChallenge || (handoff.webReturn && handoff.webReturn !== forwardedOrigin)) {
@@ -132,6 +147,7 @@ async function handler(req, res) {
             return redirect('https://appleid.apple.com/auth/authorize?' + params);
         }
         if (action === 'callback' && req.method === 'POST') {
+            const issuedAt = Date.now();
             if (forwardedOrigin && forwardedOrigin !== cfg.origin) throw error(400, 'STATE', '로그인 요청을 확인할 수 없습니다.');
             const flow = cookie(req, FLOW, cfg.secret);
             const body = typeof req.body === 'string' ? Object.fromEntries(new URLSearchParams(req.body)) : req.body;
@@ -152,8 +168,9 @@ async function handler(req, res) {
             const claims = await verify(data.id_token, flow.nonce, cfg.client, keys.keys || []);
             const authenticated = {
                 provider: 'apple', sub: 'apple:' + claims.sub, email: claims.email || 'Apple 계정',
-                refresh: data.refresh_token, csrf: crypto.randomBytes(24).toString('base64url'), issuedAt: Date.now(), exp: Date.now() + 7 * 86400000
+                refresh: data.refresh_token, csrf: crypto.randomBytes(24).toString('base64url'), appleAuthorizedAt: Math.floor(claims.iat)*1000, issuedAt, exp: issuedAt + 7 * 86400000
             };
+            await AccountErasure.recordAppleSignIn(authenticated,cfg.secret,authenticated.appleAuthorizedAt);
             const value = seal(authenticated, cfg.secret);
             // The exchange installs session cookies on the initiating origin.
             if (flow.nativeChallenge) return redirect(nativeAuth.callback(flow, value, 'apple', cfg.secret));

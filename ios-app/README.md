@@ -28,7 +28,7 @@ xcodebuild -exportArchive \
 공개 심사 전에 남은 확인 사항은 다음과 같습니다.
 
 - App Store Connect에서 배포 앱 기록을 확인하고 IPA 업로드와 빌드 처리를 완료합니다.
-- 한국 개발자의 웹 Apple 로그인 Services ID 등록에 필요한 서버 알림 수신 경로도 구현·검증하고 등록해야 합니다. [Apple 안내](https://developer.apple.com/news/?id=j9zukcr6).
+- 한국 개발자의 웹 Apple 로그인 Services ID 등록에 필요한 서버 알림 수신 경로는 `https://h-lyart-ten.vercel.app/api/apple-account`입니다. Apple Developer의 기본 App ID에서 이 URL을 등록하고, Vercel의 `APPLE_NOTIFICATION_AUDIENCE`에 그 App ID의 Bundle ID를 정확히 입력하세요. 현재 배포용 Bundle ID는 `com.wnhue.workroutine`이며 등록 화면에서 일치하는지 확인해야 합니다. Services ID는 기존 `APPLE_CLIENT_ID`에 입력합니다. 합성 서명·재전송·삭제 테스트를 마쳤으며 실제 Apple 알림 수신을 확인해야 합니다. Apple이 로그인과 알림을 같은 초로 표시하면 두 사건의 순서를 구별할 수 없어 먼저 서버에 기록한 쪽을 우선합니다. 이 경우 로그인 직후 같은 초에 이루어진 실제 철회가 처리되지 않을 수 있으므로, Apple 설정 후 실제 알림으로 이 경계 사례도 확인해야 합니다. [Apple 설정 안내](https://developer.apple.com/help/account/capabilities/enabling-server-to-server-notifications).
 - Apple 로그인 App ID/Services ID/키와 서버 설정. 현재 Apple 로그인은 설정되지 않았습니다. 로그인 시작과 Apple의 `form_post` 콜백은 Vercel 주소에서 처리하고, PKCE 확인 후 처음 시작한 앱·웹 주소에 세션을 연결하도록 구성했습니다. 합성 응답 회귀 테스트는 통과했으며 실제 Apple 계정으로도 확인해야 합니다. Google 로그인과 동등한 로그인 선택지가 실제로 작동하는지 확인합니다.
 - Google 저장 권한이 없는 로그인 계정의 삭제, 본인 게시물·공유 링크 정리, 이전 세션 차단과 재로그인 시 오래된 사본 제외를 합성 데이터로 검증했습니다. 실제 Google·Apple 계정으로 삭제와 재로그인을 확인해야 합니다. 삭제와 동시에 진행되던 Drive 업로드가 권한 해제 뒤 완료되면 Google에 잔여 파일이 남을 수 있습니다. 해당 기록은 복원에서 제외하고, 다음에 Drive 권한이 있는 세션으로 읽거나 저장할 때 해당 파일만 정리합니다. Google Calendar로 보낸 일정과 내보낸 파일은 별도 사본으로 남습니다.
 - 앱 안의 알람·공유·로그인, 실제 기기의 소리·진동·권한 거절·오프라인 및 초기 설정 완료 후 재실행을 확인합니다. 주차장 원격 푸시는 이번 네이티브 앱에 포함되어 있지 않습니다.

@@ -14,11 +14,16 @@ Object.assign(process.env, {
     APP_URL: source,
     GOOGLE_CALENDAR_SESSION_SECRET: 'synthetic-session-key'.repeat(3),
     APPLE_CLIENT_ID: client,
+    APPLE_NOTIFICATION_AUDIENCE: 'synthetic.primary',
     APPLE_TEAM_ID: 'SYNTHETIC',
     APPLE_KEY_ID: 'SYNTHETIC',
     APPLE_PRIVATE_KEY: ecKey.export({type: 'pkcs8', format: 'pem'}),
     BLOB_READ_WRITE_TOKEN: 'synthetic-test-only'
 });
+const erasureRecords = new Map();
+const {storage} = require('../lib/parking-store.js');
+storage.read = async key => erasureRecords.get(key) || null;
+storage.write = async (key,value) => {erasureRecords.set(key,structuredClone(value));};
 const apple = require('../api/apple-account.js');
 const native = require('../api/native-account.js');
 
@@ -115,6 +120,9 @@ async function browserLogin() {
         assert.equal(badState.headers['Set-Cookie'], undefined);
         assert.equal(tokenCalls, 0);
         const nativeDone = await finish(nativeFlow);
+        const [active] = erasureRecords.values();
+        assert.equal(active.phase, 'active');
+        assert(Number.isSafeInteger(active.appleAuthorizedAt));
         const callback = new URL(nativeDone.headers.Location);
         assert.equal(callback.protocol, 'shiftcal:');
         assert.equal(callback.hostname, 'auth');
@@ -157,6 +165,8 @@ async function browserLogin() {
         const worker = (await import('../cloudflare/app-worker.mjs')).default;
         const foreignPost = await worker.fetch(new Request(target + callbackPath, {method: 'POST', headers: {Origin: 'https://appleid.apple.com'}, body: 'state=synthetic'}), {});
         assert.equal(foreignPost.status, 403);
+        const notificationThroughProxy = await worker.fetch(new Request(target + '/api/apple-account', {method:'POST',headers:{'Content-Type':'application/json'},body:'{"payload":"unsigned"}'}),{});
+        assert.equal(notificationThroughProxy.status,403,'Apple notifications use the canonical backend, not the origin-guarded proxy');
         console.log('PASS Apple login issues the flow cookie on the callback host; native and browser handoff, denial, same-origin sessions and Cloudflare guard verified');
     } finally {
         global.fetch = originalFetch;

@@ -13,10 +13,13 @@
     const api=window.AccountSync={ready:false,changed,sessionChanged:()=>init(),disconnected,prepareLogout};
     const deletionBlocksSync=state=>state?.deletionPending||state?.deletionCheckUnavailable;
     const validDeletionEpoch=value=>Number.isSafeInteger(value)&&value>0;
-    function hasUnappliedDeletion(state) {
-        if(!state?.connected || !validDeletionEpoch(state.deletionEpoch))return false;
-        const applied=Number(localStorage.getItem(deletionPrefix+state.user.id));
-        return !validDeletionEpoch(applied)||applied<state.deletionEpoch;
+    function unappliedDeletionOwner(state) {
+        if(!validDeletionEpoch(state?.deletionEpoch))return null;
+        const account=state.connected?state.user?.id:
+            state.connected===false&&state.provider==='apple'?state.deletedAccount:null;
+        if(typeof account!=='string'||!account)return null;
+        const applied=Number(localStorage.getItem(deletionPrefix+account));
+        return !validDeletionEpoch(applied)||applied<state.deletionEpoch?account:null;
     }
     function openManager() {
         switchView('all');const dialog=$('account-login-dialog');if(dialog&&!dialog.open)dialog.showModal?.();
@@ -164,14 +167,23 @@
     async function refreshCloudSession(generation) {
         const live=await request('status',null,true);
         if(generation!==epoch)return false;
-        if(!live.connected || live.user.id!==auth.user.id || !live.cloudConnected || deletionBlocksSync(live) || hasUnappliedDeletion(live)) {
+        if(!live.connected || live.user.id!==auth.user.id || !live.cloudConnected || deletionBlocksSync(live) || unappliedDeletionOwner(live)) {
             setBusy(false);await init(live);return false;
         }
         auth=live;
         return true;
     }
+    async function checkPendingAppleDeletion() {
+        if(auth?.provider!=='apple'||!auth.cloudConnected||!navigator.onLine)return;
+        const generation=epoch;
+        try {
+            const live=await request('status',null,true);
+            if(generation===epoch&&!live.connected&&unappliedDeletionOwner(live))await init(live);
+        } catch {}
+    }
     async function sync() {
-        if(busy || pending)return;
+        if(busy)return;
+        if(pending){await checkPendingAppleDeletion();return;}
         if(deletionBlocksSync(auth)){if(navigator.onLine)await init();return;}
         if(!auth?.cloudConnected){status('로그인 후 계정 저장을 연결해 주세요.','warning');return;}
         if(!navigator.onLine){status('인터넷에 연결한 뒤 다시 저장해 주세요.','warning');return;}
@@ -229,8 +241,9 @@
             if(generation!==epoch)return;
             auth=live;
             baseline=null;
-            if(!deletionBlocksSync(auth) && hasUnappliedDeletion(auth)) {
-                discardDeletedAccount(auth.user.id,auth.deletionEpoch);
+            const deletedOwner=deletionBlocksSync(auth)?null:unappliedDeletionOwner(auth);
+            if(deletedOwner) {
+                discardDeletedAccount(deletedOwner,auth.deletionEpoch);
                 renderedOwner=undefined;
             }
             renderAuth();

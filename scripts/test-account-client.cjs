@@ -7,7 +7,7 @@ const flush=async()=>{for(let n=0;n<12;n++)await new Promise(resolve=>setImmedia
 function device(server,{local={},user='A',connected=true,cloudConnected=true,provider='google'}={}) {
     const saved=new Map(Object.entries(local)),elements=new Map(),events={},timers=new Map();let timerId=0;
     function element(id){if(!elements.has(id))elements.set(id,{textContent:'',hidden:false,open:false,attributes:{},setAttribute(k,v){this.attributes[k]=v},handlers:{},children:[],addEventListener(k,f){this.handlers[k]=f;},replaceChildren(){this.children=[];},append(x){this.children.push(x);},close(){this.open=false;},showModal(){this.open=true;}});return elements.get(id);}
-    const d={user,connected,cloudConnected,provider,disabled:false,reconnect:false,beforeWrite:null,beforeDelete:null,deleteFailure:false,confirmDeletion:true,deletionEpoch:null,deletionPending:false,deletionCheckUnavailable:false,calls:[],saved,element};
+    const d={user,connected,cloudConnected,provider,disabled:false,reconnect:false,beforeWrite:null,beforeDelete:null,deleteFailure:false,confirmDeletion:true,deletedAccount:null,deletionEpoch:null,deletionPending:false,deletionCheckUnavailable:false,calls:[],saved,element};
     const ctx={AccountDataCore:C,navigator:{onLine:true},crypto,URLSearchParams,Date,console,location:{search:''},switchView:v=>{d.view=v;},
         localStorage:{getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(k,String(v)),removeItem:k=>saved.delete(k)},
         document:{hidden:false,getElementById:element,createElement:()=>element('new'+Math.random()),addEventListener:(k,f)=>events[k]=f},
@@ -17,7 +17,14 @@ function device(server,{local={},user='A',connected=true,cloudConnected=true,pro
         fetch:async(url,options)=>{
             const action=new URL(url,'https://shift.example').searchParams.get('action');d.calls.push(action);
             const result=(body,status=200)=>({ok:status===200,status,json:async()=>clone(body)});
-            if(action==='status')return result({connected:d.connected,cloudConnected:d.cloudConnected&&!d.deletionPending&&!d.deletionCheckUnavailable,provider:d.provider,user:{id:d.user,email:d.user+'@example.com'},csrf:d.user+'-csrf',...(d.connected&&d.deletionEpoch?{deletionEpoch:d.deletionEpoch}:{}),deletionPending:d.deletionPending,deletionCheckUnavailable:d.deletionCheckUnavailable});
+            if(action==='status')return result({
+                connected:d.connected,cloudConnected:d.connected&&d.cloudConnected&&!d.deletionPending&&!d.deletionCheckUnavailable,
+                provider:d.provider,
+                ...(d.connected?{user:{id:d.user,email:d.user+'@example.com'},csrf:d.user+'-csrf'}:
+                    d.deletedAccount?{deletedAccount:d.deletedAccount}:{}),
+                ...(d.deletionEpoch&&(d.connected||d.deletedAccount)?{deletionEpoch:d.deletionEpoch}:{}),
+                deletionPending:d.deletionPending,deletionCheckUnavailable:d.deletionCheckUnavailable
+            });
             if(action==='logout'){d.connected=false;d.cloudConnected=false;return result({ok:true});}
             if(d.reconnect)return result({error:'RECONNECT',message:'Reconnect'},401);
             if(d.disabled)return result({error:'DRIVE_SETUP',message:'Enable Google Drive API'},403);
@@ -176,6 +183,56 @@ async function run(){
     await refreshed.tick();
     assert.deepEqual(refreshed.snapshot(),blank);
     assert(!refreshed.calls.includes('cloud-write'),'Autosave must apply the epoch before it reads or writes deleted data');
+    // A signed Apple deletion status can also arrive without a new sign-in.
+    const appleId='apple:A',otherAppleId='apple:B';
+    const appleLinks={[appleId]:liveLinks.A,[otherAppleId]:liveLinks.B};
+    const appleCopies={
+        ['shift_account_base_v1_'+appleId]:JSON.stringify(payroll),
+        ['shift_account_cache_v1_'+appleId]:JSON.stringify(payroll),
+        ['shift_account_base_v1_'+otherAppleId]:otherAccount,
+        ['shift_account_cache_v1_'+otherAppleId]:otherAccount,
+        shift_live_links_v2:JSON.stringify(appleLinks)
+    };
+    const appleServer={[appleId]:[version(payroll)]};
+    const apple=device(appleServer,{provider:'apple',user:appleId,local:appleCopies});
+    await apple.start();
+    assert.deepEqual(apple.snapshot(),payroll);
+    apple.change('shift_day_memos',{'2026-10-12':'unsaved Apple note'});
+    appleServer[appleId]=[version(payroll),version(memo({'2026-10-12':'conflicting note'}))];
+    await apple.tick();
+    assert.equal(apple.element('account-conflict-dialog').open,true);
+    delete appleServer[appleId];
+    apple.connected=false;apple.cloudConnected=false;apple.deletedAccount=appleId;apple.deletionEpoch=deletionEpoch;
+    apple.calls.length=0;
+    await apple.event('visibilitychange');
+    assert.deepEqual(apple.calls,['status'],'A visible conflicted Apple session checks deletion without syncing');
+    assert.deepEqual(apple.snapshot(),blank);
+    assert.equal(apple.saved.get('shift_account_owner_v1'),undefined);
+    assert.equal(apple.saved.get('shift_account_base_v1_'+appleId),undefined);
+    assert.equal(apple.saved.get('shift_account_cache_v1_'+appleId),undefined);
+    assert.equal(apple.saved.get('shift_account_deletion_epoch_v1_'+appleId),String(deletionEpoch));
+    assert.equal(apple.saved.get('shift_account_base_v1_'+otherAppleId),otherAccount);
+    assert.equal(apple.saved.get('shift_account_cache_v1_'+otherAppleId),otherAccount);
+    assert.deepEqual(JSON.parse(apple.saved.get('shift_live_links_v2')),{[otherAppleId]:liveLinks.B});
+    assert.equal(apple.element('account-conflict-dialog').open,false);
+    assert.equal(apple.element('account-login-dialog').attributes['data-connected'],'false');
+    assert.equal(apple.ctx.AccountSync.ready,true);
+    apple.saved.set('shift_account_owner_v1',appleId);
+    apple.saved.set('shift_day_memos',JSON.stringify({'2026-10-12':'record created after deletion'}));
+    await apple.ctx.AccountSync.sessionChanged();
+    assert.equal(apple.snapshot().shift_day_memos['2026-10-12'],'record created after deletion','The same signed notice must not erase a newer working copy');
+    for(const owner of [otherAppleId,undefined]) {
+        const boot=device({}, {provider:'apple',connected:false,cloudConnected:false,local:{
+            ...appleCopies,shift_day_memos:JSON.stringify({'2026-10-13':'unrelated work'}),
+            ...(owner?{shift_account_owner_v1:owner}:{})
+        }});
+        boot.deletedAccount=appleId;boot.deletionEpoch=deletionEpoch;
+        await boot.start();
+        assert.deepEqual(boot.calls,['status']);
+        assert.equal(boot.saved.get('shift_account_cache_v1_'+appleId),undefined);
+        assert.equal(boot.saved.get('shift_account_owner_v1'),owner);
+        assert.equal(boot.snapshot().shift_day_memos['2026-10-13'],'unrelated work');
+    }
     const unavailable=device({}, {local:staleRecovery});
     unavailable.deletionCheckUnavailable=true;await unavailable.start();
     assert.equal(unavailable.ctx.AccountSync.ready,false);
@@ -204,6 +261,6 @@ async function run(){
     const c=device({}, {local:{shift_day_memos:JSON.stringify({'2026-10-11':'retained'})}});c.disabled=true;await c.start();
     assert.equal(c.ctx.AccountSync.ready,false);assert.equal(c.element('account-setup-help').hidden,false);assert.equal(c.timers.size,0);
     c.disabled=false;await c.click('account-sync-now');assert.equal(c.ctx.AccountSync.ready,true);assert.equal(c.element('account-setup-help').hidden,true);
-    console.log('PASS: two-device cloud restore/merge, upload-time edits, conflict resolution, offline cache/reconnect, account switch/logout/deletion, setup error recovery.');
+    console.log('PASS: two-device cloud restore/merge, upload-time edits, conflict resolution, offline cache/reconnect, account switch/logout/deletion, Apple deletion on a signed-out status, setup error recovery.');
 }
 run().catch(e=>{console.error(e);process.exit(1);});
