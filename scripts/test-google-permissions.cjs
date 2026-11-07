@@ -17,6 +17,15 @@ const unchanged=response=>assert(!(response.headers['Set-Cookie']||[]).some(x=>x
   assert.deepEqual(url.searchParams.get('scope').split(' '),expected,'grant requests depend on the selected feature, not a previous session');
   assert.equal(url.searchParams.get('include_granted_scopes'),'false','retired granted scopes cannot leak into any new consent request');
  }
+ // Native errors must close ASWebAuthenticationSession without replacing a valid session.
+ const nativeState='b'.repeat(64),nativeChallenge='c'.repeat(64);
+ const nativeQuery='&storage=1&native_state='+nativeState+'&native_challenge='+nativeChallenge;
+ async function nativeCallback(query,tail){const login=await call('login',{query,session:legacy}),auth=new URL(login.headers.Location);return call('callback',{query:'&state='+auth.searchParams.get('state')+tail,rawCookie:login.headers['Set-Cookie'][0].split(';')[0]+'; '+cookie(legacy)});}
+ let failed=await nativeCallback(nativeQuery,'&error=access_denied');
+ let destination=new URL(failed.headers.Location);assert.equal(destination.protocol,'shiftcal:');assert.equal(destination.host,'auth');assert.equal(destination.searchParams.get('state'),nativeState);assert.equal(destination.searchParams.get('error'),'denied');unchanged(failed);
+ failed=await nativeCallback(nativeQuery,'');destination=new URL(failed.headers.Location);assert.equal(destination.protocol,'shiftcal:');assert.equal(destination.searchParams.get('error'),'CODE');unchanged(failed);
+ failed=await nativeCallback('','&error=access_denied');assert.equal(failed.headers.Location,'https://permissions.example/?google=denied');unchanged(failed);
+ const login=await call('login',{query:nativeQuery});failed=await call('callback',{query:'&state=forged&error=access_denied',rawCookie:login.headers['Set-Cookie'][0].split(';')[0]});assert.match(failed.headers.Location,/^https:\/\/permissions\.example\/\?google=error&reason=STATE$/);unchanged(failed);
  assert.equal((await call('login',{query:'&external=1'})).status,410,'retired consent cannot be requested');assert.equal((await call('login',{query:'&external=1&review=1'})).status,410,'retired review entry is closed');
  const realFetch=global.fetch,originalDrive={read:AccountDrive.read,write:AccountDrive.write,remove:AccountDrive.remove},originalErase=AccountErasure.erase;
  const refreshCalls=[],calendarCalls=[],driveCalls=[];

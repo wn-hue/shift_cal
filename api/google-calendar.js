@@ -198,6 +198,7 @@ async function handler(req, res) {
     const url = new URL(req.url,'https://local.invalid');
     const action = url.searchParams.get('action') || 'status';
     let session = cfg.secret ? unseal(cookies(req)[SESSION], cfg.secret) : null;
+    let verifiedFlow;
     try {
         if (action === 'status' && req.method === 'GET') {
             const deletion = await AccountErasure.access(session && {...session,provider:'google'},cfg.secret,{allowUnavailable:true});
@@ -228,7 +229,8 @@ async function handler(req, res) {
             const flow = unseal(cookies(req)[FLOW],cfg.secret);
             setCookie(res,FLOW,'',0);
             if (!flow || !url.searchParams.get('state') || flow.state !== url.searchParams.get('state')) throw new ApiError(400,'STATE','로그인 요청을 확인할 수 없습니다. 다시 연결하세요.');
-            if (url.searchParams.get('error')) return redirect(res,cfg.oauthOrigin+'/?google=denied');
+            verifiedFlow = flow;
+            if (url.searchParams.get('error')) return redirect(res,require('../lib/native-auth.js').failure(cfg.oauthOrigin,flow,'google','denied'));
             const code = url.searchParams.get('code');
             if (!code) throw new ApiError(400,'CODE','로그인 코드를 확인할 수 없습니다.');
             if(flow.external)throw new ApiError(410,'FEATURE_REMOVED','기존 일정 가져오기 요청이 종료되었습니다. Google Drive 저장으로 다시 연결해 주세요.');
@@ -303,7 +305,7 @@ async function handler(req, res) {
         }
         throw new ApiError(400,'ACTION','지원하지 않는 요청입니다.');
     } catch (e) {
-        if (action === 'callback' && cfg.origin) return redirect(res,cfg.oauthOrigin+'/?google=error&reason='+encodeURIComponent(e.code || 'ERROR'));
+        if (action === 'callback' && cfg.origin) return redirect(res,require('../lib/native-auth.js').failure(cfg.oauthOrigin,verifiedFlow,'google',e.code||'ERROR'));
         return json(res,e.status || 500,{error:e.code || 'ERROR',message:e.status ? e.message : '서버 요청을 처리하지 못했습니다.'});
     }
 }
