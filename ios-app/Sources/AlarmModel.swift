@@ -7,6 +7,8 @@ final class AlarmModel: ObservableObject {
     @Published private(set) var snapshot: ShiftSnapshot?
     @Published private(set) var lastSync: Date?
     @Published private(set) var scheduled: [PlannedAlarm] = []
+    @Published private(set) var deferredCount = 0
+    @Published private(set) var capacityReached = false
     @Published var error: String?
     @Published private(set) var busy = false
     @Published var showingSettings = false
@@ -32,6 +34,13 @@ final class AlarmModel: ObservableObject {
         defaults.set(lastSync, forKey: "natbam.lastSync")
         refresh()
     }
+    func clearSchedule() {
+        guard snapshot != nil || lastSync != nil else { return }
+        snapshot = nil; lastSync = nil
+        defaults.removeObject(forKey: "natbam.snapshot"); defaults.removeObject(forKey: "natbam.lastSync")
+        refresh()
+    }
+    private var appName: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ?? "근무 루틴" }
     func change(_ edit: (inout AlarmPreferences) -> Void) {
         edit(&preferences)
         defaults.set(try? JSONEncoder().encode(preferences), forKey: "natbam.preferences")
@@ -40,7 +49,7 @@ final class AlarmModel: ObservableObject {
     func enable(_ value: Bool) async {
         if value {
             guard snapshot?.validated() == true else {
-                error = "먼저 인터넷에 연결해 달력을 열어 주세요. 오늘부터 30일의 근무표를 확인한 뒤 알람을 켤 수 있어요."
+                error = "먼저 내 근무표를 설정해 주세요. 오늘부터 30일의 근무표를 확인한 뒤 알람을 켤 수 있어요."
                 return
             }
             guard await authorize() else { return }
@@ -50,7 +59,7 @@ final class AlarmModel: ObservableObject {
     func enableBreaks(_ value: Bool) async {
         if value {
             guard snapshot?.validated() == true else {
-                error = "먼저 인터넷에 연결해 달력을 열어 주세요. 근무표를 확인한 뒤 휴게·식사 알람을 켤 수 있어요."
+                error = "먼저 내 근무표를 설정해 주세요. 근무표를 확인한 뒤 휴게·식사 알람을 켤 수 있어요."
                 return
             }
             guard await authorize() else { return }
@@ -61,7 +70,7 @@ final class AlarmModel: ObservableObject {
         do {
             let state = try await AlarmManager.shared.requestAuthorization()
             guard state == .authorized else {
-                error = "아이폰 설정 → 앱 → 교대 루틴 테스트에서 알람을 허용해 주세요."
+                error = "아이폰 설정 → 앱 → \(appName)에서 알람을 허용해 주세요."
                 return false
             }
             return true
@@ -69,7 +78,7 @@ final class AlarmModel: ObservableObject {
     }
     func test() async {
         guard await authorize() else { return }
-        testPlan = PlannedAlarm(key: "test", title: "교대 루틴 테스트 알람", date: Date().addingTimeInterval(60))
+        testPlan = PlannedAlarm(key: "test", title: appName + (appName.contains("테스트") ? " 알람" : " 테스트 알람"), date: Date().addingTimeInterval(60))
         refresh()
     }
     func stopTest() { testPlan = nil; refresh() }
@@ -90,12 +99,16 @@ final class AlarmModel: ObservableObject {
                     if !desired.isEmpty && AlarmManager.shared.authorizationState != .authorized {
                         throw AlarmFailure.permission
                     }
-                    try await service.reconcile(desired)
-                    scheduled = try service.scheduled().filter { $0.date > Date() }
+                    let result = try await service.reconcile(desired)
+                    scheduled = result.scheduled.filter { $0.date > Date() }
+                    deferredCount = result.deferred.count
+                    capacityReached = result.capacityReached
                     error = nil
                 } catch {
                     scheduled = (try? service.scheduled().filter { $0.date > Date() }) ?? []
-                    self.error = "알람 예약을 완료하지 못했어요. \(error.localizedDescription)"
+                    deferredCount = max(0, desired.count - scheduled.count)
+                    capacityReached = false
+                    self.error = NativeL10n.format("알람 예약을 완료하지 못했어요. %@", error.localizedDescription)
                 }
             } while needsRefresh
         }
@@ -103,5 +116,5 @@ final class AlarmModel: ObservableObject {
 }
 private enum AlarmFailure: LocalizedError {
     case permission
-    var errorDescription: String? { "설정에서 교대 루틴 테스트의 알람 권한을 확인해 주세요." }
+    var errorDescription: String? { "아이폰 설정에서 이 앱의 알람 권한을 확인해 주세요." }
 }

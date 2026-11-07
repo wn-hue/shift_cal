@@ -20,8 +20,8 @@ struct AlarmView: View {
     @ViewBuilder private func breakSchedule(night: Bool) -> some View {
         let round = night ? model.preferences.nightBreakRound : model.preferences.dayBreakRound
         VStack(alignment: .leading, spacing: 12) {
-            Text(night ? "야간" : "주간").font(.subheadline.bold())
-            Picker(night ? "야간 차수" : "주간 차수", selection: Binding(get: {
+            Text(NativeL10n.text(night ? "야간" : "주간")).font(.subheadline.bold())
+            Picker(NativeL10n.text(night ? "야간 차수" : "주간 차수"), selection: Binding(get: {
                 night ? model.preferences.nightBreakRound : model.preferences.dayBreakRound
             }, set: { value in
                 model.change { if night { $0.nightBreakRound = value } else { $0.dayBreakRound = value } }
@@ -31,7 +31,7 @@ struct AlarmView: View {
             }.pickerStyle(.segmented)
                 .accessibilityIdentifier(night ? "nightBreakRound" : "dayBreakRound")
             ForEach(ShiftPlanner.breaks(night: night, round: round)) { item in
-                LabeledContent(item.title + " · \(item.leadMinutes)분 전", value: item.timeLabel).font(.subheadline)
+                LabeledContent(NativeL10n.format("%@ · %d분 전", NativeL10n.text(item.title), item.leadMinutes), value: item.timeLabel).font(.subheadline)
             }
         }.padding(.vertical, 6)
     }
@@ -46,7 +46,7 @@ struct AlarmView: View {
                 } footer: {
                     Text("한국 시간 기준이에요. 반차일에도 기본 근무의 주간·야간 시간에 울려요. 휴무·연차·무급휴무는 제외해요.")
                 }
-                Section(model.preferences.separateWeekendHolidays ? "평일 출근" : "출근 시간") {
+                Section(NativeL10n.text(model.preferences.separateWeekendHolidays ? "평일 출근" : "출근 시간")) {
                     DatePicker("주간 · 주특", selection: time(false), displayedComponents: .hourAndMinute)
                         .accessibilityIdentifier("weekdayDayTime")
                     DatePicker("야간 · 야특", selection: time(true), displayedComponents: .hourAndMinute)
@@ -66,9 +66,9 @@ struct AlarmView: View {
                 } header: {
                     Text("주말·공휴일 출근")
                 } footer: {
-                    Text(model.preferences.separateWeekendHolidays
+                    Text(NativeL10n.text(model.preferences.separateWeekendHolidays
                         ? "토·일요일과 달력에 표시된 공휴일·대체공휴일에 적용해요. 야간 근무도 출근하는 날짜를 기준으로 구분해요."
-                        : "지금은 모든 출근일에 같은 시간을 사용해요. 따로 설정하면 처음에는 기존 시간을 그대로 가져와요.")
+                        : "지금은 모든 출근일에 같은 시간을 사용해요. 따로 설정하면 처음에는 기존 시간을 그대로 가져와요."))
                 }
                 Section {
                     Toggle("휴게·식사 알람", isOn: Binding(get: { model.preferences.breaksEnabled }, set: { value in
@@ -95,10 +95,24 @@ struct AlarmView: View {
                 }
                 if let error = model.error {
                     Section {
-                        Label(error, systemImage: "exclamationmark.circle").foregroundStyle(.red)
+                        Label(NativeL10n.text(error), systemImage: "exclamationmark.circle").foregroundStyle(.red)
+                        Button("다시 예약하기") { model.refresh() }.disabled(model.busy)
                         Button("아이폰 설정 열기") {
                             if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
                         }
+                    }
+                }
+                if model.capacityReached {
+                    Section("알람 예약 안내") {
+                        Label("가까운 알람부터 예약했어요", systemImage: "clock.badge.exclamationmark").font(.subheadline.bold())
+                        if let last = model.scheduled.last {
+                            LabeledContent("예약된 마지막 알람") {
+                                Text(last.date, format: .dateTime.month().day().hour().minute())
+                            }
+                        }
+                        Text(NativeL10n.format("아이폰의 알람 예약 한도에 도달해 %d개는 아직 예약하지 못했어요. 앱을 다시 열면 남은 알람을 이어서 예약해요.", model.deferredCount))
+                            .font(.footnote).foregroundStyle(.secondary)
+                        Button("다시 예약하기") { model.refresh() }.disabled(model.busy)
                     }
                 }
                 Section("예약된 알람 · \(model.scheduled.count)개") {
@@ -106,7 +120,7 @@ struct AlarmView: View {
                     if model.scheduled.isEmpty { Text("아직 예약된 알람이 없어요").foregroundStyle(.secondary) }
                     ForEach(model.scheduled) { plan in
                         VStack(alignment: .leading, spacing: 5) {
-                            Text(plan.title).font(.subheadline.bold())
+                            Text(NativeL10n.text(plan.title)).font(.subheadline.bold())
                             Text(plan.date, format: .dateTime.month().day().weekday().hour().minute().timeZone(.omitted))
                                 .font(.subheadline).foregroundStyle(.secondary)
                         }
@@ -114,11 +128,11 @@ struct AlarmView: View {
                 }
                 Section("달력 연결") {
                     if let snapshot = model.snapshot, let sync = model.lastSync {
-                        LabeledContent("근무조", value: "\(snapshot.group)조")
+                        LabeledContent("근무조", value: NativeL10n.group(snapshot.group))
                         LabeledContent("최근 확인", value: sync.formatted(date: .abbreviated, time: .shortened))
-                        if let last = snapshot.days.last { LabeledContent("예약 범위", value: "\(last.date)까지") }
+                        if let last = snapshot.days.last { LabeledContent("근무표 확인 범위", value: NativeL10n.format("%@까지", last.date)) }
                     } else { Text("달력을 불러오면 근무표가 연결돼요") }
-                    Text("앱을 열 때 향후 30일을 갱신해요. 다른 기기에서 바꾼 근무는 이 앱에서 동기화한 뒤 알람에 반영돼요. 주차장 만차 원격 알림은 이 테스트 앱에 포함되지 않아요.")
+                    Text("앱을 열 때 향후 30일의 근무표를 확인하고, 아이폰이 허용하는 만큼 가까운 알람부터 예약해요. 다른 기기에서 바꾼 근무는 이 앱에서 동기화한 뒤 알람에 반영돼요.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }
             }
@@ -126,6 +140,6 @@ struct AlarmView: View {
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("완료") { dismiss() } } }
         }
         .environment(\.timeZone, ShiftPlanner.korea.timeZone)
-        .environment(\.locale, Locale(identifier: "ko_KR"))
+        .environment(\.locale, NativeL10n.locale)
     }
 }

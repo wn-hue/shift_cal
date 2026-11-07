@@ -110,12 +110,13 @@ struct WorkBreak: Identifiable {
     var alarmMinutes: Int { startMinutes - leadMinutes }
     var timeLabel: String {
         let minutes = alarmMinutes % 1440
-        return (alarmMinutes >= 1440 ? "다음 날 " : "") + String(format: "%02d:%02d", minutes / 60, minutes % 60)
+        let time = String(format: "%02d:%02d", minutes / 60, minutes % 60)
+        return alarmMinutes >= 1440 ? NativeL10n.format("다음 날 %@", time) : time
     }
 }
 
 enum ShiftPlanner {
-    static let types: Set<String> = ["DAY", "NIGHT", "OFF", "LEAVE", "UNPAID_OFF", "NO_OT",
+    static let types: Set<String> = ["DAY", "NIGHT", "OFF", "LEAVE", "UNPAID_OFF", "FORCED_OFF", "NO_OT",
         "SPECIAL_DAY", "SPECIAL_NIGHT", "SPECIAL_DAY_NO_OT", "SPECIAL_NIGHT_NO_OT",
         "HALF_PRE", "HALF_POST", "HALF_LEAVE", "UNPAID_HALF_PRE", "UNPAID_HALF_POST", "UNPAID_HALF"]
     static var korea: Calendar {
@@ -174,8 +175,8 @@ enum ShiftPlanner {
             let weekendOrHoliday = weekday == 1 || weekday == 7 || day.isHoliday == true
             let minutes = preferences.minutes(night: night, weekendOrHoliday: weekendOrHoliday)
             guard let fire = korea.date(byAdding: .minute, value: minutes, to: start), fire > now, fire < end else { return nil }
-            let dayLabel = preferences.separateWeekendHolidays ? " · \(weekendOrHoliday ? "주말·공휴일" : "평일")" : ""
-            return PlannedAlarm(key: day.date, title: "\(snapshot.group)조 \(night ? "야간" : "주간") 근무 알람\(dayLabel)", date: fire)
+            let dayLabel = preferences.separateWeekendHolidays ? " · " + NativeL10n.text(weekendOrHoliday ? "주말·공휴일" : "평일") : ""
+            return PlannedAlarm(key: day.date, title: NativeL10n.format("%@ %@ 근무 알람%@", NativeL10n.group(snapshot.group), NativeL10n.text(night ? "야간" : "주간"), dayLabel), date: fire)
           }
         }
         if preferences.breaksEnabled {
@@ -188,7 +189,7 @@ enum ShiftPlanner {
                 for item in breaks(night: night, round: round) {
                     guard let fire = korea.date(byAdding: .minute, value: item.alarmMinutes, to: start), fire > now, fire < end else { continue }
                     plans.append(PlannedAlarm(key: day.date + ":break:" + item.id,
-                        title: "\(snapshot.group)조 \(night ? "야간" : "주간") \(round)차 · \(item.title) \(item.leadMinutes)분 전", date: fire))
+                        title: NativeL10n.format("%@ %@ %d차 · %@ %d분 전", NativeL10n.group(snapshot.group), NativeL10n.text(night ? "야간" : "주간"), round, NativeL10n.text(item.title), item.leadMinutes), date: fire))
                 }
             }
         }

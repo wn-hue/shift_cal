@@ -2,9 +2,11 @@
 
 ## App Store 배포 준비
 
-배포용 프로젝트는 `WorkRoutine.xcodeproj`, Scheme은 `WorkRoutine`입니다. 앱 이름은 **근무 루틴**, Bundle ID는 `com.wnhue.workroutine`, 버전은 `1.0 (1)`이며 iOS 26 이상 iPhone용입니다. 배포용 앱은 `https://20261104.xyz`를 사용합니다. `production.yml`로 생성하며 기존 `Natbam.xcodeproj`와 개인 테스트앱의 서명 설정을 덮어쓰지 않습니다.
+현재 네이티브 배포용 프로젝트는 `WorkRoutine.xcodeproj`, Scheme은 `WorkRoutine`입니다. 앱 이름은 **근무 루틴**, Bundle ID는 `com.wnhue.workroutine`, App Store Connect에 업로드한 최신 버전은 **`1.0 (3)`**이며 iOS 26 이상 iPhone용입니다. 업로드 응답은 Apple 서버에서 처리 중이며, 공개 심사는 제출하지 않았습니다. 다섯 기본 탭과 편집·설정·서비스 화면은 SwiftUI로 표시하고, 기존 계산 규칙은 번들에 담아 JavaScriptCore에서 실행합니다. 서버 기능은 `https://20261104.xyz`를 사용합니다. `production.yml`로 생성하며 기존 `Natbam.xcodeproj`는 이전 개인 테스트앱용으로 유지합니다. 전환 범위와 검증 조건은 [NATIVE_MIGRATION.md](NATIVE_MIGRATION.md)를 확인하세요.
 
 기존 테스트앱은 기존 식별자와 Vercel 저장소를 유지합니다. 새 앱은 별도 설치되므로 테스트앱을 삭제하지 말고, 기존 앱에서 Google Drive에 저장한 뒤 새 앱에서 같은 계정으로 기록을 불러오거나 백업 파일을 가져옵니다. Safari와 새 앱의 기기 저장소도 서로 다릅니다.
+
+동일한 배포용 Bundle ID의 이전 설치본을 업데이트하면 숨겨진 WKWebView를 한 번 사용해 기존 저장소의 허용된 기록을 읽습니다. 화면 표시에는 사용하지 않으며 기존 저장소를 지우지 않습니다. 주차장 제보 참여·만차 알림, APNs 기기 등록·갱신·해제와 서버 발송 경로를 구현했습니다. 내보낸 App Store 패키지의 production APNs 권한은 확인했지만 서버 APNs 키는 아직 설정되지 않았습니다. 이 설정 전에는 제보·원격 알림을 켤 수 없으며, 화면에서 준비 중임을 안내하고 현황 조회를 제공합니다. Google Calendar는 보내기 버튼을 눌러야 갱신합니다. 기존 공유 링크는 앱 실행 중 계정 기록을 사용할 수 있을 때 현재 선택한 근무조만 갱신하며, 백그라운드에서는 자동 갱신하지 않습니다.
 
 `Production/PrivacyInfo.xcprivacy`에 알람 설정 저장용 UserDefaults 사용 사유를 선언했습니다. App Store 개인정보 항목 응답은 별도 절차이며 이 파일로 대체되지 않습니다. 앱은 시스템 암호화 API와 HTTPS를 이용하며 광고 추적 SDK를 포함하지 않습니다.
 
@@ -12,33 +14,43 @@
 xcodegen generate --spec ios-app/production.yml
 xcodebuild -project ios-app/WorkRoutine.xcodeproj -scheme WorkRoutine \
   -configuration Release -destination 'generic/platform=iOS' \
-  -archivePath output/ios-release/WorkRoutine-signed.xcarchive \
+  -archivePath output/ios-native-build3/WorkRoutine-verified.xcarchive \
   -allowProvisioningUpdates DEVELOPMENT_TEAM=YOUR_PAID_TEAM_ID archive
 xcodebuild -exportArchive \
-  -archivePath output/ios-release/WorkRoutine-signed.xcarchive \
-  -exportPath output/ios-release/AppStore \
+  -archivePath output/ios-native-build3/WorkRoutine-verified.xcarchive \
+  -exportPath output/ios-native-build3/Verified-AppStore \
   -exportOptionsPlist ios-app/Production/ExportOptions.plist \
   -allowProvisioningUpdates
 ```
 
-2026-11-08에 Apple Developer Program 유료 멤버십과 배포 권한을 확인했습니다. Apple Distribution으로 서명한 `1.0 (1)`을 `output/ios-release/AppStore-release/WorkRoutine.ipa`로 내보냈습니다. IPA 서명과 배포 프로파일이 앱 식별자에 맞고 개인정보 매니페스트가 들어 있는지 확인했습니다. 검사 결과와 파일 해시는 `output/ios-release/distribution-verification.json`에 있습니다.
+최종 아카이브는 `output/ios-native-build3/WorkRoutine-verified.xcarchive`, IPA는 `output/ios-native-build3/Verified-AppStore/WorkRoutine.ipa`입니다. 내보낸 App Store 패키지에서 production APNs와 Sign in with Apple 권한을 확인했습니다. 시뮬레이터 검증은 실제 iPhone의 로그인·기록 복원·업그레이드·잠금 상태 알람 검증을 대신하지 않습니다.
+
+2026-11-08 최종 검사에서 **87개 테스트(단위 86개 + UI 흐름 1개)가 모두 통과했고 런타임 경고는 0개**였습니다. 결과는 `/tmp/work-routine-build3-verified.xcresult`에 있습니다. 메모 키보드 닫기는 입력 폼 안으로 옮겨 이전 키보드 툴바의 프레임 경고를 없앴으며, 언어 변경 후 설정 화면 유지와 재실행도 검증했습니다. `1.0 (3)` 업로드 로그 `/tmp/work-routine-build3-upload.log`에는 `Upload succeeded`, `EXPORT SUCCEEDED`와 Apple 서버의 패키지 처리 중 응답이 기록되어 있습니다. 공개 심사는 제출하지 않았습니다.
+
+이전 네이티브 `1.0 (2)`는 단위 테스트 51개와 UI 흐름을 검증한 뒤 업로드했습니다. 당시 기록은 `output/ios-native/verification.json`에 유지하며, 현재 빌드 3의 검증 결과·파일과 구분합니다.
+
+이전 하이브리드 배포 기록: 2026-11-08에 Apple Developer Program 유료 멤버십과 배포 권한을 확인했고, Apple Distribution으로 서명한 `1.0 (1)`을 `output/ios-release/AppStore-release/WorkRoutine.ipa`로 내보냈습니다. 해당 이전 빌드의 서명·프로파일·개인정보 매니페스트 검사 결과와 파일 해시는 `output/ios-release/distribution-verification.json`에 있습니다. 이 파일은 현재 네이티브 `1.0 (3)` 패키지가 아닙니다.
 
 `ExportOptions.plist`로 생성하는 것은 로컬 배포 패키지입니다. App Store Connect 앱 등록과 업로드는 별도 단계입니다.
 
+현재 빌드에는 예약 한도 안내, 메모 알림의 직렬 처리·실패 재시도, 네이티브 주차장 기능과 다국어 화면을 추가했습니다. 테스트와 업로드 성공은 실제 계정의 기록 복원이나 실제 기기의 알람·푸시 수신 성공을 뜻하지 않습니다.
+
 공개 심사 전에 남은 확인 사항은 다음과 같습니다.
 
-- App Store Connect에서 배포 앱 기록을 확인하고 IPA 업로드와 빌드 처리를 완료합니다.
+- App Store Connect에서 네이티브 `1.0 (3)`의 빌드 처리가 끝났는지 확인하고 TestFlight 설치를 검증합니다.
 - 한국 개발자의 웹 Apple 로그인 Services ID 등록에 필요한 서버 알림 수신 경로는 `https://h-lyart-ten.vercel.app/api/apple-account`입니다. Apple Developer의 기본 App ID에서 이 URL을 등록하고, Vercel의 `APPLE_NOTIFICATION_AUDIENCE`에 그 App ID의 Bundle ID를 정확히 입력하세요. 현재 배포용 Bundle ID는 `com.wnhue.workroutine`이며 등록 화면에서 일치하는지 확인해야 합니다. Services ID는 기존 `APPLE_CLIENT_ID`에 입력합니다. 합성 서명·재전송·삭제 테스트를 마쳤으며 실제 Apple 알림 수신을 확인해야 합니다. Apple이 로그인과 알림을 같은 초로 표시하면 두 사건의 순서를 구별할 수 없어 먼저 서버에 기록한 쪽을 우선합니다. 이 경우 로그인 직후 같은 초에 이루어진 실제 철회가 처리되지 않을 수 있으므로, Apple 설정 후 실제 알림으로 이 경계 사례도 확인해야 합니다. [Apple 설정 안내](https://developer.apple.com/help/account/capabilities/enabling-server-to-server-notifications).
-- Apple 로그인 App ID/Services ID/키와 서버 설정. 현재 Apple 로그인은 설정되지 않았습니다. 로그인 시작과 Apple의 `form_post` 콜백은 Vercel 주소에서 처리하고, PKCE 확인 후 처음 시작한 앱·웹 주소에 세션을 연결하도록 구성했습니다. 합성 응답 회귀 테스트는 통과했으며 실제 Apple 계정으로도 확인해야 합니다. Google 로그인과 동등한 로그인 선택지가 실제로 작동하는지 확인합니다.
+- 내보낸 앱의 Sign in with Apple 권한은 확인했지만 Apple Services ID·키와 서버 설정은 아직 완료되지 않았습니다. 로그인 시작과 Apple의 `form_post` 콜백은 Vercel 주소에서 처리하고, PKCE 확인 후 처음 시작한 앱·웹 주소에 세션을 연결하도록 구성했습니다. 합성 응답 회귀 테스트는 통과했으며 서버 구성을 마친 뒤 실제 Apple 계정으로도 확인해야 합니다. Google 로그인과 동등한 로그인 선택지가 실제로 작동하는지 확인합니다.
 - Google 저장 권한이 없는 로그인 계정의 삭제, 본인 게시물·공유 링크 정리, 이전 세션 차단과 재로그인 시 오래된 사본 제외를 합성 데이터로 검증했습니다. 실제 Google·Apple 계정으로 삭제와 재로그인을 확인해야 합니다. 삭제와 동시에 진행되던 Drive 업로드가 권한 해제 뒤 완료되면 Google에 잔여 파일이 남을 수 있습니다. 해당 기록은 복원에서 제외하고, 다음에 Drive 권한이 있는 세션으로 읽거나 저장할 때 해당 파일만 정리합니다. Google Calendar로 보낸 일정과 내보낸 파일은 별도 사본으로 남습니다.
-- 앱 안의 알람·공유·로그인, 실제 기기의 소리·진동·권한 거절·오프라인 및 초기 설정 완료 후 재실행을 확인합니다. 주차장 원격 푸시는 이번 네이티브 앱에 포함되어 있지 않습니다.
-- 실기기 화면을 기준으로 스크린샷, 연령 등급, 개인정보 항목, 콘텐츠 권리, 심사 연락처를 입력합니다. 심사 설명 초안은 `Production/app-store-metadata.ko.json`에 있습니다. 이름·식별자 사용 가능 여부와 앱 공개 국가·지역은 App Store Connect에서 확인합니다.
+- 앱 안의 알람·공유·로그인, 실제 기기의 소리·진동·권한 거절·오프라인 및 초기 설정 완료 후 재실행을 확인합니다. 앱의 production Push Notifications 권한은 확인했으며, 남은 주차장 APNs 서버 키(`PARKING_APNS_KEY_ID`, `PARKING_APNS_TEAM_ID`, `PARKING_APNS_PRIVATE_KEY`, `PARKING_APNS_TOPIC`)를 구성한 뒤 실제 iPhone에서 참여 켜기·수신·끄기를 확인합니다. 서버 설정 대기와 실제 기기 전달 미검증을 기능 미구현과 구분합니다.
+- iPhone 18 Pro Max 시뮬레이터의 추가 UI 흐름 테스트도 101초에 통과했고, 스크린샷 후보 PNG 6장을 `output/ios-native-build3/app-store-screenshots/`에 저장했습니다. 크기·화면 내용을 최종 확인한 뒤 App Store Connect에 등록하고, 연령 등급·개인정보 항목·콘텐츠 권리·심사 연락처를 입력합니다. 캡처 완료는 실제 기기 전달 검증이나 Connect 등록 완료를 뜻하지 않습니다. 심사 설명 초안은 `Production/app-store-metadata.ko.json`에 있습니다. 이름·식별자 사용 가능 여부와 앱 공개 국가·지역은 App Store Connect에서 확인합니다.
 
 지원 URL은 `https://20261104.xyz/ios-support.html`, 개인정보 URL은 `https://20261104.xyz/ios-privacy.html`입니다. 문서 변경이 실제 사이트에 배포되어 있는지도 제출 전에 확인합니다.
 
 ## 기존 개인 테스트 프로젝트
 
-`Natbam.xcodeproj`를 Xcode에서 열어 실행합니다. **iOS 26 이상**, Xcode 26 이상이 필요합니다. 현재 교대 루틴 웹앱을 WKWebView로 표시하고, 달력에서 계산한 근무표를 iOS AlarmKit 알람에 연결합니다. 기존 `ios-alarm/`의 Google 캘린더 보조 앱과 다른 프로젝트입니다.
+아래 설치·기능·개발 안내는 이전 하이브리드 개인 테스트앱 `Natbam`에만 해당합니다. 현재 네이티브 배포 앱은 위의 `WorkRoutine` 안내를 따릅니다.
+
+`Natbam.xcodeproj`를 Xcode에서 열어 실행합니다. **iOS 26 이상**, Xcode 26 이상이 필요합니다. 교대 루틴 웹앱을 WKWebView로 표시하고, 달력에서 계산한 근무표를 iOS AlarmKit 알람에 연결합니다. 기존 `ios-alarm/`의 Google 캘린더 보조 앱과 다른 프로젝트입니다.
 
 ## 아이폰에 설치
 

@@ -7,21 +7,69 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0416F80AE9ED287AD351A887 /* holiday-work-pay-core.js in Resources */ = {isa = PBXBuildFile; fileRef = E311C5965DD25E917E9A6C4C /* holiday-work-pay-core.js */; };
+		0758B14FDC401918F7DBB895 /* NativeLabExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7098F1FF6DBF130C44D644E /* NativeLabExtras.swift */; };
+		0F054C5B650DB6E625B330D9 /* day-entry-core.js in Resources */ = {isa = PBXBuildFile; fileRef = F74D34464EFF48D3C27C4FA3 /* day-entry-core.js */; };
+		135D14CBD1DA0428188D09D7 /* NativeReminderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EDBC1D0D227D659C869EAF0 /* NativeReminderTests.swift */; };
+		163E7EBDB5DCE86F0B949C49 /* bus-factory-locations.js in Resources */ = {isa = PBXBuildFile; fileRef = 0C2135F0CBD43C458EF6427B /* bus-factory-locations.js */; };
+		19EB73ED34459FFD99A1624A /* NativeParkingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39471E9AA6251F291DEC53F5 /* NativeParkingTests.swift */; };
+		22225B90B7567E8E8F61B76B /* weather-forecast.js in Resources */ = {isa = PBXBuildFile; fileRef = 9CD3CE4881BF68A25C05F235 /* weather-forecast.js */; };
+		22E41C71615F9DAF71EECED1 /* NativeOAuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4CAECC651C2DF1CE6EA31C /* NativeOAuthTests.swift */; };
 		26336C2BBABD540ACFDD7F3F /* ShiftPlannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC962E1CF307DA72335D867F /* ShiftPlannerTests.swift */; };
+		28FFD2725EC7CF8AB0E4BA02 /* NativeAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A6DF627872919055B23E38 /* NativeAccount.swift */; };
+		2CCED3023EA3A3BC31FDEBA1 /* google-sync-core.js in Resources */ = {isa = PBXBuildFile; fileRef = 5CBEFB807FDE7A5774415376 /* google-sync-core.js */; };
+		41A3B42411DA09BFF37A1B66 /* NativeCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6449D7A00C04E9AD7CAA8757 /* NativeCalendar.swift */; };
+		48A6C8083258CA58853AB57A /* bus-location-core.js in Resources */ = {isa = PBXBuildFile; fileRef = 6A033611B7A0806860C3AFDF /* bus-location-core.js */; };
+		49503A2D9B7EFE7487CFFB73 /* NativeWeatherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58A7311A24AAFA21CD40A952 /* NativeWeatherTests.swift */; };
+		49C3EF93775043A50B243F98 /* NativeBus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6FD6153F4633E472F8F5D2F /* NativeBus.swift */; };
+		4BD393E437461B172F69EF48 /* NativeRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 140583AC3587357228009CD0 /* NativeRoot.swift */; };
 		4F27BAC3DBA47C14AC8DEE35 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3249FC32C1696831A4C26E42 /* Assets.xcassets */; };
 		54A009AB993A0BCC322FF443 /* ShiftPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD6B507CEE00B15AFF62497 /* ShiftPlanner.swift */; };
+		57BDE4789B8AD89317E2FC2E /* bus-stop-locations.js in Resources */ = {isa = PBXBuildFile; fileRef = 223E413CDA3BA5B951D1C1D4 /* bus-stop-locations.js */; };
 		631401795E531AA07DF6747D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B921E5019041E9DEDB22FAB3 /* PrivacyInfo.xcprivacy */; };
+		6559752B2C56B12DEDC5B46C /* NativeWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A5C42116248068A66CC0FB /* NativeWeather.swift */; };
+		6DB97C5BEACE6A28E62B5B34 /* NativeLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CADBCAB2F55A19B7D53608 /* NativeLocalization.swift */; };
+		6E61DAC3BEB0228744A5E08B /* day-memos-core.js in Resources */ = {isa = PBXBuildFile; fileRef = 2764991EDFAB5847682D68FC /* day-memos-core.js */; };
+		6FFCCA1CE1F3506A7E43F28A /* NativePayroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7848B1303205D0D06885E844 /* NativePayroll.swift */; };
+		700771CA334DB495659D0E35 /* NativeCalendarExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB426CC7BEC8157ADB51B6 /* NativeCalendarExport.swift */; };
 		714D4245128E0B214FCD2425 /* AlarmModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC68C0C353C9A5EA159CF4D /* AlarmModel.swift */; };
+		744AD15CA926DEA0E3521F10 /* NativeAccountFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9758B8A645D6662E7A98E6F /* NativeAccountFlowTests.swift */; };
+		79E4EC01CAE9C762C62A9716 /* NativeMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 118F6BEC1D76DF550D7CCA5F /* NativeMigrationTests.swift */; };
+		7F2548F8FD4370E7BA2AF3CA /* planner-core.js in Resources */ = {isa = PBXBuildFile; fileRef = 5902A3D371051BF33EF39D73 /* planner-core.js */; };
+		803F12522D4F4772E1D5601E /* account-data-core.js in Resources */ = {isa = PBXBuildFile; fileRef = 8E0B9DD70C486BBDEDBB1BC9 /* account-data-core.js */; };
 		81ECF86DA5BCA6132644BD40 /* AlarmServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F95158A052AEE138894FC71B /* AlarmServiceTests.swift */; };
 		825173CDDC56C205A9EF65EB /* AlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46BA444D4967D4DBA0C0823 /* AlarmView.swift */; };
+		837AFFB8408211670347BFA2 /* NativePayrollTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D145480DDAD456BA67B534 /* NativePayrollTests.swift */; };
+		A27C10AAF7A9153C22814FBA /* day-scheduler-core.js in Resources */ = {isa = PBXBuildFile; fileRef = 57C2175070E7ED34689630A9 /* day-scheduler-core.js */; };
+		A34EF817BEBAFDA8782205F4 /* NativeParking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF7AAA1C56EEAE862270C25 /* NativeParking.swift */; };
+		A8133ACB1C63132A8DD1EACF /* bus-routes.js in Resources */ = {isa = PBXBuildFile; fileRef = ADAED1B16D9401DB6B0F9D4D /* bus-routes.js */; };
+		A893322ED94CED704782D594 /* NativeLocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF30B0F5EEA6BAA7A032CF3 /* NativeLocalizationTests.swift */; };
+		ADBF877529EA16087056D059 /* NativeMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99D100749E8E0443FB4C4233 /* NativeMigration.swift */; };
 		AF491189AC15A11D4F071926 /* NatbamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8214DFBB8969A4494ED2ACD /* NatbamApp.swift */; };
-		B6AD7A28C0D303E5BBC9ED15 /* Bridge.js in Resources */ = {isa = PBXBuildFile; fileRef = 4BFE8C900115DFB1F77CAD3B /* Bridge.js */; };
-		D1DE448B1EE9BC67462FB545 /* WebApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C38F318D33F8E9BF2B5513C3 /* WebApp.swift */; };
+		C72125CA11C9EDA6F8FB4019 /* NativeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357EE2B09FD6CFE8F56D6493 /* NativeCore.swift */; };
+		CA331C2D9E1D3EFD754F1821 /* payroll-estimate.js in Resources */ = {isa = PBXBuildFile; fileRef = 8AD447BF9C695816D6EEFBB8 /* payroll-estimate.js */; };
+		CD349F2BB0B768155FF4C131 /* NativeServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158297A0754EB9BD6481C6B2 /* NativeServices.swift */; };
+		CEAF0EDA472C2E88EF2EAFEF /* salary-challenge.js in Resources */ = {isa = PBXBuildFile; fileRef = 246C26A09CC9A9893A25C30E /* salary-challenge.js */; };
+		CF4C1522EECEAF5C26887C4A /* NativeCalendarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC743B5B8BCA3EBB04C91585 /* NativeCalendarTests.swift */; };
+		D1F8A6F66B3CEC9832360A7F /* NativeOAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB0A0B71BD51277477A3A78 /* NativeOAuth.swift */; };
+		D6AFEF52E6148791A6820A4A /* NativeFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37451A73CE65E022FD18C44B /* NativeFlowTests.swift */; };
+		DFC4D162B3EC1A2140603114 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = D01F3AFE37F01A88597EC38C /* Localizable.xcstrings */; };
 		E3FC6AD5C6AF50AD004FAAD8 /* AlarmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5D7740CF56C833EF7FA5BB /* AlarmService.swift */; };
-		EF4380A61E54B81BCDDF4612 /* AccountLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BD4DAAB66155D1DF509773 /* AccountLogin.swift */; };
+		E90DF3CB8941A4A2126323F2 /* NativeStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF6426DCE99CF92F903EC66 /* NativeStoreTests.swift */; };
+		E91342D9BF74F5213E56E01E /* NativeAccountSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB0B8206945C862F1B8D94 /* NativeAccountSyncTests.swift */; };
+		EC5660EE2DA9F0DEE35B9F9F /* payroll-sms.js in Resources */ = {isa = PBXBuildFile; fileRef = CF8CCFAC239333FE9BFC5286 /* payroll-sms.js */; };
+		F4693F92053FB2B713A431C1 /* NativeReminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2DD90442933DE0DB774052 /* NativeReminders.swift */; };
+		F502EC7A38C94CBBCA1BB7DA /* NativeLiveShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10562CDAA003B4FD77C56C89 /* NativeLiveShare.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3EA430A24146F8FCE8128AC1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FF8341183A8A2FFE7E9D34BB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1AC6E0C45189AC061ABC7964;
+			remoteInfo = Natbam;
+		};
 		8F686597C6F9ED74427DB75A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FF8341183A8A2FFE7E9D34BB /* Project object */;
@@ -32,19 +80,61 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0C2135F0CBD43C458EF6427B /* bus-factory-locations.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "bus-factory-locations.js"; sourceTree = "<group>"; };
+		10562CDAA003B4FD77C56C89 /* NativeLiveShare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLiveShare.swift; sourceTree = "<group>"; };
+		118F6BEC1D76DF550D7CCA5F /* NativeMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeMigrationTests.swift; sourceTree = "<group>"; };
+		140583AC3587357228009CD0 /* NativeRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeRoot.swift; sourceTree = "<group>"; };
 		140B297145571C2500EA1C9D /* NatbamTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NatbamTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		158297A0754EB9BD6481C6B2 /* NativeServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeServices.swift; sourceTree = "<group>"; };
+		1AF7AAA1C56EEAE862270C25 /* NativeParking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeParking.swift; sourceTree = "<group>"; };
+		1EDBC1D0D227D659C869EAF0 /* NativeReminderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeReminderTests.swift; sourceTree = "<group>"; };
+		223E413CDA3BA5B951D1C1D4 /* bus-stop-locations.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "bus-stop-locations.js"; sourceTree = "<group>"; };
+		246C26A09CC9A9893A25C30E /* salary-challenge.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "salary-challenge.js"; sourceTree = "<group>"; };
+		259EA962CF4395029DBAB2B9 /* NativeUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NativeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2764991EDFAB5847682D68FC /* day-memos-core.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "day-memos-core.js"; sourceTree = "<group>"; };
 		2C5D7740CF56C833EF7FA5BB /* AlarmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmService.swift; sourceTree = "<group>"; };
+		2DBB0B8206945C862F1B8D94 /* NativeAccountSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAccountSyncTests.swift; sourceTree = "<group>"; };
 		3249FC32C1696831A4C26E42 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		34BD4DAAB66155D1DF509773 /* AccountLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountLogin.swift; sourceTree = "<group>"; };
-		4BFE8C900115DFB1F77CAD3B /* Bridge.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Bridge.js; sourceTree = "<group>"; };
+		357EE2B09FD6CFE8F56D6493 /* NativeCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeCore.swift; sourceTree = "<group>"; };
+		37451A73CE65E022FD18C44B /* NativeFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeFlowTests.swift; sourceTree = "<group>"; };
+		39471E9AA6251F291DEC53F5 /* NativeParkingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeParkingTests.swift; sourceTree = "<group>"; };
+		3EFB426CC7BEC8157ADB51B6 /* NativeCalendarExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeCalendarExport.swift; sourceTree = "<group>"; };
+		4FF30B0F5EEA6BAA7A032CF3 /* NativeLocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLocalizationTests.swift; sourceTree = "<group>"; };
 		54E40F176DA113B17C89FBE5 /* Natbam.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Natbam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		57C2175070E7ED34689630A9 /* day-scheduler-core.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "day-scheduler-core.js"; sourceTree = "<group>"; };
+		58A7311A24AAFA21CD40A952 /* NativeWeatherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeWeatherTests.swift; sourceTree = "<group>"; };
+		5902A3D371051BF33EF39D73 /* planner-core.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "planner-core.js"; sourceTree = "<group>"; };
+		5CBEFB807FDE7A5774415376 /* google-sync-core.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "google-sync-core.js"; sourceTree = "<group>"; };
+		6449D7A00C04E9AD7CAA8757 /* NativeCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeCalendar.swift; sourceTree = "<group>"; };
+		6A033611B7A0806860C3AFDF /* bus-location-core.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "bus-location-core.js"; sourceTree = "<group>"; };
+		6E4CAECC651C2DF1CE6EA31C /* NativeOAuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeOAuthTests.swift; sourceTree = "<group>"; };
+		7848B1303205D0D06885E844 /* NativePayroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativePayroll.swift; sourceTree = "<group>"; };
+		80D145480DDAD456BA67B534 /* NativePayrollTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativePayrollTests.swift; sourceTree = "<group>"; };
+		8AD447BF9C695816D6EEFBB8 /* payroll-estimate.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "payroll-estimate.js"; sourceTree = "<group>"; };
+		8E0B9DD70C486BBDEDBB1BC9 /* account-data-core.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "account-data-core.js"; sourceTree = "<group>"; };
+		99D100749E8E0443FB4C4233 /* NativeMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeMigration.swift; sourceTree = "<group>"; };
+		9CD3CE4881BF68A25C05F235 /* weather-forecast.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "weather-forecast.js"; sourceTree = "<group>"; };
+		A6CADBCAB2F55A19B7D53608 /* NativeLocalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLocalization.swift; sourceTree = "<group>"; };
+		A6FD6153F4633E472F8F5D2F /* NativeBus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeBus.swift; sourceTree = "<group>"; };
+		AC2DD90442933DE0DB774052 /* NativeReminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeReminders.swift; sourceTree = "<group>"; };
+		AC743B5B8BCA3EBB04C91585 /* NativeCalendarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeCalendarTests.swift; sourceTree = "<group>"; };
+		ADAED1B16D9401DB6B0F9D4D /* bus-routes.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "bus-routes.js"; sourceTree = "<group>"; };
 		ADC68C0C353C9A5EA159CF4D /* AlarmModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmModel.swift; sourceTree = "<group>"; };
 		B921E5019041E9DEDB22FAB3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		BDD6B507CEE00B15AFF62497 /* ShiftPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShiftPlanner.swift; sourceTree = "<group>"; };
-		C38F318D33F8E9BF2B5513C3 /* WebApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebApp.swift; sourceTree = "<group>"; };
 		C46BA444D4967D4DBA0C0823 /* AlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmView.swift; sourceTree = "<group>"; };
+		C9758B8A645D6662E7A98E6F /* NativeAccountFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAccountFlowTests.swift; sourceTree = "<group>"; };
 		CC962E1CF307DA72335D867F /* ShiftPlannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShiftPlannerTests.swift; sourceTree = "<group>"; };
+		CCB0A0B71BD51277477A3A78 /* NativeOAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeOAuth.swift; sourceTree = "<group>"; };
+		CF8CCFAC239333FE9BFC5286 /* payroll-sms.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "payroll-sms.js"; sourceTree = "<group>"; };
+		D01F3AFE37F01A88597EC38C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		DAF6426DCE99CF92F903EC66 /* NativeStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeStoreTests.swift; sourceTree = "<group>"; };
+		E311C5965DD25E917E9A6C4C /* holiday-work-pay-core.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "holiday-work-pay-core.js"; sourceTree = "<group>"; };
+		E4A6DF627872919055B23E38 /* NativeAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAccount.swift; sourceTree = "<group>"; };
+		E7A5C42116248068A66CC0FB /* NativeWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeWeather.swift; sourceTree = "<group>"; };
 		E8214DFBB8969A4494ED2ACD /* NatbamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NatbamApp.swift; sourceTree = "<group>"; };
+		F7098F1FF6DBF130C44D644E /* NativeLabExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLabExtras.swift; sourceTree = "<group>"; };
+		F74D34464EFF48D3C27C4FA3 /* day-entry-core.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "day-entry-core.js"; sourceTree = "<group>"; };
 		F95158A052AEE138894FC71B /* AlarmServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmServiceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -53,6 +143,17 @@
 			isa = PBXGroup;
 			children = (
 				F95158A052AEE138894FC71B /* AlarmServiceTests.swift */,
+				C9758B8A645D6662E7A98E6F /* NativeAccountFlowTests.swift */,
+				2DBB0B8206945C862F1B8D94 /* NativeAccountSyncTests.swift */,
+				AC743B5B8BCA3EBB04C91585 /* NativeCalendarTests.swift */,
+				4FF30B0F5EEA6BAA7A032CF3 /* NativeLocalizationTests.swift */,
+				118F6BEC1D76DF550D7CCA5F /* NativeMigrationTests.swift */,
+				6E4CAECC651C2DF1CE6EA31C /* NativeOAuthTests.swift */,
+				39471E9AA6251F291DEC53F5 /* NativeParkingTests.swift */,
+				80D145480DDAD456BA67B534 /* NativePayrollTests.swift */,
+				1EDBC1D0D227D659C869EAF0 /* NativeReminderTests.swift */,
+				DAF6426DCE99CF92F903EC66 /* NativeStoreTests.swift */,
+				58A7311A24AAFA21CD40A952 /* NativeWeatherTests.swift */,
 				CC962E1CF307DA72335D867F /* ShiftPlannerTests.swift */,
 			);
 			path = Tests;
@@ -63,24 +164,76 @@
 			children = (
 				54E40F176DA113B17C89FBE5 /* Natbam.app */,
 				140B297145571C2500EA1C9D /* NatbamTests.xctest */,
+				259EA962CF4395029DBAB2B9 /* NativeUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		85AB56F90AA83CAEAA85475E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D01F3AFE37F01A88597EC38C /* Localizable.xcstrings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		BB0BB3DD22AA0D718CEA9301 /* NativeResources */ = {
+			isa = PBXGroup;
+			children = (
+				8E0B9DD70C486BBDEDBB1BC9 /* account-data-core.js */,
+				0C2135F0CBD43C458EF6427B /* bus-factory-locations.js */,
+				6A033611B7A0806860C3AFDF /* bus-location-core.js */,
+				ADAED1B16D9401DB6B0F9D4D /* bus-routes.js */,
+				223E413CDA3BA5B951D1C1D4 /* bus-stop-locations.js */,
+				F74D34464EFF48D3C27C4FA3 /* day-entry-core.js */,
+				2764991EDFAB5847682D68FC /* day-memos-core.js */,
+				57C2175070E7ED34689630A9 /* day-scheduler-core.js */,
+				5CBEFB807FDE7A5774415376 /* google-sync-core.js */,
+				E311C5965DD25E917E9A6C4C /* holiday-work-pay-core.js */,
+				8AD447BF9C695816D6EEFBB8 /* payroll-estimate.js */,
+				CF8CCFAC239333FE9BFC5286 /* payroll-sms.js */,
+				5902A3D371051BF33EF39D73 /* planner-core.js */,
+				246C26A09CC9A9893A25C30E /* salary-challenge.js */,
+				9CD3CE4881BF68A25C05F235 /* weather-forecast.js */,
+			);
+			path = NativeResources;
 			sourceTree = "<group>";
 		};
 		BDD0A16067132D72844EDD54 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				34BD4DAAB66155D1DF509773 /* AccountLogin.swift */,
 				ADC68C0C353C9A5EA159CF4D /* AlarmModel.swift */,
 				2C5D7740CF56C833EF7FA5BB /* AlarmService.swift */,
 				C46BA444D4967D4DBA0C0823 /* AlarmView.swift */,
 				3249FC32C1696831A4C26E42 /* Assets.xcassets */,
-				4BFE8C900115DFB1F77CAD3B /* Bridge.js */,
 				E8214DFBB8969A4494ED2ACD /* NatbamApp.swift */,
+				E4A6DF627872919055B23E38 /* NativeAccount.swift */,
+				A6FD6153F4633E472F8F5D2F /* NativeBus.swift */,
+				6449D7A00C04E9AD7CAA8757 /* NativeCalendar.swift */,
+				3EFB426CC7BEC8157ADB51B6 /* NativeCalendarExport.swift */,
+				357EE2B09FD6CFE8F56D6493 /* NativeCore.swift */,
+				F7098F1FF6DBF130C44D644E /* NativeLabExtras.swift */,
+				10562CDAA003B4FD77C56C89 /* NativeLiveShare.swift */,
+				A6CADBCAB2F55A19B7D53608 /* NativeLocalization.swift */,
+				99D100749E8E0443FB4C4233 /* NativeMigration.swift */,
+				CCB0A0B71BD51277477A3A78 /* NativeOAuth.swift */,
+				1AF7AAA1C56EEAE862270C25 /* NativeParking.swift */,
+				7848B1303205D0D06885E844 /* NativePayroll.swift */,
+				AC2DD90442933DE0DB774052 /* NativeReminders.swift */,
+				140583AC3587357228009CD0 /* NativeRoot.swift */,
+				158297A0754EB9BD6481C6B2 /* NativeServices.swift */,
+				E7A5C42116248068A66CC0FB /* NativeWeather.swift */,
 				BDD6B507CEE00B15AFF62497 /* ShiftPlanner.swift */,
-				C38F318D33F8E9BF2B5513C3 /* WebApp.swift */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		CCE0B39741CB7FDF29912C1C /* NativeUITests */ = {
+			isa = PBXGroup;
+			children = (
+				37451A73CE65E022FD18C44B /* NativeFlowTests.swift */,
+			);
+			path = NativeUITests;
 			sourceTree = "<group>";
 		};
 		D5F18FF312AEF414B047C48D /* Production */ = {
@@ -94,7 +247,10 @@
 		F82BA3D72930A0A94A90A989 = {
 			isa = PBXGroup;
 			children = (
+				BB0BB3DD22AA0D718CEA9301 /* NativeResources */,
+				CCE0B39741CB7FDF29912C1C /* NativeUITests */,
 				D5F18FF312AEF414B047C48D /* Production */,
+				85AB56F90AA83CAEAA85475E /* Resources */,
 				BDD0A16067132D72844EDD54 /* Sources */,
 				146C21FB66E8CF9320CE341E /* Tests */,
 				77DC705EF0EBAD8085A609F2 /* Products */,
@@ -140,6 +296,24 @@
 			productReference = 140B297145571C2500EA1C9D /* NatbamTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		E550700C4609486B386940F2 /* NativeUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E13B64DA37B944866B22E58A /* Build configuration list for PBXNativeTarget "NativeUITests" */;
+			buildPhases = (
+				4CAD346B721DB58D4846D5A5 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AC8908814C93A4B1BB04B31C /* PBXTargetDependency */,
+			);
+			name = NativeUITests;
+			packageProductDependencies = (
+			);
+			productName = NativeUITests;
+			productReference = 259EA962CF4395029DBAB2B9 /* NativeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -157,14 +331,22 @@
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
+					E550700C4609486B386940F2 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+						TestTargetID = 1AC6E0C45189AC061ABC7964;
+					};
 				};
 			};
 			buildConfigurationList = 71CD997C7B7A6B3C37B545BC /* Build configuration list for PBXProject "WorkRoutine" */;
-			developmentRegion = en;
+			developmentRegion = ko;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
 				en,
+				ja,
+				ko,
+				"zh-Hans",
 			);
 			mainGroup = F82BA3D72930A0A94A90A989;
 			minimizedProjectReferenceProxies = 1;
@@ -175,6 +357,7 @@
 			targets = (
 				1AC6E0C45189AC061ABC7964 /* Natbam */,
 				6620F8264F4B99C09A47B8FA /* NatbamTests */,
+				E550700C4609486B386940F2 /* NativeUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -185,25 +368,62 @@
 			buildActionMask = 2147483647;
 			files = (
 				4F27BAC3DBA47C14AC8DEE35 /* Assets.xcassets in Resources */,
-				B6AD7A28C0D303E5BBC9ED15 /* Bridge.js in Resources */,
+				DFC4D162B3EC1A2140603114 /* Localizable.xcstrings in Resources */,
 				631401795E531AA07DF6747D /* PrivacyInfo.xcprivacy in Resources */,
+				803F12522D4F4772E1D5601E /* account-data-core.js in Resources */,
+				163E7EBDB5DCE86F0B949C49 /* bus-factory-locations.js in Resources */,
+				48A6C8083258CA58853AB57A /* bus-location-core.js in Resources */,
+				A8133ACB1C63132A8DD1EACF /* bus-routes.js in Resources */,
+				57BDE4789B8AD89317E2FC2E /* bus-stop-locations.js in Resources */,
+				0F054C5B650DB6E625B330D9 /* day-entry-core.js in Resources */,
+				6E61DAC3BEB0228744A5E08B /* day-memos-core.js in Resources */,
+				A27C10AAF7A9153C22814FBA /* day-scheduler-core.js in Resources */,
+				2CCED3023EA3A3BC31FDEBA1 /* google-sync-core.js in Resources */,
+				0416F80AE9ED287AD351A887 /* holiday-work-pay-core.js in Resources */,
+				CA331C2D9E1D3EFD754F1821 /* payroll-estimate.js in Resources */,
+				EC5660EE2DA9F0DEE35B9F9F /* payroll-sms.js in Resources */,
+				7F2548F8FD4370E7BA2AF3CA /* planner-core.js in Resources */,
+				CEAF0EDA472C2E88EF2EAFEF /* salary-challenge.js in Resources */,
+				22225B90B7567E8E8F61B76B /* weather-forecast.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4CAD346B721DB58D4846D5A5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6AFEF52E6148791A6820A4A /* NativeFlowTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		58DCEF0340DED1DF2D9F7F47 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EF4380A61E54B81BCDDF4612 /* AccountLogin.swift in Sources */,
 				714D4245128E0B214FCD2425 /* AlarmModel.swift in Sources */,
 				E3FC6AD5C6AF50AD004FAAD8 /* AlarmService.swift in Sources */,
 				825173CDDC56C205A9EF65EB /* AlarmView.swift in Sources */,
 				AF491189AC15A11D4F071926 /* NatbamApp.swift in Sources */,
+				28FFD2725EC7CF8AB0E4BA02 /* NativeAccount.swift in Sources */,
+				49C3EF93775043A50B243F98 /* NativeBus.swift in Sources */,
+				41A3B42411DA09BFF37A1B66 /* NativeCalendar.swift in Sources */,
+				700771CA334DB495659D0E35 /* NativeCalendarExport.swift in Sources */,
+				C72125CA11C9EDA6F8FB4019 /* NativeCore.swift in Sources */,
+				0758B14FDC401918F7DBB895 /* NativeLabExtras.swift in Sources */,
+				F502EC7A38C94CBBCA1BB7DA /* NativeLiveShare.swift in Sources */,
+				6DB97C5BEACE6A28E62B5B34 /* NativeLocalization.swift in Sources */,
+				ADBF877529EA16087056D059 /* NativeMigration.swift in Sources */,
+				D1F8A6F66B3CEC9832360A7F /* NativeOAuth.swift in Sources */,
+				A34EF817BEBAFDA8782205F4 /* NativeParking.swift in Sources */,
+				6FFCCA1CE1F3506A7E43F28A /* NativePayroll.swift in Sources */,
+				F4693F92053FB2B713A431C1 /* NativeReminders.swift in Sources */,
+				4BD393E437461B172F69EF48 /* NativeRoot.swift in Sources */,
+				CD349F2BB0B768155FF4C131 /* NativeServices.swift in Sources */,
+				6559752B2C56B12DEDC5B46C /* NativeWeather.swift in Sources */,
 				54A009AB993A0BCC322FF443 /* ShiftPlanner.swift in Sources */,
-				D1DE448B1EE9BC67462FB545 /* WebApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,6 +432,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				81ECF86DA5BCA6132644BD40 /* AlarmServiceTests.swift in Sources */,
+				744AD15CA926DEA0E3521F10 /* NativeAccountFlowTests.swift in Sources */,
+				E91342D9BF74F5213E56E01E /* NativeAccountSyncTests.swift in Sources */,
+				CF4C1522EECEAF5C26887C4A /* NativeCalendarTests.swift in Sources */,
+				A893322ED94CED704782D594 /* NativeLocalizationTests.swift in Sources */,
+				79E4EC01CAE9C762C62A9716 /* NativeMigrationTests.swift in Sources */,
+				22E41C71615F9DAF71EECED1 /* NativeOAuthTests.swift in Sources */,
+				19EB73ED34459FFD99A1624A /* NativeParkingTests.swift in Sources */,
+				837AFFB8408211670347BFA2 /* NativePayrollTests.swift in Sources */,
+				135D14CBD1DA0428188D09D7 /* NativeReminderTests.swift in Sources */,
+				E90DF3CB8941A4A2126323F2 /* NativeStoreTests.swift in Sources */,
+				49503A2D9B7EFE7487CFFB73 /* NativeWeatherTests.swift in Sources */,
 				26336C2BBABD540ACFDD7F3F /* ShiftPlannerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -219,6 +450,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		AC8908814C93A4B1BB04B31C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1AC6E0C45189AC061ABC7964 /* Natbam */;
+			targetProxy = 3EA430A24146F8FCE8128AC1 /* PBXContainerItemProxy */;
+		};
 		F41352B17B515D3872D72F41 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1AC6E0C45189AC061ABC7964 /* Natbam */;
@@ -319,12 +555,48 @@
 			};
 			name = Release;
 		};
+		7FE16283B9B5896D42A9A93E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wnhue.workroutine.nativeuitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Natbam;
+			};
+			name = Release;
+		};
+		841A231846A0A089EDB09D3C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wnhue.workroutine.nativeuitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Natbam;
+			};
+			name = Debug;
+		};
 		9F5B4A37F4B3AF44CA92B305 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APNS_ENVIRONMENT = development;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Production/WorkRoutine.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Production/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "근무 루틴";
@@ -339,6 +611,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) WORK_ROUTINE_NATIVE";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -411,9 +684,11 @@
 		EED36142ADA3E7A667FCF219 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APNS_ENVIRONMENT = production;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Production/WorkRoutine.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Production/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "근무 루틴";
@@ -428,6 +703,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) WORK_ROUTINE_NATIVE";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -458,6 +734,15 @@
 			buildConfigurations = (
 				634313C331214F4AAA55098B /* Debug */,
 				0A755007C72214DFC0574B51 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E13B64DA37B944866B22E58A /* Build configuration list for PBXNativeTarget "NativeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				841A231846A0A089EDB09D3C /* Debug */,
+				7FE16283B9B5896D42A9A93E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

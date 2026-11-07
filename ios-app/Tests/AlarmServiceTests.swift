@@ -1,4 +1,5 @@
 import XCTest
+import AlarmKit
 @testable import Natbam
 
 @MainActor
@@ -7,6 +8,7 @@ private final class FakeBackend: AlarmBackend {
     var scheduledIDs: [UUID] = []
     var cancelled: [UUID] = []
     var failNextSchedule = false
+    var capacity = Int.max
     func currentIDs() throws -> Set<UUID> { ids }
     func cancel(id: UUID) throws { cancelled.append(id); ids.remove(id) }
     func schedule(id: UUID, plan: PlannedAlarm) async throws {
@@ -14,6 +16,7 @@ private final class FakeBackend: AlarmBackend {
             failNextSchedule = false
             throw NSError(domain: "Test", code: 1)
         }
+        if !ids.contains(id) && ids.count >= capacity { throw AlarmManager.AlarmError.maximumLimitReached }
         scheduledIDs.append(id)
         ids.insert(id)
     }
@@ -129,6 +132,67 @@ final class AlarmServiceTests: XCTestCase {
         prefs.breaksEnabled = false
         try await service.reconcile(ShiftPlanner.plans(snapshot, preferences: prefs, now: start))
         XCTAssertEqual(backend.ids, [wake])
+    }
+
+    @MainActor
+    func testCapacityKeepsNearestAlarmsAndReportsUnscheduledPlans() async throws {
+        let backend = FakeBackend(); backend.capacity = 2
+        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let service = AlarmService(defaults: defaults, backend: backend)
+        let first = plan("first", seconds: 100)
+        let second = plan("second", seconds: 200)
+        let third = plan("third", seconds: 300)
+        let result = try await service.reconcile([third, first, second])
+        XCTAssertTrue(result.capacityReached)
+        XCTAssertEqual(result.scheduled, [first, second])
+        XCTAssertEqual(result.deferred, [third])
+        XCTAssertEqual(backend.ids.count, 2)
+        XCTAssertEqual(try service.scheduled(), [first, second])
+        let repeatResult = try await AlarmService(defaults: defaults, backend: backend).reconcile([first, second, third])
+        XCTAssertEqual(repeatResult.deferred, [third])
+        XCTAssertEqual(backend.scheduledIDs.count, 2, "A full device must not create duplicate alarms on refresh")
+    }
+
+    @MainActor
+    func testNearTermAlarmReplacesDistantAlarmAtCapacityAndRefillsWhenRoomReturns() async throws {
+        let backend = FakeBackend(); backend.capacity = 2
+        let service = AlarmService(defaults: UserDefaults(suiteName: UUID().uuidString)!, backend: backend)
+        let near = plan("test", seconds: 100)
+        let middle = plan("middle", seconds: 200)
+        let far = plan("far", seconds: 300)
+        try await service.reconcile([middle, far])
+        let farID = service.records[far.key]!.id
+        let result = try await service.reconcile([far, middle, near])
+        XCTAssertEqual(result.scheduled, [near, middle])
+        XCTAssertEqual(result.deferred, [far])
+        XCTAssertEqual(backend.cancelled, [farID])
+        XCTAssertTrue(result.capacityReached)
+        let refilled = try await service.reconcile([middle, far])
+        XCTAssertEqual(refilled.scheduled, [middle, far])
+        XCTAssertTrue(refilled.deferred.isEmpty)
+        XCTAssertFalse(refilled.capacityReached)
+    }
+
+    @MainActor
+    func testZeroAvailableCapacityDoesNotClaimAnyAlarmScheduled() async throws {
+        let backend = FakeBackend(); backend.capacity = 0
+        let service = AlarmService(defaults: UserDefaults(suiteName: UUID().uuidString)!, backend: backend)
+        let result = try await service.reconcile([plan("first"), plan("second")])
+        XCTAssertTrue(result.capacityReached)
+        XCTAssertTrue(result.scheduled.isEmpty)
+        XCTAssertEqual(result.deferred.count, 2)
+        XCTAssertTrue(try service.scheduled().isEmpty)
+    }
+
+    @MainActor
+    func testDisablingAlsoCancelsUntrackedAlarmAfterLostLocalRecords() async throws {
+        let backend = FakeBackend()
+        let orphan = UUID(); backend.ids.insert(orphan)
+        let service = AlarmService(defaults: UserDefaults(suiteName: UUID().uuidString)!, backend: backend)
+        let result = try await service.reconcile([])
+        XCTAssertEqual(backend.cancelled, [orphan])
+        XCTAssertTrue(backend.ids.isEmpty)
+        XCTAssertTrue(result.scheduled.isEmpty)
     }
 
 }

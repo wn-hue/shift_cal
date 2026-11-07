@@ -1,5 +1,6 @@
 name: WorkRoutine
 options:
+  developmentLanguage: ko
   deploymentTarget:
     iOS: '26.0'
 settings:
@@ -13,6 +14,11 @@ targets:
     platform: iOS
     sources:
       - path: Sources
+        excludes: [WebApp.swift, AccountLogin.swift, Bridge.js]
+      - path: NativeResources
+        buildPhase: resources
+      - path: Resources
+        buildPhase: resources
       - path: Production/PrivacyInfo.xcprivacy
         buildPhase: resources
     settings:
@@ -21,7 +27,9 @@ targets:
         PRODUCT_NAME: WorkRoutine
         PRODUCT_MODULE_NAME: Natbam
         MARKETING_VERSION: '1.0'
-        CURRENT_PROJECT_VERSION: '1'
+        CURRENT_PROJECT_VERSION: '3'
+        CODE_SIGN_ENTITLEMENTS: Production/WorkRoutine.entitlements
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) WORK_ROUTINE_NATIVE
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: '1'
         GENERATE_INFOPLIST_FILE: YES
@@ -29,6 +37,11 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: 근무 루틴
         SUPPORTS_MACCATALYST: NO
         SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: NO
+      configs:
+        Debug:
+          APNS_ENVIRONMENT: development
+        Release:
+          APNS_ENVIRONMENT: production
   NatbamTests:
     type: bundle.unit-test
     platform: iOS
@@ -41,12 +54,22 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.wnhue.workroutine.tests
         TEST_HOST: $(BUILT_PRODUCTS_DIR)/WorkRoutine.app/WorkRoutine
         BUNDLE_LOADER: $(TEST_HOST)
+  NativeUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [NativeUITests]
+    dependencies:
+      - target: Natbam
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.wnhue.workroutine.nativeuitests
 schemes:
   WorkRoutine:
     build:
       targets:
         Natbam: all
     test:
-      targets: [NatbamTests]
+      targets: [NatbamTests, NativeUITests]
     archive:
       config: Release

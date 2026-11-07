@@ -2,11 +2,19 @@ import SwiftUI
 
 @main
 struct NatbamApp: App {
+    #if WORK_ROUTINE_NATIVE
+    @UIApplicationDelegateAdaptor(NativeParkingAppDelegate.self) private var parkingDelegate
+    #endif
+    #if !WORK_ROUTINE_NATIVE
     @StateObject private var alarms = AlarmModel()
     @StateObject private var web = WebState()
     @Environment(\.scenePhase) private var phase
+    #endif
     var body: some Scene {
         WindowGroup {
+            #if WORK_ROUTINE_NATIVE
+            NativeRootView()
+            #else
             ZStack {
                 WebApp(alarms: alarms, state: web)
                     .ignoresSafeArea(.container, edges: .bottom)
@@ -33,6 +41,7 @@ struct NatbamApp: App {
                 if ProcessInfo.processInfo.arguments.contains("--alarm-settings") { alarms.showingSettings = true }
                 #endif
             }
+            #endif
         }
     }
 }
