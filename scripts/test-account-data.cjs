@@ -106,7 +106,7 @@ async function run(){try{
     const login=await invoke('login',{method:'GET',query:'&storage=1'});
     const params=new URL(login.headers.Location).searchParams;
     assert.ok(params.get('scope').includes('https://www.googleapis.com/auth/drive.appdata'));
-    assert.equal(params.get('include_granted_scopes'),'true');
+    assert.equal(params.get('include_granted_scopes'),'false');
     const flow=handler._test.unseal(login.headers['Set-Cookie'][0].split(';')[0].split('=')[1],secret);
     assert.equal(flow.storage,true);assert.equal(flow.state,params.get('state'));
     const callbackReq={url:'/api/google-calendar?action=callback&code=fixture&state='+params.get('state'),method:'GET',headers:{cookie:login.headers['Set-Cookie'][0].split(';')[0]}};

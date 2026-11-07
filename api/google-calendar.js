@@ -61,13 +61,15 @@ async function request(url, options = {}) {
     }
     return data;
 }
-async function getTokenGrant(session, cfg) {
+async function getTokenGrant(session, cfg, feature) {
+    const refresh = Permissions.refreshFor(session,feature);
+    if (!refresh) throw new ApiError(401, 'RECONNECT', '구글 계정을 다시 연결하세요.');
     const data = await request('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ client_id: cfg.clientId, client_secret: cfg.clientSecret, refresh_token: session.refresh, grant_type: 'refresh_token' }) });
+        body: new URLSearchParams({ client_id: cfg.clientId, client_secret: cfg.clientSecret, refresh_token: refresh, grant_type: 'refresh_token' }) });
     if (!data.access_token) throw new ApiError(401, 'RECONNECT', '구글 계정을 다시 연결하세요.');
     return data;
 }
-async function getToken(session, cfg) { return (await getTokenGrant(session,cfg)).access_token; }
+async function getToken(session, cfg, feature) { return (await getTokenGrant(session,cfg,feature)).access_token; }
 async function revokeGoogle(session) {
     try {
         await request('https://oauth2.googleapis.com/revoke',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({token:session.refresh})});
@@ -218,7 +220,7 @@ async function handler(req, res) {
             setCookie(res,FLOW,seal({state,verifier,storage,calendar,...nativeFlow,exp:Date.now()+600000},cfg.secret),600);
             const params = new URLSearchParams({ client_id:cfg.clientId, redirect_uri:cfg.oauthOrigin+'/api/google-calendar?action=callback', response_type:'code',
                 scope:Permissions.requested({storage,calendar}).join(' '),
-                include_granted_scopes:'true',
+                include_granted_scopes:'false',
                 access_type:'offline', prompt:'consent select_account', state, code_challenge:crypto.createHash('sha256').update(verifier).digest('base64url'), code_challenge_method:'S256' });
             return redirect(res,'https://accounts.google.com/o/oauth2/v2/auth?'+params);
         }
@@ -237,9 +239,9 @@ async function handler(req, res) {
             if (flow.storage && !scopes.has('https://www.googleapis.com/auth/drive.appdata')) throw new ApiError(403,'DRIVE_PERMISSION','계정 저장 권한을 허용해주세요.');
             const user = await request('https://openidconnect.googleapis.com/v1/userinfo',{headers:{Authorization:`Bearer ${data.access_token}`}});
             if (!user.sub || !user.email || !user.email_verified) throw new ApiError(403,'USER','구글 계정을 확인할 수 없습니다.');
-            const refresh = data.refresh_token || (session?.sub === user.sub ? session.refresh : null);
-            if (!refresh) throw new ApiError(401,'RECONNECT','지속 연결 권한을 받지 못했습니다. 다시 연결하세요.');
-            session = { sub:user.sub,email:user.email,refresh,...Permissions.granted(scopes,flow,session,session?.sub===user.sub),driveAuthorized:scopes.has(Permissions.scopes.storage),csrf:crypto.randomBytes(24).toString('base64url'),issuedAt:Date.now(),exp:Date.now()+30*86400000 };
+            const credentials = Permissions.credentials(scopes,flow,session,session?.sub===user.sub,data.refresh_token);
+            if (!credentials) throw new ApiError(401,'RECONNECT','지속 연결 권한을 받지 못했습니다. 다시 연결하세요.');
+            session = { sub:user.sub,email:user.email,...credentials,csrf:crypto.randomBytes(24).toString('base64url'),issuedAt:Date.now(),exp:Date.now()+30*86400000 };
             const cookie = seal(session,cfg.secret);
             if (cookie.length > 3700) throw new ApiError(502,'SESSION_SIZE','로그인 정보를 저장하지 못했습니다.');
             setCookie(res,SESSION,cookie,30*86400);
@@ -258,7 +260,7 @@ async function handler(req, res) {
         if (action === 'cloud-delete') {
             const result = await AccountErasure.erase(account,cfg.secret,{
                 async erasePrivateData(needsDrive) {
-                    const grant = await getTokenGrant(session,cfg);
+                    const grant = await getTokenGrant(session,cfg,needsDrive||session.driveAuthorized||session.drive||session.driveRefresh?'drive':undefined);
                     const hasDrive = (grant.scope || '').split(' ').includes(Permissions.scopes.storage);
                     if (needsDrive || hasDrive) await AccountDrive.remove(grant.access_token);
                 },
@@ -275,14 +277,14 @@ async function handler(req, res) {
         }
         if (action === 'cloud-read' || action === 'cloud-write') {
             if (!session.drive) throw new ApiError(403,'DRIVE_PERMISSION','계정 저장 권한을 추가해주세요.');
-            const token = await getToken(session,cfg);
+            const token = await getToken(session,cfg,'drive');
             return json(res,200,action === 'cloud-read' ? await AccountDrive.read(token,access.deletionEpoch) :
                 await AccountDrive.write(token,body,{deletionEpoch:access.deletionEpoch,requireActive:()=>AccountErasure.requireActive(account,cfg.secret)}));
         }
         if (action === 'external-list' || action === 'external-read') throw new ApiError(410,'FEATURE_REMOVED','기존 Google 일정 가져오기는 종료되었습니다.');
         if(!['calendar','read','write'].includes(action))throw new ApiError(400,'ACTION','지원하지 않는 요청입니다.');
         if(!Permissions.calendarConnected(session))throw new ApiError(403,'CALENDAR_PERMISSION','근무표 동기화 연결을 먼저 허용해 주세요.');
-        const group = groupOf(body.group), token = await getToken(session,cfg);
+        const group = groupOf(body.group), token = await getToken(session,cfg,'calendar');
         if (action === 'calendar') {
             let calendar;
             if(body.calendarId){try{calendar=await ownedCalendar(token,body.calendarId,session.sub,group);}catch(e){if(![404,410].includes(e.status))throw e;}}
