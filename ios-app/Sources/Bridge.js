@@ -1,6 +1,7 @@
 (() => {
   'use strict';
-  if (location.origin !== 'https://h-lyart-ten.vercel.app') return;
+  const trustedOrigins = ['https://20261104.xyz', 'https://h-lyart-ten.vercel.app'];
+  if (!trustedOrigins.includes(location.origin)) return;
   const send = (action, value) => window.webkit.messageHandlers.natbam.postMessage({action, value});
   // Only direct bottom-tab interactions produce feedback, never programmatic navigation.
   const isTabPress = event => event.isTrusted && event.target.closest?.('.bottom-nav .nav-item:not(:disabled)');
@@ -34,7 +35,7 @@
       parkingAlert.dataset.nativeNotice = 'true';
       parkingAlert.onclick = () => {
         const status = document.getElementById('parking-alert-status');
-        if (status) status.textContent = '이 iPhone 테스트 앱은 근무 알람을 지원해요. 주차장 만차 원격 알림은 Safari의 홈 화면 웹앱에서 이용해 주세요.';
+        if (status) status.textContent = '근무 알람은 이 앱에서 설정할 수 있어요. 주차장 만차 알림은 Safari에서 근무 루틴을 홈 화면에 추가한 뒤 켜 주세요.';
       };
     }
     const section = document.querySelector('#view-all .menu-services');
@@ -81,7 +82,7 @@
   async function share(data = {}) {
     const files = Array.from(data.files || []);
     if (files.length > 5 || files.reduce((total, f) => total + f.size, 0) > 10 * 1024 * 1024) throw new Error('공유 파일은 10MB까지 지원해요.');
-    const value = {id: String(++sequence), title: String(data.title || ''), text: String(data.text || ''), url: String(data.url || ''), files: await Promise.all(files.map(async f => ({name: f.name || '교대 루틴', data: await read(f)})))};
+    const value = {id: String(++sequence), title: String(data.title || ''), text: String(data.text || ''), url: String(data.url || ''), files: await Promise.all(files.map(async f => ({name: f.name || '근무 루틴', data: await read(f)})))};
     return new Promise((resolve, reject) => { pending.set(value.id, {resolve, reject}); send('share', value); });
   }
   Object.defineProperty(navigator, 'share', {value: share, configurable: true});
@@ -90,7 +91,7 @@
   function download(link) {
     if (!link || !link.hasAttribute('download') || !/^(blob:|data:)/.test(link.href)) return false;
     (async () => {
-      try { const blob = await (await fetch(link.href)).blob(); await share({files: [new File([blob], link.download || '교대 루틴')]}); }
+      try { const blob = await (await fetch(link.href)).blob(); await share({files: [new File([blob], link.download || '근무 루틴')]}); }
       catch (error) { if (error.name !== 'AbortError') alert(error.message); }
     })();
     return true;

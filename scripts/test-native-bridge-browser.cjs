@@ -1,18 +1,20 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const {webkit}=require(process.env.PLAYWRIGHT_MODULE);
+const {webkit}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root=path.resolve(__dirname,'..');
-(async()=>{
- const browser=await webkit.launch();
+const bridgePath=path.join(root,'ios-app/Sources/Bridge.js');
+const trustedOrigins=['https://20261104.xyz','https://h-lyart-ten.vercel.app'];
+
+async function checkTrustedOrigin(browser, origin) {
+ const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,timezoneId:'America/Los_Angeles'});
  try {
-  const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,timezoneId:'America/Los_Angeles'});
   const instant=new Date('2026-10-02T12:00:00+09:00');
   await page.clock.setFixedTime(instant);
   const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',async dialog=>{errors.push(dialog.message());await dialog.dismiss()});
   await page.route('**/*',async route=>{
    const url=new URL(route.request().url());
    if(['blob:','data:'].includes(url.protocol))return route.continue();
-   if(url.hostname!=='h-lyart-ten.vercel.app')return route.abort();
+   if(url.origin!==origin)return route.abort();
    if(url.pathname.startsWith('/api/'))return route.fulfill({json:{configured:false}});
    const file=path.resolve(root,'.'+(url.pathname==='/'?'/index.html':decodeURIComponent(url.pathname)));
    if(!file.startsWith(root+path.sep)||!fs.existsSync(file))return route.fulfill({status:404,body:''});
@@ -21,11 +23,12 @@ const root=path.resolve(__dirname,'..');
   await page.addInitScript(()=>{
    window.nativeMessages=[];
    window.webkit={messageHandlers:{natbam:{postMessage:value=>window.nativeMessages.push(value)}}};
+   localStorage.setItem('shift_origin_ready_v1','1');
    localStorage.setItem('shift_active_group','C');
    localStorage.setItem('shift_salary_config_master',JSON.stringify({baseHourly:10320,ordinaryHourly:11000,hireDate:'2015-06-16'}));
   });
-  await page.goto('https://h-lyart-ten.vercel.app/');
-  await page.addScriptTag({path:path.join(root,'ios-app/Sources/Bridge.js')});
+  await page.goto(origin+'/');
+  await page.addScriptTag({path:bridgePath});
   const feedbackCount=()=>page.evaluate(()=>window.nativeMessages.filter(x=>x.action==='selectionHaptic').length);
   for(const id of ['account-menu-button','bnav-cal','bnav-groups','bnav-pay','bnav-menu']) {
    const before=await feedbackCount();
@@ -73,12 +76,48 @@ const root=path.resolve(__dirname,'..');
   await page.evaluate(id=>window.natbamShareResult(id,true),exported.value.id);
   await page.locator('#parking-open').click();
   await page.locator('#parking-alert-toggle').click();
-  assert.match(await page.locator('#parking-alert-status').textContent(),/근무 알람/);
+  const parkingNotice=await page.locator('#parking-alert-status').textContent();
+  assert.match(parkingNotice,/주차장 만차 알림은 Safari에서 근무 루틴을 홈 화면에 추가/);
+  assert.doesNotMatch(parkingNotice,/테스트/);
   const count=await page.evaluate(()=>window.nativeMessages.filter(x=>x.action==='snapshot').length);
   await page.evaluate(()=>document.body.append(document.createElement('span')));
   await page.waitForTimeout(400);
   assert.equal(await page.evaluate(()=>window.nativeMessages.filter(x=>x.action==='snapshot').length),count,'unchanged DOM must not repeatedly sync');
   assert.deepEqual(errors,[]);
-  console.log('PASS native bridge: real calendar + leave edit + group change + Korea dates + dedup + menu + native share');
- } finally {await browser.close()}
+  console.log('PASS native haptics, schedule snapshots and sharing',origin);
+ } finally {await page.close();}
+}
+
+async function checkUntrustedOrigins(browser) {
+ const page=await browser.newPage();
+ try {
+  await page.route('**/*', route=>route.fulfill({
+   contentType:'text/html',
+   body:'<nav class="bottom-nav"><button class="nav-item">Tab</button></nav><section id="view-all"><div class="menu-services"></div></section>'
+  }));
+  await page.addInitScript(()=>{
+   window.nativeMessages=[];
+   window.webkit={messageHandlers:{natbam:{postMessage:value=>window.nativeMessages.push(value)}}};
+   window.initialShare=navigator.share;
+  });
+  for(const origin of ['http://20261104.xyz','https://20261104.xyz:8443','https://20261104.xyz.invalid','https://h-lyart-ten.vercel.app.invalid']) {
+   await page.goto(origin+'/');
+   assert.equal(new URL(page.url()).origin,origin);
+   await page.addScriptTag({path:bridgePath});
+   await page.getByRole('button',{name:'Tab'}).click();
+   assert.deepEqual(await page.evaluate(()=>window.nativeMessages),[]);
+   assert.equal(await page.evaluate(()=>window.natbamSync),undefined);
+   assert.equal(await page.evaluate(()=>navigator.share===window.initialShare),true);
+   assert.equal(await page.locator('#native-alarm-open').count(),0);
+  }
+  console.log('PASS native bridge stays inactive on HTTP, alternate ports and lookalike hosts');
+ } finally {await page.close();}
+}
+
+(async()=>{
+ const browser=await webkit.launch();
+ try {
+  for(const origin of trustedOrigins)await checkTrustedOrigin(browser,origin);
+  await checkUntrustedOrigins(browser);
+ } finally {await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1});

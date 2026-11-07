@@ -6,7 +6,7 @@ import WebKit
 final class AccountLogin: NSObject, ASWebAuthenticationPresentationContextProviding {
     private var session: ASWebAuthenticationSession?
     private var window: UIWindow?
-    private let base = URL(string: "https://h-lyart-ten.vercel.app")!
+    private let base = WebApp.home
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor { window! }
 
     func login(url: URL, webView: WKWebView, completion: @escaping (String?) -> Void) {
@@ -53,6 +53,8 @@ final class AccountLogin: NSObject, ASWebAuthenticationPresentationContextProvid
         var request = URLRequest(url: base.appendingPathComponent("api/native-account").appending(queryItems: [URLQueryItem(name: "action", value: action)]))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        // The hosting proxy checks the origin on the exchange before a bearer token exists.
+        request.setValue(base.absoluteString, forHTTPHeaderField: "Origin")
         if let token { request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         let client = URLSession(configuration: .ephemeral)

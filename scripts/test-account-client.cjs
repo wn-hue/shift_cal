@@ -7,13 +7,13 @@ const flush=async()=>{for(let n=0;n<12;n++)await new Promise(resolve=>setImmedia
 function device(server,{local={},user='A',connected=true,cloudConnected=true,provider='google'}={}) {
     const saved=new Map(Object.entries(local)),elements=new Map(),events={},timers=new Map();let timerId=0;
     function element(id){if(!elements.has(id))elements.set(id,{textContent:'',hidden:false,open:false,attributes:{},setAttribute(k,v){this.attributes[k]=v},handlers:{},children:[],addEventListener(k,f){this.handlers[k]=f;},replaceChildren(){this.children=[];},append(x){this.children.push(x);},close(){this.open=false;},showModal(){this.open=true;}});return elements.get(id);}
-    const d={user,connected,cloudConnected,provider,disabled:false,reconnect:false,beforeWrite:null,calls:[],saved,element};
+    const d={user,connected,cloudConnected,provider,disabled:false,reconnect:false,beforeWrite:null,beforeDelete:null,deleteFailure:false,confirmDeletion:true,calls:[],saved,element};
     const ctx={AccountDataCore:C,navigator:{onLine:true},crypto,URLSearchParams,Date,console,location:{search:''},switchView:v=>{d.view=v;},
         localStorage:{getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(k,String(v)),removeItem:k=>saved.delete(k)},
         document:{hidden:false,getElementById:element,createElement:()=>element('new'+Math.random()),addEventListener:(k,f)=>events[k]=f},
         addEventListener:(k,f)=>events[k]=f,
         setTimeout:(f,delay)=>{const id=++timerId;timers.set(id,{f,delay});return id;},clearTimeout:id=>timers.delete(id),setInterval:()=>0,
-        refreshAccountData:()=>{},GoogleSync:{groupChanged:()=>{},refreshStatus:()=>{}},
+        refreshAccountData:()=>{},GoogleSync:{groupChanged:()=>{},refreshStatus:()=>{}},confirm:()=>d.confirmDeletion,
         fetch:async(url,options)=>{
             const action=new URL(url,'https://shift.example').searchParams.get('action');d.calls.push(action);
             const result=(body,status=200)=>({ok:status===200,status,json:async()=>clone(body)});
@@ -23,6 +23,12 @@ function device(server,{local={},user='A',connected=true,cloudConnected=true,pro
             if(d.disabled)return result({error:'DRIVE_SETUP',message:'Enable Google Drive API'},403);
             if(options.headers['X-Shift-CSRF']!==d.user+'-csrf')return result({error:'CSRF'},403);
             if(action==='cloud-read')return result({versions:server[d.user]||[]});
+            if(action==='cloud-delete'){
+                if(d.deleteFailure)return result({error:'CLOUD_ERROR',message:'Delete failed'},502);
+                const owner=d.user;
+                if(d.beforeDelete)await d.beforeDelete();
+                delete server[owner];d.connected=false;d.cloudConnected=false;return result({ok:true});
+            }
             const input=JSON.parse(options.body);assert.equal(action,'cloud-write');
             if(d.beforeWrite)await d.beforeWrite();
             if(!C.equal(input.parents.slice().sort(),(server[d.user]||[]).map(v=>v.revision).sort()))return result({error:'CLOUD_CONFLICT',message:'stale'},412);
@@ -89,6 +95,7 @@ async function run(){
     const payroll=C.normalize({shift_salary_config_master:{hireDate:'2020-01-01',baseHourly:11050,ordinaryHourly:14482},shift_active_group:'C',shift_day_memos:{'2026-10-12':'keep memo'},shift_overrides_C:{'2026-10-12':'LEAVE'}});
     const reServer={A:[version(payroll)]},re=device(reServer);await re.start();
     const beforeLogout=clone(reServer.A);await re.click('account-logout');
+    assert.deepEqual(JSON.parse(re.saved.get('shift_account_cache_v1_A')),payroll,'Logout keeps the account recovery copy');
     re.connected=true;re.cloudConnected=true;await re.ctx.AccountSync.sessionChanged();await flush();
     assert.deepEqual(re.snapshot(),payroll,'Same-account re-login restores wages, memos and attendance');
     assert.deepEqual(reServer.A,beforeLogout,'Logout screen must never create a deletion revision');
@@ -97,6 +104,47 @@ async function run(){
     assert.equal(reServer.A[0].data.shift_day_memos['2026-10-12'],'not yet uploaded');
     re.connected=true;re.cloudConnected=true;await re.ctx.AccountSync.sessionChanged();await flush();
     assert.equal(re.snapshot().shift_day_memos['2026-10-12'],'not yet uploaded');
+    // Confirmed deletion removes the local recovery copies that ordinary logout keeps.
+    const otherAccount=JSON.stringify(memo({'2026-10-09':'other account'}));
+    const deletingServer={A:[version(payroll)],B:[version(JSON.parse(otherAccount))]};
+    const deleting=device(deletingServer,{local:{
+        shift_account_base_v1_B:otherAccount,shift_account_cache_v1_B:otherAccount,shift_display_language:'ja'
+    }});
+    await deleting.start();
+    deleting.change('shift_day_memos',{'2026-10-12':'unsaved edit'});
+    const beforeDelete=clone(deleting.snapshot());
+    deleting.confirmDeletion=false;await deleting.click('account-delete');
+    assert(!deleting.calls.includes('cloud-delete'));
+    deleting.confirmDeletion=true;deleting.deleteFailure=true;await deleting.click('account-delete');
+    assert.deepEqual(deleting.snapshot(),beforeDelete,'Failed deletion keeps the device copy');
+    assert.equal(deleting.saved.get('shift_account_cache_v1_A'),JSON.stringify(beforeDelete));
+    assert.deepEqual(deletingServer.A[0].data,payroll);
+    deleting.deleteFailure=false;
+    deleting.beforeDelete=async()=>{await deleting.tick();await deleting.click('account-sync-now');};
+    await deleting.click('account-delete');
+    assert.equal(deleting.saved.has('shift_account_cache_v1_A'),false,'Deletion purges the deleted account cache');
+    assert.equal(deleting.saved.has('shift_account_base_v1_A'),false,'Deletion purges the deleted account baseline');
+    assert.equal(deleting.saved.has('shift_account_owner_v1'),false);
+    assert.deepEqual(deleting.snapshot(),blank);
+    assert.equal(deleting.saved.get('shift_account_cache_v1_B'),otherAccount);
+    assert.equal(deleting.saved.get('shift_account_base_v1_B'),otherAccount);
+    assert.equal(deleting.saved.get('shift_display_language'),'ja');
+    assert.deepEqual(deletingServer.B[0].data,JSON.parse(otherAccount));
+    deleting.connected=true;deleting.cloudConnected=true;await deleting.ctx.AccountSync.sessionChanged();await flush();
+    assert.deepEqual(deleting.snapshot(),blank,'Re-login does not restore deleted account records');
+    assert(!deleting.calls.includes('cloud-write'),'Neither a pending save nor re-login should upload the deleted account copy');
+    assert.equal(deletingServer.A,undefined);
+    // If a different account took over the working copy during the request, keep its records.
+    const switched=device({A:[version(payroll)]});await switched.start();
+    switched.beforeDelete=()=>{
+        for(const key of C.keys)switched.saved.delete(key);
+        switched.saved.set('shift_day_memos',JSON.stringify({'2026-10-09':'other account'}));
+        switched.saved.set('shift_account_owner_v1','B');
+    };
+    await switched.click('account-delete');
+    assert.deepEqual(switched.snapshot(),JSON.parse(otherAccount));
+    assert.equal(switched.saved.get('shift_account_owner_v1'),'B');
+    assert.equal(switched.saved.has('shift_account_base_v1_A'),false);
     // An older affected client can recover the intact per-account device cache.
     const recovery=device({A:[version(blank)]},{local:{shift_account_owner_v1:'A',shift_account_base_v1_A:JSON.stringify(blank),shift_account_cache_v1_A:JSON.stringify(payroll)}});
     await recovery.start();assert.deepEqual(recovery.snapshot(),payroll);
@@ -111,6 +159,6 @@ async function run(){
     const c=device({}, {local:{shift_day_memos:JSON.stringify({'2026-10-11':'retained'})}});c.disabled=true;await c.start();
     assert.equal(c.ctx.AccountSync.ready,false);assert.equal(c.element('account-setup-help').hidden,false);assert.equal(c.timers.size,0);
     c.disabled=false;await c.click('account-sync-now');assert.equal(c.ctx.AccountSync.ready,true);assert.equal(c.element('account-setup-help').hidden,true);
-    console.log('PASS: two-device cloud restore/merge, upload-time edits, explicit conflict resolution, fork join, offline cache/reconnect, account switch/logout, setup error recovery.');
+    console.log('PASS: two-device cloud restore/merge, upload-time edits, conflict resolution, offline cache/reconnect, account switch/logout/deletion, setup error recovery.');
 }
 run().catch(e=>{console.error(e);process.exit(1);});

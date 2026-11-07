@@ -1,0 +1,52 @@
+name: WorkRoutine
+options:
+  deploymentTarget:
+    iOS: '26.0'
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: ''
+targets:
+  Natbam:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+      - path: Production/PrivacyInfo.xcprivacy
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.wnhue.workroutine
+        PRODUCT_NAME: WorkRoutine
+        PRODUCT_MODULE_NAME: Natbam
+        MARKETING_VERSION: '1.0'
+        CURRENT_PROJECT_VERSION: '1'
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: '1'
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: Production/Info.plist
+        INFOPLIST_KEY_CFBundleDisplayName: 근무 루틴
+        SUPPORTS_MACCATALYST: NO
+        SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: NO
+  NatbamTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [Tests]
+    dependencies:
+      - target: Natbam
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.wnhue.workroutine.tests
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/WorkRoutine.app/WorkRoutine
+        BUNDLE_LOADER: $(TEST_HOST)
+schemes:
+  WorkRoutine:
+    build:
+      targets:
+        Natbam: all
+    test:
+      targets: [NatbamTests]
+    archive:
+      config: Release

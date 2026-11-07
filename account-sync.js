@@ -87,9 +87,9 @@
         $('account-conflict-dialog').close();notifyReady();
         if(window.GoogleSync)GoogleSync.groupChanged();
     }
-    function disconnected() {
+    function disconnected({keepRecoveryCopy=true}={}) {
         if(window.PayrollEstimate?.clearDraft)PayrollEstimate.clearDraft();
-        if(auth?.connected)localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(snapshot()));
+        if(keepRecoveryCopy&&auth?.connected)localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(snapshot()));
         ++epoch;clearTimeout(timer);pending=null;baseline=null;
         restore(C.normalize({}));localStorage.removeItem(ownerKey);auth=null;api.ready=true;renderAuth();
         status('로그아웃했어요. 계정에 저장한 기록은 남아 있어요.');
@@ -233,7 +233,29 @@
             if(window.GoogleSync)GoogleSync.refreshStatus();
         }catch(e){status(e.message);}
     });
-    if($('account-delete'))$('account-delete').addEventListener('click',async()=>{if(busy || !confirm('계정에 저장된 근무 변경·메모·급여 기준·연차를 삭제하고 로그아웃할까요? 공유 링크는 공유 화면에서 별도로 종료하세요.'))return;try{await request('cloud-delete',{});disconnected();status('계정에 저장한 기록을 지웠어요.');}catch(e){status(e.message);}});
+    async function deleteAccount() {
+        if(busy || !auth?.connected || !confirm('계정에 저장된 근무 변경·메모·급여 기준·연차를 삭제하고 로그아웃할까요? 공유 링크는 공유 화면에서 별도로 종료하세요.'))return;
+        const deletedAccount=auth.user.id;
+        setBusy(true);
+        try {
+            await request('cloud-delete',{});
+            const ownsWorkingCopy=localStorage.getItem(ownerKey)===deletedAccount;
+            try {
+                if(ownsWorkingCopy)disconnected({keepRecoveryCopy:false});
+            } finally {
+                // A later sign-in can restore either of these copies before reading cloud storage.
+                localStorage.removeItem(cachePrefix+deletedAccount);
+                localStorage.removeItem(basePrefix+deletedAccount);
+            }
+            if(!ownsWorkingCopy)await init();
+            status('계정에 저장한 기록을 지웠어요.','success');
+        } catch(error) {
+            status(error.message,'error');
+        } finally {
+            setBusy(false);
+        }
+    }
+    $('account-delete')?.addEventListener('click',deleteAccount);
     window.addEventListener('storage',event=>{if(event.key===ownerKey){api.ready=false;init();}else if(C.keys.includes(event.key)){window.refreshAccountData();changed();}});
     window.addEventListener('online',()=>sync());
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync();});

@@ -12,7 +12,11 @@ final class WebState: ObservableObject {
 }
 
 struct WebApp: UIViewRepresentable {
-    static let home = URL(string: "https://h-lyart-ten.vercel.app")!
+    static let home: URL = {
+        let production = "https://20261104.xyz"
+        let configured = Bundle.main.object(forInfoDictionaryKey: "WorkRoutineOrigin") as? String
+        return URL(string: configured == production ? production : "https://h-lyart-ten.vercel.app")!
+    }()
     @ObservedObject var alarms: AlarmModel
     @ObservedObject var state: WebState
     func makeCoordinator() -> Coordinator { Coordinator(alarms: alarms, state: state) }
@@ -111,26 +115,26 @@ struct WebApp: UIViewRepresentable {
         }
         func showMessage(_ message: String) {
             guard let presenter else { return }
-            let alert = UIAlertController(title: "교대 루틴", message: message, preferredStyle: .alert)
+            let alert = UIAlertController(title: "근무 루틴", message: message, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "확인", style: .default))
             presenter.present(alert, animated: true)
         }
         func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
             guard trusted(frame.request.url), let presenter else { completionHandler(); return }
-            let alert = UIAlertController(title: "교대 루틴", message: message, preferredStyle: .alert)
+            let alert = UIAlertController(title: "근무 루틴", message: message, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "확인", style: .default) { _ in completionHandler() })
             presenter.present(alert, animated: true)
         }
         func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
             guard trusted(frame.request.url), let presenter else { completionHandler(false); return }
-            let alert = UIAlertController(title: "교대 루틴", message: message, preferredStyle: .alert)
+            let alert = UIAlertController(title: "근무 루틴", message: message, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "취소", style: .cancel) { _ in completionHandler(false) })
             alert.addAction(UIAlertAction(title: "확인", style: .default) { _ in completionHandler(true) })
             presenter.present(alert, animated: true)
         }
         func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
             guard trusted(frame.request.url), let presenter else { completionHandler(nil); return }
-            let alert = UIAlertController(title: "교대 루틴", message: prompt, preferredStyle: .alert)
+            let alert = UIAlertController(title: "근무 루틴", message: prompt, preferredStyle: .alert)
             alert.addTextField { $0.text = defaultText }
             alert.addAction(UIAlertAction(title: "취소", style: .cancel) { _ in completionHandler(nil) })
             alert.addAction(UIAlertAction(title: "확인", style: .default) { _ in completionHandler(alert.textFields?.first?.text) })
@@ -158,7 +162,7 @@ struct WebApp: UIViewRepresentable {
                         guard let encoded = file["data"], encoded.count <= 14000000, let data = Data(base64Encoded: encoded) else { throw CocoaError(.fileReadCorruptFile) }
                         size += data.count
                         guard size <= 10 * 1024 * 1024 else { throw CocoaError(.fileReadTooLarge) }
-                        let name = String((file["name"] ?? "교대 루틴").split(separator: "/").last ?? "교대 루틴")
+                        let name = String((file["name"] ?? "근무 루틴").split(separator: "/").last ?? "근무 루틴")
                         let url = directory.appendingPathComponent("\(index)-\(name.prefix(100))")
                         try data.write(to: url); items.append(url)
                     }

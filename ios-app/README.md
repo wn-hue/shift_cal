@@ -1,4 +1,39 @@
-# 교대 루틴 iPhone 테스트 앱
+# 근무 루틴 iPhone 앱
+
+## App Store 배포 준비
+
+배포용 프로젝트는 `WorkRoutine.xcodeproj`, Scheme은 `WorkRoutine`입니다. 앱 이름은 **근무 루틴**, Bundle ID는 `com.wnhue.workroutine`, 버전은 `1.0 (1)`이며 iOS 26 이상 iPhone용입니다. 배포용 앱은 `https://20261104.xyz`를 사용합니다. `production.yml`로 생성하며 기존 `Natbam.xcodeproj`와 개인 테스트앱의 서명 설정을 덮어쓰지 않습니다.
+
+기존 테스트앱은 기존 식별자와 Vercel 저장소를 유지합니다. 새 앱은 별도 설치되므로 테스트앱을 삭제하지 말고, 기존 앱에서 Google Drive에 저장한 뒤 새 앱에서 같은 계정으로 기록을 불러오거나 백업 파일을 가져옵니다. Safari와 새 앱의 기기 저장소도 서로 다릅니다.
+
+`Production/PrivacyInfo.xcprivacy`에 알람 설정 저장용 UserDefaults 사용 사유를 선언했습니다. App Store 개인정보 항목 응답은 별도 절차이며 이 파일로 대체되지 않습니다. 앱은 시스템 암호화 API와 HTTPS를 이용하며 광고 추적 SDK를 포함하지 않습니다.
+
+```sh
+xcodegen generate --spec ios-app/production.yml
+xcodebuild -project ios-app/WorkRoutine.xcodeproj -scheme WorkRoutine \
+  -configuration Release -destination 'generic/platform=iOS' \
+  -archivePath output/ios-release/WorkRoutine-signed.xcarchive \
+  -allowProvisioningUpdates DEVELOPMENT_TEAM=YOUR_PAID_TEAM_ID archive
+xcodebuild -exportArchive \
+  -archivePath output/ios-release/WorkRoutine-signed.xcarchive \
+  -exportPath output/ios-release/AppStore \
+  -exportOptionsPlist ios-app/Production/ExportOptions.plist \
+  -allowProvisioningUpdates
+```
+
+`ExportOptions.plist`는 로컬 IPA 내보내기용이며 자동 업로드하거나 공개하지 않습니다. 유료 개발자 Team의 배포 권한과 App Store Connect 앱 등록이 확인된 후 업로드합니다. 현재 Mac에 연결된 Personal Team의 개발용 서명 성공은 App Store 배포 가능 여부를 뜻하지 않습니다.
+
+공개 심사 전에 남은 확인 사항은 다음과 같습니다.
+
+- 유료 멤버십 활성화, 올바른 Team 선택, 배포 인증서와 App Store 프로파일, App Store Connect 앱 등록.
+- Apple 로그인 App ID/Services ID/키와 서버 설정. 현재 Apple 로그인은 설정되지 않았습니다. Cloudflare와 Vercel 사이의 시작·콜백 쿠키 및 Apple의 `form_post` 요청 경로를 검증해야 합니다. Google 로그인과 동등한 로그인 선택지가 실제로 작동하는지 확인합니다.
+- 계정 데이터 삭제 후 재로그인 시 삭제된 기록이 복구되지 않는지 확인합니다. Drive 저장 권한이 없는 계정의 삭제, 계정에 연결된 분실물 글과 공유 링크 처리도 공개 심사 전에 확인해야 합니다.
+- 앱 안의 알람·공유·로그인, 실제 기기의 소리·진동·권한 거절·오프라인 및 초기 설정 완료 후 재실행을 확인합니다. 주차장 원격 푸시는 이번 네이티브 앱에 포함되어 있지 않습니다.
+- 실기기 화면을 기준으로 스크린샷, 연령 등급, 개인정보 항목, 콘텐츠 권리, 심사 연락처를 입력합니다. 심사 설명 초안은 `Production/app-store-metadata.ko.json`에 있습니다. 이름·식별자 사용 가능 여부와 앱 공개 국가·지역은 App Store Connect에서 확인합니다.
+
+지원 URL은 `https://20261104.xyz/ios-support.html`, 개인정보 URL은 `https://20261104.xyz/ios-privacy.html`입니다. 문서 변경이 실제 사이트에 배포되어 있는지도 제출 전에 확인합니다.
+
+## 기존 개인 테스트 프로젝트
 
 `Natbam.xcodeproj`를 Xcode에서 열어 실행합니다. **iOS 26 이상**, Xcode 26 이상이 필요합니다. 현재 교대 루틴 웹앱을 WKWebView로 표시하고, 달력에서 계산한 근무표를 iOS AlarmKit 알람에 연결합니다. 기존 `ios-alarm/`의 Google 캘린더 보조 앱과 다른 프로젝트입니다.
 
