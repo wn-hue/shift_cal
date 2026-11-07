@@ -1,1 +1,37 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>로그인 연결 · 근무 루틴</title><link rel="stylesheet" href="/origin-transfer.css"></head><body><main><h1>로그인을 연결하고 있어요</h1><p id="status" role="status">잠시만 기다려 주세요.</p><a class="button secondary" href="/">앱으로 돌아가기</a></main><script src="/origin-auth.js"></script></body></html>
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#ffffff">
+  <title>로그인 연결 · 근무 루틴</title>
+  <link rel="stylesheet" href="/origin-auth.css?v=20261108-1">
+</head>
+<body>
+  <main class="auth-page" id="auth-page" data-state="loading">
+    <header class="auth-brand" aria-label="근무 루틴">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="4" y="6" width="24" height="23" rx="6" stroke="currentColor" stroke-width="2.8"/>
+        <path d="M4 13h24M10 3v6M22 3v6" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+        <path d="M10 18h.01M16 18h.01M22 18h.01M10 23h.01M16 23h.01" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+      <span>근무 루틴</span>
+    </header>
+    <section class="auth-content" aria-labelledby="auth-title">
+      <div class="auth-art" aria-hidden="true">
+        <img src="/assets/login/calendar-cloud-v1.webp" width="640" height="640" alt="" fetchpriority="high" decoding="async">
+      </div>
+      <h1 id="auth-title">로그인을 마무리하고<br>있어요</h1>
+      <p class="auth-status" id="status" role="status" aria-live="polite" aria-atomic="true">잠시 후 근무 루틴으로 이동해요</p>
+      <div class="auth-progress" aria-hidden="true"><span></span><span></span><span></span></div>
+    </section>
+    <footer class="auth-footer">
+      <p id="return-hint">자동으로 이동하지 않나요?</p>
+      <a class="auth-return" href="/">앱으로 돌아가기</a>
+    </footer>
+    <noscript><p class="auth-noscript">로그인을 마치려면 브라우저에서 JavaScript를 켜 주세요.</p></noscript>
+  </main>
+  <script src="/origin-auth.js"></script>
+</body>
+</html>
