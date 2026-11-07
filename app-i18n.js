@@ -12,6 +12,7 @@
   // Keep compact calendar badges legible; titles and accessible names retain the full wording.
   if(!attribute&&el?.closest('.cal-grid .shift-badge')&&['test1','test3','test4'].includes(document.body.dataset.prefTheme)&&['주특','야특'].includes(s))value={en:{주특:'D+',야특:'N+'},zh:{주특:'白加',야특:'夜加'},ja:{주특:'日特',야특:'夜特'}}[language][s];
   if(!value&&s==='원')value=el?.closest('#pref-shape')?{en:'Circle',zh:'圆形',ja:'円'}[language]:{en:'KRW',zh:'韩元',ja:'ウォン'}[language];
+  if(s==='일'&&el?.closest('#menu-leave-settings'))value={en:el.querySelector('#quick-remain-leave')?.textContent.trim()==='1'?' day':' days',zh:'天',ja:'日'}[language];
   if(!value&&(m=s.match(/^([ABC])조( 근무표)?$/)))value={en:'Team '+m[1]+(m[2]?' schedule':''),zh:m[1]+'组'+(m[2]?'班表':''),ja:m[1]+'組'+(m[2]?'の勤務表':'')}[language];
   if(!value&&(m=s.match(/^([ABC])조 · 3조 2교대$/)))value={en:'Team '+m[1]+' · 3 teams / 2 shifts',zh:m[1]+'组 · 三班两倒',ja:m[1]+'組・3組2交替'}[language];
   if(!value&&(m=s.match(/^(\d+)년 (\d+)월 급여$/)))value={en:`Pay · ${m[1]}.${m[2]}`,zh:`${m[1]}年${m[2]}月工资`,ja:`${m[1]}年${m[2]}月の給与`}[language];
@@ -27,6 +28,9 @@
   if(!value&&(m=s.match(/^(.+) 스티커$/))&&dict[m[1]])value=t(m[1])+' '+t('스티커');
   const copy=(en,zh,ja)=>({en,zh,ja}[language]);
   const date=(y,month,day)=>new Intl.DateTimeFormat(languages[language][0],{month:'long',day:'numeric',weekday:'short',...(y?{year:'numeric'}:{})}).format(new Date(Number(y)||2026,Number(month)-1,Number(day)));
+  if(!value&&(m=s.match(/^(급여|상여): (문자 기준|기본 비율) ([\d.]+)%$/)))value=copy(m[1]==='급여'?'Salary':'Bonus',m[1]==='급여'?'工资':'奖金',m[1]==='급여'?'給与':'賞与')+copy(': ','：','：')+(m[2]==='문자 기준'?copy('message rate ','短信比例 ','メッセージの割合 '):copy('default rate ','默认比例 ','既定の割合 '))+m[3]+'%';
+  if(!value&&(m=s.match(/^(급여|상여): 문자에 나온 세금·보험료 기준$/)))value=copy(m[1]==='급여'?'Salary':'Bonus',m[1]==='급여'?'工资':'奖金',m[1]==='급여'?'給与':'賞与')+copy(': taxes and insurance from your message','：短信中的税费和保险费','：メッセージの税金・保険料を使用');
+  if(!value&&(m=s.match(/^(.+) 기존에 등록한 내용은 그대로 유지돼요\.$/)))value=t(m[1])+' '+t('기존에 등록한 내용은 그대로 유지돼요.');
   if(!value&&(m=s.match(/^(?:(\d{4})년 )?(\d+)월 (\d+)일 \([일월화수목금토]\)$/)))value=date(m[1],m[2],m[3]);
   if(!value&&(m=s.match(/^예상 급여 변화 (.+)$/)))value=copy('Estimated pay change: ','预计工资变化：','予想給与の変化：')+t(m[1]);
   if(!value&&(m=s.match(/^(.+) · 현재 근무와 비교한 세전 추정입니다\. 저장 전까지 근무는 바뀌지 않습니다\.$/)))value=m[1]+copy(' · Gross estimate compared with your current shift. No shift changes until saved.',' · 与当前班次相比的税前预估，保存前不会更改班次。','・現在の勤務と比較した税引前の推定です。保存するまで勤務は変わりません。');

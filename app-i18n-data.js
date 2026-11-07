@@ -365,7 +365,7 @@ Apple 계정으로 계속하기|Continue with Apple|使用 Apple 继续|Appleで
 로그아웃|Sign out|退出登录|ログアウト
 계정 데이터 삭제|Delete account data|删除账户数据|アカウントデータを削除
 내 근무 설정|My work settings|我的工作设置|勤務の設定
-내 교대근무|My shift team|我的班组|自分の勤務グループ
+내 근무조|My shift team|我的班组|自分の勤務グループ
 교대조 선택|Choose team|选择班组|勤務グループを選択
 내 근무 도구|Work tools|工作工具|勤務ツール
 연차 설정|Annual leave|年假设置|有休設定
@@ -769,4 +769,43 @@ Object.assign(window.AppTranslations, {
   "zh": "没有已复制的短信，请先复制奖金短信。",
   "ja": "コピーしたメッセージがありません。先に賞与SMSをコピーしてください。"
  }
+});
+
+Object.assign(window.AppTranslations, {
+ '근무에 필요한 정보를 한곳에서': {en:'Everything you need for work, in one place',zh:'工作所需信息，一处查看',ja:'勤務に必要な情報をひとつに'},
+ '연차와 시급': {en:'Leave and hourly pay',zh:'年假与时薪',ja:'有休と時給'},
+ '남은 연차': {en:'Leave left',zh:'剩余年假',ja:'残りの有休'},
+ '시급과 수당 입력': {en:'Enter hourly pay and allowances',zh:'输入时薪和津贴',ja:'時給と手当を入力'},
+ '생활과 출퇴근': {en:'Daily life and commuting',zh:'日常与通勤',ja:'生活と通勤'},
+ '주차 현황 · 만차 알림': {en:'Parking status · Full alerts',zh:'停车状态 · 满位提醒',ja:'駐車状況・満車通知'},
+ '물건 찾고 알리기': {en:'Find or report items',zh:'寻找和发布物品',ja:'物を探す・知らせる'},
+ '새 기능 체험': {en:'Try new features',zh:'体验新功能',ja:'新機能を体験'},
+ '준비 중인 기능 써보기': {en:'Try features in development',zh:'试用开发中的功能',ja:'開発中の機能を試す'},
+ '3조 2교대 기준이에요. 근무조는 전체 → 내 근무조에서 변경할 수 있어요.': {en:'Based on 3 teams and 2 shifts. You can change your team in All → My shift team.',zh:'按三班两倒计算。可在“全部 → 我的班组”中更改班组。',ja:'3組2交替が基準です。「全体 → 自分の勤務グループ」で変更できます。'},
+ '세금과 보험료': {en:'Taxes and insurance',zh:'税费和保险费',ja:'税金と保険料'},
+ '새로 가져온 내용은 완료하면 반영돼요.': {en:'Your imported details will apply when you tap Done.',zh:'点击完成后应用新导入的内容。',ja:'新しく取り込んだ内容は「完了」で反映されます。'},
+ '등록한 문자를 기준으로 예상해요.': {en:'Estimates use your saved message.',zh:'根据已添加的短信估算。',ja:'登録したメッセージをもとに見積もります。'},
+ '기본 비율로 예상해요. 문자는 나중에 등록해도 돼요.': {en:'Estimates use the default rates. You can add a message later.',zh:'按默认比例估算，也可稍后添加短信。',ja:'既定の割合で見積もります。メッセージは後から登録できます。'},
+ '급여 문자 등록하기': {en:'Add a pay message',zh:'添加工资短信',ja:'給与メッセージを登録'},
+ '상여 문자 등록하기': {en:'Add a bonus message',zh:'添加奖金短信',ja:'賞与メッセージを登録'},
+ '급여 문자를 복사한 뒤 아래 버튼을 눌러 주세요.': {en:'Copy your pay message, then tap the button below.',zh:'请复制工资短信，然后点击下方按钮。',ja:'給与メッセージをコピーして、下のボタンを押してください。'},
+ '상여 문자를 복사한 뒤 아래 버튼을 눌러 주세요.': {en:'Copy your bonus message, then tap the button below.',zh:'请复制奖金短信，然后点击下方按钮。',ja:'賞与メッセージをコピーして、下のボタンを押してください。'},
+ '문자에 나온 지급·공제 합계로 세금과 보험료를 예상해요.': {en:'Taxes and insurance are estimated from the payment and deduction totals in your message.',zh:'根据短信中的应发和扣除合计估算税费及保险费。',ja:'メッセージの支給・控除合計から税金と保険料を見積もります。'},
+ '등록한 문자가 없으면 기본 비율(약 18.09%)로 예상해요.': {en:'Without a saved message, estimates use the default rate of about 18.09%.',zh:'未添加短信时，按约18.09%的默认比例估算。',ja:'メッセージが未登録の場合は、既定の割合（約18.09%）で見積もります。'},
+ '등록한 문자가 없으면 기본 비율(약 2.41%)로 예상해요.': {en:'Without a saved message, estimates use the default rate of about 2.41%.',zh:'未添加短信时，按约2.41%的默认比例估算。',ja:'メッセージが未登録の場合は、既定の割合（約2.41%）で見積もります。'},
+ '가져온 내용 확인하기': {en:'Review imported details',zh:'查看导入内容',ja:'取り込んだ内容を確認'},
+ '필요한 계산 기준만 저장하고, 붙여넣은 문자는 바로 지워요.': {en:'Only the details needed for calculations are saved. Pasted messages are cleared right away.',zh:'仅保存计算所需的依据，粘贴的短信会立即清除。',ja:'計算に必要な基準だけを保存し、貼り付けたメッセージはすぐに消去します。'},
+ '급여 문자를 가져왔어요. 완료하면 계산에 반영돼요.': {en:'Pay message imported. Tap Done to use it in calculations.',zh:'已导入工资短信，点击完成后用于计算。',ja:'給与メッセージを取り込みました。「完了」で計算に反映されます。'},
+ '상여 문자를 가져왔어요. 완료하면 계산에 반영돼요.': {en:'Bonus message imported. Tap Done to use it in calculations.',zh:'已导入奖金短信，点击完成后用于计算。',ja:'賞与メッセージを取り込みました。「完了」で計算に反映されます。'},
+ '시급과 수당은 입력한 금액을 그대로 사용해요.': {en:'Hourly pay and allowances use the amounts you entered.',zh:'时薪和津贴沿用您输入的金额。',ja:'時給と手当は入力した金額をそのまま使用します。'},
+ '기존에 등록한 내용은 그대로 유지돼요.': {en:'Your previously saved details are kept.',zh:'保留之前已添加的内容。',ja:'登録済みの内容はそのまま保持されます。'},
+ '직접 입력한 금액이에요': {en:'Amount entered by you',zh:'您手动输入的金额',ja:'手入力した金額です'},
+ '입사일에 맞춰 계산했어요': {en:'Calculated from your start date',zh:'根据入职日期计算',ja:'入社日をもとに計算しました'},
+ '자동으로 계산하기': {en:'Calculate automatically',zh:'自动计算',ja:'自動で計算する'},
+ '문자는 30,000자 이내로 붙여넣어주세요.': {en:'Paste a message of up to 30,000 characters.',zh:'请粘贴不超过30,000字的短信。',ja:'30,000文字以内のメッセージを貼り付けてください。'},
+ '서로 다른 금액의 명세서가 섞여 있습니다. 한 달 명세서만 붙여넣어주세요.': {en:'There are conflicting payslip amounts. Paste a payslip for one month only.',zh:'包含金额不同的工资单，请仅粘贴一个月的工资单。',ja:'金額の異なる明細が混在しています。1か月分の明細だけを貼り付けてください。'},
+ '지급 합계와 공제 합계가 포함된 문자를 붙여넣어 주세요.': {en:'Paste a message with total payments and deductions.',zh:'请粘贴包含应发和扣除合计的短信。',ja:'支給合計と控除合計を含むメッセージを貼り付けてください。'},
+ '지급 합계와 공제 합계가 포함된 급여 문자를 붙여넣어 주세요.': {en:'Paste a pay message with total payments and deductions.',zh:'请粘贴包含应发和扣除合计的工资短信。',ja:'支給合計と控除合計を含む給与メッセージを貼り付けてください。'},
+ '공제 기준에는 지급 합계와 공제 합계가 필요합니다. 합계가 없거나 내역과 맞지 않아 공제율은 변경하지 않습니다.': {en:'Total payments and deductions are needed. The totals are missing or do not match the details, so the deduction rate is unchanged.',zh:'需要应发和扣除合计。合计缺失或与明细不符，因此不会更改扣除比例。',ja:'支給合計と控除合計が必要です。合計がないか内訳と一致しないため、控除率は変更しません。'},
+ '인식한 시급·수당이 없습니다. 지급내역과 공제내역을 포함한 명세서를 붙여넣어주세요.': {en:'No hourly pay or allowances were recognized. Paste a payslip with payment and deduction details.',zh:'未识别到时薪或津贴，请粘贴包含应发和扣除明细的工资单。',ja:'時給・手当を読み取れませんでした。支給内訳と控除内訳を含む明細を貼り付けてください。'}
 });

@@ -67,7 +67,7 @@ elem('inp-bonus-check').checked=true;evaluate('calculatePayrollFromInputs()');as
 ctx.PayrollEstimate.open();ctx.PayrollEstimate.importText('bonus','성명 비공개상여테스트\n기본시급 999999\n지급내역\n소계 1000000\n공제내역\n소계 50000');click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),11050);assert.deepEqual(JSON.parse(saved.get('shift_bonus_sms_reference_v1')),{rate:.05});assert.ok(![...saved.values()].join('').includes('비공개상여테스트'));
 const before=saved.get('shift_payroll_sms_reference_v1'),bonusBefore=saved.get('shift_bonus_sms_reference_v1');
-ctx.PayrollEstimate.open();elem('wage-manual-base').value='22000';assert.equal(ctx.PayrollEstimate.importText('salary','기본시급 33000'),false);assert.match(elem('payroll-sms-status').textContent,/기존 공제 기준은 유지/);assert.equal(ctx.PayrollEstimate.importText('bonus','상여 읽을 수 없음'),false);click('payroll-sms-apply');
+ctx.PayrollEstimate.open();elem('wage-manual-base').value='22000';assert.equal(ctx.PayrollEstimate.importText('salary','기본시급 33000'),false);assert.match(elem('payroll-sms-status').textContent,/기존에 등록한 내용은 그대로 유지/);assert.equal(ctx.PayrollEstimate.importText('bonus','상여 읽을 수 없음'),false);click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),22000);assert.equal(saved.get('shift_payroll_sms_reference_v1'),before);assert.equal(saved.get('shift_bonus_sms_reference_v1'),bonusBefore);
 ctx.PayrollEstimate.clearDraft();
 elem('payroll-sms-text').value='another private draft';ctx.PayrollEstimate.open();elem('payroll-sms-dialog').close();assert.equal(elem('payroll-sms-text').value,'');

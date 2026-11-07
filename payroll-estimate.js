@@ -116,14 +116,16 @@
     api.clearDraft=()=>{clearDraft();if(dialog.open)dialog.close();};
     api.clearReference=()=>{localStorage.removeItem(storageKey);localStorage.removeItem(bonusKey);profile=bonusProfile=null;api.clearDraft();render();el('payroll-sms-applied').textContent='';root.AccountSync?.changed();};
     function senioritySource(){
-        el('wage-seniority-source').textContent=seniorityOverride?'저장된 금액 · 직접 수정 가능':'입사일 기준 자동 계산';
+        el('wage-seniority-source').textContent=seniorityOverride?'직접 입력한 금액이에요':'입사일에 맞춰 계산했어요';
         el('wage-seniority-reset').hidden=!seniorityOverride;
     }
     el('wage-seniority-reset').addEventListener('click',()=>{seniorityOverride=false;el('wage-seniority').value=money(automaticSeniority);el('wage-seniority').classList.remove('wage-filled');senioritySource();});
     function updateTaxSummary(){
         const salary=draftSalary||profile,bonus=draftBonus||bonusProfile;
-        el('wage-tax-basis').textContent=basis('급여',salary)+' · '+basis('상여',bonus);
-        el('wage-tax-source').textContent=draftSalary||draftBonus?'새 개인 공제 기준 · 설정 완료 시 적용':salary||bonus?'저장된 개인 공제 기준 유지':'기본 공제 기준으로 추정';
+        const summary=(name,p,fallback)=>name+': '+(p?.model==='monthly-insurance'?'문자에 나온 세금·보험료 기준':(p?'문자 기준 ':'기본 비율 ')+((p?minimalProfile(p).rate:fallback)*100).toFixed(2)+'%');
+        el('wage-tax-salary-basis').textContent=summary('급여',salary,rate);
+        el('wage-tax-bonus-basis').textContent=summary('상여',bonus,bonusRate);
+        el('wage-tax-source').textContent=draftSalary||draftBonus?'새로 가져온 내용은 완료하면 반영돼요.':salary||bonus?'등록한 문자를 기준으로 예상해요.':'기본 비율로 예상해요. 문자는 나중에 등록해도 돼요.';
     }
     api.importText=(kind,raw)=>{
         const isBonus=kind==='bonus',message=isBonus?el('wage-bonus-status'):status;
@@ -134,10 +136,10 @@
             if(!validProfile(parsed.profile))throw Error('지급 합계와 공제 합계가 포함된 문자를 붙여넣어 주세요.');
             if(isBonus)draftBonus=minimalProfile(parsed.profile);else draftSalary=minimalProfile(parsed.profile);
             const recognized=el('payroll-sms-recognized');recognized.hidden=false;
-            recognized.textContent='개인 공제 기준을 가져왔어요. 설정 완료 시 적용돼요.';
+            recognized.textContent=isBonus?'상여 문자를 가져왔어요. 완료하면 계산에 반영돼요.':'급여 문자를 가져왔어요. 완료하면 계산에 반영돼요.';
             preview.textContent=[draftSalary?basis('급여',draftSalary):'',draftBonus?basis('상여',draftBonus):'',...parsed.warnings].filter(Boolean).join('\n');
             el('wage-import-review').hidden=!preview.textContent;
-            message.textContent='세금·보험료와 실수령액은 추정치예요. 시급과 수당은 직접 입력한 금액을 유지해요.';
+            message.textContent='시급과 수당은 입력한 금액을 그대로 사용해요.';
             el(isBonus?'wage-bonus-paste-fallback':'wage-paste-fallback').open=false;ok=true;return true;
         }catch(error){
             // A failed optional import never replaces a saved personal profile or blocks manual entry.
@@ -145,7 +147,7 @@
             el('payroll-sms-recognized').hidden=!(draftSalary||draftBonus);
             preview.textContent=[draftSalary?basis('급여',draftSalary):'',draftBonus?basis('상여',draftBonus):''].filter(Boolean).join('\n');
             el('wage-import-review').hidden=!preview.textContent;
-            message.textContent=error.message+' 기존 공제 기준은 유지돼요.';return false;
+            message.textContent=error.message+' 기존에 등록한 내용은 그대로 유지돼요.';return false;
         }finally{
             text.value='';bonusText.value='';updateTaxSummary();
             if(typeof root.CustomEvent==='function')dialog.dispatchEvent(new CustomEvent('wage-draft-imported',{detail:{ok,kind,taxOnly:true}}));

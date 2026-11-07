@@ -7,7 +7,7 @@
         (section === 'group' ? $('menu-group-open') : section === 'salary' ? $('payroll-sms-open') : $('menu-leave-settings').querySelector('button')).focus();
     }
     function openGroup() {
-        window.SettingsOptions.open('내 교대근무',['A','B','C'].map(value=>({value,label:value+'조'})),$('group-select').value,value=>setGroup(value));
+        window.SettingsOptions.open('내 근무조',['A','B','C'].map(value=>({value,label:value+'조'})),$('group-select').value,value=>setGroup(value));
     }
     function closeGroup() { $('settings-options').close(); }
     function openLeave() {

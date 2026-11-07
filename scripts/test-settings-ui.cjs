@@ -28,4 +28,4 @@ for(const group of ['A','B','C']) {
 }
 api.syncGroup(null);assert.equal(els.get('group-select').value,'');assert.match(els.get('group-selection-status').textContent,/선택/);
 
-els.set('settings-options',el());ctx.window.SettingsOptions={open(title,options,selected){assert.equal(title,'내 교대근무');assert.deepEqual(Array.from(options,o=>o.value),['A','B','C']);assert.equal(selected,'');els.get('settings-options').open=true;}};api.openGroup();assert.equal(els.get('settings-options').open,true);api.closeGroup();assert.equal(els.get('settings-options').open,false);
+els.set('settings-options',el());ctx.window.SettingsOptions={open(title,options,selected){assert.equal(title,'내 근무조');assert.deepEqual(Array.from(options,o=>o.value),['A','B','C']);assert.equal(selected,'');els.get('settings-options').open=true;}};api.openGroup();assert.equal(els.get('settings-options').open,true);api.closeGroup();assert.equal(els.get('settings-options').open,false);
