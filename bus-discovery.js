@@ -8,16 +8,16 @@
   function cancel(){++serial;pending?.(false);pending=null;onStatus('',false);}
   function setPlace(point,label){if(!C.valid(point))return;cancel();state.point={lat:point.lat,lon:point.lon};state.label=String(label||'선택한 장소').slice(0,150);selection=state.selection=point.source?{source:point.source}:null;manualRadius=null;changed('place');}
   function requestGPS(){
-   cancel();if(!navigator.geolocation){onStatus('위치를 사용할 수 없어요. 검색창에서 장소나 주소를 선택해 주세요.',false);return Promise.resolve(false);}
+   cancel();if(!navigator.geolocation){onStatus('현재 위치를 사용할 수 없어요. 장소나 주소로 찾아보세요.',false);return Promise.resolve(false);}
    const current=++serial;onStatus('현재 위치를 확인하고 있어요.',true);
    return new Promise(resolve=>{pending=resolve;
     const fail=message=>{if(current!==serial)return;pending=null;onStatus(message,false);resolve(false);};
     navigator.geolocation.getCurrentPosition(p=>{
      if(current!==serial)return;const point={lat:p.coords.latitude,lon:p.coords.longitude};
-     if(!C.valid(point)){fail('위치를 확인하지 못했어요. 장소나 주소로 검색해 주세요.');return;}
-     if(p.coords.accuracy>1000){fail('위치 오차가 너무 커요. 장소나 주소로 검색해 주세요.');return;}
-     pending=null;state.point=point;state.label='현재 위치';selection=state.selection=null;manualRadius=null;onStatus(p.coords.accuracy>300?'위치 오차가 커요. 장소나 주소를 직접 선택할 수도 있어요.':'',false);changed('place');resolve(true);
-    },e=>fail(e.code===1?'위치 권한이 꺼져 있어요. 장소나 주소로 검색해 주세요.':'위치를 확인하지 못했어요. 다시 시도하거나 장소·주소로 검색해 주세요.'),{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
+     if(!C.valid(point)){fail('현재 위치를 확인하지 못했어요. 장소나 주소로 찾아보세요.');return;}
+     if(p.coords.accuracy>1000){fail('위치 오차가 커서 현재 위치를 사용할 수 없어요. 장소나 주소로 찾아보세요.');return;}
+     pending=null;state.point=point;state.label='현재 위치';selection=state.selection=null;manualRadius=null;onStatus(p.coords.accuracy>300?'현재 위치가 정확하지 않을 수 있어요. 장소나 주소로 찾아도 돼요.':'',false);changed('place');resolve(true);
+    },e=>fail(e.code===1?'위치 권한이 꺼져 있어요. 장소나 주소로 찾아보세요.':'현재 위치를 확인하지 못했어요. 다시 시도하거나 장소나 주소로 찾아보세요.'),{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
    });
   }
   return {

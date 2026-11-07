@@ -593,9 +593,271 @@ Apple 계정으로 계속하기|Continue with Apple|使用 Apple 继续|Appleで
 물건을 간단히 적어 주세요|Briefly describe the item|请简单描述物品|物を簡単に説明してください
 필터|Filters|筛选|絞り込み
 물건·장소 검색|Search items or places|搜索物品或地点|物・場所を検索
+좌우로 넘겨 다른 달 근무를 보세요|Swipe to view another month|左右滑动查看其他月份|左右にスワイプして別の月の勤務を表示
+조별 근무표. 좌우로 넘겨 다른 달 보기|Team schedules. Swipe to view another month|各组班表。左右滑动查看其他月份|グループ勤務表。左右にスワイプして別の月を表示
+기본 근무표에 바꾼 근무도 반영돼요.|Base shifts and saved changes are shown.|显示基本班次和已保存的变更。|基本勤務と保存済みの変更を表示します。
+좌우로 넘겨 다른 달 급여 보기|Swipe to view another month’s pay|左右滑动查看其他月份的工资|左右にスワイプして別の月の給与を表示
+세후 예상 금액 보기|Show estimated take-home pay|查看预估实发金额|予想手取り額を表示
+시급과 수당은 직접 입력해요. 근속수당은 입사일을 기준으로 계산하고, 직접 바꿀 수도 있어요. 급여 문자는 세금과 보험료를 예상할 때만 써요.|Enter hourly pay and allowances yourself. The seniority allowance is calculated from your start date and can be edited. Pay messages are only used to estimate taxes and insurance.|请手动输入时薪和津贴。工龄津贴按入职日期计算，也可以手动修改。工资短信仅用于估算税费和保险费。|時給と手当は手入力します。勤続手当は入社日をもとに計算され、手動で変更することもできます。給与メッセージは税金と保険料の見積もりにのみ使います。
+잔업을 뺀 날|Days without overtime|取消延时加班的天数|残業を外した日数
+무급으로 줄어드는 금액|Estimated unpaid deduction|无薪休假预估扣款|無給による見込み減額
+정규직 전환일 (연차·지원금 계산)|Permanent employment start date (leave and support payment)|转正日期（计算年假和补助金）|正社員への転換日（有休・支援金の計算）
+근무조를 선택해 주세요.|Choose your shift team.|请选择班组。|勤務グループを選んでください。
+저장한 내용 이어 쓰기|Continue with saved data|继续使用已保存的记录|保存した内容を引き継ぐ
+근무표, 메모, 시급과 연차 설정을 Google Drive에 저장해요. 다른 기기에서도 같은 Google 계정으로 로그인하면 이어서 쓸 수 있어요.|Save your shifts, notes, hourly pay and leave settings in Google Drive. Sign in with the same Google account to continue on another device.|将班表、备忘、时薪和年假设置保存到 Google Drive。在其他设备登录同一个 Google 账户即可继续使用。|勤務表、メモ、時給と有休の設定をGoogle Driveに保存します。別の端末でも同じGoogleアカウントでログインすれば続きから使えます。
+처음 설정 다시 보기|View setup again|重新查看初始设置|初期設定をもう一度見る
+25일이 쉬는 날이면 그 전 영업일에 들어와요.|If the 25th is a non-business day, pay arrives on the previous business day.|如果25日不是工作日，工资会在前一个工作日到账。|25日が休業日の場合は、直前の営業日に入金されます。
+급여 내역 자세히 보기|View pay breakdown|查看工资明细|給与明細を見る
+정규직으로 전환된 날을 입력해 주세요. 급여 산정 마지막 날인 15일을 기준으로 정규직 1년 미만이면 지원금, 1년 이상이면 상여금으로 계산해요.|Enter the date you became a permanent employee. As of the 15th, the last day of the pay period, less than one year of permanent employment counts toward a support payment. One year or more counts toward a bonus.|请输入转正日期。以工资核算期最后一天（15日）为准，转正不满一年按补助金计算，满一年按奖金计算。|正社員に転換した日を入力してください。給与算定期間の最終日である15日時点で、正社員になって1年未満なら支援金、1年以上なら賞与として計算します。
+정규직으로 전환된 날부터 연차를 계산해요. 첫 1년 동안 한 달을 개근하면 하루씩, 최대 11일을 받아요. 다음 해 1월 1일에 받는 연차는 전년도에 일한 기간에 맞춰 따로 예상해요. 매달 받은 연차부터 사용한 날을 빼요. 매달 받은 연차 중 남은 날은 첫 1년이 끝나면 없어져요.|Leave accrues from the day you become a permanent employee. In your first year, each month with full attendance earns one day, up to 11 days. Leave granted on January 1 of the next year is estimated separately based on the time you worked in the previous year. Leave taken is deducted from the monthly accrual first. Unused monthly leave expires at the end of your first year.|年假从转正当天起计算。第一年内每满勤一个月获得一天，最多11天。次年1月1日发放的年假按上一年的在职时间另行估算。已休天数优先从每月获得的年假中扣除，未使用的月度年假在第一年结束时失效。|正社員に転換した日から有休を計算します。最初の1年間は1か月皆勤するごとに1日、最大11日付与されます。翌年1月1日に付与される有休は、前年に働いた期間に応じて別に見積もります。取得した日数は毎月付与された有休から先に差し引きます。その残りは最初の1年が終わると失効します。
+개근했고 회사가 1월 1일을 기준으로 연차를 준다고 가정한 값이에요. 회사에서 확인한 연차가 다르면 총 연차를 바꿔 주세요.|This assumes full attendance and that your company grants leave on January 1. If your employer confirms a different amount, update your total leave.|此估算假设您全勤，且公司在1月1日发放年假。如果公司确认的天数不同，请调整年假总天数。|皆勤し、会社が1月1日を基準に有休を付与する前提で計算しています。会社で確認した日数と異なる場合は、有休の合計を変更してください。
+달력에 적은 연차를 자동으로 반영해요|Leave recorded in your calendar is reflected automatically|日历中记录的年假会自动计入|カレンダーに記録した有休を自動で反映
+쓴 연차|Used leave|已用年假|使用済み有休
+해당 기간 쓴 연차|Leave used in this period|该期间已休年假|対象期間に使用した有休
+어떤 기록을 사용할까요?|Which records would you like to use?|要使用哪份记录？|どちらの記録を使いますか？
+이 기기와 계정에 저장한 내용이 달라요.|This device and your account have different saved records.|此设备与账户保存的记录不同。|この端末とアカウントに保存した内容が異なります。
+기록 선택 닫기|Close record selection|关闭记录选择|記録の選択を閉じる
+이어서 쓸 기록을 골라 주세요. 선택한 뒤 바꾼 내용은 자동으로 저장되고, 동시에 저장한 기록도 보관돼요.|Choose which records to keep using. Later changes save automatically, and records saved at the same time are kept.|请选择要继续使用的记录。之后的更改会自动保存，同时保存的记录也会保留。|引き続き使う記録を選んでください。選択後の変更は自動で保存され、同時に保存された記録も保管されます。
+이 기기의 기록 사용하기|Use records from this device|使用此设备的记录|この端末の記録を使う
+연결 상태를 확인하고 있어요…|Checking connection…|正在检查连接…|接続状況を確認しています…
+근무표와 날짜 메모를 Google 캘린더에 보내요. 다시 보내면 근무 루틴에 저장한 내용으로 바뀌니, 수정은 근무 루틴에서 해 주세요. 저장한 기록은 Google Drive에서 불러올 수 있어요.|Send your shifts and date notes to Google Calendar. Sending them again updates them to what’s saved in Shift Routine, so make edits in Shift Routine. You can restore saved records from Google Drive.|将班表和日期备忘发送到 Google 日历。再次发送时会以轮班日常中保存的内容为准，请在轮班日常中修改。可从 Google Drive 恢复已保存的记录。|勤務表と日付ごとのメモをGoogleカレンダーに送ります。再送するとシフトルーティンに保存した内容で更新されるので、変更はシフトルーティンで行ってください。保存した記録はGoogle Driveから読み込めます。
+근무표 보내기는 원하는 분만 연결하면 돼요. 연결할 때 캘린더 목록을 보고 근무 루틴 전용 캘린더의 일정을 관리할 수 있도록 권한을 요청해요.|Connecting to send your schedule is optional. We ask permission to view your calendar list and manage events in the Shift Routine calendar.|您可以选择是否连接以发送班表。连接时会请求查看日历列表和管理轮班日常专用日历日程的权限。|勤務表の送信は任意です。接続時に、カレンダー一覧の表示とシフトルーティン専用カレンダーの予定の管理に必要な権限を求めます。
+이번 달 근무표 보내기|Send this month’s schedule|发送本月班表|今月の勤務表を送る
+이번 달에 빠진 일정 다시 보내기|Resend missing events for this month|重新发送本月遗漏的日程|今月の送信対象から外れた予定を再送
+보내기를 중지하거나 연결을 끊어도 이미 보낸 근무표는 남아요. 앱 권한은 Google 계정의 보안 → 연결된 앱에서 해제할 수 있어요.|Stopping or disconnecting keeps schedules you already sent. You can remove app access in your Google account under Security → Connected apps.|停止发送或断开连接后，已发送的班表会保留。您可在 Google 账户的“安全 → 已连接的应用”中撤销权限。|送信を停止したり接続を解除したりしても、送信済みの勤務表は残ります。アプリの権限はGoogleアカウントの「セキュリティ → 接続済みのアプリ」で解除できます。
+근무표나 메모를 바꿀 때는 근무 루틴에서 수정해 주세요. 지금 보고 있는 달의 근무표를 보낼 수 있어요. 자동 보내기를 켜면 내용을 수정하거나 다른 달을 열 때 해당 달의 근무표도 보내요.|Edit shifts or notes in Shift Routine. You can send the schedule for the month you’re viewing. With auto-send on, editing something or opening another month sends the schedule for that month too.|请在轮班日常中修改班表或备忘。您可以发送当前查看月份的班表。开启自动发送后，修改内容或打开其他月份时，也会发送对应月份的班表。|勤務表やメモはシフトルーティンで変更してください。表示中の月の勤務表を送信できます。自動送信を有効にすると、内容を編集したり別の月を開いたりしたときに、その月の勤務表も送信します。
+보고 있는 달의 근무표를 이미지로 보내요|Share this month’s schedule as an image|以图片分享正在查看的月度班表|表示中の月の勤務表を画像で共有
+정규직 전환일을 입력하면 연차를 자동으로 계산해요.|Enter your permanent employment start date to calculate leave automatically.|输入转正日期后会自动计算年假。|正社員への転換日を入力すると有休を自動で計算します。
+총 연차를 0일 이상으로 입력해 주세요.|Enter a total leave amount of zero days or more.|请输入不少于0天的年假总天数。|有休の合計は0日以上で入力してください。
+이 기기에 저장했어요. Google 계정을 연결하면 다른 기기에서도 이어서 쓸 수 있어요.|Saved on this device. Connect your Google account to continue on other devices.|已保存到此设备。连接 Google 账户后可在其他设备继续使用。|この端末に保存しました。Googleアカウントを連携すると、別の端末でも続きから使えます。
+이 기기에 저장했어요.|Saved on this device.|已保存到此设备。|この端末に保存しました。
+쉬는 날에는 연차, 반차, 무급휴무를 쓰거나 잔업을 뺄 수 없어요.|You can’t use annual leave, half-day leave, or unpaid leave, or remove overtime, on a day off.|休息日无法使用年假、半天假或无薪休假，也无法取消延时加班。|休日には有休・半休・無給休暇を取ったり、残業を外したりできません。
+주간 근무일에는 야간 특근을 넣을 수 없어요.|You can’t add an extra night shift on a day shift.|白班当天无法安排夜班加班。|日勤の日には夜勤の特別勤務を追加できません。
+야간 근무일에는 주간 특근을 넣을 수 없어요.|You can’t add an extra day shift on a night shift.|夜班当天无法安排白班加班。|夜勤の日には日勤の特別勤務を追加できません。
+전날 야간 근무가 끝난 직후에는 주간 특근을 넣을 수 없어요.|You can’t add an extra day shift right after the previous night’s shift ends.|前一晚的夜班结束后，不能紧接着安排白班加班。|前日の夜勤が終わった直後に日勤の特別勤務は追加できません。
+다음 날 주간 특근이 있어 야간 특근을 넣을 수 없어요.|You can’t add an extra night shift when an extra day shift is scheduled for the next day.|次日已安排白班加班，无法添加夜班加班。|翌日に日勤の特別勤務があるため、夜勤の特別勤務を追加できません。
+한 달에 무급휴무 1번 또는 무급반차 2번까지 쓸 수 있어요.|You can take one unpaid day or up to two unpaid half-days per month.|每月可休1天无薪假，或最多2次无薪半天假。|1か月に無給休暇を1日、または無給の半休を2回まで取得できます。
+입력한 값을 초기화했어요.|Your entries were reset.|已重置输入内容。|入力した値をリセットしました。
+입사일 (정규직 기준)|Start date (permanent employment)|入职日期（正式员工）|入社日（正社員基準）
+계약직이라면 처음 입사한 날을 골라 주세요. 정규직으로 전환되면 전체 → 연차 설정에서 날짜를 바꿀 수 있어요.|If you’re a contract employee, choose the day you first joined. After becoming permanent, you can change it in All → Leave settings.|合同员工请选择首次入职日期。转正后可在“全部 → 年假设置”中更改。|契約社員の方は最初に入社した日を選んでください。正社員への転換後に「全体 → 有休設定」で変更できます。
+받는 수당이 있을 때만 금액을 입력해 주세요.|Enter an amount only if you receive the allowance.|只有领取津贴时才需要输入金额。|受け取っている手当がある場合のみ金額を入力してください。
+위아래로 넘겨 날짜를 골라 주세요. 키보드 방향키로도 바꿀 수 있어요.|Swipe up or down to choose a date. You can also use the arrow keys.|上下滑动选择日期，也可使用键盘方向键。|上下にスワイプして日付を選びます。キーボードの矢印キーでも変更できます。
+입사일을 알려 주세요|When did you join?|请选择入职日期|入社日を教えてください
+입사일을 기준으로 연차와 예상 급여를 계산해요.|We use your start date to calculate leave and estimate pay.|根据入职日期计算年假和预估工资。|入社日をもとに有休と予想給与を計算します。
+전에 쓰던 Google 계정으로 로그인하면 근무표, 메모, 설정을 불러와요.|Sign in with the Google account you used before to restore shifts, notes and settings.|登录之前使用的 Google 账户即可恢复班表、备忘和设置。|以前使っていたGoogleアカウントでログインすると、勤務表・メモ・設定を読み込めます。
+기본 근무로 되돌리기|Restore base shift|恢复基本班次|基本勤務に戻す
+특근과 잔업 고르기|Choose extra shifts and overtime|选择额外班次和延时加班|特別勤務と残業を選ぶ
+반차(후)를 쓰면 잔업이 자동으로 꺼져요|Overtime turns off automatically with second-half leave|使用后半天假时会自动取消延时加班|後半休を取ると残業が自動でオフになります
+근무를 고르면 잔업을 설정할 수 있어요|Choose a shift to set overtime|选择班次后可设置延时加班|勤務を選ぶと残業を設定できます
+메모나 일정 남기기|Add a note or event|添加备忘或日程|メモや予定を追加
+이날 메모 남기기|Add a note for this date|为这一天添加备忘|この日にメモを追加
+메모 닫기|Close note|关闭备忘|メモを閉じる
+저장하고 돌아가기|Save and go back|保存并返回|保存して戻る
+메모 목록 보기|View notes|查看备忘列表|メモ一覧を見る
+반복 일정과 메모를 모두 지울까요?|Delete all occurrences of this event and its note?|删除此重复日程的所有发生项和备忘吗？|繰り返し予定とメモをすべて削除しますか？
+이 메모와 알림을 지울까요?|Delete this note and reminder?|删除这条备忘及提醒吗？|このメモと通知を削除しますか？
+다른 곳에서 이 메모를 바꿨어요. 지금 쓴 내용을 복사한 뒤 메모를 다시 열어 주세요.|This note changed elsewhere. Copy what you’ve written, then reopen the note.|这条备忘已在其他地方修改。请复制您刚写的内容，然后重新打开备忘。|このメモが別の場所で更新されました。入力した内容をコピーしてからメモを開き直してください。
+종일 일정은 오전 9시에 알려드려요. 웹 화면이 열려 있을 때 알려드려요. 잠금 화면 알림은 저장 후 휴대폰 캘린더에 추가해 설정해 주세요.|All-day events are announced at 9 a.m. Reminders appear while the web app is open. For lock screen reminders, save the event and add it to your phone’s calendar.|全天日程在上午9点提醒。网页版打开时才会提醒。如需锁屏提醒，请保存日程后添加到手机日历。|終日の予定は午前9時にお知らせします。通知はウェブ版を開いている間に表示されます。ロック画面に通知するには、保存後にスマートフォンのカレンダーへ追加してください。
+끝나는 시간을 시작 시간보다 늦게 골라 주세요.|Choose an end time after the start time.|请选择晚于开始时间的结束时间。|終了時刻は開始時刻より後にしてください。
+다른 기기에서 이 일정을 지웠어요. 창을 닫고 새 일정으로 추가해 주세요.|This event was deleted on another device. Close this window and add a new event.|此日程已在另一台设备上删除。请关闭窗口并添加新日程。|この予定は別の端末で削除されました。画面を閉じて新しい予定として追加してください。
+다른 기기에서 이 일정을 바꿨어요. 창을 닫고 최근 내용을 확인해 주세요.|This event changed on another device. Close this window to see the latest details.|此日程已在另一台设备上修改。请关闭窗口查看最新内容。|この予定は別の端末で変更されました。画面を閉じて最新の内容を確認してください。
+근무 루틴 근무표|Shift Routine schedule|轮班日常班表|シフトルーティンの勤務表
+파일을 저장했어요. 원하는 앱에서 공유해 보세요.|File saved. Share it from an app of your choice.|文件已保存。请使用您喜欢的应用分享。|ファイルを保存しました。お好きなアプリで共有してください。
+공유하지 못했어요. 다시 시도해 주세요.|Couldn’t share. Please try again.|无法分享，请重试。|共有できませんでした。もう一度お試しください。
+이미지를 만들지 못했어요. 다시 시도해 주세요.|Couldn’t create the image. Please try again.|无法生成图片，请重试。|画像を作成できませんでした。もう一度お試しください。
+Google이나 Apple 계정으로 로그인하면 쓸 수 있어요.|Sign in with Google or Apple to use this feature.|登录 Google 或 Apple 账户后即可使用。|GoogleまたはAppleアカウントでログインすると使えます。
+Google Drive에 저장하기|Save to Google Drive|保存到 Google Drive|Google Driveに保存
+계정에 저장하지 못했어요. 다시 시도해 주세요.|Couldn’t save to your account. Please try again.|无法保存到账户，请重试。|アカウントに保存できませんでした。もう一度お試しください。
+바꾼 내용을 곧 저장해요|Changes will be saved shortly|即将保存更改|変更をまもなく保存します
+인터넷이 끊겨 이 기기에 먼저 저장했어요|You’re offline. Saved on this device for now.|网络已断开，暂时保存到此设备。|オフラインのため、先にこの端末へ保存しました
+로그아웃했어요. 계정에 저장한 기록은 남아 있어요.|Signed out. Records saved to your account are still there.|已退出登录。账户中保存的记录仍会保留。|ログアウトしました。アカウントに保存した記録は残っています。
+계정에 저장한 기록 사용하기|Use records from your account|使用账户保存的记录|アカウントに保存した記録を使う
+저장하는 동안 바뀐 내용이 있어요. 이어서 쓸 기록을 골라 주세요.|Some records changed while saving. Choose which ones to keep using.|保存期间有内容发生更改，请选择要继续使用的记录。|保存中に変更された内容があります。引き続き使う記録を選んでください。
+인터넷에 연결한 뒤 다시 저장해 주세요.|Connect to the internet and try saving again.|请连接网络后重新保存。|インターネットに接続してから保存し直してください。
+시급, 연차, 메모와 근무 변경을 확인하고 있어요…|Checking hourly pay, leave, notes and shift changes…|正在检查时薪、年假、备忘和班次变更…|時給・有休・メモ・勤務変更を確認しています…
+여러 기기에서 내용이 바뀌었어요. 이어서 쓸 기록을 골라 주세요.|Records changed on multiple devices. Choose which ones to keep using.|记录已在多个设备上更改，请选择要继续使用的记录。|複数の端末で内容が変更されました。引き続き使う記録を選んでください。
+이 기기와 계정에 저장한 내용이 달라요. 이어서 쓸 기록을 골라 주세요.|This device and your account have different records. Choose which ones to keep using.|此设备与账户保存的记录不同，请选择要继续使用的记录。|この端末とアカウントに保存した内容が異なります。引き続き使う記録を選んでください。
+다른 기기에서도 같은 내용을 바꿨어요. 이어서 쓸 기록을 골라 주세요.|The same records changed on another device. Choose which ones to keep using.|另一台设备也修改了相同的内容，请选择要继续使用的记录。|別の端末でも同じ内容が変更されました。引き続き使う記録を選んでください。
+연결했어요. 바꾼 내용은 자동으로 저장돼요.|Connected. Changes will save automatically.|已连接，更改将自动保存。|接続しました。変更は自動で保存されます。
+저장을 완료하지 못했어요.|Couldn’t finish saving.|未能完成保存。|保存を完了できませんでした。
+이 기기에 저장한 기록은 남아 있어요.|Records saved on this device are still there.|此设备上保存的记录仍会保留。|この端末に保存した記録は残っています。
+로그인했어요. 다른 기기에서도 쓰려면 계정 저장을 연결해 주세요.|Signed in. Connect account storage to continue on other devices.|已登录。连接账户存储后可在其他设备继续使用。|ログインしました。別の端末でも使うには、アカウントの保存機能を連携してください。
+계정에 저장한 기록을 확인하고 있어요…|Checking records saved to your account…|正在检查账户中保存的记录…|アカウントに保存した記録を確認しています…
+계정을 확인하지 못했어요. 이 기기에는 계속 저장할 수 있어요.|Couldn’t verify your account. You can still save on this device.|无法验证您的账户，仍可保存到此设备。|アカウントを確認できませんでした。この端末には引き続き保存できます。
+이어서 쓸 기록을 골라 주세요.|Choose which records to keep using.|请选择要继续使用的记录。|引き続き使う記録を選んでください。
+계정에 저장하고 있어요. 저장이 끝나면 다시 로그아웃해 주세요.|Saving to your account. Try signing out again once it finishes.|正在保存到账户，请在保存完成后重新退出登录。|アカウントに保存しています。完了してからもう一度ログアウトしてください。
+아직 계정에 저장하지 못한 내용이 있어요. 인터넷에 연결해 저장한 뒤 로그아웃해 주세요.|Some changes haven’t been saved to your account. Connect to the internet and save them before signing out.|有些内容尚未保存到账户。请连接网络并保存后再退出登录。|アカウントに未保存の内容があります。インターネットに接続して保存してからログアウトしてください。
+계정에 저장하지 못했어요. 저장 상태를 확인한 뒤 다시 로그아웃해 주세요.|Couldn’t save to your account. Check the save status and try signing out again.|无法保存到账户，请检查保存状态后重新退出登录。|アカウントに保存できませんでした。保存状況を確認してから、もう一度ログアウトしてください。
+계정에 저장한 기록을 지웠어요.|Records saved to your account were deleted.|已删除账户中保存的记录。|アカウントに保存した記録を削除しました。
+인터넷 연결을 확인하고 다시 보내 주세요.|Check your internet connection and send again.|请检查网络连接后重新发送。|インターネット接続を確認し、もう一度送信してください。
+근무표를 보내지 못했어요.|Couldn’t send the schedule.|未能发送班表。|勤務表を送信できませんでした。
+다른 기기에서 내용이 바뀌었어요. 다시 보내 주세요.|The records changed on another device. Please send again.|记录已在另一台设备上修改，请重新发送。|別の端末で内容が変更されました。もう一度送信してください。
+먼저 Google 캘린더 연결을 허용해 주세요.|Allow the Google Calendar connection first.|请先允许连接 Google 日历。|先にGoogleカレンダーとの接続を許可してください。
+Google Drive에 저장됐는지 확인한 뒤 다시 보내 주세요.|Check that your records were saved to Google Drive, then send again.|请确认记录已保存到 Google Drive 后重新发送。|Google Driveに保存されたことを確認してから、もう一度送信してください。
+인터넷에 연결한 뒤 다시 보내 주세요.|Connect to the internet and send again.|请连接网络后重新发送。|インターネットに接続してから、もう一度送信してください。
+연결했어요. ‘이번 달 근무표 보내기’를 눌러 주세요.|Connected. Tap “Send this month’s schedule.”|已连接。请点击“发送本月班表”。|接続しました。「今月の勤務表を送る」を押してください。
+자동 보내기를 멈췄어요. 이미 보낸 근무표와 Drive에 저장한 기록은 남아 있어요.|Auto-send stopped. Schedules you sent and records saved in Drive are still there.|已停止自动发送。已发送的班表和 Drive 中保存的记录仍会保留。|自動送信を停止しました。送信済みの勤務表とDriveに保存した記録は残っています。
+Google 캘린더 연결을 끊었어요. Google Drive 저장은 계속 쓸 수 있어요.|Google Calendar was disconnected. You can still save to Google Drive.|已断开 Google 日历连接，仍可保存到 Google Drive。|Googleカレンダーの接続を解除しました。Google Driveへの保存は引き続き使えます。
+금액을 0원 이상으로 입력해 주세요. 소수점은 빼 주세요.|Enter a whole amount of ₩0 or more.|请输入不低于0韩元的整数金额。|0ウォン以上の整数で入力してください。
+내 캘린더 보기|View my calendar|查看我的日历|自分のカレンダーを見る
+입사일을 다시 확인해 주세요. 오늘까지의 날짜를 고를 수 있어요.|Check your start date. You can choose today or an earlier date.|请检查入职日期。可选择今天或更早的日期。|入社日を確認してください。今日までの日付を選べます。
+남은 설정을 마치면 내 캘린더를 볼 수 있어요.|Finish the remaining steps to see your calendar.|完成剩余设置后即可查看日历。|残りの設定を終えると、カレンダーを確認できます。
+연차와 근속수당|Leave & seniority allowance|年假和工龄津贴|有休と勤続手当
+기본시급은 얼마인가요?|What is your base hourly rate?|您的基本时薪是多少？|基本時給はいくらですか？
+매달 받는 수당이 있나요?|Do you receive any monthly allowances?|您每月有固定津贴吗？|毎月受け取る手当はありますか？
+급여·상여 문자 등록|Add pay and bonus messages|添加工资和奖金短信|給与・賞与のSMSを登録
+급여 명세서에 나온 기본시급을 입력해 주세요.|Enter the base hourly rate from your payslip.|请输入工资单上的基本时薪。|給与明細に記載された基本時給を入力してください。
+급여 명세서에서 통상시급을 찾아 입력해 주세요.|Enter the ordinary hourly rate from your payslip.|请在工资单上找到并输入通常时薪。|給与明細の通常時給を確認して入力してください。
+매달 받는 수당을 모두 골라 주세요.|Choose all the allowances you receive each month.|请选择您每月收到的所有津贴。|毎月受け取る手当をすべて選んでください。
+매달 받는 금액을 입력해 주세요.|Enter the amount you receive each month.|请输入您每月收到的金额。|毎月受け取る金額を入力してください。
+문자 등록은 선택이에요. 등록한 문자가 없으면 기본 비율로 예상해요.|Adding a message is optional. We use the default rates if you haven't added one.|可选择是否添加短信。未添加时按默认比例估算。|SMSの登録は任意です。未登録の場合は既定の割合で見積もります。
+7만 원을 고르거나 다른 금액을 입력해 주세요.|Choose 70,000 won or enter another amount.|请选择70,000韩元或输入其他金额。|70,000ウォンを選ぶか、別の金額を入力してください。
+문자 등록 · 선택|Add a message · Optional|添加短信 · 可选|SMSの登録・任意
+수당 금액 입력하기|Enter allowance amounts|输入津贴金额|手当の金額を入力
+시급 설정으로 돌아가기|Return to hourly pay setup|返回时薪设置|時給設定に戻る
+기본시급, 통상시급과 매달 받는 수당을 입력해 주세요.|Enter your base and ordinary hourly rates and monthly allowances.|请输入基本时薪、通常时薪和每月津贴。|基本時給、通常時給、毎月の手当を入力してください。
+수당 없이 설정을 마쳐요|Finish setup without allowances|不添加津贴，完成设置|手当を追加せず設定を完了
+매달 받는 수당|Monthly allowance|每月津贴|毎月の手当
+매달 받는 금액|Monthly amount|每月金额|毎月の金額
+수당 금액을 고르거나 직접 입력해 주세요.|Choose or enter the allowance amount.|请选择或手动输入津贴金额。|手当の金額を選ぶか、直接入力してください。
+고정수당 합계는 10억 원까지 입력할 수 있어요.|Fixed allowances can total up to 1 billion won.|固定津贴合计最高为10亿韩元。|固定手当の合計は10億ウォンまで入力できます。
+근무조|Shift team|班组|勤務グループ
+근무조 선택|Choose a shift team|选择班组|勤務グループを選択
+내 근무조를 골라 주세요.|Choose your shift team.|请选择您的班组。|自分の勤務グループを選んでください。
+내 근무표와 연차, 예상 급여를 볼 수 있어요.|View your shift schedule, leave, and estimated pay.|可查看您的班表、年假和预估工资。|自分の勤務表、有休、給与の目安を確認できます。
+뒤로 가기|Go back|返回|戻る
+로그인과 동기화|Sign-in and sync|登录和同步|ログインと同期
+언어와 지역|Language and region|语言和地区|言語と地域
+앱에 사용한 오픈소스와 이미지를 확인할 수 있어요.|See the open-source software and images used in the app.|可查看此应用使用的开源软件和图片。|アプリで使用したオープンソースソフトウェアや画像を確認できます。
+화면 테마와 표시 방식, 언어, 통화를 처음 설정으로 되돌려요. 근무표, 급여 설정, 메모와 일정은 그대로 남아요.|Reset your theme, display, language, and currency to their defaults. Your schedule, pay settings, notes, and events will stay as they are.|将主题、显示方式、语言和货币恢复为初始设置。班表、工资设置、备注和日程会保留。|テーマ、表示方法、言語、通貨を初期設定に戻します。勤務表、給与設定、メモ、予定はそのまま残ります。
+라이선스 정보를 불러오지 못했어요. 인터넷에 연결한 뒤 다시 열어 주세요.|Couldn't load license information. Connect to the internet and open this page again.|无法加载许可证信息。请联网后重新打开。|ライセンス情報を読み込めませんでした。インターネットに接続してから開き直してください。
+상여 문자를 먼저 복사한 뒤 다시 눌러 주세요.|Copy your bonus message first, then tap again.|请先复制奖金短信，再点击此按钮。|賞与のSMSをコピーしてから、もう一度押してください。
+급여 문자를 먼저 복사한 뒤 다시 눌러 주세요.|Copy your pay message first, then tap again.|请先复制工资短信，再点击此按钮。|給与のSMSをコピーしてから、もう一度押してください。
+매달 받는 금액을 골라 주세요.|Choose the amount you receive each month.|请选择您每月收到的金额。|毎月受け取る金額を選んでください。
+문자는 30,000자까지 붙여넣을 수 있어요.|You can paste up to 30,000 characters.|最多可粘贴30,000个字符。|30,000文字まで貼り付けられます。
+서로 다른 금액이 섞여 있어요. 한 달치 명세서만 붙여넣어 주세요.|The message contains conflicting amounts. Paste a payslip for just one month.|短信中的金额有冲突。请只粘贴一个月的工资单。|異なる金額が混在しています。1か月分の明細だけを貼り付けてください。
+근속수당 금액을 읽지 못했어요. 설정한 금액을 확인해 주세요.|Couldn't read the seniority allowance. Check the amount in your settings.|无法读取工龄津贴。请检查已设置的金额。|勤続手当の金額を読み取れませんでした。設定した金額を確認してください。
+국민연금과 건강보험료(장기요양보험료 포함)는 문자에 적힌 월 금액을 사용해요. 소득세와 지방소득세는 문자에 나온 비율로 예상해요. 보험료 정산이나 신고보수, 비과세 항목에 변경이 있으면 새 문자를 등록해 주세요.|National pension and health insurance, including long-term care insurance, use the monthly amounts in your message. Income tax and local income tax are estimated using the rates from the message. Add a new message if insurance adjustments, reported wages, or tax-exempt items change.|国民年金和医保（含长期护理保险）按短信中的月缴金额计算。所得税和地方所得税按短信中的比例估算。若保费结算、申报薪酬或免税项目有变化，请添加新短信。|国民年金と健康保険料（長期療養保険料を含む）は、SMSに記載された月額を使います。所得税と地方所得税は、SMSに記載された割合で見積もります。保険料の精算、届出報酬、非課税項目に変更があれば、新しいSMSを登録してください。
+문자에 적힌 고용보험료가 지급액의 0.9%와 달라요. 문자에 나온 비율로 예상해요.|The employment insurance amount in your message differs from 0.9% of gross pay. We estimate it using the rate from the message.|短信中的就业保险费不等于应发工资的0.9%。按短信中的比例估算。|SMSに記載された雇用保険料が支給額の0.9%と異なるため、SMSの割合で見積もります。
+지급 합계와 공제 합계를 확인하지 못했어요. 두 합계가 모두 있고 세부 내역과 맞는지 확인해 주세요.|Couldn't verify the payment and deduction totals. Check that both totals appear and match the details.|无法确认应发和扣除合计。请检查两项合计是否都有且与明细一致。|支給合計と控除合計を確認できませんでした。両方の合計があり、明細と一致するか確認してください。
+지급 합계와 공제 합계가 함께 적힌 문자를 붙여넣어 주세요.|Paste a message that includes both payment and deduction totals.|请粘贴同时包含应发和扣除合计的短信。|支給合計と控除合計の両方が記載されたSMSを貼り付けてください。
+시급이나 수당을 읽지 못했어요. 지급 내역과 공제 내역이 모두 있는 명세서를 붙여넣어 주세요.|Couldn't read hourly pay or allowances. Paste a payslip that includes payment and deduction details.|无法读取时薪或津贴。请粘贴同时包含应发和扣除明细的工资单。|時給や手当を読み取れませんでした。支給と控除の内訳が両方記載された明細を貼り付けてください。
+총 지급액을 확인해 주세요.|Check your total gross pay.|请检查应发合计。|総支給額を確認してください。
+세금과 보험료 계산 기준을 확인해 주세요.|Check the rates used to estimate taxes and insurance.|请检查税费和保险费的估算依据。|税金と保険料の計算基準を確認してください。
+저장하지 못했어요. 입력한 내용을 확인하고 다시 시도해 주세요.|Couldn't save. Check your entries and try again.|保存失败。请检查输入后重试。|保存できませんでした。入力内容を確認して、もう一度お試しください。
+설정을 저장했어요.|Settings saved.|设置已保存。|設定を保存しました。
+평일 06:50~07:30 제보|Report weekdays, 06:50–07:30|工作日06:50～07:30可上报|平日06:50〜07:30に報告できます
+본사·1공장 반경 1km 안에서 제보할 수 있어요.|You can report within 1 km of HQ / Factory 1.|在总部·1工厂1公里范围内可以上报。|本社・第1工場から1km以内で報告できます。
+주간 근무자의 최근 10분 제보를 모아 보여 드려요. 실제로 주차할 수 있는지는 현장 상황에 따라 달라요.|We show reports from day-shift workers over the last 10 minutes. Actual parking availability may vary.|这里汇总白班同事最近10分钟的上报。是否有空位，以现场情况为准。|日勤の方から直近10分間に届いた報告をまとめて表示します。実際に駐車できるかは現地の状況によります。
+현재 상태를 눌러 제보해 주세요. 같은 상태를 다시 누르면 취소돼요.|Tap the current status to report it. Tap the same status again to undo it.|点选当前状态即可上报。再次点选同一状态即可撤销。|現在の状況をタップして報告できます。同じ状況をもう一度タップすると取り消せます。
+제보와 만차 알림은 함께 켜고 꺼요. 아이폰에서는 홈 화면에 앱을 추가한 뒤 알림 권한을 허용해 주세요. 알림 소리는 기기의 알림과 집중 모드 설정을 따라요.|Reporting and full-lot alerts turn on and off together. On iPhone, add the app to your Home Screen, then allow notifications. Alert sounds follow your device’s notification and Focus settings.|上报和满位提醒会同时开启或关闭。在 iPhone 上，请先将应用添加到主屏幕，再允许通知。提醒声音遵循设备的通知和专注模式设置。|状況報告と満車通知は同時にオン・オフできます。iPhoneではホーム画面にアプリを追加してから通知を許可してください。通知音は端末の通知と集中モードの設定に従います。
+스위치를 켜면 주차 상태를 제보하고 만차 알림을 받을 수 있어요. 끄면 둘 다 중단돼요.|Turn on the switch to report parking status and get full-lot alerts. Turning it off stops both.|开启开关后就能上报停车状态并接收满位提醒。关闭后两项功能都会停止。|スイッチをオンにすると、駐車状況を報告して満車通知を受け取れます。オフにすると両方が停止します。
+제보할 수 있는 위치인지 확인할 때만 위치를 서버로 보내요. 위치는 저장하지 않아요. 위치 오차가 300m를 넘으면 다시 확인해 주세요.|We send your location to the server only to check whether you can report from there. We don’t store it. Check again if the location accuracy is worse than 300 m.|仅在确认当前位置是否可以上报时，才会将位置发送到服务器。位置信息不会保存。如果定位误差超过300米，请重新确认。|報告できる場所かを確認する場合に限り、位置情報をサーバーに送信します。位置情報は保存しません。位置の誤差が300mを超える場合は再確認してください。
+제보하려면 아래 스위치를 켜 주세요.|Turn on the switch below to report.|要上报，请开启下方的开关。|報告するには下のスイッチをオンにしてください。
+평일 06:50~07:30에 제보할 수 있어요.|You can report on weekdays from 06:50 to 07:30.|工作日06:50～07:30可以上报。|平日06:50〜07:30に報告できます。
+이 앱이나 브라우저에서 위치를 확인할 수 없어요. 위치 확인이 가능한 앱이나 브라우저에서 열어 주세요.|This app or browser can’t check your location. Open the page in an app or browser that supports location.|此应用或浏览器无法获取位置。请使用支持定位的应用或浏览器打开。|このアプリやブラウザでは位置情報を取得できません。位置情報に対応するアプリやブラウザで開いてください。
+최근 10분 동안 만차 제보가 5건 이상 들어왔어요|At least five full-lot reports in the last 10 minutes|最近10分钟收到至少5条满位上报|直近10分間に満車の報告が5件以上ありました
+주차장 정보를 불러오지 못했어요.|Couldn’t load parking information.|未能加载停车场信息。|駐車場の情報を読み込めませんでした。
+주차장 정보를 불러오는 데 시간이 걸려요. 새로고침해 주세요.|Parking information is taking longer to load. Please refresh.|加载停车场信息需要更长时间。请刷新。|駐車場の情報の読み込みに時間がかかっています。更新してください。
+알림 연결이 끊겼어요. 스위치를 다시 켜 주세요.|Alerts were disconnected. Turn the switch back on.|提醒连接已断开。请重新打开开关。|通知の接続が切れました。スイッチをもう一度オンにしてください。
+알림을 설정하지 못했어요.|Couldn’t set up alerts.|未能设置提醒。|通知を設定できませんでした。
+이 브라우저에서는 알림을 받을 수 없어요. 아이폰에서는 Safari에서 홈 화면에 추가한 앱을 열어 주세요.|This browser can’t receive alerts. On iPhone, open the app you added to your Home Screen from Safari.|此浏览器无法接收提醒。在 iPhone 上，请打开从 Safari 添加到主屏幕的应用。|このブラウザでは通知を受け取れません。iPhoneではSafariからホーム画面に追加したアプリを開いてください。
+만차 알림을 받으려면 알림 권한을 허용해 주세요.|Allow notifications to get full-lot alerts.|要接收满位提醒，请允许通知。|満車通知を受け取るには通知を許可してください。
+주차장 화면을 새로고침한 뒤 다시 켜 주세요.|Refresh the parking screen, then turn it back on.|请刷新停车场页面，然后重新开启。|駐車場の画面を更新してから、もう一度オンにしてください。
+제보와 만차 알림을 켰어요. 최근 10분 동안 만차 제보가 5건 이상 들어오면 하루 한 번 알려 드려요.|Reporting and full-lot alerts are on. We’ll notify you once a day when at least five full-lot reports arrive within 10 minutes.|已开启上报和满位提醒。10分钟内收到至少5条满位上报时，每天最多提醒一次。|状況報告と満車通知をオンにしました。10分以内に満車報告が5件以上届くと、1日1回通知します。
+제보와 만차 알림을 껐어요.|Reporting and full-lot alerts are off.|已关闭上报和满位提醒。|状況報告と満車通知をオフにしました。
+교대 시간 한마디|Shift check-in|交接班留言|交替時のひとこと
+이 기기에 저장하지 못했어요. 화면을 닫으면 바꾼 내용이 사라질 수 있어요.|Couldn’t save on this device. Changes may be lost when you close the screen.|未能保存到此设备。关闭页面后，更改可能会丢失。|この端末に保存できませんでした。画面を閉じると変更内容が失われることがあります。
+여기서 쓴 글과 설정은 이 기기에만 저장돼요. 다른 이용자에게 보내지 않아요. 식단 평가는 오늘 메뉴에서, 통근버스·주차장·분실물은 전체 메뉴에서 이용할 수 있어요.|Your posts and settings here are saved only on this device. They aren’t sent to other users. Find meal ratings in Today’s Menu, and shuttle buses, parking and lost & found in the All menu.|这里的发帖和设置仅保存在此设备上，不会发送给其他用户。请在今日菜单中查看餐点评价，在全部菜单中使用通勤班车、停车场和失物招领。|ここで書いた投稿や設定は、この端末だけに保存されます。他の利用者には送信されません。献立評価は「今日のメニュー」、通勤バス・駐車場・落とし物は「すべて」のメニューから利用できます。
+예시 보기 (작성 시간 제한 없이)|Show examples (no posting time limit)|查看示例（不限发帖时间）|例を見る（投稿時間の制限なし）
+테스트 기록 지우기|Clear test history|清除试用记录|試用の記録を消す
+누가 글을 볼 수 있는지 예시로 보여 드려요. 아직 실제 소속이나 열람 권한은 확인하지 않아요. 회사의 공식 승인은 별도로 받아야 해요.|The example shows who could view a post. We don’t verify team membership or viewing permissions yet. You’ll still need official company approval.|示例展示哪些人可以查看帖子。此功能尚未验证实际归属或查看权限。仍需另行获得公司的正式批准。|誰が投稿を閲覧できるかを例で示します。実際の所属や閲覧権限はまだ確認しません。会社の正式な承認は別途必要です。
+동료가 지원하면 요청자가 선택하고, 두 사람이 확인하면 확정해요. 여기서는 실제 지원이 전송되지 않아요.|A coworker volunteers, the requester chooses them, and both confirm. This preview doesn’t send an actual response.|同事报名后，请求者选择人选，双方确认后才确定。这里不会发送实际报名。|同僚が応募し、依頼した人が選び、双方が確認すると確定します。このプレビューでは実際の応募は送信されません。
+잠들기 몇 시간 전에 알릴지 정해 보세요. 체험 중에는 앱을 열어 둔 동안만 알림을 받을 수 있어요.|Choose how many hours before bedtime to get an alert. In this trial, alerts only arrive while the app is open.|请选择睡前几小时提醒。在试用期间，只有应用打开时才能收到提醒。|就寝の何時間前に通知を受け取るかを選んでください。試用中はアプリを開いている間だけ通知を受け取れます。
+알림 시간이 이미 지났어요. 취침 예정 시간을 다시 선택해 주세요.|That alert time has already passed. Choose your planned bedtime again.|提醒时间已过。请重新选择预计就寝时间。|通知時刻はすでに過ぎています。就寝予定時刻を選び直してください。
+오전 7~9시와 오후 7~9시(한국 시간)에 글을 쓸 수 있어요. 함께 보기에서 출근·퇴근 글을 모아 볼 수 있어요. 글과 응원은 이 기기에만 저장돼요.|You can post from 7 to 9 a.m. and 7 to 9 p.m. Korea time. Show both brings together posts from people arriving and leaving. Posts and reactions are saved only on this device.|韩国时间上午7～9点和晚上7～9点可以发帖。选择一起查看，就能同时看到上班和下班的留言。帖子和鼓励仅保存在此设备上。|韓国時間の午前7〜9時と午後7〜9時に投稿できます。「まとめて見る」では出勤と退勤の投稿を一緒に見られます。投稿や応援はこの端末だけに保存されます。
+지금은 글을 읽을 수 있어요. 오전 7~9시와 오후 7~9시(한국 시간)에 글을 쓸 수 있어요.|You can read posts now. Posting opens from 7 to 9 a.m. and 7 to 9 p.m. Korea time.|现在可以阅读帖子。韩国时间上午7～9点和晚上7～9点可以发帖。|今は投稿を読めます。韓国時間の午前7〜9時と午後7〜9時に投稿できます。
+출근 중인가요, 퇴근 중인가요?|Are you arriving for work or heading home?|你是在上班路上，还是下班路上？|出勤中ですか、退勤中ですか？
+이 기기의 글, 설정, 검토 결과를 지울까요? 식단 평가는 그대로 남아요. 평가를 취소하려면 오늘 메뉴에서 선택한 버튼을 다시 눌러 주세요.|Clear posts, settings and review choices from this device? Your meal ratings will stay. To undo a rating, tap your selected button again in Today’s Menu.|要清除此设备上的帖子、设置和试用反馈吗？餐点评价会保留。要撤销评价，请在今日菜单中再次点按已选按钮。|この端末の投稿、設定、検討結果を消しますか？献立の評価は残ります。評価を取り消すには「今日のメニュー」で選んだボタンをもう一度タップしてください。
+최신 식단을 확인하고 있어요|Checking the latest menu|正在检查最新菜单|最新の献立を確認しています
+식단을 불러오고 있어요|Loading the menu|正在加载菜单|献立を読み込んでいます
+식당 응답이 늦어지고 있어요.|The cafeteria is taking longer to respond.|食堂响应较慢。|食堂からの応答に時間がかかっています。
+식단 날짜가 바뀌었어요. 새로고침해 주세요.|The menu date has changed. Please refresh.|菜单日期已变更，请刷新。|献立の日付が変わりました。更新してください。
+식단을 확인하지 못했어요. 잠시 후 다시 시도해 주세요.|Couldn’t check the menu. Try again in a moment.|无法获取菜单，请稍后重试。|献立を確認できませんでした。しばらくしてからもう一度お試しください。
+식단을 불러오는 데 시간이 걸려요. 잠시 후 다시 시도해 주세요.|The menu is taking longer to load. Try again in a moment.|菜单加载较慢，请稍后重试。|献立の読み込みに時間がかかっています。しばらくしてからもう一度お試しください。
+평가 다시 불러오기|Reload ratings|重新加载评价|評価を読み込み直す
+식단 평가를 불러오는 중…|Loading meal ratings…|正在加载餐点评价…|献立の評価を読み込んでいます…
+평가를 저장했어요.|Rating saved.|评价已保存。|評価を保存しました。
+식단 평가를 불러오지 못했어요.|Couldn’t load meal ratings.|无法加载餐点评价。|献立の評価を読み込めませんでした。
+식단 평가를 확인하지 못했어요. 다시 불러와 주세요.|Couldn’t check the meal ratings. Please reload.|无法获取餐点评价，请重新加载。|献立の評価を確認できませんでした。読み込み直してください。
+식단 평가를 불러오는 데 시간이 걸려요. 다시 불러와 주세요.|Meal ratings are taking longer to load. Please reload.|餐点评价加载较慢，请重新加载。|献立の評価の読み込みに時間がかかっています。読み込み直してください。
+이날 식단 이름이 아직 저장되지 않았어요.|The menu for this day hasn’t been saved yet.|这一天的菜单尚未保存。|この日の献立はまだ保存されていません。
+오늘은 탑승 시간을 맞출 근무가 없어요.|There’s no shift to match your ride time to today.|今天没有可用于匹配乘车时间的班次。|今日は乗車時刻を合わせる勤務がありません。
+버스 찾기|Find buses|查找班车|バスを探す
+직선거리로 가까운 순서대로 보여 드려요. 걸어서 얼마나 걸리는지는 길찾기에서 확인해 주세요.|Stops are sorted by straight-line distance. Check walking time in Directions.|站点按直线距离由近到远排列。步行时间请在路线导航中查看。|停留所は直線距離が近い順に表示します。徒歩の所要時間は経路検索で確認してください。
+주변 건물로 표시한 위치는 실제 타는 곳과 다를 수 있어요. 길찾기를 열면 출발지와 도착지를 지도 서비스에 보내요.|A nearby building may mark a different spot from the actual boarding point. Opening Directions sends your start and destination to the map service.|以附近建筑标注的位置可能与实际上车点不同。打开路线导航时，会将出发地和目的地发送给地图服务。|周辺の建物を目印にした位置は、実際の乗車場所と異なることがあります。経路検索を開くと、出発地と目的地が地図サービスに送られます。
+06:10은 1공장 출발 시간이에요. 2공장은 10분 먼저 출발해요. 각 노선의 출발 공장도 확인해 주세요.|06:10 is the departure from Factory 1. Factory 2 departures are 10 minutes earlier. Check which factory each route leaves from.|06:10是1号工厂的发车时间。2号工厂提前10分钟发车。请确认各线路的出发工厂。|06:10は第1工場の出発時刻です。第2工場は10分早く出発します。各路線の出発工場も確認してください。
+퇴근 버스 시간은 1공장 출발 기준이에요. 4공장은 5분, 2공장은 10분 먼저 출발해요.|After-work bus times are for departures from Factory 1. Factory 4 leaves 5 minutes earlier and Factory 2 leaves 10 minutes earlier.|下班班车时间以1号工厂发车为准。4号工厂提前5分钟，2号工厂提前10分钟。|退勤バスは第1工場の出発時刻を表示しています。第4工場は5分、第2工場は10分早く出発します。
+근무 루틴은 회사에서 운영하는 공식 앱이 아니에요.|Shift Routine is an independent app.|轮班日常并非公司运营的官方应用。|シフトルーティンは会社が運営する公式アプリではありません。
+2026년 11월 2일부터 적용해요.|Effective November 2, 2026.|从2026年11月2日起生效。|2026年11月2日から適用されます。
+주간 출근 2호차와 6호차 모두 07:12에 안산역건너(진성고시텔)에 들러요.|Day-shift buses 2 and 6 both stop at 안산역건너(진성고시텔) at 07:12.|白班上班班车2号和6号均于07:12停靠안산역건너(진성고시텔)。|日勤の出勤バス2号車と6号車はどちらも07:12に안산역건너(진성고시텔)に停車します。
+바뀌는 날 전까지는 기존 노선이 검색돼요.|Search results use the current routes until the effective date.|生效前仍可搜索现有线路。|変更日までは現在の路線が検索結果に表示されます。
+선택한 정류장에 서는 버스만 보여 드려요.|Showing buses that stop at the selected stop.|仅显示停靠所选站点的班车。|選んだ停留所に停まるバスを表示します。
+직선거리 500m 안에서 가까운 순서대로 보여 드려요. 걸어서 얼마나 걸리는지는 길찾기에서 확인해 주세요.|Showing stops within 500 m, sorted by straight-line distance. Check walking time in Directions.|显示直线距离500米以内的站点，按距离由近到远排列。步行时间请在路线导航中查看。|直線距離500m以内の停留所を近い順に表示します。徒歩の所要時間は経路検索で確認してください。
+선택한 정류장에 서는 버스가 없어요. 공장이나 탑승 시간을 바꿔 보세요.|No buses stop at the selected stop. Try a different factory or ride time.|没有班车停靠所选站点。请更换工厂或乘车时间。|選んだ停留所に停まるバスがありません。工場や乗車時刻を変えてみてください。
+2km 이내에 탈 수 있는 버스가 없어요. 장소나 검색 조건을 바꿔 보세요.|No buses are available within 2 km. Try another place or search setting.|2公里以内没有可乘坐的班车。请更换地点或搜索条件。|2km以内に乗れるバスがありません。場所や検索条件を変えてみてください。
+선택한 거리 안에 탈 수 있는 버스가 없어요. 범위를 넓혀 보세요.|No buses are available in the selected range. Try a wider area.|所选距离范围内没有可乘坐的班车。请扩大搜索范围。|選んだ範囲に乗れるバスがありません。範囲を広げてみてください。
+이 조건에 맞는 즐겨찾기 노선이 없어요.|No favorite routes match these settings.|没有符合这些条件的收藏线路。|条件に合うお気に入り路線がありません。
+검색한 노선을 찾지 못했어요. 호차, 지역, 정류장 이름을 확인하거나 공장과 탑승 시간을 바꿔 보세요.|Couldn’t find that route. Check the bus number, area or stop name, or try another factory or ride time.|未找到该线路。请检查车号、地区或站点名称，或者更换工厂和乘车时间。|路線が見つかりませんでした。号車・地域・停留所名を確認するか、工場や乗車時刻を変えてみてください。
+조건에 맞는 버스가 없어요. 공장이나 탑승 시간을 바꿔 보세요.|No buses match these settings. Try a different factory or ride time.|没有符合条件的班车。请更换工厂或乘车时间。|条件に合うバスがありません。工場や乗車時刻を変えてみてください。
+시간 정보 없음|No time available|暂无时间信息|時刻情報なし
+공장과 탑승 시간에 맞는 노선을 찾지 못했어요. 검색어나 검색 조건을 바꿔 보세요.|No routes match your factory and ride time. Try a different search term or setting.|没有符合所选工厂和乘车时间的线路。请更换关键词或搜索条件。|工場と乗車時刻に合う路線が見つかりませんでした。検索語や検索条件を変えてみてください。
+일치하는 장소나 노선이 없어요. 주소나 장소를 더 찾으려면 검색을 눌러 주세요.|No matching places or routes. Tap Search to look up more addresses or places.|没有匹配的地点或线路。请点击搜索查找更多地址或地点。|一致する場所や路線がありません。住所や場所をさらに探すには検索を押してください。
+안산역 셔틀은 안산역에서 출발해요.|The Ansan Station shuttle departs from Ansan Station.|安山站接驳班车从安山站出发。|安山駅シャトルは安山駅から出発します。
+주소나 장소를 더 찾으려면 두 글자 이상 입력해 주세요.|Enter at least two characters to look up more addresses or places.|请输入至少两个字符以查找更多地址或地点。|住所や場所をさらに探すには、2文字以上入力してください。
+주소나 장소를 찾고 있어요.|Looking up addresses or places.|正在查找地址或地点。|住所や場所を検索しています。
+현재 위치를 사용할 수 없어요. 장소나 주소로 찾아보세요.|Current location is unavailable. Search by place or address.|无法使用当前位置，请按地点或地址搜索。|現在地を使えません。場所や住所で探してください。
+현재 위치를 확인하지 못했어요. 장소나 주소로 찾아보세요.|Couldn’t find your current location. Search by place or address.|无法获取当前位置，请按地点或地址搜索。|現在地を確認できませんでした。場所や住所で探してください。
+위치 오차가 커서 현재 위치를 사용할 수 없어요. 장소나 주소로 찾아보세요.|Your location is too imprecise to use. Search by place or address.|定位误差过大，无法使用当前位置。请按地点或地址搜索。|位置の誤差が大きいため現在地を使えません。場所や住所で探してください。
+현재 위치가 정확하지 않을 수 있어요. 장소나 주소로 찾아도 돼요.|Your current location may be inaccurate. You can also search by place or address.|当前位置可能不准确，也可以按地点或地址搜索。|現在地が正確でない場合があります。場所や住所でも探せます。
+위치 권한이 꺼져 있어요. 장소나 주소로 찾아보세요.|Location permission is off. Search by place or address.|定位权限已关闭，请按地点或地址搜索。|位置情報の利用が許可されていません。場所や住所で探してください。
+현재 위치를 확인하지 못했어요. 다시 시도하거나 장소나 주소로 찾아보세요.|Couldn’t find your current location. Try again or search by place or address.|无法获取当前位置，请重试或按地点或地址搜索。|現在地を確認できませんでした。もう一度試すか、場所や住所で探してください。
+잃어버린 물건을 찾거나 주운 물건을 알릴 수 있어요.|Look for something you lost or let others know what you found.|可以寻找丢失的物品，也可以发布捡到的物品。|なくした物を探したり、拾った物を知らせたりできます。
+숨긴 작성자 모두 다시 보기|Show all hidden authors again|重新显示所有已隐藏的作者|非表示にした投稿者をすべて表示
+물건 종류|Item type|物品类型|品物の種類
+다른 날 잃어버렸어요|I lost it on a different day|我是在其他日期丢的|別の日になくしました
+욕설이나 음란한 표현은 글에 쓸 수 없어요.|Posts can’t contain profanity or obscene language.|帖子中不能使用辱骂或淫秽用语。|投稿には暴言やわいせつな表現を使えません。
+경비실에 맡기면 CCTV로 물건을 건넨 사실을 확인할 수 있어요. 아직 맡기지 않았다면 현장을 선택해 주세요.|If you leave it at the security office, the cameras can help confirm the handover. If you haven’t dropped it off yet, choose On site.|把物品交到保安室后，可以通过监控确认交接。如果还没交过去，请选择现场。|警備室に預けると、防犯カメラで受け渡しを確認できます。まだ預けていない場合は「現場」を選んでください。
+이 기기에 남은 테스트 글|Test posts on this device|此设备上的测试帖子|この端末に残っている試用投稿
+물건을 받으러 갈 때는 본인 물건의 특징을 설명해 주세요. 신고·차단이나 개인정보 삭제는|When collecting an item, describe what makes it yours. For reports, blocking or personal data deletion, contact|领取物品时，请说明物品的特征。举报、屏蔽或删除个人信息，请联系|受け取るときは、ご自身の品物の特徴を説明してください。通報・ブロックや個人情報の削除については、
+으로 문의해 주세요.|.|。|にお問い合わせください。
+조건에 맞는 글이 없어요. 다른 검색어를 입력하거나 필터를 바꿔 보세요.|No posts match. Try a different search term or change your filters.|没有符合条件的帖子。请更换搜索词或调整筛选条件。|条件に合う投稿がありません。別の検索語を入力するか、絞り込み条件を変えてみてください。
+주운 물건을 알려요|Share what you found|告诉大家你捡到了什么|拾った物を知らせる
+글쓰기를 그만둘까요? 지금까지 쓴 내용은 저장되지 않아요.|Stop writing? What you’ve written so far won’t be saved.|要停止编辑吗？目前输入的内容不会保存。|投稿の作成をやめますか？ここまで入力した内容は保存されません。
+무엇을 주웠는지, 어디에 두었는지 알려 주세요. 가능하면 경비실에 맡겨 주세요.|Tell us what you found and where you left it. If possible, leave it at the security office.|请说明捡到了什么、放在哪里。如果可以，请将物品交到保安室。|何を拾ったか、どこに置いたかを教えてください。可能であれば警備室に預けてください。
+무엇을 잃어버렸는지, 마지막으로 어디에서 봤는지 알려 주세요.|Tell us what you lost and where you last saw it.|请说明丢了什么，以及最后一次在哪里见到它。|何をなくしたか、最後にどこで見たかを教えてください。
+요청을 처리하지 못했어요. 다시 시도해 주세요.|Couldn’t complete your request. Please try again.|未能处理请求。请重试。|リクエストを処理できませんでした。もう一度お試しください。
+신고를 받았어요. 서로 다른 계정에서 3번 신고하면 글이 자동으로 숨겨져요.|Report received. A post is automatically hidden after reports from three different accounts.|已收到举报。同一帖子收到三个不同账号的举报后会自动隐藏。|通報を受け付けました。異なる3つのアカウントから通報されると、投稿は自動的に非表示になります。
+글을 삭제했어요.|Post deleted.|帖子已删除。|投稿を削除しました。
+변경 내용을 저장했어요.|Changes saved.|更改已保存。|変更を保存しました。
+응답이 늦어지고 있어요. 새로고침해서 처리 결과를 확인해 주세요.|The response is taking longer than usual. Refresh to see whether the action went through.|响应时间较长。请刷新后确认处理结果。|応答に時間がかかっています。更新して処理結果を確認してください。
+글을 저장했어요.|Post saved.|帖子已保存。|投稿を保存しました。
+응답이 늦어지고 있어요. 새로고침해서 글이 올라갔는지 확인한 뒤 다시 시도해 주세요.|The response is taking longer than usual. Refresh to see whether your post went through before trying again.|响应时间较长。请刷新确认帖子是否已发布，再重试。|応答に時間がかかっています。更新して投稿できたかを確認してから、もう一度お試しください。
+분실물 글을 불러오는 중…|Loading lost & found posts…|正在加载失物招领帖子…|落とし物の投稿を読み込み中…
+분실물 글을 불러오지 못했어요. 새로고침해 주세요.|Couldn’t load lost & found posts. Please refresh.|未能加载失物招领帖子。请刷新。|落とし物の投稿を読み込めませんでした。更新してください。
+같은 계정으로 로그인하면 다른 기기에서도 내 글을 관리할 수 있어요.|Sign in with the same account to manage your posts on other devices.|使用同一个账号登录后，也可以在其他设备上管理自己的帖子。|同じアカウントでログインすると、別の端末でも自分の投稿を管理できます。
+누구나 글을 볼 수 있어요. 글을 올리거나 관리·신고하려면 Google 또는 Apple로 로그인해 주세요.|Anyone can view posts. Sign in with Google or Apple to post, manage your posts or report one.|任何人都可以查看帖子。要发布、管理或举报帖子，请使用 Google 或 Apple 登录。|投稿は誰でも閲覧できます。投稿の作成・管理や通報をするには、Google または Apple でログインしてください。
+글을 삭제할까요? 삭제한 글은 되돌릴 수 없어요.|Delete this post? You can’t recover it once it’s deleted.|要删除这个帖子吗？删除后无法恢复。|投稿を削除しますか？削除した投稿は復元できません。
+글쓰기에 불러오기|Load into editor|加载到编辑区|編集欄に読み込む
+테스트 글을 불러왔어요. 게시물 등록을 누르면 앱에 공개돼요.|Test post loaded. Tap Publish post to make it visible in the app.|已加载测试帖子。点击发布帖子后，帖子会在应用中公开。|試用投稿を読み込みました。「投稿する」をタップするとアプリ内に公開されます。
 `.trim().split('\n').map(line=>{const [ko,en,zh,ja]=line.split('|');return [ko,{en,zh,ja}]}));
 
 Object.assign(window.AppTranslations, {
+ "입사일을\n알려 주세요": {"en":"When did you start?","zh":"请告诉我们\n您的入职日期","ja":"入社日を\n教えてください"},
+ "어느 조에서\n일하시나요?": {"en":"Which team do you work on?","zh":"您在哪个班组工作？","ja":"どの勤務グループで\n働いていますか？"},
+ "시급을 입력하면\n준비가 끝나요": {"en":"Enter your hourly pay to finish setup","zh":"输入时薪即可\n完成设置","ja":"時給を入力すれば\n準備完了です"},
+ "입사일을 기준으로 연차와\n예상 급여를 계산해요.": {"en":"We use your start date to calculate leave and estimated pay.","zh":"我们会根据入职日期计算年假和预估工资。","ja":"入社日をもとに有休と給与の目安を計算します。"},
+ "시급을 입력하면\n예상 급여를 볼 수 있어요.": {"en":"Enter your hourly pay to see your estimated pay.","zh":"输入时薪即可查看预估工资。","ja":"時給を入力すると給与の目安を確認できます。"},
  '입사일을\n알려주세요.': {en:'When did you join?',zh:'请告诉我们\n您的入职日期',ja:'入社日を\n教えてください'},
  '어느 조에서\n근무하시나요?': {en:'Which team are\nyou on?',zh:'您在哪个\n班组工作？',ja:'どの組で\n働いていますか？'},
  '시급을 설정하면\n준비가 끝나요': {en:'Set your hourly pay\nand you’re ready',zh:'设置好时薪\n就准备好了',ja:'時給を設定すれば\n準備完了です'}

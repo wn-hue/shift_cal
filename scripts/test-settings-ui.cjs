@@ -19,13 +19,13 @@ for(const view of ['payroll','leave']){const section=html.slice(html.indexOf('<s
 const dialog=html.slice(html.indexOf('<dialog id="leave-settings-dialog"'));assert.ok(dialog.slice(0,dialog.indexOf('</dialog>')).includes('id="input-hire-date"'));
 console.log('PASS: incomplete/new-user guidance, imported complete settings, fractional annual leave, separate menu settings and single SMS entry point.');
 
-api.refresh({...state,group:null,hireDate:'2020-01-01',baseHourly:11050,ordinaryHourly:14482});assert.equal(els.get('first-use-guide').hidden,false);assert.equal(buttons[0].hidden,true);assert.match(els.get('first-use-copy').textContent,/교대조/);api.openMenu('group');assert.equal(els.get('menu-group-open').focused,true);
+api.refresh({...state,group:null,hireDate:'2020-01-01',baseHourly:11050,ordinaryHourly:14482});assert.equal(els.get('first-use-guide').hidden,false);assert.equal(buttons[0].hidden,true);assert.match(els.get('first-use-copy').textContent,/근무조/);api.openMenu('group');assert.equal(els.get('menu-group-open').focused,true);
 for(const group of ['A','B','C']) {
     api.refresh({...state,group});
     assert.equal(els.get('group-select').value,group);
-    assert.match(els.get('group-selection-status').textContent,new RegExp(group+'조 근무표 적용됨'));
+    assert.match(els.get('group-selection-status').textContent,new RegExp(group+'조 근무표가 표시돼요'));
     api.openMenu('group');assert.equal(els.get('menu-group-open').focused,true);
 }
-api.syncGroup(null);assert.equal(els.get('group-select').value,'');assert.match(els.get('group-selection-status').textContent,/선택/);
+api.syncGroup(null);assert.equal(els.get('group-select').value,'');assert.match(els.get('group-selection-status').textContent,/골라 주세요/);
 
 els.set('settings-options',el());ctx.window.SettingsOptions={open(title,options,selected){assert.equal(title,'내 근무조');assert.deepEqual(Array.from(options,o=>o.value),['A','B','C']);assert.equal(selected,'');els.get('settings-options').open=true;}};api.openGroup();assert.equal(els.get('settings-options').open,true);api.closeGroup();assert.equal(els.get('settings-options').open,false);

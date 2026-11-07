@@ -33,15 +33,15 @@ async function sendScheduleFile(file) {
     const status=document.getElementById('share-status');
     try {
         if(navigator.canShare?.({files:[file]})) {
-            await navigator.share({files:[file],title:'Shift_cal 근무표'});
+            await navigator.share({files:[file],title:'근무 루틴 근무표'});
             status.textContent='';
         } else {
             const url=URL.createObjectURL(file),link=document.createElement('a');
             link.href=url;link.download=file.name;document.body.append(link);link.click();link.remove();
             setTimeout(()=>URL.revokeObjectURL(url),60000);
-            status.textContent='파일을 저장했습니다. 원하는 앱으로 보내 주세요.';
+            status.textContent='파일을 저장했어요. 원하는 앱에서 공유해 보세요.';
         }
-    } catch(error) { if(error.name!=='AbortError')status.textContent='공유하지 못했습니다. 다시 시도해 주세요.'; }
+    } catch(error) { if(error.name!=='AbortError')status.textContent='공유하지 못했어요. 다시 시도해 주세요.'; }
 }
 function shareScheduleImage() {
     const days=sharedMonthDays(),offset=days[0].date.getDay(),rows=Math.ceil((offset+days.length)/7);
@@ -66,7 +66,7 @@ function shareScheduleImage() {
         }
     });
     canvas.toBlob(blob=>{
-        if(!blob){document.getElementById('share-status').textContent='이미지를 만들지 못했습니다.';return;}
+        if(!blob){document.getElementById('share-status').textContent='이미지를 만들지 못했어요. 다시 시도해 주세요.';return;}
         sendScheduleFile(new File([blob],`Shift_cal-${currentGroup}-${currentCalDate.getFullYear()}-${currentCalDate.getMonth()+1}.png`,{type:'image/png'}));
     },'image/png');
 }

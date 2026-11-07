@@ -52,7 +52,7 @@
   function appendRoutes(){if(!routes.length)return;results.append(el('h3','bus-unified-section','노선'));const all=el('button','bus-unified-query-all','노선 검색 결과 '+routes.length+'개 보기');all.type='button';all.onclick=()=>{configuration.onQuery(q);close({results:true});};results.append(all);for(const r of routes){const b=el('button','bus-unified-route');b.type='button';b.append(el('strong','',r.name),el('small','',ctx.periodLabel+' · '+r.stops.length+'곳 경유'));b.onclick=()=>{configuration.onQuery(r.name);close({results:true});};results.append(b);}}
   function appendPlaces(){if(!places.length)return;results.append(el('h3','bus-unified-section',q?'정류장·장소':'정류장·장소 목록'));for(const p of places)results.append(rowPlace(p));}
   if(routeFirst){appendRoutes();appendPlaces();}else{appendPlaces();appendRoutes();}
-  if(!places.length&&!routes.length){results.append(el('p','bus-unified-empty',q?(routeOnly(q)?'선택한 공장·탑승 시간에 맞는 노선이 없어요. 검색어나 조회 조건을 확인해 주세요.':'일치하는 장소나 노선이 없어요. 주소·장소를 더 찾아보려면 검색을 눌러 주세요.'):'이 지역에 등록된 장소가 없어요.'));}
+  if(!places.length&&!routes.length){results.append(el('p','bus-unified-empty',q?(routeOnly(q)?'공장과 탑승 시간에 맞는 노선을 찾지 못했어요. 검색어나 검색 조건을 바꿔 보세요.':'일치하는 장소나 노선이 없어요. 주소나 장소를 더 찾으려면 검색을 눌러 주세요.'):'이 지역에 등록된 장소가 없어요.'));}
  }
  for(const[value,text]of[['all','전체'],['ansan','안산'],['siheung','시흥·배곧']]){const b=el('button','',text);b.type='button';b.dataset.region=value;b.onclick=()=>{region=value;render();results.scrollTop=0;};regions.append(b);}
  function show({initial='',focus=true,reset=true}={}){
@@ -75,9 +75,9 @@
   e.preventDefault();if(composing)return;const q=input.value.trim();if(!q){render();return;}abort();render();
   if(routeOnly(q)){input.blur();return;}
   if(C.search(window.BusStopLocations.points,q,{limit:100,minLength:1}).length||C.searchRoutes(context().routes,q,window.BusStopLocations.points).length){input.blur();return;}
-  if(context().period==='shuttle'){status.textContent='안산역 셔틀의 출발지는 안산역으로 고정돼 있어요.';return;}
-  if(q.length<2){status.textContent='추가 장소·주소 검색은 두 글자 이상 입력해 주세요.';return;}
-  const current=++token;controller=new AbortController();submit.disabled=true;submit.setAttribute('aria-busy','true');status.textContent='주소·장소를 찾고 있어요.';
+  if(context().period==='shuttle'){status.textContent='안산역 셔틀은 안산역에서 출발해요.';return;}
+  if(q.length<2){status.textContent='주소나 장소를 더 찾으려면 두 글자 이상 입력해 주세요.';return;}
+  const current=++token;controller=new AbortController();submit.disabled=true;submit.setAttribute('aria-busy','true');status.textContent='주소나 장소를 찾고 있어요.';
   try{const r=await fetch('/api/bus-places?q='+encodeURIComponent(q),{signal:controller.signal,cache:'no-store'}),data=await r.json();if(current!==token||!showing)return;if(!r.ok)throw Error(data.message||'장소를 찾지 못했어요.');remote=Array.isArray(data.places)?data.places.filter(C.valid):[];status.textContent=remote.length?'장소를 선택해 주세요.':'검색 결과가 없어요. 다른 주소나 장소 이름을 입력해 주세요.';render();}
   catch(error){if(current===token&&showing&&error.name!=='AbortError')status.textContent=error.message==='Failed to fetch'?'인터넷 연결을 확인해 주세요.':error.message;}
   finally{if(current===token&&showing){submit.disabled=false;submit.setAttribute('aria-busy','false');}}

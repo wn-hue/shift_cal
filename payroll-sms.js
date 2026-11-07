@@ -2,7 +2,7 @@
     'use strict';
     const deductionKeys = ['income', 'local', 'pension', 'health', 'employment', 'care'];
     function parse(text, options = {}) {
-        if (typeof text !== 'string' || text.length > 30000) throw new Error('문자는 30,000자 이내로 붙여넣어주세요.');
+        if (typeof text !== 'string' || text.length > 30000) throw new Error('문자는 30,000자까지 붙여넣을 수 있어요.');
         const references = {};
         const wages = {}, deductions = {}, warnings = [], fixedAllowances = {};
         let section = '', gross, statedTotal, hasPaySection = false, unreadableAllowance = false;
@@ -31,7 +31,7 @@
             return Number.isSafeInteger(value) && value >= 0 ? value : null;
         }
         function assign(target, key, value) {
-            if (Object.hasOwn(target, key) && target[key] !== value) throw new Error('서로 다른 금액의 명세서가 섞여 있습니다. 한 달 명세서만 붙여넣어주세요.');
+            if (Object.hasOwn(target, key) && target[key] !== value) throw new Error('서로 다른 금액이 섞여 있어요. 한 달치 명세서만 붙여넣어 주세요.');
             target[key] = value;
         }
         const totals = {};
@@ -53,7 +53,7 @@
                 const rest = line.slice(m[0].length).replace(/^\s*[:：]\s*/, '');
                 const value = amount(rest.trim() ? rest : (lines[i + 1] || ''));
                 if(kind==='fixed'&&value===null)unreadableAllowance=true;
-                if(kind==='seniority'&&value===null)warnings.push('근속수당 금액을 인식하지 못했어요. 기존 금액을 확인해 주세요.');
+                if(kind==='seniority'&&value===null)warnings.push('근속수당 금액을 읽지 못했어요. 설정한 금액을 확인해 주세요.');
                 if (value !== null) { assign(kind === 'deduct' ? deductions : kind === 'fixed' ? fixedAllowances : kind === 'reference' ? references : wages, key, value);if(kind==='deduct' && /법정\s*요율/.test(line))statutory.add(key); }
             }
         }
@@ -77,14 +77,14 @@
                 const statutoryEmployment=Math.trunc(gross*0.009/10)*10;
                 const employmentRate=deductions.employment===statutoryEmployment?0.009:deductions.employment/gross;
                 profile={rate:statedTotal/gross,model:'monthly-insurance',fixedInsurance,taxRate:(deductions.income+deductions.local)/gross,employmentRate,otherFixed:statedTotal-knownTotal};
-                warnings.push('연금·건강(별도 요양 포함)은 문자 월액을 유지합니다. 소득세·지방소득세는 문자 비율로 추정합니다. 정산·신고보수·비과세 변경 시 새 문자를 적용하세요.');
-                if(employmentRate!==0.009)warnings.push('고용보험이 지급액의 0.9%와 일치하지 않아 문자 기준 비율을 사용합니다.');
+                warnings.push('국민연금과 건강보험료(장기요양보험료 포함)는 문자에 적힌 월 금액을 사용해요. 소득세와 지방소득세는 문자에 나온 비율로 예상해요. 보험료 정산이나 신고보수, 비과세 항목에 변경이 있으면 새 문자를 등록해 주세요.');
+                if(employmentRate!==0.009)warnings.push('문자에 적힌 고용보험료가 지급액의 0.9%와 달라요. 문자에 나온 비율로 예상해요.');
             }
         } else if (gross !== undefined || Object.keys(deductions).length || statedTotal !== undefined) {
-            warnings.push('공제 기준에는 지급 합계와 공제 합계가 필요합니다. 합계가 없거나 내역과 맞지 않아 공제율은 변경하지 않습니다.');
+            warnings.push('지급 합계와 공제 합계를 확인하지 못했어요. 두 합계가 모두 있고 세부 내역과 맞는지 확인해 주세요.');
         }
-        if(options.taxOnly&&!profile)throw new Error(warnings[0] || '지급 합계와 공제 합계가 포함된 급여 문자를 붙여넣어 주세요.');
-        if (!Object.keys(wages).length && !profile && !(options.kind!=='bonus'&&references.baseMonthly>0)) throw new Error(warnings[0] || '인식한 시급·수당이 없습니다. 지급내역과 공제내역을 포함한 명세서를 붙여넣어주세요.');
+        if(options.taxOnly&&!profile)throw new Error(warnings[0] || '지급 합계와 공제 합계가 함께 적힌 문자를 붙여넣어 주세요.');
+        if (!Object.keys(wages).length && !profile && !(options.kind!=='bonus'&&references.baseMonthly>0)) throw new Error(warnings[0] || '시급이나 수당을 읽지 못했어요. 지급 내역과 공제 내역이 모두 있는 명세서를 붙여넣어 주세요.');
         return { wages, deductions, profile, warnings, fixedAllowances, completeAllowances:hasPaySection&&Number.isSafeInteger(gross)&&!unreadableAllowance, baseMonthly:options.kind==='bonus'?null:references.baseMonthly };
     }
     const api = { parse };

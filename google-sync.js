@@ -23,11 +23,11 @@
   g.records||={};g.excluded||={};g.group=currentGroup;return g;
  }
  function status(text,tone='info'){const n=$('google-sync-status');if(n){n.textContent=text;n.setAttribute('data-state',tone);}}
- function setBusy(value){busy=value;const b=$('google-sync-enable');if(b){b.disabled=value;b.textContent=value?'근무표 보내는 중…':'이달 근무표 보내기';b.setAttribute('aria-busy',String(value));}$('google-sync-status')?.setAttribute('aria-busy',String(value));}
+ function setBusy(value){busy=value;const b=$('google-sync-enable');if(b){b.disabled=value;b.textContent=value?'근무표 보내는 중…':'이번 달 근무표 보내기';b.setAttribute('aria-busy',String(value));}$('google-sync-status')?.setAttribute('aria-busy',String(value));}
  async function api(action,body,get=false){
   const r=await fetch('/api/google-calendar?action='+action,{method:get?'GET':'POST',credentials:'same-origin',cache:'no-store',headers:get?{}:{'Content-Type':'application/json','X-Shift-CSRF':auth?.csrf||''},...(get?{}:{body:JSON.stringify(body||{})})});
-  let data;try{data=await r.json();}catch{throw Error('연결 상태를 확인한 뒤 다시 보내주세요.');}
-  if(!r.ok){const e=Error(data.message||'근무표를 보내지 못했습니다.');e.status=r.status;throw e;}return data;
+  let data;try{data=await r.json();}catch{throw Error('인터넷 연결을 확인하고 다시 보내 주세요.');}
+  if(!r.ok){const e=Error(data.message||'근무표를 보내지 못했어요.');e.status=r.status;throw e;}return data;
  }
  function render(){
   if(!$('google-sync-login'))return;
@@ -36,7 +36,7 @@
   $('google-sync-controls').hidden=!linked;$('google-sync-setup').hidden=configured;
   $('google-sync-user').textContent=linked?auth.user.email+' · '+currentGroup+'조':auth?.connected?'Drive 계정 저장과 별도로 연결할 수 있어요.':'먼저 Google 계정을 연결해 주세요.';
   $('google-sync-badge').textContent=g?.enabled?'근무표 자동 보내기 사용 중':'Google 캘린더에 근무표 보내기';
-  if(!$('google-sync-enable').disabled)$('google-sync-enable').textContent='이달 근무표 보내기';
+  if(!$('google-sync-enable').disabled)$('google-sync-enable').textContent='이번 달 근무표 보내기';
   if(!configured){$('google-sync-setup-message').textContent='관리자 캘린더 연결 설정이 필요합니다.';$('google-sync-redirect').textContent=auth?.redirectUri||location.origin+'/api/google-calendar?action=callback';}
   const entry=document.querySelector('.calendar-link-entry');if(entry)entry.textContent='Google 캘린더에 근무표 보내기';
  }
@@ -69,10 +69,10 @@
    }
    for(let i=0;i<operations.length;i+=10){
     if(!current())return;const batch=operations.slice(i,i+10),{results}=await api('write',{group,calendarId:g.calendarId,operations:batch.map(x=>x.op)});
-    for(const result of results){const sent=batch.find(x=>x.op.id===result.id);if(!sent)continue;if(!result.ok)throw Error(result.message||'다른 기기에서 변경되었어요. 다시 보내주세요.');g.records[sent.key]={id:result.event.id,etag:result.event.etag,signature:C.signature(result.event),local:sent.value};}save();
+    for(const result of results){const sent=batch.find(x=>x.op.id===result.id);if(!sent)continue;if(!result.ok)throw Error(result.message||'다른 기기에서 내용이 바뀌었어요. 다시 보내 주세요.');g.records[sent.key]={id:result.event.id,etag:result.event.etag,signature:C.signature(result.event),local:sent.value};}save();
    }
    if(!current())return;g.lastSync=new Date().toISOString();save();render();
-   status(skipped?'중복·반복 일정 '+skipped+'개를 제외하고 보냈어요. Google 캘린더에서 확인한 뒤 다시 보내주세요.':'근무표 보내기 완료 · '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}),skipped?'warning':'success');
+   status(skipped?'중복되거나 반복되는 일정 '+skipped+'개를 빼고 보냈어요. Google 캘린더에서 확인한 뒤 다시 보내 주세요.':'근무표 보내기 완료 · '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}),skipped?'warning':'success');
   }catch(e){status('근무표 보내기 실패 · '+e.message,'error');if(e.status===401){auth=null;state=null;render();}}
   finally{setBusy(false);if(currentGroup!==group||changes!==version)queue();}
  }
@@ -82,12 +82,12 @@
   catch(e){status(e.message,'error');return;}finally{setBusy(false);}
   render();await sync();
  }
- async function synchronize(){if(busy)return;if(!connected()){status('근무표 보내기 연결을 먼저 허용해 주세요.');return;}if(!accountReady()){status('Drive 계정 저장을 확인한 뒤 다시 보내주세요.');return;}if(!navigator.onLine){status('인터넷 연결 후 다시 보내주세요.');return;}if(groupState()?.enabled)await sync();else await enable();}
- function stop(){const g=groupState();if(g){g.enabled=false;save();render();status('자동 보내기를 중지했어요. Google에 보낸 근무표와 Drive 저장 데이터는 유지됩니다.');}}
- async function disconnect(){if(busy||!connected())return;try{await api('calendar-disconnect');for(const g of Object.values(state?.groups||{}))g.enabled=false;save();auth.calendarConnected=false;state=null;render();status('근무표 보내기를 해제했어요. Google Drive 저장과 로그인은 유지됩니다.');}catch(e){status(e.message,'error');}}
+ async function synchronize(){if(busy)return;if(!connected()){status('먼저 Google 캘린더 연결을 허용해 주세요.');return;}if(!accountReady()){status('Google Drive에 저장됐는지 확인한 뒤 다시 보내 주세요.');return;}if(!navigator.onLine){status('인터넷에 연결한 뒤 다시 보내 주세요.');return;}if(groupState()?.enabled)await sync();else await enable();}
+ function stop(){const g=groupState();if(g){g.enabled=false;save();render();status('자동 보내기를 멈췄어요. 이미 보낸 근무표와 Drive에 저장한 기록은 남아 있어요.');}}
+ async function disconnect(){if(busy||!connected())return;try{await api('calendar-disconnect');for(const g of Object.values(state?.groups||{}))g.enabled=false;save();auth.calendarConnected=false;state=null;render();status('Google 캘린더 연결을 끊었어요. Google Drive 저장은 계속 쓸 수 있어요.');}catch(e){status(e.message,'error');}}
  function relink(){const g=groupState();if(!g)return;const bounds=range();for(const key of Object.keys(g.excluded))if(key>=bounds.start&&key<bounds.end)delete g.excluded[key];save();changed();}
  function groupChanged(){render();changed();}
  function viewChanged(){const tag=currentGroup+'-'+dateKey(currentCalDate).slice(0,7);if(tag!==viewTag){viewTag=tag;render();changed();}}
- async function init(){await refreshStatus();if(connected())await sync();document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshStatus().then(changed);});window.addEventListener('focus',changed);window.addEventListener('online',changed);window.addEventListener('shift-account-changed',()=>refreshStatus().then(changed));const params=new URLSearchParams(location.search),result=params.get('google');if(result){openCalendarIntegration();status(result==='connected'?'연결됐어요. 이달 근무표 보내기를 눌러 시작하세요.':result==='denied'?'캘린더 연결을 취소했어요.':'캘린더 연결을 완료하지 못했어요.');params.delete('google');params.delete('reason');history.replaceState(history.state,'',location.pathname+(params.size?'?'+params:'')+location.hash);}}
+ async function init(){await refreshStatus();if(connected())await sync();document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshStatus().then(changed);});window.addEventListener('focus',changed);window.addEventListener('online',changed);window.addEventListener('shift-account-changed',()=>refreshStatus().then(changed));const params=new URLSearchParams(location.search),result=params.get('google');if(result){openCalendarIntegration();status(result==='connected'?'연결했어요. ‘이번 달 근무표 보내기’를 눌러 주세요.':result==='denied'?'캘린더 연결을 취소했어요.':'캘린더 연결을 완료하지 못했어요.');params.delete('google');params.delete('reason');history.replaceState(history.state,'',location.pathname+(params.size?'?'+params:'')+location.hash);}}
  window.GoogleSync={init,refreshStatus,render,sync,changed,enable,synchronize,relink,groupChanged,viewChanged,disconnect,stop};window.addEventListener('load',init);
 })();

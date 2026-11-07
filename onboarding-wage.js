@@ -13,11 +13,11 @@
   dialog.dataset.wageStep=stage;
   dialog.style.setProperty('--guided-wage-height',((stage==='choice'||stage==='import')?640:stage==='allowances'&&['seniority','duty'].includes(OnboardingAllowances.current()[0])?560:460)+'px');
   const importing=stage==='import',editing=stage==='allowances';
-  const titles={base:'기본시급을 알려주세요',ordinary:'통상시급은 얼마인가요?',choice:'받고 있는 수당이 있나요?',allowances:'선택한 수당은 얼마인가요?',import:'개인 공제 기준 설정'};
-  const descriptions={base:'급여명세서에 적힌 기본시급을 입력해 주세요.',ordinary:'기본시급과 별도로 적힌 통상시급을 확인해 주세요.',choice:'받는 수당을 모두 선택해 주세요. 여러 개 선택할 수 있어요.',allowances:'선택한 수당의 월 금액을 입력해 주세요.',import:'선택 사항이에요. 등록하지 않아도 기본 공제 기준으로 추정해요.'};
+  const titles={base:'기본시급은 얼마인가요?',ordinary:'통상시급은 얼마인가요?',choice:'매달 받는 수당이 있나요?',allowances:'선택한 수당은 얼마인가요?',import:'급여·상여 문자 등록'};
+  const descriptions={base:'급여 명세서에 나온 기본시급을 입력해 주세요.',ordinary:'급여 명세서에서 통상시급을 찾아 입력해 주세요.',choice:'매달 받는 수당을 모두 골라 주세요.',allowances:'매달 받는 금액을 입력해 주세요.',import:'문자 등록은 선택이에요. 등록한 문자가 없으면 기본 비율로 예상해요.'};
   $('payroll-sms-title').textContent=editing?OnboardingAllowances.current()[1]+'은 얼마인가요?':titles[stage];
-  $('wage-import-intro').textContent=editing?['seniority','duty'].includes(OnboardingAllowances.current()[0])?'7만원을 선택하거나 다른 금액을 직접 입력해 주세요.':'매월 받는 수당 금액을 입력해 주세요.':descriptions[stage];
-  $('guided-wage-progress').textContent=editing?'고정수당 '+(OnboardingAllowances.index()+1)+' / '+OnboardingAllowances.count():importing?'세금 추정 · 선택':stage==='base'?'시급 설정 1 / 3':stage==='ordinary'?'시급 설정 2 / 3':'시급 설정 3 / 3';
+  $('wage-import-intro').textContent=editing?['seniority','duty'].includes(OnboardingAllowances.current()[0])?'7만 원을 고르거나 다른 금액을 입력해 주세요.':'매달 받는 금액을 입력해 주세요.':descriptions[stage];
+  $('guided-wage-progress').textContent=editing?'고정수당 '+(OnboardingAllowances.index()+1)+' / '+OnboardingAllowances.count():importing?'문자 등록 · 선택':stage==='base'?'시급 설정 1 / 3':stage==='ordinary'?'시급 설정 2 / 3':'시급 설정 3 / 3';
   back.hidden=stage==='base';
   const base=amount('wage-manual-base'),ordinary=amount('wage-manual-ordinary');
   summary.textContent=[stage!=='base'&&base>0?'기본시급 '+money(base):'',(stage==='choice'||editing||importing)&&ordinary>0?'통상시급 '+money(ordinary):''].filter(Boolean).join(' · ');
@@ -30,7 +30,7 @@
   optional.hidden=importing;
   $('wage-tax-import').open=importing;
   if(stage==='choice')OnboardingAllowances.renderChoice();
-  apply.textContent=stage==='choice'&&OnboardingAllowances.count()>0?'선택한 수당 금액 입력':importing?'시급 입력 계속하기':stage==='base'||stage==='ordinary'||editing&&!OnboardingAllowances.isLast()?'다음':'설정 완료하기';
+  apply.textContent=stage==='choice'&&OnboardingAllowances.count()>0?'수당 금액 입력하기':importing?'시급 설정으로 돌아가기':stage==='base'||stage==='ordinary'||editing&&!OnboardingAllowances.isLast()?'다음':'설정 완료하기';
   apply.disabled=busy||!ready();
   $('wage-manual-status').textContent='';content.scrollTop=0;
  }
@@ -61,7 +61,7 @@
   only($('wage-import-info'),!enabled);
   if(!enabled){
    delete dialog.dataset.wageStep;
-   $('payroll-sms-title').textContent='시급 설정';$('wage-import-intro').textContent='기본시급·통상시급과 받는 수당을 직접 입력해 주세요.';apply.textContent='설정 완료하기';
+   $('payroll-sms-title').textContent='시급 설정';$('wage-import-intro').textContent='기본시급, 통상시급과 매달 받는 수당을 입력해 주세요.';apply.textContent='설정 완료하기';
    $('wage-legacy-row').firstChild.textContent='기타 고정수당 ';return;
   }
   OnboardingAllowances.refresh();
@@ -95,7 +95,7 @@
  choice.addEventListener('click',event=>{
   const button=event.target.closest('[data-guided-allowance]');if(!button||busy)return;
   OnboardingAllowances.choose(button.dataset.guidedAllowance);
-  apply.textContent=OnboardingAllowances.count()?'선택한 수당 금액 입력':'설정 완료하기';
+  apply.textContent=OnboardingAllowances.count()?'수당 금액 입력하기':'설정 완료하기';
   apply.disabled=!OnboardingAllowances.ready();
   $('wage-manual-status').textContent='';
  });

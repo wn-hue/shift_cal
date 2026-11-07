@@ -7,7 +7,7 @@ const assert=require('node:assert/strict'),{webkit,chromium}=require('playwright
  await H.address(p,'두산위브','초지두산위브아파트');await H.query(p);assert.deepEqual(await p.locator('.bus-route-heading strong').allTextContents(),['5호 고잔동']);await H.period(p,'night');await H.query(p);assert.deepEqual(await p.locator('.bus-route-heading strong').allTextContents(),['1호 본오동']);await H.period(p,'day');
  // An exact known stop without matching factory service stays empty, even near another bus.
  await H.factory(p,'4');await H.query(p);assert.equal(await p.locator('.bus-route').count(),0);assert.match(await p.locator('.bus-empty').textContent(),/선택한 정류장/);await H.factory(p,'1');
- for(const[delta,range,label]of[[0.002,'500m',/500m 이내 가까운 순/],[0.007,'1km',/500m 이내 결과가 없어 1km/],[0.012,'2km',/1km 이내 결과가 없어 2km/],[0.025,'2km',/2km 이내까지/]]){
+ for(const[delta,range,label]of[[0.002,'500m',/500m 안에서 가까운 순서/],[0.007,'1km',/500m 이내 결과가 없어 1km/],[0.012,'2km',/1km 이내 결과가 없어 2km/],[0.025,'2km',/2km 이내까지/]]){
   offset=delta;await H.address(p,'범위확인지점','범위 확인 지점');await H.query(p);assert.equal(await p.locator('.bus-result-ranges button[aria-pressed=true]').textContent(),range);assert.match(await p.locator('.bus-result-distance-note').textContent(),label);
   if(delta===0.025){assert.equal(await p.locator('.bus-route').count(),0);assert.match(await p.locator('.bus-empty').textContent(),/2km 이내/);}else{assert.deepEqual(await p.locator('.bus-route-heading strong').allTextContents(),['1호 본오동']);assert.match(await p.locator('.bus-nearby-result').textContent(),/문화고/);}
  }

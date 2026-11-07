@@ -13,12 +13,12 @@
         indicator.classList.toggle('is-refreshing', refreshing);
         $('today-menu-status').classList.toggle('meal-status-loading', active);
         if (!active) return;
-        indicator.querySelector('strong').textContent = refreshing ? '식단을 다시 확인하고 있어요' : '식단을 가져오고 있어요';
+        indicator.querySelector('strong').textContent = refreshing ? '최신 식단을 확인하고 있어요' : '식단을 불러오고 있어요';
         indicator.querySelector('small').textContent = '잠시만 기다려 주세요';
         $('today-menu-status').textContent = indicator.querySelector('strong').textContent;
         loadingTimer = setTimeout(() => {
-            indicator.querySelector('small').textContent = '식당 응답을 기다리고 있어요. 조금만 더 기다려 주세요.';
-            $('today-menu-status').textContent = '식당 응답을 기다리고 있어요. 조금만 더 기다려 주세요.';
+            indicator.querySelector('small').textContent = '식당 응답이 늦어지고 있어요.';
+            $('today-menu-status').textContent = '식당 응답이 늦어지고 있어요.';
         }, 8000);
     }
     const selected = () => selectedDate || today();
@@ -75,13 +75,13 @@
             const response = await fetch('/api/today-menu?date='+encodeURIComponent(date),{cache:'no-store',signal:AbortSignal.timeout(45000)});
             const data = await response.json();
             if (!response.ok || data.status === 'error') throw new Error(data.message || '식단을 불러오지 못했어요. 다시 시도해 주세요.');
-            if (data.date !== date) throw new Error('날짜가 변경되었어요. 새로고침해 주세요.');
+            if (data.date !== date) throw new Error('식단 날짜가 바뀌었어요. 새로고침해 주세요.');
             // Save the entire published schedule so moving to another day needs no download.
             const {menus, ...menu} = data;
             if (Array.isArray(menus)) for (const item of menus.slice(0,31)) if (validMenu(item,item?.date)) saveCache(item);
             if (validMenu(menu,date)) saveCache(menu);
             else if (data.status === 'not_published') saveCache({...menu,checkedAt:data.checkedAt || new Date().toISOString()});
-            else if (data.status !== 'not_published') throw new Error('메뉴를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.');
+            else if (data.status !== 'not_published') throw new Error('식단을 확인하지 못했어요. 잠시 후 다시 시도해 주세요.');
             return menu;
         })().finally(()=>pending.delete(date));
         pending.set(date,request);
@@ -188,7 +188,7 @@
             shownDate = date;
         } catch (error) {
             if (id !== requestId) return;
-            empty(error.name === 'TimeoutError' || error.name === 'AbortError' ? '응답이 늦어지고 있어요. 잠시 후 다시 시도해 주세요.' : error.message === 'Failed to fetch' ? '인터넷 연결을 확인한 뒤 다시 시도해 주세요.' : error.message);
+            empty(error.name === 'TimeoutError' || error.name === 'AbortError' ? '식단을 불러오는 데 시간이 걸려요. 잠시 후 다시 시도해 주세요.' : error.message === 'Failed to fetch' ? '인터넷 연결을 확인한 뒤 다시 시도해 주세요.' : error.message);
         } finally {
             if (id !== requestId) return;
             loading(false);

@@ -2,8 +2,13 @@
 (()=>{'use strict';
  const dict=window.AppTranslations,languages={ko:['ko','한국어'],en:['en','English'],zh:['zh-Hans','简体中文'],ja:['ja','日本語']},sources=new WeakMap(),attrs=new WeakMap();
  let language='ko',frame=0;try{const saved=localStorage.getItem('shift_display_language');if(languages[saved])language=saved}catch{}
- const skip='script,style,textarea,input,code,pre,[data-no-i18n],[data-language],#settings-language-name,.memo-tag,.day-event-tag,.external-event,.meal-items,#external-calendar-list,#account-email,.lost-card h3,.lost-card-place,.lost-card-storage,.event-open strong,.event-open span,#schedule-reminder p,.bus-unified-place strong,.bus-unified-place small,.bus-unified-route strong,.bus-route-heading strong,.bus-stop-name,.bus-result-stop';
+ const skip='script,style,textarea,input,code,pre,[data-no-i18n],[data-language],#settings-language-name,.memo-tag,.day-event-tag,.external-event,.meal-items,#external-calendar-list,.lost-card h3,.lost-card-place,.lost-card-storage,.event-open strong,.event-open span,#schedule-reminder p,.bus-unified-place strong,.bus-unified-place small,.bus-unified-route strong,.bus-route-heading strong,.bus-stop-name,.bus-result-stop';
  const days={en:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],zh:['日','一','二','三','四','五','六'],ja:['日','月','火','水','木','金','土']};
+ const deductionLabels={
+  급여:{en:'Salary',zh:'工资',ja:'給与'},
+  상여:{en:'Bonus',zh:'奖金',ja:'賞与'},
+  '전체 공제':{en:'Total deductions',zh:'扣除总额',ja:'控除合計'}
+ };
  function t(source,el,attribute=false){
   if(language==='ko')return source;
   const s=source.trim();let value=dict[s]?.[language],m;
@@ -28,15 +33,45 @@
   if(!value&&(m=s.match(/^(.+) 스티커$/))&&dict[m[1]])value=t(m[1])+' '+t('스티커');
   const copy=(en,zh,ja)=>({en,zh,ja}[language]);
   const date=(y,month,day)=>new Intl.DateTimeFormat(languages[language][0],{month:'long',day:'numeric',weekday:'short',...(y?{year:'numeric'}:{})}).format(new Date(Number(y)||2026,Number(month)-1,Number(day)));
-  if(!value&&(m=s.match(/^(급여|상여): (문자 기준|기본 비율) ([\d.]+)%$/)))value=copy(m[1]==='급여'?'Salary':'Bonus',m[1]==='급여'?'工资':'奖金',m[1]==='급여'?'給与':'賞与')+copy(': ','：','：')+(m[2]==='문자 기준'?copy('message rate ','短信比例 ','メッセージの割合 '):copy('default rate ','默认比例 ','既定の割合 '))+m[3]+'%';
-  if(!value&&(m=s.match(/^(급여|상여): 문자에 나온 세금·보험료 기준$/)))value=copy(m[1]==='급여'?'Salary':'Bonus',m[1]==='급여'?'工资':'奖金',m[1]==='급여'?'給与':'賞与')+copy(': taxes and insurance from your message','：短信中的税费和保险费','：メッセージの税金・保険料を使用');
+  if(!value&&(m=s.match(/^(급여|상여): (문자 기준|기본 비율) ([\d.]+)%$/)))value=deductionLabels[m[1]][language]+copy(': ','：','：')+(m[2]==='문자 기준'?copy('message rate ','短信比例 ','メッセージの割合 '):copy('default rate ','默认比例 ','既定の割合 '))+m[3]+'%';
+  if(!value&&(m=s.match(/^(급여|상여): 문자에 나온 세금·보험료 기준$/)))value=deductionLabels[m[1]][language]+copy(': taxes and insurance from your message','：短信中的税费和保险费','：メッセージの税金・保険料を使用');
+  if(!value&&el?.id==='payroll-sms-preview'&&s.includes('\n'))value=s.split('\n').map(line=>t(line)).join('\n');
+  if(!value&&(m=s.match(/^(급여: (?:기본 비율 |문자로 등록한 공제율 |월 보험료 ).+) · (상여: (?:기본 비율 |문자로 등록한 공제율 |월 보험료 ).+)$/)))value=t(m[1])+' · '+t(m[2]);
+  if(!value&&(m=s.match(/^(급여|상여|전체 공제): 기본 비율 ([\d.]+)%로 예상해요 \((소득세·지방소득세·고용보험|세금·보험료) 포함\)$/))){
+   const name=deductionLabels[m[1]][language],rate=m[2];
+   const included=m[3]==='세금·보험료'?copy('taxes and insurance','税费和保险费','税金・保険料'):copy('income tax, local income tax and employment insurance','所得税、地方所得税和就业保险','所得税・地方所得税・雇用保険');
+   value=copy(name+': estimated at the default rate of '+rate+'% (including '+included+')',name+'：按默认比例'+rate+'%估算（含'+included+'）',name+'：既定の割合'+rate+'%で見積もり（'+included+'を含む）');
+  }
+  if(!value&&(m=s.match(/^(급여|상여|전체 공제): 문자로 등록한 공제율 ([\d.]+)%$/))){
+   const name=deductionLabels[m[1]][language],rate=m[2];
+   value=copy(name+': deduction rate from your message '+rate+'%',name+'：短信扣除比例'+rate+'%',name+'：メッセージに基づく控除率'+rate+'%');
+  }
+  if(!value&&(m=s.match(/^(급여|상여|전체 공제): 월 보험료 ([\d,]+ 원) · 문자로 등록한 세금 비율 ([\d.]+)% · 고용보험 ([\d.]+)%(?: · 기타 월 공제 ([\d,]+ 원))?$/))){
+   const name=deductionLabels[m[1]][language],insurance=t(m[2]),tax=m[3],employment=m[4];
+   value=copy(name+': monthly insurance '+insurance+' · tax rate from your message '+tax+'% · employment insurance '+employment+'%',name+'：每月保险费'+insurance+' · 短信税率'+tax+'% · 就业保险'+employment+'%',name+'：月額保険料'+insurance+'・メッセージに基づく税率'+tax+'%・雇用保険'+employment+'%');
+   if(m[5])value+=copy(' · other monthly deductions ',' · 其他每月扣除','・その他の月額控除')+t(m[5]);
+  }
+  if(!value&&(m=s.match(/^(.+)은 ([01])원부터 10억 원까지 입력할 수 있어요\. 소수점 없이 숫자로 입력해 주세요\.$/))&&dict[m[1]]){
+   const label=t(m[1]),minimum=m[2];
+   value=copy('Enter '+label+' as a whole amount from ₩'+minimum+' to ₩1 billion.','请输入'+minimum+'韩元至10亿韩元之间的'+label+'金额，且不含小数。',label+'は'+minimum+'ウォンから10億ウォンまで、整数で入力してください。');
+  }
   if(!value&&(m=s.match(/^(.+) 기존에 등록한 내용은 그대로 유지돼요\.$/)))value=t(m[1])+' '+t('기존에 등록한 내용은 그대로 유지돼요.');
+  if(!value&&(m=s.match(/^저장을 완료하지 못했어요\. (.+)$/)))value=t('저장을 완료하지 못했어요.')+' '+t(m[1]);
+  if(!value&&(m=s.match(/^계정에 저장한 기록 사용하기 · (.+)$/)))value=t('계정에 저장한 기록 사용하기')+' · '+m[1];
+  if(!value&&(m=s.match(/^근무표 보내기 실패 · (.+)$/)))value=t('근무표를 보내지 못했어요.')+' '+t(m[1]);
+  if(!value&&(m=s.match(/^중복되거나 반복되는 일정 (\d+)개를 빼고 보냈어요\. Google 캘린더에서 확인한 뒤 다시 보내 주세요\.$/))){
+   const count=m[1];
+   value=copy('Skipped '+count+' duplicate or recurring '+(count==='1'?'event':'events')+'. Check Google Calendar, then send again.','已跳过'+count+'个重复或定期日程。请在 Google 日历中检查后重新发送。','重複または繰り返しの予定を'+count+'件除いて送信しました。Googleカレンダーで確認してから再送してください。');
+  }
+  if(!value&&(m=s.match(/^지난주 식단 평가 · (\d{2}\.\d{2}~\d{2}\.\d{2})$/)))value=copy('Last week’s meal ratings','上周餐点评价','先週の献立の評価')+' · '+m[1];
+  if(!value&&(m=s.match(/^([\d.]+(?:m|km)) 안에서 직선거리로 가까운 순서대로 보여 드려요\.$/)))value=copy('Within '+m[1]+' · Sorted by straight-line distance',m[1]+'以内 · 按直线距离排序',m[1]+'以内・直線距離が近い順に表示');
   if(!value&&(m=s.match(/^(?:(\d{4})년 )?(\d+)월 (\d+)일 \([일월화수목금토]\)$/)))value=date(m[1],m[2],m[3]);
   if(!value&&(m=s.match(/^예상 급여 변화 (.+)$/)))value=copy('Estimated pay change: ','预计工资变化：','予想給与の変化：')+t(m[1]);
   if(!value&&(m=s.match(/^(.+) · 현재 근무와 비교한 세전 추정입니다\. 저장 전까지 근무는 바뀌지 않습니다\.$/)))value=m[1]+copy(' · Gross estimate compared with your current shift. No shift changes until saved.',' · 与当前班次相比的税前预估，保存前不会更改班次。','・現在の勤務と比較した税引前の推定です。保存するまで勤務は変わりません。');
   if(!value&&(m=s.match(/^산정기간: (.+)$/)))value=copy('Pay period: ','计算期间：','算定期間：')+m[1];
   if(!value&&(m=s.match(/^(\d+)월 급여명세서 발송일$/)))value=copy(`Month ${m[1]} payslip notice`,`${m[1]}月工资单发送日`,`${m[1]}月の給与明細送付日`);
-  if(!value&&(m=s.match(/^([ABC])조 근무표 적용됨 · 자동 저장$/)))value=copy(`Team ${m[1]} schedule applied · Auto-saved`,`${m[1]}组班表已应用 · 自动保存`,`${m[1]}組の勤務表を適用・自動保存`);
+  if(!value&&(m=s.match(/^([ABC])조 근무표가 표시돼요\. 근무조는 자동으로 저장돼요\.$/)))value=copy('Showing Team '+m[1]+' schedule. Your team is saved automatically.', '已显示'+m[1]+'组班表。班组会自动保存。',m[1]+'組の勤務表を表示します。勤務グループは自動で保存されます。');
+  if(!value&&(m=s.match(/^전체 메뉴에서 다음 항목을 설정해 주세요\. (.+)$/)))value=copy('Set up the following in the All menu: ','请在“全部”菜单中设置以下项目：','「全体」メニューで次の項目を設定してください。')+m[1].split(' · ').map(item=>t(item)).join(' · ');
   if(!value&&(m=s.match(/^([ABC])조 (?!·)(.+)$/)))value=t(m[1]+'조')+' '+t(m[2]);
   if(!value&&(m=s.match(/^([ABC])조 · (.+)에 맞춰 자동 설정$/)))value=t(m[1]+'조')+' · '+copy('Automatically matched to ','自动匹配','自動設定：')+t(m[2]);
   if(!value&&(m=s.match(/^(\d{4})년 (\d+)월 (\d+)번째 주 조별 근무$/)))value=copy(`${m[1]}.${m[2]} · Week ${m[3]} teams`,`${m[1]}年${m[2]}月 · 第${m[3]}周各组班次`,`${m[1]}年${m[2]}月・第${m[3]}週のグループ勤務`);
@@ -81,6 +116,7 @@
   while(node=walker.nextNode()){
    const el=node.parentElement;if(!el||el.closest(skip)||el.tagName==='OPTION'&&!el.hasAttribute('value'))continue;
    let record=sources.get(node);if(!record||node.nodeValue!==record.rendered)record={source:node.nodeValue};
+   if(el.closest('#account-email')&&!Object.hasOwn(dict,record.source.trim()))continue;
    record.rendered=t(record.source,el);if(node.nodeValue!==record.rendered)node.nodeValue=record.rendered;sources.set(node,record);
   }
   for(const el of document.querySelectorAll('[aria-label],[placeholder],[title],[alt]')){

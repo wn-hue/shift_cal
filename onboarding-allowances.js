@@ -18,7 +18,7 @@
    const button=document.createElement('button');button.type='button';button.dataset.guidedAllowance=key;
    button.setAttribute('aria-pressed',String(key==='none'?decided&&!selected.size:selected.has(key)));
    const name=document.createElement('strong');name.textContent=label;
-   const hint=document.createElement('span');hint.textContent=key==='none'?'추가할 수당 없이 완료해요':number(values[key])>0?number(values[key]).toLocaleString('ko-KR')+'원':'매월 받는 수당';
+   const hint=document.createElement('span');hint.textContent=key==='none'?'수당 없이 설정을 마쳐요':number(values[key])>0?number(values[key]).toLocaleString('ko-KR')+'원':'매달 받는 수당';
    const check=document.createElement('i');check.setAttribute('aria-hidden','true');check.textContent='✓';button.append(name,hint,check);choice.append(button);
   }
  }
@@ -53,7 +53,7 @@
   if(!preset||modes[key]==='custom'){
    const card=document.createElement('label');card.className='guided-allowance-card';card.htmlFor='guided-allowance-amount-'+key;
    const name=document.createElement('span');name.className='guided-allowance-name';name.textContent=label;
-   const hint=document.createElement('small');hint.textContent='매월 받는 금액';name.append(hint);
+   const hint=document.createElement('small');hint.textContent='매달 받는 금액';name.append(hint);
    const amount=document.createElement('span');amount.className='wage-value';
    const input=document.createElement('input');input.id=card.htmlFor;input.type='text';input.inputMode='numeric';input.autocomplete='off';input.maxLength=13;input.placeholder='금액 입력';input.value=number(values[key])===0?'':values[key]||'';input.setAttribute('aria-label',label+' 금액');input.setAttribute('aria-describedby','wage-manual-status');
    input.onfocus=()=>{if(number(input.value)===0)input.value='';};
@@ -72,7 +72,7 @@
  }
  function readyCurrent(){const item=current();return !!item&&(!hasPreset(item[0])||!!modes[item[0]]);}
  function validateCurrent(){
-  if(!readyCurrent()){$('wage-manual-status').textContent='수당 금액을 선택해 주세요.';return false;}
+  if(!readyCurrent()){$('wage-manual-status').textContent='수당 금액을 고르거나 직접 입력해 주세요.';return false;}
   const [key,label]=current(),input=$('guided-allowance-amount-'+key);
   if(input&&PayrollEstimate.validateAllowance(input,label)===null)return false;
   syncDraft();return true;
@@ -84,7 +84,7 @@
    const amount=PayrollEstimate.validateAllowance($('wage-'+key),label);if(amount===null)return false;
    if(key!=='seniority')fixedTotal+=amount;
   }
-  if(fixedTotal>1000000000){$('wage-manual-status').textContent='고정수당 합계는 10억 원 이하여야 합니다.';return false;}
+  if(fixedTotal>1000000000){$('wage-manual-status').textContent='고정수당 합계는 10억 원까지 입력할 수 있어요.';return false;}
   syncDraft();return true;
  }
  window.OnboardingAllowances={refresh,choose,validate,validateCurrent,readyCurrent,current,index:()=>index,start(){index=0;},move(delta){index=Math.max(0,Math.min(ordered().length-1,index+delta));},isLast:()=>index===selected.size-1,count:()=>selected.size,ready:()=>decided,renderChoice,hide(){entry.hidden=true;},show(){render();entry.hidden=false;}};

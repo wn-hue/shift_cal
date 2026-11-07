@@ -34,8 +34,8 @@
   $('onboarding-step-label').textContent=`${step+1} / 3`;
   for(const [i,bar] of [...dialog.querySelectorAll('.onboarding-progress span')].entries())bar.dataset.filled=String(i<=step);
   for(const [i,panel] of [...main.querySelectorAll('.onboarding-panel')].entries())panel.hidden=i!==step;
-  const titles=['입사일을\n알려주세요.','어느 조에서\n근무하시나요?','시급을 설정하면\n준비가 끝나요'];
-  const copies=['내 연차와 예상 급여를\n계산하는 기준이에요.','선택한 조에 맞춰\n내 근무표를 만들어요.','시급을 확인하면\n내 예상 급여를 볼 수 있어요.'];
+  const titles=['입사일을\n알려 주세요','어느 조에서\n일하시나요?','시급을 입력하면\n준비가 끝나요'];
+  const copies=['입사일을 기준으로 연차와\n예상 급여를 계산해요.','선택한 조에 맞춰\n내 근무표를 만들어요.','시급을 입력하면\n예상 급여를 볼 수 있어요.'];
   $('onboarding-title').textContent=titles[step];$('onboarding-description').textContent=copies[step];
   $('onboarding-date').value=config.hireDate||'';window.OnboardingDatePicker.sync();
   selected=['A','B','C'].includes(text('shift_active_group'))?text('shift_active_group'):'';
@@ -45,7 +45,7 @@
   $('onboarding-base-wage').textContent=Number(config.baseHourly||0).toLocaleString('ko-KR')+'원';
   $('onboarding-ordinary-wage').textContent=Number(config.ordinaryHourly||0).toLocaleString('ko-KR')+'원';
   $('onboarding-import-again').hidden=!wagesReady;
-  $('onboarding-next').textContent=step===2?(wagesReady?'캘린더 시작하기':'시급 설정하기'):'다음';
+  $('onboarding-next').textContent=step===2?(wagesReady?'내 캘린더 보기':'시급 설정하기'):'다음';
   $('onboarding-next').disabled=navigating||(step===1&&!selected);
   if(changed){main.scrollTop=0;if(dialog.open)$('onboarding-heading').focus({preventScroll:true});}
  }
@@ -73,7 +73,7 @@
   try{
    if(step===0){
     const value=$('onboarding-date').value;
-    if(!validDate(value)){$('onboarding-error').textContent='오늘까지의 올바른 입사일을 선택해 주세요.';$('onboarding-date-open').focus({preventScroll:true});return;}
+    if(!validDate(value)){$('onboarding-error').textContent='입사일을 다시 확인해 주세요. 오늘까지의 날짜를 고를 수 있어요.';$('onboarding-date-open').focus({preventScroll:true});return;}
     $('input-hire-date').value=value;onHireDateChange();
    }else if(step===1){if(!selected)return;setGroup(selected);}
    else {if(ready())finish();else PayrollEstimate.open({onboarding:true});return;}
@@ -86,7 +86,7 @@
  $('onboarding-date').addEventListener('input',()=>{$('onboarding-error').textContent='';});
  $('onboarding-back').addEventListener('click',()=>{if(step>0&&!navigating){if(!manual&&!remember({status:'in_progress',step:step-1}))return;changeStep(step-1);}});
  $('onboarding-exit').addEventListener('click',()=>{active=false;delete document.body.dataset.onboarding;dialog.close();$('onboarding-reopen').focus()});
- dialog.addEventListener('cancel',event=>{if(!manual){event.preventDefault();$('onboarding-error').textContent='세 가지 설정을 완료하면 내 캘린더를 볼 수 있어요.';}});
+ dialog.addEventListener('cancel',event=>{if(!manual){event.preventDefault();$('onboarding-error').textContent='남은 설정을 마치면 내 캘린더를 볼 수 있어요.';}});
  dialog.addEventListener('close',()=>{if(!dialog.open){OnboardingFlowMotion.cancel(main);active=false;delete document.body.dataset.onboarding;}});
  for(const button of dialog.querySelectorAll('[data-onboarding-group]'))button.addEventListener('click',()=>{
   selected=button.dataset.onboardingGroup;

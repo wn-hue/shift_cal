@@ -63,7 +63,7 @@ assert.equal(evaluate('JSON.stringify(config)'),wageBefore);assert.equal(saved.g
 click('payroll-sms-apply');assert.equal(evaluate('JSON.stringify(config)'),wageBefore);assert.deepEqual(JSON.parse(saved.get('shift_payroll_sms_reference_v1')),{rate:.15});
 assert.equal(elem('payroll-sms-text').value,'');assert.ok(![...saved.values()].join('').includes('합성테스트'));assert.ok(![...saved.values()].join('').includes('123456'));
 elem('payroll-estimate-toggle').checked=true;for(const f of elem('payroll-estimate-toggle').handlers.change)f();assert.match(elem('payroll-estimate-basis').textContent,/15.00%/);
-elem('inp-bonus-check').checked=true;evaluate('calculatePayrollFromInputs()');assert.match(elem('payroll-estimate-basis').textContent,/상여:.*기준 명세서.*2.41%/);assert.equal(saved.get('shift_bonus_sms_reference_v1'),undefined);
+elem('inp-bonus-check').checked=true;evaluate('calculatePayrollFromInputs()');assert.match(elem('payroll-estimate-basis').textContent,/상여: 기본 비율 2.41%/);assert.equal(saved.get('shift_bonus_sms_reference_v1'),undefined);
 ctx.PayrollEstimate.open();ctx.PayrollEstimate.importText('bonus','성명 비공개상여테스트\n기본시급 999999\n지급내역\n소계 1000000\n공제내역\n소계 50000');click('payroll-sms-apply');
 assert.equal(evaluate('config.baseHourly'),11050);assert.deepEqual(JSON.parse(saved.get('shift_bonus_sms_reference_v1')),{rate:.05});assert.ok(![...saved.values()].join('').includes('비공개상여테스트'));
 const before=saved.get('shift_payroll_sms_reference_v1'),bonusBefore=saved.get('shift_bonus_sms_reference_v1');
@@ -85,11 +85,11 @@ assert.equal(typeof ctx.exportPersonalCalendar,'undefined');assert.equal(typeof 
 const leaveMarkup=html.slice(html.indexOf('<dialog id="leave-settings-dialog"'),html.indexOf('</dialog>',html.indexOf('<dialog id="leave-settings-dialog"')));
 assert.equal(/1일 연차 단가|매년 1월 1일|근속수당은/.test(leaveMarkup),false);
 const leavePolicyMarkup=html.slice(html.indexOf('<dialog id="leave-policy-dialog"'),html.indexOf('</dialog>',html.indexOf('<dialog id="leave-policy-dialog"')));
-assert.match(leavePolicyMarkup,/1년 미만은 매월 개근 시 1일씩 최대 11일/);
+assert.match(leavePolicyMarkup,/첫 1년 동안 한 달을 개근하면 하루씩, 최대 11일/);
 assert.match(leaveMarkup,/data-info-target="leave-policy-dialog"/);
 assert.ok(leaveMarkup.includes('<span>1일 연차수당</span>'));
 assert.equal(/<details\b|<summary\b/.test(leaveMarkup),false,'Leave settings stay visible; policy explanation uses a separate sheet');
-assert.ok(html.includes('정규직 전환일 (연차, 지원금 판정)'));
+assert.ok(html.includes('정규직 전환일 (연차·지원금 계산)'));
 assert.equal(elem('leave-year-label').textContent,'2026년');
 const detailLabels=[...html.slice(html.indexOf('<table class="pay-table">'),html.indexOf('</table>',html.indexOf('<table class="pay-table">'))).matchAll(/<tr[^>]*>\s*<td[^>]*>([^<]+)<\/td>/g)].map(m=>m[1]);
 assert.deepEqual(detailLabels.slice(0,9),['기본','고정수당','근속','연장','야간','휴근','휴연','휴야','상여금']);

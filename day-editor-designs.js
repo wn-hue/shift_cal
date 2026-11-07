@@ -26,13 +26,13 @@
  main.classList.add('design-main-choices');
  const daySummary=make('section','kakao-summary','<div class="kakao-base-bubble"><small>기본 근무</small><div class="kakao-summary-shift"><span id="kakao-base-badge" class="kakao-summary-badge" aria-hidden="true"></span><strong id="kakao-base-label"></strong></div></div><div class="kakao-selection-bubble"><small id="kakao-selection-caption"></small><div class="kakao-summary-shift"><span id="kakao-selection-badge" class="kakao-summary-badge" aria-hidden="true"></span><strong id="kakao-selection-label"></strong></div><p id="kakao-change-copy"></p></div><p id="kakao-save-state" aria-live="polite"></p></section>');
  main.before(daySummary,make('h3','kakao-choice-heading','근무 고르기'));
- const extra=make('details','design-extra','<summary><span class="design-row-icon">'+icons.NO_OT+'</span><span><strong>특근 설정</strong><small>추가 근무 선택</small></span><span class="design-chevron" aria-hidden="true">›</span></summary><div class="shift-scroll design-extra-choices" role="group" aria-label="특근과 잔업 선택"></div>');
+ const extra=make('details','design-extra','<summary><span class="design-row-icon">'+icons.NO_OT+'</span><span><strong>특근 설정</strong><small>추가 근무 선택</small></span><span class="design-chevron" aria-hidden="true">›</span></summary><div class="shift-scroll design-extra-choices" role="group" aria-label="특근과 잔업 고르기"></div>');
  const overtime=make('div','design-overtime','<div><strong id="design-ot-label">O.T (잔업)</strong><small id="design-ot-hint">이 날짜에만 적용돼요</small></div><span id="design-ot-state" aria-hidden="true">ON</span><button type="button" id="design-ot-toggle" role="switch" aria-checked="true" aria-labelledby="design-ot-label" aria-describedby="design-ot-hint"><span></span></button>');
  const dateRow=make('div','design-date-row','');hero.prepend(dateRow);dateRow.append($('design-date'),dateNav,overtime);
  const attend=make('details','design-attendance','<summary><span class="design-row-icon">'+icons.OFF+'</span><span><strong>근태 · 휴가</strong><small id="design-attendance-value">선택 안 함</small></span><span class="design-chevron" aria-hidden="true">›</span></summary>');
  main.after(extra,attend);attend.append(attendance);
- const memoLink=make('button','design-memo-link',`<span class="design-row-icon">${svg('<path d="M5 3h14v18H5zM9 8h6m-6 4h6m-6 4h3"/>')}</span><span><strong>메모 · 일정</strong><small id="design-note-value">추가할 내용이 있나요?</small></span><span class="design-chevron" aria-hidden="true">›</span>`);memoLink.type='button';memoLink.onclick=()=>window.MemoComposer?MemoComposer.enter(null):switchEditorTab('memo');attend.after(memoLink);
- const reset=$('modal-override').querySelector('.override-reset');reset.classList.add('design-reset');memoLink.after(reset);reset.querySelector('span').textContent='기본근무로 복구';
+ const memoLink=make('button','design-memo-link',`<span class="design-row-icon">${svg('<path d="M5 3h14v18H5zM9 8h6m-6 4h6m-6 4h3"/>')}</span><span><strong>메모 · 일정</strong><small id="design-note-value">메모나 일정 남기기</small></span><span class="design-chevron" aria-hidden="true">›</span>`);memoLink.type='button';memoLink.onclick=()=>window.MemoComposer?MemoComposer.enter(null):switchEditorTab('memo');attend.after(memoLink);
+ const reset=$('modal-override').querySelector('.override-reset');reset.classList.add('design-reset');memoLink.after(reset);reset.querySelector('span').textContent='기본 근무로 되돌리기';
  const footer=make('footer','design-footer','<button type="button" id="design-cancel">닫기</button>');
  sheet.append(footer);footer.append($('apply-preview'));
  const preview=$('change-preview');const pay=make('details','design-pay','<summary>예상 급여 변화</summary>');preview.before(pay);pay.append(preview);const payEmpty=make('p','kakao-pay-empty','근무를 선택하면 예상 급여 변화를 확인할 수 있어요.');pay.append(payEmpty);
@@ -71,19 +71,19 @@
  function updateOT(base){
   const shift=selectedShift(),eligible=canToggleOT(shift,base),type=regularType(shift.type,base);
   overtime.hidden=false;const enabled=shift.hasOt===true;
-  text('design-ot-hint',type==='HALF_POST'||type==='UNPAID_HALF_POST'?'반차(후)는 잔업이 없어요':eligible?'이 날짜에만 적용돼요':'선택한 근무의 잔업 기준을 적용해요');
+  text('design-ot-hint',type==='HALF_POST'||type==='UNPAID_HALF_POST'?'반차(후)를 쓰면 잔업이 자동으로 꺼져요':eligible?'이 날짜에만 적용돼요':'근무를 고르면 잔업을 설정할 수 있어요');
   $('design-ot-toggle').setAttribute('aria-checked',String(enabled));$('design-ot-toggle').disabled=!eligible;text('design-ot-state',enabled?'ON':'OFF');
   // The shift remains selected when its overtime switch is off.
   for(const button of [...main.querySelectorAll('.opt-btn'),...extra.querySelectorAll('.opt-btn')])button.setAttribute('aria-pressed',String(button.dataset.override===type));
  }
  function update(){if(!selectedDateStr)return;const variant=design();
   if(nav.dataset.variant!==variant){nav.dataset.variant=variant;nav.innerHTML=(variant==='kakao'?[['work','근무'],['memo','메모'],['pay','급여']]:[['work','근무'],['attendance','근태 · 휴가'],['memo','메모']]).map(([key,label])=>`<button type="button" data-pane="${key}" aria-pressed="false">${label}</button>`).join('');}overlay.dataset.editorDesign=variant;overlay.dataset.designPane=pane;const d=dateObj(selectedDateStr),base=getBaseShift(d,currentGroup),pending=ShiftTools.pending(),type=selectedShift().type,displayType=regularType(type,base.type),label=labels[displayType]||getActualShift(d,currentGroup).name;
-  text('design-date',dateLabel(d));text('design-base-name',labels[base.type]);text('design-title',variant==='kakao'?'나의 하루':pane==='memo'?'메모':pane==='attendance'?'근태 · 휴가':'근무 변경');text('design-bubble-date',dateLabel(d));text('design-bubble-shift',pending?' → '+tr(label):label);text('design-attendance-value',labels[type]&&!shorts[type]?label:'선택 안 함');text('design-note-value',$('modal-memo-input').value.trim()?'메모가 있어요':'추가할 내용이 있나요?');
+  text('design-date',dateLabel(d));text('design-base-name',labels[base.type]);text('design-title',variant==='kakao'?'나의 하루':pane==='memo'?'메모':pane==='attendance'?'근태 · 휴가':'근무 변경');text('design-bubble-date',dateLabel(d));text('design-bubble-shift',pending?' → '+tr(label):label);text('design-attendance-value',labels[type]&&!shorts[type]?label:'선택 안 함');text('design-note-value',$('modal-memo-input').value.trim()?'메모가 있어요':'메모나 일정 남기기');
   text('apply-preview',dirty()?'변경사항 저장':'닫기');$('design-done').disabled=false;pay.hidden=variant==='kakao'?pane!=='pay':!pending;preview.hidden=!pending;payEmpty.hidden=!!pending||variant!=='kakao';if(variant==='kakao'&&pane==='pay')pay.open=true;
   text('kakao-date',dateLabel(d));text('kakao-base-label',labels[base.type]);text('kakao-base-badge',shorts[base.type]);$('kakao-base-badge').dataset.shift=base.type;
   daySummary.querySelector('.kakao-selection-bubble').hidden=!pending&&!overrides[selectedDateStr];text('kakao-selection-caption',pending?'변경할 근무':'현재 근무');text('kakao-selection-label',label);text('kakao-selection-badge',shorts[displayType]||'✓');$('kakao-selection-badge').dataset.shift=displayType;
   text('kakao-change-copy',pending?tr(labels[base.type])+' → '+tr(label):'');$('kakao-change-copy').hidden=!pending;text('kakao-save-state',dirty()?'아직 저장하지 않았어요.':'저장된 근무');
-  if(variant==='kakao'){attend.hidden=attendance.hidden;memoLink.querySelector('strong').textContent='오늘의 메모 남기기';}else{attend.hidden=false;memoLink.querySelector('strong').textContent='메모';}
+  if(variant==='kakao'){attend.hidden=attendance.hidden;memoLink.querySelector('strong').textContent='이날 메모 남기기';}else{attend.hidden=false;memoLink.querySelector('strong').textContent='메모';}
   updateOT(base.type);
   for(const b of nav.children)b.setAttribute('aria-pressed',String(b.dataset.pane===pane));
  }

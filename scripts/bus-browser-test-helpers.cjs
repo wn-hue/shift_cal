@@ -14,6 +14,6 @@ async function closed(page){await page.waitForFunction(()=>document.querySelecto
 async function address(page,q,title){await booking(page);await openSearch(page,q);if(!await page.locator('.bus-unified-place').filter({has:page.locator('strong',{hasText:title})}).count()){await page.locator('.bus-unified-submit').tap();}await page.locator('.bus-unified-place').filter({has:page.locator('strong',{hasText:title})}).first().tap();await closed(page);}
 async function routeSearch(page,q){await openSearch(page,q);await page.locator('.bus-unified-query-all').tap();await closed(page);}
 async function gps(page){await booking(page);await page.locator('.bus-use-gps').tap();await page.waitForFunction(()=>document.querySelector('.bus-location-open strong')?.textContent==='현재 위치');}
-async function query(page){await booking(page);await page.getByRole('button',{name:'버스 조회',exact:true}).tap();}
+async function query(page){await booking(page);await page.getByRole('button',{name:'버스 찾기',exact:true}).tap();}
 async function clean(page,errors){assert.equal(await page.locator('#commute-dialog').evaluate(el=>el.scrollWidth>el.clientWidth),false);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);}
 module.exports={boot,booking,direction,period,factory,browse,openSearch,closed,address,routeSearch,gps,query,clean};

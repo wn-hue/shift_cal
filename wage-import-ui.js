@@ -9,7 +9,7 @@ for(const button of dialog.querySelectorAll('[data-wage-paste]'))button.addEvent
  try{
   if(!navigator.clipboard?.readText)throw Error();const value=await navigator.clipboard.readText();
   if(token!==revision||!dialog.open||dialog.dataset.sheetClosing==='true')return;
-  if(!value.trim()){message.textContent=isBonus?'복사한 문자가 없어요. 상여 문자를 먼저 복사해 주세요.':'복사한 문자가 없어요. 급여 문자를 먼저 복사해 주세요.';return;}
+  if(!value.trim()){message.textContent=isBonus?'상여 문자를 먼저 복사한 뒤 다시 눌러 주세요.':'급여 문자를 먼저 복사한 뒤 다시 눌러 주세요.';return;}
   PayrollEstimate.importText(isBonus?'bonus':'salary',value);
  }catch{
   if(token!==revision||!dialog.open||dialog.dataset.sheetClosing==='true')return;
@@ -34,8 +34,8 @@ info.addEventListener('click',()=>{help.open=!help.open;if(help.open)help.scroll
   if(!parent.open||parent.dataset.guided==='true'||picker.open)return;
   target=input;source=card;label=name;presetAmount=70000;
   const current=value(input);
-  $('wage-amount-title').textContent=name+'을 설정해요';
-  $('wage-amount-description').textContent='매월 받는 금액을 골라주세요.';
+  $('wage-amount-title').textContent=name+'은 얼마인가요?';
+  $('wage-amount-description').textContent='매달 받는 금액을 골라 주세요.';
   $('wage-amount-preset-label').textContent='7만원';
   $('wage-amount-preset-hint').textContent='매월 70,000원';
   choice=current>0&&current!==presetAmount?'custom':'preset';

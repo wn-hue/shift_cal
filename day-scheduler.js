@@ -22,7 +22,7 @@
  function read(){return {title:$('event-title').value.trim(),allDay:$('event-all-day').checked,start:$('event-start-date').value+'T'+($('event-all-day').checked?'00:00':$('event-start-time').value),end:$('event-end-date').value+'T'+($('event-all-day').checked?'00:00':$('event-end-time').value),location:$('event-location').value.trim(),notes:$('event-notes').value.trim(),reminder:$('event-reminder').value===''?null:Number($('event-reminder').value)};}
  function dirty(){return !form.hidden&&JSON.stringify(read())!==original;}
  function saveDraft(){if(!dirty())return true;if(!form.reportValidity())return false;form.requestSubmit();return form.hidden;}
- function timeFields(){const all=$('event-all-day').checked;for(const id of ['event-start-time','event-end-time']){$(id).hidden=all;$(id).required=!all;} $('event-reminder').options[1].textContent=all?'당일 오전 9시':'일정 시작할 때';$('event-alarm-help').textContent=(all?'종일 일정은 오전 9시를 기준으로 알려드려요. ':'')+'웹 화면이 열려 있을 때 알려드려요. 잠금 화면 알림은 저장 후 휴대폰 캘린더에 추가해 설정해 주세요.';}
+ function timeFields(){const all=$('event-all-day').checked;for(const id of ['event-start-time','event-end-time']){$(id).hidden=all;$(id).required=!all;} $('event-reminder').options[1].textContent=all?'당일 오전 9시':'일정 시작할 때';$('event-alarm-help').textContent=(all?'종일 일정은 오전 9시에 알려드려요. ':'')+'웹 화면이 열려 있을 때 알려드려요. 잠금 화면 알림은 저장 후 휴대폰 캘린더에 추가해 설정해 주세요.';}
  function edit(entry){
   if(window.MemoComposer?.openEvent){window.MemoComposer.openEvent(entry);return;}
   if(!saveDraft())return;
@@ -49,9 +49,9 @@
  function open(date){loadedDate=date;overview();$('event-status').textContent='';}
  function persist(next){const normalized=AccountDataCore.normalize({[C.key]:next})[C.key];localStorage.setItem(C.key,JSON.stringify(normalized));data=normalized;window.AccountSync?.changed();renderCalendar();}
  form.onsubmit=e=>{e.preventDefault();try{
-  const event=read(),date=event.start.slice(0,10);if(!event.allDay&&(!Number.isFinite(new Date(event.start).getTime())||new Date(event.end)<=new Date(event.start)))throw Error('종료 시간은 시작 시간보다 늦게 설정해 주세요.');
-  begin();if(editing&&!data[editing.date]?.[editing.id])throw Error('다른 기기에서 삭제된 일정이에요. 취소 후 새 일정으로 추가해 주세요.');
-  if(editing&&!AccountDataCore.equal(data[editing.date][editing.id],editing.source))throw Error('다른 기기에서 변경된 일정이에요. 취소 후 최신 내용을 확인해 주세요.');
+  const event=read(),date=event.start.slice(0,10);if(!event.allDay&&(!Number.isFinite(new Date(event.start).getTime())||new Date(event.end)<=new Date(event.start)))throw Error('끝나는 시간을 시작 시간보다 늦게 골라 주세요.');
+  begin();if(editing&&!data[editing.date]?.[editing.id])throw Error('다른 기기에서 이 일정을 지웠어요. 창을 닫고 새 일정으로 추가해 주세요.');
+  if(editing&&!AccountDataCore.equal(data[editing.date][editing.id],editing.source))throw Error('다른 기기에서 이 일정을 바꿨어요. 창을 닫고 최근 내용을 확인해 주세요.');
   const next=JSON.parse(JSON.stringify(data)),id=editing?.id||crypto.randomUUID();if(editing){delete next[editing.date][id];if(!Object.keys(next[editing.date]).length)delete next[editing.date];}
   (next[date]??={})[id]=event;persist(next);overview();$('event-status').textContent=date===selectedDateStr?'일정을 저장했어요.':date.replace(/-/g,'. ')+'에 일정을 저장했어요.';
  }catch(error){$('event-error').textContent=error.message;}};

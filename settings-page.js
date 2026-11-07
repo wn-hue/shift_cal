@@ -3,14 +3,14 @@
  const $=id=>document.getElementById(id),page=$('app-preferences-dialog'),cards=[...page.querySelectorAll('.preferences-card')],calendars=page.querySelector('.external-calendars'),about=page.querySelector('.all-info-section');
  document.body.append(page);
  page.replaceChildren();
- page.innerHTML=`<header class="settings-topbar"><button type="button" id="settings-back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><h1 id="settings-title" tabindex="-1">설정</h1></header><div class="settings-body">
- <div data-settings-panel="root"><button type="button" id="settings-account" class="settings-profile"><span class="settings-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3"/></svg></span><span><strong>내 계정</strong><small>로그인 · 계정 연결 · 동기화</small></span><span aria-hidden="true">›</span></button>
+ page.innerHTML=`<header class="settings-topbar"><button type="button" id="settings-back" aria-label="뒤로 가기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><h1 id="settings-title" tabindex="-1">설정</h1></header><div class="settings-body">
+ <div data-settings-panel="root"><button type="button" id="settings-account" class="settings-profile"><span class="settings-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3"/></svg></span><span><strong>내 계정</strong><small>로그인과 동기화</small></span><span aria-hidden="true">›</span></button>
  <h2 class="settings-group-title">화면 설정</h2><section class="settings-list" id="settings-display-list"></section>
- <h2 class="settings-group-title">언어 및 국가</h2><section class="settings-list"><button id="choose-language" class="settings-choice" aria-haspopup="dialog" aria-controls="settings-options"><span>언어</span><span id="settings-language-name" class="settings-value">한국어</span></button><div class="settings-row"><span>지역</span><span>대한민국</span></div><button id="choose-currency" class="settings-choice" aria-haspopup="dialog" aria-controls="settings-options"><span>통화</span><span id="settings-currency-name" class="settings-value" data-no-i18n>원화 (KRW)</span></button><div id="settings-holiday-toggle"></div></section>
+ <h2 class="settings-group-title">언어와 지역</h2><section class="settings-list"><button id="choose-language" class="settings-choice" aria-haspopup="dialog" aria-controls="settings-options"><span>언어</span><span id="settings-language-name" class="settings-value">한국어</span></button><div class="settings-row"><span>지역</span><span>대한민국</span></div><button id="choose-currency" class="settings-choice" aria-haspopup="dialog" aria-controls="settings-options"><span>통화</span><span id="settings-currency-name" class="settings-value" data-no-i18n>원화 (KRW)</span></button><div id="settings-holiday-toggle"></div></section>
  <h2 class="settings-group-title">선택 기능</h2><section class="settings-list"><button data-settings-link="calendars"><span>Google 캘린더에 근무표 보내기</span><span aria-hidden="true">›</span></button></section>
  <h2 class="settings-group-title">정보</h2><section class="settings-list"><div class="settings-row"><span>버전</span><span>2.0.0 · Web</span></div><a href="./privacy.html"><span>개인정보처리방침</span><span aria-hidden="true">›</span></a><button data-settings-link="licenses"><span>오픈소스 라이선스</span><span aria-hidden="true">›</span></button><button data-settings-link="about"><span>앱 소개 · 문의</span><span aria-hidden="true">›</span></button></section><button id="settings-reset" class="settings-reset">앱 설정 초기화</button></div>
 
- <div data-settings-panel="display" hidden></div><div data-settings-panel="licenses" hidden><p class="settings-description">앱에서 사용하는 오픈소스 및 이미지 정보예요.</p><div id="settings-licenses" class="settings-list"></div></div><div data-settings-panel="calendars" hidden></div><div data-settings-panel="about" hidden></div></div>`;
+ <div data-settings-panel="display" hidden></div><div data-settings-panel="licenses" hidden><p class="settings-description">앱에 사용한 오픈소스와 이미지를 확인할 수 있어요.</p><div id="settings-licenses" class="settings-list"></div></div><div data-settings-panel="calendars" hidden></div><div data-settings-panel="about" hidden></div></div>`;
  const panel=name=>page.querySelector('[data-settings-panel="'+name+'"]');cards.forEach(c=>panel('display').append(c));panel('calendars').append(calendars);panel('about').append(about);
  const names={root:'설정',display:'화면 테마 · 표시',calendars:'근무표 보내기',about:'앱 안내',licenses:'오픈소스 라이선스'},scrolls={};let active=false,showing=false,route='root',returnScroll=0,locked=[];
  function render(name){
@@ -48,12 +48,12 @@
  ],window.AppI18n?.language||'ko',v=>window.AppI18n?.setLanguage(v));
  $('choose-currency').onclick=()=>window.AppCurrency.open();
  $('settings-reset').onclick=()=>{
-  window.SettingsOptions.confirm('앱 설정 초기화','화면 테마·표시·언어·통화를 기본값으로 되돌려요. 근무표, 급여 설정, 메모와 일정은 유지돼요.',()=>{
+  window.SettingsOptions.confirm('앱 설정 초기화','화면 테마와 표시 방식, 언어, 통화를 처음 설정으로 되돌려요. 근무표, 급여 설정, 메모와 일정은 그대로 남아요.',()=>{
    for(const name of ['theme','shape','adjacent','holidays','memos']){const el=$('pref-'+name);if(name==='theme')el.value='current';else if(name==='shape')el.value='circle';else el.checked=true;el.dispatchEvent(new Event('change',{bubbles:true}));}
    window.AppI18n?.setLanguage('ko');window.AppCurrency?.set('KRW');
   });
  };
  fetch('./open-source-notices.json').then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{
   const list=$('settings-licenses');for(const item of data){const row=document.createElement('a'),title=document.createElement('span'),detail=document.createElement('small');row.href=item.url;row.target='_blank';row.rel='noopener noreferrer';title.textContent=item.name;detail.textContent=item.version+' · '+item.license;row.append(title,detail);list.append(row);}
- }).catch(()=>{$('settings-licenses').textContent='라이선스 정보를 불러오지 못했어요. 인터넷 연결 후 다시 열어 주세요.';});
+ }).catch(()=>{$('settings-licenses').textContent='라이선스 정보를 불러오지 못했어요. 인터넷에 연결한 뒤 다시 열어 주세요.';});
 })();

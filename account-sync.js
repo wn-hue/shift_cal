@@ -57,19 +57,19 @@
         if($('login-sheet-title'))$('login-sheet-title').textContent=connected?(auth.provider==='apple'?'내 계정':'Google Drive 저장'):'Google Drive에 저장하고 이어 쓰기';
         const owner=connected?auth.user.id:null;
         if(owner!==renderedOwner){renderedOwner=owner;if(typeof CustomEvent==='function')window.dispatchEvent(new CustomEvent('shift-account-changed',{detail:{owner}}));}
-        $('account-email').textContent=connected?auth.user.email:'이전 주소에서 사용한 같은 Google 계정으로 로그인하면 근무표·메모·설정을 불러와요.';
+        $('account-email').textContent=connected?auth.user.email:'전에 쓰던 Google 계정으로 로그인하면 근무표, 메모, 설정을 불러와요.';
         $('account-login').hidden=!!auth?.cloudConnected;
         if($('apple-login'))$('apple-login').hidden=connected;
         if($('apple-login-status') && connected)$('apple-login-status').textContent='';
         $('account-login').setAttribute('aria-label',connected?'Google Drive 저장 연결':'Google로 로그인하고 저장하기');
-        $('account-sync-now').hidden=!auth?.cloudConnected;$('account-sync-now').textContent=auth?.provider==='apple'?'지금 저장하기':'Google Drive에 지금 저장하기';
+        $('account-sync-now').hidden=!auth?.cloudConnected;$('account-sync-now').textContent=auth?.provider==='apple'?'지금 저장하기':'Google Drive에 저장하기';
         $('account-logout').hidden=!connected;
         if($('account-delete'))$('account-delete').hidden=!connected;
     }
     async function request(action,body,get=false) {
         const response=await fetch('/api/account?action='+action,{method:get?'GET':'POST',credentials:'same-origin',cache:'no-store',headers:get?{}:{'Content-Type':'application/json','X-Shift-CSRF':auth?.csrf||''},...(get?{}:{body:JSON.stringify(body||{})})});
         const data=await response.json();
-        if(!response.ok){const e=Error(data.message||'계정 저장 요청을 완료하지 못했습니다.');e.code=data.error;e.status=response.status;throw e;}
+        if(!response.ok){const e=Error(data.message||'계정에 저장하지 못했어요. 다시 시도해 주세요.');e.code=data.error;e.status=response.status;throw e;}
         return data;
     }
     function changed() {
@@ -79,7 +79,7 @@
             try { localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(snapshot())); }catch(_){}
         }
         if(!auth?.cloudConnected || !api.ready || pending)return;
-        clearTimeout(timer);status(navigator.onLine?'변경사항 저장 대기 중':'오프라인 · 기기에 임시 저장됨');
+        clearTimeout(timer);status(navigator.onLine?'바꾼 내용을 곧 저장해요':'인터넷이 끊겨 이 기기에 먼저 저장했어요');
         timer=setTimeout(()=>sync(),3000);
     }
     function adopt(data) {
@@ -92,7 +92,7 @@
         if(auth?.connected)localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(snapshot()));
         ++epoch;clearTimeout(timer);pending=null;baseline=null;
         restore(C.normalize({}));localStorage.removeItem(ownerKey);auth=null;api.ready=true;renderAuth();
-        status('로그아웃했습니다. 계정 데이터는 보관됩니다.');
+        status('로그아웃했어요. 계정에 저장한 기록은 남아 있어요.');
     }
     function showConflict(versions,message) {
         pending={versions};api.ready=false;status(message,'warning');
@@ -100,7 +100,7 @@
         for(const version of versions) {
             const button=document.createElement('button');button.type='button';button.className='sms-primary-btn';
             const date=new Date(version.updatedAt);
-            button.textContent='계정 저장 데이터 사용'+(Number.isFinite(date.getTime())?' · '+date.toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}):'');
+            button.textContent='계정에 저장한 기록 사용하기'+(Number.isFinite(date.getTime())?' · '+date.toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}):'');
             button.addEventListener('click',()=>resolve(version.data));choices.append(button);
         }
         if(!$('account-conflict-dialog').open)$('account-conflict-dialog').showModal();
@@ -115,9 +115,9 @@
             if(generation!==epoch)return;
             parents=[result.revision];
             const merged=C.merge(localAtStart,snapshot(),result.data);
-            if(merged.conflicts.length){showConflict([result],'저장 중에도 수정된 항목이 있습니다. 사용할 데이터를 선택해주세요.');return;}
+            if(merged.conflicts.length){showConflict([result],'저장하는 동안 바뀐 내용이 있어요. 이어서 쓸 기록을 골라 주세요.');return;}
             restore(merged.data);persistBase(result.data);pending=null;api.ready=true;
-            $('account-conflict-dialog').close();status(C.equal(merged.data,result.data)?'계정에 저장됨':'변경사항 저장 대기 중');
+            $('account-conflict-dialog').close();status(C.equal(merged.data,result.data)?'계정에 저장됨':'바꾼 내용을 곧 저장해요');
             if(window.GoogleSync)GoogleSync.groupChanged();
         } catch(e) {
             if(generation!==epoch)return;
@@ -128,9 +128,9 @@
     async function sync() {
         if(busy || pending)return;
         if(!auth?.cloudConnected){status('로그인 후 계정 저장을 연결해 주세요.','warning');return;}
-        if(!navigator.onLine){status('오프라인입니다. 인터넷 연결 후 다시 동기화해 주세요.','warning');return;}
+        if(!navigator.onLine){status('인터넷에 연결한 뒤 다시 저장해 주세요.','warning');return;}
         setBusy(true);const generation=epoch;
-        status('시급·연차·메모·근무 변경을 동기화하고 있습니다…','progress');
+        status('시급, 연차, 메모와 근무 변경을 확인하고 있어요…','progress');
         try {
             const live=await request('status',null,true);
             if(generation!==epoch)return;
@@ -139,7 +139,7 @@
             const {versions}=await request('cloud-read');
             if(generation!==epoch)return;
             cloudFound=versions.some(v=>C.meaningful(v.data));
-            if(versions.length>1){showConflict(versions,'여러 기기에서 동시에 변경했습니다. 사용할 데이터를 선택해주세요.');return;}
+            if(versions.length>1){showConflict(versions,'여러 기기에서 내용이 바뀌었어요. 이어서 쓸 기록을 골라 주세요.');return;}
             const local=snapshot(), remote=versions[0]?.data || C.normalize({});
             parents=versions.map(v=>v.revision);
             // If the user deleted the hidden app data, retain/re-upload the
@@ -147,26 +147,26 @@
             if(!versions.length)baseline=C.normalize({});
             if(!baseline) {
                 if(versions.length && C.meaningful(local) && !C.equal(local,remote)) {
-                    showConflict(versions,'기기와 계정의 데이터가 다릅니다. 사용할 데이터를 선택해주세요.');return;
+                    showConflict(versions,'이 기기와 계정에 저장한 내용이 달라요. 이어서 쓸 기록을 골라 주세요.');return;
                 }
                 if(versions.length){adopt(remote);completed(auth.provider==='apple'?'계정에서 불러왔어요':'Google Drive에서 불러왔어요');return;}
                 baseline=C.normalize({});
             }
             const merged=C.merge(baseline,local,remote);
-            if(merged.conflicts.length){showConflict(versions,'같은 항목을 다른 기기에서도 변경했습니다. 사용할 데이터를 선택해주세요.');return;}
+            if(merged.conflicts.length){showConflict(versions,'다른 기기에서도 같은 내용을 바꿨어요. 이어서 쓸 기록을 골라 주세요.');return;}
             const data=C.normalize(merged.data);
             if(!C.equal(local,data))restore(data);
-            if(C.equal(data,remote)){persistBase(remote);api.ready=true;$('account-setup-help').hidden=true;completed(versions.length?(auth.provider==='apple'?'계정 저장 완료':'Google Drive 저장 완료'):'연결 완료 · 변경하면 자동 저장');if(!C.equal(local,data) && window.GoogleSync)GoogleSync.groupChanged();return;}
+            if(C.equal(data,remote)){persistBase(remote);api.ready=true;$('account-setup-help').hidden=true;completed(versions.length?(auth.provider==='apple'?'계정 저장 완료':'Google Drive 저장 완료'):'연결했어요. 바꾼 내용은 자동으로 저장돼요.');if(!C.equal(local,data) && window.GoogleSync)GoogleSync.groupChanged();return;}
             status('계정에 저장 중…');
             const result=await request('cloud-write',{revision:crypto.randomUUID().replace(/-/g,''),parents,data});
             if(generation!==epoch)return;
             parents=[result.revision];persistBase(result.data);api.ready=true;
             $('account-setup-help').hidden=true;
-            C.equal(snapshot(),result.data)?completed(auth.provider==='apple'?'계정 저장 완료':'Google Drive 저장 완료'):status('변경사항 저장 대기 중');
+            C.equal(snapshot(),result.data)?completed(auth.provider==='apple'?'계정 저장 완료':'Google Drive 저장 완료'):status('바꾼 내용을 곧 저장해요');
             if(!C.equal(local,data) && window.GoogleSync)GoogleSync.groupChanged();
         } catch(e) {
             if(generation!==epoch)return;
-            status('동기화 실패 · '+(e.message||'기기 데이터는 유지됩니다.'),'error');
+            status('저장을 완료하지 못했어요. '+(e.message||'이 기기에 저장한 기록은 남아 있어요.'),'error');
             $('account-setup-help').hidden=e.code!=='DRIVE_SETUP';
             if(e.status>=400 && e.status<500)api.ready=false;
             if(['RECONNECT','DRIVE_PERMISSION'].includes(e.code)){const apple=auth?.provider==='apple';const login=$(apple?'apple-login':'account-login');if(login){login.hidden=false;login.setAttribute('aria-label',apple?'Apple 계정 다시 연결':'Google 계정 다시 연결');}}
@@ -207,23 +207,23 @@
             // Guest edits made after logout are a new branch. Do not treat them
             // as deletions of the previous signed-in account's data.
             if(saved && (owner || !C.meaningful(local)))baseline=C.normalize(saved);
-            if(!auth.cloudConnected){api.ready=true;status('로그인됨 · 계정 저장은 별도로 연결해 주세요.');return;}
-            status('계정 데이터 확인 중…');if(busy)timer=setTimeout(sync,1000);else {await sync();if(api.ready && window.GoogleSync)GoogleSync.groupChanged();}
-        } catch(e){api.ready=false;status(e.message||'계정을 확인하지 못했습니다. 기기 저장은 계속 사용할 수 있습니다.');}
+            if(!auth.cloudConnected){api.ready=true;status('로그인했어요. 다른 기기에서도 쓰려면 계정 저장을 연결해 주세요.');return;}
+            status('계정에 저장한 기록을 확인하고 있어요…');if(busy)timer=setTimeout(sync,1000);else {await sync();if(api.ready && window.GoogleSync)GoogleSync.groupChanged();}
+        } catch(e){api.ready=false;status(e.message||'계정을 확인하지 못했어요. 이 기기에는 계속 저장할 수 있어요.');}
         finally{if(generation===epoch)notifyReady();}
     }
-    $('account-sync-now').addEventListener('click',()=>{if(pending)showConflict(pending.versions,'사용할 데이터를 선택해주세요.');else sync();});
+    $('account-sync-now').addEventListener('click',()=>{if(pending)showConflict(pending.versions,'이어서 쓸 기록을 골라 주세요.');else sync();});
     $('account-use-local').addEventListener('click',()=>resolve(null));
     $('account-conflict-close').addEventListener('click',()=>$('account-conflict-dialog').close());
     async function prepareLogout() {
         if(!auth?.connected)return;
-        if(busy)throw Error('계정 저장 중입니다. 완료 후 다시 로그아웃해 주세요.');
+        if(busy)throw Error('계정에 저장하고 있어요. 저장이 끝나면 다시 로그아웃해 주세요.');
         localStorage.setItem(cachePrefix+auth.user.id,JSON.stringify(snapshot()));
         if(!auth.cloudConnected)return;
-        if(!navigator.onLine)throw Error('오프라인 변경사항이 있습니다. 인터넷 연결 후 저장을 완료하고 로그아웃해 주세요.');
+        if(!navigator.onLine)throw Error('아직 계정에 저장하지 못한 내용이 있어요. 인터넷에 연결해 저장한 뒤 로그아웃해 주세요.');
         await sync();
         if(pending || !api.ready || !baseline || !C.equal(snapshot(),baseline))
-            throw Error('계정 저장을 완료하지 못해 로그아웃을 보류했습니다. 저장 상태를 확인해 주세요.');
+            throw Error('계정에 저장하지 못했어요. 저장 상태를 확인한 뒤 다시 로그아웃해 주세요.');
     }
     $('account-logout').addEventListener('click',async()=>{
         if(busy)return;
@@ -233,7 +233,7 @@
             if(window.GoogleSync)GoogleSync.refreshStatus();
         }catch(e){status(e.message);}
     });
-    if($('account-delete'))$('account-delete').addEventListener('click',async()=>{if(busy || !confirm('계정에 저장된 근무 변경·메모·급여 기준·연차를 삭제하고 로그아웃할까요? 공유 링크는 공유 화면에서 별도로 종료하세요.'))return;try{await request('cloud-delete',{});disconnected();status('계정 데이터를 삭제했습니다.');}catch(e){status(e.message);}});
+    if($('account-delete'))$('account-delete').addEventListener('click',async()=>{if(busy || !confirm('계정에 저장된 근무 변경·메모·급여 기준·연차를 삭제하고 로그아웃할까요? 공유 링크는 공유 화면에서 별도로 종료하세요.'))return;try{await request('cloud-delete',{});disconnected();status('계정에 저장한 기록을 지웠어요.');}catch(e){status(e.message);}});
     window.addEventListener('storage',event=>{if(event.key===ownerKey){api.ready=false;init();}else if(C.keys.includes(event.key)){window.refreshAccountData();changed();}});
     window.addEventListener('online',()=>sync());
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync();});

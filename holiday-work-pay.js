@@ -33,7 +33,7 @@
  $('holiday-work-pay-close').onclick=()=>sheet.close();
  function apply(){
   const raw=input.value.trim();let n=choice==='preset'?50000:raw===''?0:Number(raw.replace(/,/g,''));
-  if(choice==='custom'&&(!/^(?:\d+|\d{1,3}(?:,\d{3})+)?$/.test(raw)||!core.validAmount(n))){error.textContent='0원 이상의 정수 금액을 입력해 주세요.';input.setAttribute('aria-invalid','true');return;}
+  if(choice==='custom'&&(!/^(?:\d+|\d{1,3}(?:,\d{3})+)?$/.test(raw)||!core.validAmount(n))){error.textContent='금액을 0원 이상으로 입력해 주세요. 소수점은 빼 주세요.';input.setAttribute('aria-invalid','true');return;}
   if(!eligible())return sheet.close();draft={date:selectedDateStr,group:currentGroup,amount:n};refresh();sheet.close();
  }
  $('holiday-work-pay-done').onclick=apply;input.oninput=()=>{if(/^\d+$/.test(input.value))input.value=input.value.replace(/^0+(?=\d)/,'');error.textContent='';input.removeAttribute('aria-invalid');};input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();apply();}};

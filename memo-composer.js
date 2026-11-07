@@ -13,7 +13,7 @@
  const context=document.createElement('p');context.id='memo-day-context';
  const heading=document.createElement('div');heading.className='memo-day-heading';const label=source.previousElementSibling;source.before(heading);heading.append(label,context);
  const dialog=document.createElement('dialog');dialog.id='memo-compose-dialog';dialog.setAttribute('aria-labelledby','memo-compose-title');
- dialog.innerHTML='<button type="button" id="memo-compose-dismiss" aria-label="창 내리기"><span aria-hidden="true"></span></button><header class="memo-compose-header"><button type="button" id="memo-compose-back" aria-label="저장하고 뒤로가기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><h2 id="memo-compose-title">메모</h2><button type="button" id="memo-compose-save" aria-label="변경사항 저장"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button></header><p id="memo-compose-date"></p><textarea id="memo-compose-input" maxlength="16000" placeholder="메모 입력" aria-labelledby="memo-compose-title" autofocus></textarea>';
+ dialog.innerHTML='<button type="button" id="memo-compose-dismiss" aria-label="메모 닫기"><span aria-hidden="true"></span></button><header class="memo-compose-header"><button type="button" id="memo-compose-back" aria-label="저장하고 돌아가기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><h2 id="memo-compose-title">메모</h2><button type="button" id="memo-compose-save" aria-label="변경사항 저장"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button></header><p id="memo-compose-date"></p><textarea id="memo-compose-input" maxlength="16000" placeholder="메모 입력" aria-labelledby="memo-compose-title" autofocus></textarea>';
  const content=document.createElement('div');content.id='memo-compose-content';
  content.append(dialog.querySelector('#memo-compose-input'));dialog.append(content);
  const description=document.createElement('textarea');description.id='memo-compose-details';description.maxLength=16000;description.rows=3;description.placeholder='내용을 더 적어 주세요 (선택)';
@@ -48,7 +48,7 @@
  function fullText(){return [input.value,description.value].filter(value=>value.trim()).join('\n\n');}
 
  const input=dialog.querySelector('#memo-compose-input'),viewport=window.visualViewport;
- const savedList=document.createElement('button');savedList.type='button';savedList.id='memo-compose-list';savedList.textContent='목록 보기';const contextBar=document.createElement('div');contextBar.className='memo-compose-context';dialog.querySelector('.memo-compose-header').after(contextBar);contextBar.append(dialog.querySelector('#memo-compose-date'),savedList);savedList.onclick=()=>cancel(true,'list');
+ const savedList=document.createElement('button');savedList.type='button';savedList.id='memo-compose-list';savedList.textContent='메모 목록 보기';const contextBar=document.createElement('div');contextBar.className='memo-compose-context';dialog.querySelector('.memo-compose-header').after(contextBar);contextBar.append(dialog.querySelector('#memo-compose-date'),savedList);savedList.onclick=()=>cancel(true,'list');
  let date='',initial='',initialDraft='',entrySource=null,entryVersion='',rendered='',opener=null,closing=false,drag=null,offset=0,returnAnimation=null,entrance=null,suppressClickUntil=0,frame=0,restingHeight=0,restingWidth=0,finishClose=null,closeTimer=0;
  const reduced=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
  function clearDrag(){returnAnimation?.cancel();returnAnimation=null;drag=null;offset=0;dialog.style.removeProperty('--compose-drag');}
@@ -87,7 +87,7 @@
   }catch(e){if(dialog.open){error.textContent=e.message;error.hidden=false;}else{status.textContent=e.message;status.hidden=false;}return false;}
  }
  function removeMemo(source){
-  const recurring=source.eventId&&readState().events[source.date]?.[source.eventId]?.repeat;if(!confirm(tr(recurring?'이 일정의 전체 반복과 메모를 삭제할까요?':'이 메모와 연결된 알림을 삭제할까요?')))return;
+  const recurring=source.eventId&&readState().events[source.date]?.[source.eventId]?.repeat;if(!confirm(tr(recurring?'반복 일정과 메모를 모두 지울까요?':'이 메모와 알림을 지울까요?')))return;
   if(persist(source,{text:'',date:selectedDateStr,schedule:null}))(add.hidden?button:add).focus({preventScroll:true});
  }
 
@@ -153,7 +153,7 @@
    if(!DayEditorDesigns.flush()){error.textContent=document.getElementById('design-save-error')?.textContent||tr('저장하지 못했어요. 작성한 내용은 그대로 남아 있어요. 다시 시도해 주세요.');error.hidden=false;settle();return false;}
    close(animated,true,destination);return true;
   }
-  if(DayEntryCore.signature(readState(),entrySource)!==entryVersion){error.textContent=tr('다른 곳에서 메모가 변경됐어요. 작성한 내용을 복사한 뒤 다시 열어 주세요.');error.hidden=false;settle();return false;}
+  if(DayEntryCore.signature(readState(),entrySource)!==entryVersion){error.textContent=tr('다른 곳에서 이 메모를 바꿨어요. 지금 쓴 내용을 복사한 뒤 메모를 다시 열어 주세요.');error.hidden=false;settle();return false;}
   if(!value&&schedule){error.textContent=tr('일정 내용을 입력해 주세요.');error.hidden=false;settle();return false;}
   if(persist(entrySource,{text:value,date:entrySource?.date||date,schedule})){close(animated,true,destination);return true;}
   settle();return false;

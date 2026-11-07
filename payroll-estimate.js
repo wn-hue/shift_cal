@@ -13,8 +13,8 @@
     }
     function minimalProfile(p) { return validProfile(p)?p.model==='monthly-insurance'?{rate:p.rate,model:p.model,fixedInsurance:p.fixedInsurance,taxRate:p.taxRate,employmentRate:p.employmentRate,otherFixed:p.otherFixed}:{rate:p.rate ?? p.total/p.gross}:null; }
     function estimate(gross, profile = null) {
-        if (!Number.isFinite(gross) || Math.abs(gross) > Number.MAX_SAFE_INTEGER) throw new RangeError('총 지급액을 확인해주세요.');
-        if (profile !== null && !validProfile(profile)) throw new RangeError('공제 기준을 확인해주세요.');
+        if (!Number.isFinite(gross) || Math.abs(gross) > Number.MAX_SAFE_INTEGER) throw new RangeError('총 지급액을 확인해 주세요.');
+        if (profile !== null && !validProfile(profile)) throw new RangeError('세금과 보험료 계산 기준을 확인해 주세요.');
         gross = Math.max(0, Math.trunc(gross));
         const p=minimalProfile(profile);
         const total = p?.model==='monthly-insurance'?Math.min(gross,gross===0?0:p.fixedInsurance+p.otherFixed+Math.trunc(gross*p.taxRate+1e-7)+(p.employmentRate===0.009?Math.trunc((gross*p.employmentRate+1e-7)/10)*10:Math.trunc(gross*p.employmentRate+1e-7))):Math.trunc(gross * (p ? p.rate : rate) + 1e-7);
@@ -41,7 +41,22 @@
     let parts = {regular:0,bonus:0,support:0}, profile = null, bonusProfile = null;
     function loadProfile(key) { try {const p=JSON.parse(localStorage.getItem(key));const minimal=minimalProfile(p);if(minimal)localStorage.setItem(key,JSON.stringify(minimal));return minimal;}catch(_){return null;} }
     profile=loadProfile(storageKey);bonusProfile=loadProfile(bonusKey);
-    const basis = (name,p) => name + ': ' + (p ? p.model==='monthly-insurance'?'월 보험료 '+fmt(p.fixedInsurance)+' · 세금 문자 비율 '+(p.taxRate*100).toFixed(2)+'% · 고용 '+(p.employmentRate*100).toFixed(2)+'%'+(p.otherFixed?' · 기타 월 공제 '+fmt(p.otherFixed):''):'적용한 문자 공제율 ' + (100*minimalProfile(p).rate).toFixed(2) + '%' : name==='상여'?'개인 기준 미등록 · 기준 명세서 공제율 '+(bonusRate*100).toFixed(2)+'% 추정 (소득세·지방소득세·고용보험 포함)':'개인 기준 미등록 · 기준 명세서 공제율 '+(rate*100).toFixed(2)+'% 추정 (세금·보험료 포함)');
+    function basis(name, savedProfile) {
+        if (!savedProfile) {
+            const isBonus = name === '상여';
+            const percent = ((isBonus ? bonusRate : rate) * 100).toFixed(2);
+            const includes = isBonus ? '소득세·지방소득세·고용보험' : '세금·보험료';
+            return `${name}: 기본 비율 ${percent}%로 예상해요 (${includes} 포함)`;
+        }
+        if (savedProfile.model === 'monthly-insurance') {
+            const taxPercent = (savedProfile.taxRate * 100).toFixed(2);
+            const employmentPercent = (savedProfile.employmentRate * 100).toFixed(2);
+            const otherDeductions = savedProfile.otherFixed ? ' · 기타 월 공제 ' + fmt(savedProfile.otherFixed) : '';
+            return `${name}: 월 보험료 ${fmt(savedProfile.fixedInsurance)} · 문자로 등록한 세금 비율 ${taxPercent}% · 고용보험 ${employmentPercent}%${otherDeductions}`;
+        }
+        const percent = (100 * minimalProfile(savedProfile).rate).toFixed(2);
+        return `${name}: 문자로 등록한 공제율 ${percent}%`;
+    }
     function render() {
         panel.hidden = !toggle.checked;
         updateTaxSummary();
@@ -133,7 +148,7 @@
         try{
             // Import only the deduction profile. Hourly pay and allowances are always manual.
             const parsed=root.PayrollSMS.parse(raw,{kind,taxOnly:true});
-            if(!validProfile(parsed.profile))throw Error('지급 합계와 공제 합계가 포함된 문자를 붙여넣어 주세요.');
+            if(!validProfile(parsed.profile))throw Error('지급 합계와 공제 합계가 함께 적힌 문자를 붙여넣어 주세요.');
             if(isBonus)draftBonus=minimalProfile(parsed.profile);else draftSalary=minimalProfile(parsed.profile);
             const recognized=el('payroll-sms-recognized');recognized.hidden=false;
             recognized.textContent=isBonus?'상여 문자를 가져왔어요. 완료하면 계산에 반영돼요.':'급여 문자를 가져왔어요. 완료하면 계산에 반영돼요.';
@@ -165,7 +180,18 @@
             input.classList.remove('wage-filled');input.setAttribute('aria-invalid','false');manualStatus.textContent='';if(input===el('wage-seniority')){seniorityOverride=true;senioritySource();}
         });
     }
-    function readAmount(input,label,positive){const raw=input.value.trim()||(positive?'':'0'),n=Number(raw.replace(/,/g,''));if(!/^(?:[0-9]+|[1-9][0-9]{0,2}(?:,[0-9]{3})+)$/.test(raw)||!Number.isSafeInteger(n)||n<(positive?1:0)||n>1000000000){input.setAttribute('aria-invalid','true');input.focus();throw Error(label+'을 '+(positive?'1':'0')+'원 이상 10억 원 이하의 정수로 입력해 주세요.');}return n;}
+    function readAmount(input, label, positive) {
+        const raw = input.value.trim() || (positive ? '' : '0');
+        const amount = Number(raw.replace(/,/g, ''));
+        const minimum = positive ? 1 : 0;
+        const validNumber = /^(?:[0-9]+|[1-9][0-9]{0,2}(?:,[0-9]{3})+)$/.test(raw);
+        if (!validNumber || !Number.isSafeInteger(amount) || amount < minimum || amount > 1000000000) {
+            input.setAttribute('aria-invalid', 'true');
+            input.focus();
+            throw Error(`${label}은 ${minimum}원부터 10억 원까지 입력할 수 있어요. 소수점 없이 숫자로 입력해 주세요.`);
+        }
+        return amount;
+    }
     api.validateHourly=kind=>{try{return readAmount(kind==='base'?manualBase:manualOrdinary,kind==='base'?'기본시급':'통상시급',true);}catch(error){manualStatus.textContent=error.message;return null;}};
     api.validateAllowance=(input,label)=>{try{return readAmount(input,label,false);}catch(error){manualStatus.textContent=error.message;return null;}};
     apply.addEventListener('click',()=>{
@@ -174,12 +200,12 @@
             wages.baseHourly=readAmount(manualBase,'기본시급',onboardingMode);wages.ordinaryHourly=readAmount(manualOrdinary,'통상시급',onboardingMode);
             wages.seniorityPayOverride=seniorityOverride?readAmount(el('wage-seniority'),'근속수당',false):null;
             const parts={};for(const key of allowanceKeys)parts[key]=readAmount(el('wage-'+key),allowanceLabels[key],false);
-            wages.dutyPay=Object.values(parts).reduce((a,b)=>a+b,0);if(wages.dutyPay>1000000000)throw Error('고정수당 합계는 10억 원 이하여야 합니다.');wages.fixedAllowances=parts;
+            wages.dutyPay=Object.values(parts).reduce((a,b)=>a+b,0);if(wages.dutyPay>1000000000)throw Error('고정수당 합계는 10억 원까지 입력할 수 있어요.');wages.fixedAllowances=parts;
         }catch(error){manualStatus.textContent=error.message;return;}
         const previous=[storageKey,bonusKey,'shift_salary_config_master'].map(key=>[key,localStorage.getItem(key)]);
         try{if(draftSalary)localStorage.setItem(storageKey,JSON.stringify(draftSalary));if(draftBonus)localStorage.setItem(bonusKey,JSON.stringify(draftBonus));root.applyPayrollStatement(wages);}
-        catch(_){for(const [key,value]of previous)try{value===null?localStorage.removeItem(key):localStorage.setItem(key,value);}catch{}manualStatus.textContent='저장하지 못했습니다. 작성한 내용을 확인하고 다시 시도해 주세요.';return;}
-        api.reloadReference();root.calculatePayrollFromInputs();root.AccountSync?.changed();el('payroll-sms-applied').textContent='설정 적용됨';
+        catch(_){for(const [key,value]of previous)try{value===null?localStorage.removeItem(key):localStorage.setItem(key,value);}catch{}manualStatus.textContent='저장하지 못했어요. 입력한 내용을 확인하고 다시 시도해 주세요.';return;}
+        api.reloadReference();root.calculatePayrollFromInputs();root.AccountSync?.changed();el('payroll-sms-applied').textContent='설정을 저장했어요.';
         // Keep the onboarding backdrop in place until the sheet has fully left.
         dialog.addEventListener('close',()=>{if(typeof root.CustomEvent==='function')root.dispatchEvent(new CustomEvent('shift-payroll-applied'));},{once:true});dialog.close();
     });

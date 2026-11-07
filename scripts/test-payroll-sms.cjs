@@ -16,8 +16,8 @@ assert.deepEqual(parse('기본시급 10,000\n지급내역\n기본 2,090,000').wa
 assert.deepEqual(parse('기본시급 10,000\n지급내역\n직책 읽을수없음\n소계(ⓐ) 2,090,000').wages,
     {baseHourly:10000},'An unreadable allowance must not silently replace a saved amount with zero');
 assert.throws(() => parse(sample + '\n기본시급 20,000'), /섞여/);
-assert.throws(() => parse('이름 테스트\n사번 123'), /인식/);
-assert.throws(() => parse('기본시급 1,00'), /인식/);
+assert.throws(() => parse('이름 테스트\n사번 123'), /읽지 못했어요/);
+assert.throws(() => parse('기본시급 1,00'), /읽지 못했어요/);
 const partial = parse('통상시급 12,000\n공제내역\n연금 90,000');
 assert.equal(partial.profile,null);
 assert.ok(partial.warnings.length);

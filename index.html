@@ -1016,9 +1016,9 @@
         </section>
 
         <section id="view-groups" class="view-page" aria-label="조별 근무 비교">
-            <div class="group-view-caption"><span>월간 근무표</span><small>좌우로 넘겨 다른 달도 확인해요</small></div>
-            <div id="group-weeks" tabindex="0" aria-label="조별 근무표, 좌우로 넘겨 월 이동"></div>
-            <p class="group-data-note">기본 근무표와 저장된 근무 변경을 표시해요.</p>
+            <div class="group-view-caption"><span>월간 근무표</span><small>좌우로 넘겨 다른 달 근무를 보세요</small></div>
+            <div id="group-weeks" tabindex="0" aria-label="조별 근무표. 좌우로 넘겨 다른 달 보기"></div>
+            <p class="group-data-note">기본 근무표에 바꾼 근무도 반영돼요.</p>
         </section>
 
         <!-- 2. 급여 계산기 화면 -->
@@ -1035,13 +1035,13 @@
 
             <!-- 총지급액 히어로 카드 (좌/우 스와이프 지원) -->
             <div class="salary-month-viewport">
-            <div class="salary-hero" id="salary-hero-card" title="좌우로 스와이프하여 이전/다음 달 급여 이동">
+            <div class="salary-hero" id="salary-hero-card" title="좌우로 넘겨 다른 달 급여 보기">
                 <div class="hero-label" id="hero-pay-label">이번 달 예상 급여</div>
                 <div class="hero-pay-row">
                     <div class="hero-amount" id="hero-gross-pay">0 원</div>
                     <label class="estimate-toggle" for="payroll-gross-toggle">
                         <span id="payroll-estimate-action-label">세전</span>
-                        <input type="checkbox" id="payroll-gross-toggle" role="switch" aria-label="세후 예상 금액으로 보기" aria-controls="payroll-estimate-panel">
+                        <input type="checkbox" id="payroll-gross-toggle" role="switch" aria-label="세후 예상 금액 보기" aria-controls="payroll-estimate-panel">
                     </label>
                 </div>
                 <p class="hero-pay-meta"><span id="hero-pay-basis">세전</span> · <span class="period-tag" id="pay-period-label">10.16–11.15 근무 기준</span></p>
@@ -1151,7 +1151,7 @@
                         <input type="text" id="display-allowance-legacy" value="0원" readonly aria-describedby="wage-sms-hint">
                     </div>
                 </div>
-                <details class="wage-help"><summary>시급과 수당은 어떻게 반영되나요?</summary><p id="wage-sms-hint" class="account-hint">시급과 수당은 직접 입력해요. 근속수당은 입사일 기준 금액을 확인하고 수정할 수 있어요. 문자 붙여넣기는 개인 세금·보험료 추정에만 사용해요.</p></details>
+                <details class="wage-help"><summary>시급과 수당은 어떻게 반영되나요?</summary><p id="wage-sms-hint" class="account-hint">시급과 수당은 직접 입력해요. 근속수당은 입사일을 기준으로 계산하고, 직접 바꿀 수도 있어요. 급여 문자는 세금과 보험료를 예상할 때만 써요.</p></details>
 
             </div>
             <div class="payroll-tools">
@@ -1159,15 +1159,15 @@
                     <summary><span>근무 계산·조정<small id="workday-adjustment-value">연장·무급·잔업 제외</small></span><span class="workday-chevron" aria-hidden="true">⌄</span></summary>
                     <div class="workday-summary" aria-label="캘린더 계산 결과">
                         <div><label for="disp-ot-hours">연장시간 · 1.5배</label><input type="text" id="disp-ot-hours" value="0.0h" readonly></div>
-                        <div><label for="inp-no-ot-days">잔업 제외 일수</label><input type="text" id="inp-no-ot-days" value="0" readonly></div>
+                        <div><label for="inp-no-ot-days">잔업을 뺀 날</label><input type="text" id="inp-no-ot-days" value="0" readonly></div>
                         <div><label for="disp-unpaid-days">무급 일수</label><input type="text" id="disp-unpaid-days" value="0일" readonly></div>
-                        <div><label for="disp-unpaid-deduction">무급 차감 예상액</label><input type="text" id="disp-unpaid-deduction" value="0원" readonly></div>
+                        <div><label for="disp-unpaid-deduction">무급으로 줄어드는 금액</label><input type="text" id="disp-unpaid-deduction" value="0원" readonly></div>
                         <div id="payroll-holiday-pay-row" hidden><span>명절근무수당</span><strong id="payroll-holiday-pay-total">0원</strong></div>
                     </div>
                     <p class="adjustment-hint">달력에서 변경한 근무가 자동으로 반영돼요.</p>
                 </details>
                 <input type="hidden" id="inp-holiday-bonus" value="0">
-                <input type="hidden" id="inp-hire-date" aria-label="정규직 전환일 (연차, 지원금 판정)">
+                <input type="hidden" id="inp-hire-date" aria-label="정규직 전환일 (연차·지원금 계산)">
 
 
             </div>
@@ -1241,14 +1241,14 @@
         <div class="all-settings-card" id="menu-group-settings">
             <button type="button" id="menu-group-open" class="group-summary" aria-haspopup="dialog" aria-controls="settings-options" onclick="SettingsUI.openGroup()">
                 <span class="group-summary-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6m2 4a5 5 0 0 1 3 5"/></svg></span>
-                <span class="group-summary-label">내 근무조</span><span id="menu-group-current">교대조 선택</span><svg class="group-summary-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+                <span class="group-summary-label">내 근무조</span><span id="menu-group-current">근무조 선택</span><svg class="group-summary-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
             </button>
             <div class="group-select-wrapper" hidden>
                 <select id="group-select" class="group-select" tabindex="-1" aria-label="근무조 선택" aria-describedby="group-selection-status" onchange="setGroup(this.value)">
-                    <option value="" disabled selected>교대조 선택</option><option value="A">A조</option><option value="B">B조</option><option value="C">C조</option>
+                    <option value="" disabled selected>근무조 선택</option><option value="A">A조</option><option value="B">B조</option><option value="C">C조</option>
                 </select>
             </div>
-            <p id="group-selection-status" class="group-selection-status" role="status" aria-live="polite">교대조를 선택해 주세요.</p>
+            <p id="group-selection-status" class="group-selection-status" role="status" aria-live="polite">내 근무조를 골라 주세요.</p>
         </div>
         </section>
 
@@ -1256,16 +1256,16 @@
           <div id="menu-leave-settings"><button type="button" class="all-shortcut" onclick="SettingsUI.openLeave()"><span class="all-shortcut-icon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4m-9 10 3 3 5-6"/></svg></span><strong>연차 설정</strong><span class="all-shortcut-caption">남은 연차 <span id="quick-remain-leave">0</span>일</span></button></div>
           <div id="menu-salary-settings"><button type="button" id="payroll-sms-open" class="all-shortcut"><span class="all-shortcut-icon lavender"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><circle cx="12" cy="12" r="3"/></svg></span><strong>시급 설정</strong><span class="all-shortcut-caption">시급과 수당 입력</span></button></div>
         </div></section>
-        <details class="all-account-card"><summary>계정 연결 및 동기화 안내</summary>
+        <details class="all-account-card"><summary>저장한 내용 이어 쓰기</summary>
         <div class="all-account-details">
 
-            <p class="account-hint">시급·연차·메모·근무 변경을 Google Drive의 앱 전용 공간에 저장하고 다른 기기에서 불러와요. 이전 주소에서 사용한 같은 Google 계정으로 로그인하세요.</p>
+            <p class="account-hint">근무표, 메모, 시급과 연차 설정을 Google Drive에 저장해요. 다른 기기에서도 같은 Google 계정으로 로그인하면 이어서 쓸 수 있어요.</p>
             
 
             <div id="account-setup-help" class="account-hint" hidden>관리자가 Google Cloud에서 Google Drive API를 사용 설정해야 합니다. 사용 설정 후 ‘지금 동기화’를 눌러주세요.</div>
         </div>
         </details>
-        <button type="button" id="onboarding-reopen" aria-haspopup="dialog" aria-controls="onboarding-dialog">처음 설정 안내 다시 보기</button>
+        <button type="button" id="onboarding-reopen" aria-haspopup="dialog" aria-controls="onboarding-dialog">처음 설정 다시 보기</button>
 
       </div>
     </section>
@@ -1342,13 +1342,13 @@
                     <div><dt>급여 산정기간</dt><dd id="payslip-modal-period">08.16 ~ 09.15</dd></div>
                     <div><dt>월급 입금 예정일</dt><dd id="payslip-modal-payday">2026년 9월 23일 (수)</dd></div>
                 </dl>
-                <p id="payslip-modal-holiday-note">※ 25일이 휴일이므로 직전 영업일에 입금됩니다.</p>
+                <p id="payslip-modal-holiday-note">25일이 쉬는 날이면 그 전 영업일에 들어와요.</p>
             </div>
 
             <p class="payslip-estimate-note">금액은 개인 확인용 추정값이며 실제 명세서와 다를 수 있어요.</p>
             <div class="payslip-actions">
                 <button type="button" class="payslip-dismiss" onclick="closePayslipModalDirect()">확인</button>
-                <button type="button" class="payslip-details" onclick="goToPayrollFromPayslip()">상세 명세 보기</button>
+                <button type="button" class="payslip-details" onclick="goToPayrollFromPayslip()">급여 내역 자세히 보기</button>
             </div>
         </div>
     </div>
@@ -1370,9 +1370,9 @@
         <button type="button" class="sms-close-btn" data-info-close aria-label="연차 계산 기준 닫기">×</button>
         <div class="info-sheet-content">
             <h2 id="leave-policy-title" tabindex="-1">연차·상여금 계산 기준</h2>
-            <h3>상여금과 지원금</h3><p class="info-sheet-copy">입사 날짜는 정규직 전환일을 입력해 주세요. 급여 기간 마지막 날(15일) 기준 정규직 1년 미만은 지원금, 1년부터는 상여금이 적용됩니다. </p>
-            <h3>연차</h3><p class="info-sheet-copy">연차도 정규직 전환일부터 계산합니다. 1년 미만은 매월 개근 시 1일씩 최대 11일, 다음 해 1월 1일에는 전년도 재직기간에 비례한 연차를 별도로 추정합니다. 월별 발생분의 미사용분은 첫 1년 종료 시 소멸하며 사용 내역은 월별 발생분부터 차감합니다. </p>
-            <p class="estimate-disclaimer">개근과 회계연도 부여를 가정한 추정값이므로 회사에서 확인한 총 연차로 조정할 수 있습니다.</p>
+            <h3>상여금과 지원금</h3><p class="info-sheet-copy">정규직으로 전환된 날을 입력해 주세요. 급여 산정 마지막 날인 15일을 기준으로 정규직 1년 미만이면 지원금, 1년 이상이면 상여금으로 계산해요. </p>
+            <h3>연차</h3><p class="info-sheet-copy">정규직으로 전환된 날부터 연차를 계산해요. 첫 1년 동안 한 달을 개근하면 하루씩, 최대 11일을 받아요. 다음 해 1월 1일에 받는 연차는 전년도에 일한 기간에 맞춰 따로 예상해요. 매달 받은 연차부터 사용한 날을 빼요. 매달 받은 연차 중 남은 날은 첫 1년이 끝나면 없어져요. </p>
+            <p class="estimate-disclaimer">개근했고 회사가 1월 1일을 기준으로 연차를 준다고 가정한 값이에요. 회사에서 확인한 연차가 다르면 총 연차를 바꿔 주세요.</p>
         </div>
         <button type="button" class="info-sheet-done" data-info-close>확인</button>
     </dialog>
@@ -1388,15 +1388,15 @@
 
                 <div class="leave-balance">
                     <div class="leave-stat-box leave-remaining">
-                        <div class="stat-label">잔여 연차</div>
+                        <div class="stat-label">남은 연차</div>
                         <div class="stat-value" id="stat-remain-leave">0일</div>
-                        <p class="leave-balance-caption">사용 내역이 자동으로 반영돼요</p>
+                        <p class="leave-balance-caption">달력에 적은 연차를 자동으로 반영해요</p>
                     </div>
                     <span class="leave-balance-art" aria-hidden="true"><svg viewBox="0 0 72 72" fill="none"><rect x="11" y="16" width="50" height="47" rx="13" fill="#c5e1ff"/><rect x="16" y="11" width="45" height="47" rx="12" fill="#3182f6"/><path d="M16 25h45" stroke="#8bc2ff" stroke-width="3"/><path d="M28 9v10m21-10v10" stroke="#1b64da" stroke-width="5" stroke-linecap="round"/><path d="m28 40 8 8 13-16" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                 </div>
                 <div class="leave-stat-grid">
                     <div class="leave-stat-box"><div class="stat-label">총 연차</div><div class="stat-value" id="stat-total-leave">0일</div></div>
-                    <div class="leave-stat-box"><div class="stat-label">사용 연차</div><div class="stat-value" id="stat-used-leave">0일</div></div>
+                    <div class="leave-stat-box"><div class="stat-label">쓴 연차</div><div class="stat-value" id="stat-used-leave">0일</div></div>
                 </div>
 
                 <p id="leave-accrual-basis" class="leave-accrual-basis" role="status"></p>
@@ -1436,10 +1436,10 @@
 
 
     <dialog id="account-conflict-dialog" class="sms-dialog" aria-labelledby="account-conflict-title">
-        <div class="sms-dialog-header"><div><h2 id="account-conflict-title">사용할 데이터 선택</h2><p>기기와 계정의 데이터가 다릅니다.</p></div><button type="button" id="account-conflict-close" class="sms-close-btn" aria-label="데이터 선택 닫기">×</button></div>
-        <p class="account-hint">한쪽 데이터를 자동으로 덮어쓰지 않습니다. 사용할 데이터를 선택하면 이후 변경사항은 자동 저장됩니다. 동시 저장 기록은 보관됩니다.</p>
+        <div class="sms-dialog-header"><div><h2 id="account-conflict-title">어떤 기록을 사용할까요?</h2><p>이 기기와 계정에 저장한 내용이 달라요.</p></div><button type="button" id="account-conflict-close" class="sms-close-btn" aria-label="기록 선택 닫기">×</button></div>
+        <p class="account-hint">이어서 쓸 기록을 골라 주세요. 선택한 뒤 바꾼 내용은 자동으로 저장되고, 동시에 저장한 기록도 보관돼요.</p>
         <div id="account-conflict-choices" class="account-choices"></div>
-        <button type="button" id="account-use-local" class="sms-clear-btn" style="width:100%;margin-top:12px;">현재 기기 데이터 사용</button>
+        <button type="button" id="account-use-local" class="sms-clear-btn" style="width:100%;margin-top:12px;">이 기기의 기록 사용하기</button>
     </dialog>
 
     <dialog id="payroll-sms-dialog" class="sms-dialog" aria-labelledby="payroll-sms-title">
@@ -1491,7 +1491,7 @@
         <details id="wage-import-help" class="sms-help wage-import-help"><summary><strong>문자 원문은 저장하지 않아요</strong></summary><div class="wage-help-body"><p>필요한 계산 기준만 저장하고, 붙여넣은 문자는 바로 지워요.</p><ul class="wage-explainer-list"><li>이름·사번·계좌번호·원문과 지급·공제 합계는 저장하지 않아요.</li><li>공제 비율·월 보험료·기타 공제액만 저장해요.</li><li>시급·수당은 직접 입력한 금액을 사용해요.</li><li>계정 연결 시 공제 설정도 본인 계정에 저장돼요.</li></ul><p class="wage-copy-note">개인 기준이 없을 때만 기본 비율로 추정해요.<br>급여 약 18.09% · 상여 약 2.41% (세금·보험료 포함)</p><p class="wage-copy-note">실제 공제액과 실수령액은 명세서와 다를 수 있어요. <a href="./privacy.html">저장 안내</a></p></div></details>
         </section>
         </div>
-        <button type="button" id="guided-wage-import" class="guided-wage-import" hidden>개인 공제 기준 설정 <span>선택</span><small>세금·보험료와 실수령액은 추정치예요.</small></button>
+        <button type="button" id="guided-wage-import" class="guided-wage-import" hidden>급여·상여 문자 등록 <span>선택</span><small>세금·보험료와 실수령액은 추정치예요.</small></button>
         </div>
         <div class="sms-actions"><p id="wage-manual-status" class="sms-status" role="alert"></p><button type="button" id="payroll-sms-apply" class="sms-primary-btn">설정 완료하기</button></div>
     </dialog>
@@ -1541,7 +1541,7 @@
           <div><span class="stats-badge day-sp">주특</span><strong id="stat-daysp"></strong></div>
           <div><span class="stats-badge night-sp">야특</span><strong id="stat-nightsp"></strong></div>
         </div><div class="stats-row"><span>총 출근</span><strong id="modal-pill-total-work"></strong></div><span id="modal-pill-special" hidden></span></section>
-        <section class="stats-section stats-leave"><h3>연차 사용</h3><div class="stats-row"><span>해당 기간 사용 연차</span><strong id="modal-pill-leave"></strong></div></section>
+        <section class="stats-section stats-leave"><h3>연차 사용</h3><div class="stats-row"><span>해당 기간 쓴 연차</span><strong id="modal-pill-leave"></strong></div></section>
       </div>
     </div>
 
@@ -1557,18 +1557,18 @@
             </div>
             <div class="card" style="padding:12px;">
                 <strong id="google-sync-badge" style="font-size:14px;">Google 캘린더에 근무표 보내기</strong>
-                <p id="google-sync-user" class="calendar-link-copy">동기화 상태 확인 중…</p>
-                <p class="calendar-link-copy">앱의 근무표와 날짜 메모를 앱 전용 Google 캘린더로 보내요. 앱에서 저장한 변경은 자동 반영되며, Google에서 수정한 내용은 앱으로 가져오지 않아요. 앱이 만든 근무 일정은 다시 보낼 때 앱의 내용으로 맞춰집니다. 계정 데이터의 저장·복원은 Google Drive에서 처리해요.</p>
+                <p id="google-sync-user" class="calendar-link-copy">연결 상태를 확인하고 있어요…</p>
+                <p class="calendar-link-copy">근무표와 날짜 메모를 Google 캘린더에 보내요. 다시 보내면 근무 루틴에 저장한 내용으로 바뀌니, 수정은 근무 루틴에서 해 주세요. 저장한 기록은 Google Drive에서 불러올 수 있어요.</p>
                 <a id="google-sync-login" class="account-login" href="/api/google-calendar?action=login&amp;calendar=1" aria-label="Google 계정으로 캘린더 연결" aria-describedby="calendar-permission-notice" hidden><img class="google-login-image" src="./google-signin.png?v=3" width="180" height="40" alt="" aria-hidden="true"></a>
-                <p id="calendar-permission-notice" class="account-hint">로그인과 별도의 선택 기능입니다. 연결할 때 캘린더 목록 조회와 앱이 만든 전용 캘린더의 일정 관리 권한을 요청합니다. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p>
+                <p id="calendar-permission-notice" class="account-hint">근무표 보내기는 원하는 분만 연결하면 돼요. 연결할 때 캘린더 목록을 보고 근무 루틴 전용 캘린더의 일정을 관리할 수 있도록 권한을 요청해요. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p>
                 <div id="google-sync-controls" hidden>
                     <div class="calendar-link-actions">
-                        <button id="google-sync-enable" class="btn-save" onclick="GoogleSync.synchronize()">이달 근무표 보내기</button>
+                        <button id="google-sync-enable" class="btn-save" onclick="GoogleSync.synchronize()">이번 달 근무표 보내기</button>
                     </div>
                     <details class="calendar-link-help"><summary>보내기 관리</summary>
                         <div class="calendar-link-actions"><button class="btn-reset-data" onclick="GoogleSync.stop()">자동 보내기 중지</button><button class="btn-reset-data" onclick="GoogleSync.disconnect()">근무표 보내기 해제</button></div>
-                        <button class="btn-reset-data" onclick="GoogleSync.relink()">이달 제외한 근무표 다시 보내기</button>
-                        <p>중지·해제해도 구글에 저장된 일정은 남습니다. Google 계정의 앱 권한을 완전히 취소하려면 Google 계정 → 보안 → 연결된 앱에서 해제하세요.</p>
+                        <button class="btn-reset-data" onclick="GoogleSync.relink()">이번 달에 빠진 일정 다시 보내기</button>
+                        <p>보내기를 중지하거나 연결을 끊어도 이미 보낸 근무표는 남아요. 앱 권한은 Google 계정의 보안 → 연결된 앱에서 해제할 수 있어요.</p>
                     </details>
                 </div>
                 <div id="google-sync-setup" hidden>
@@ -1583,20 +1583,20 @@
                 <div id="google-sync-status" class="sync-feedback" role="status" aria-live="polite" aria-atomic="true"></div>
                 <details class="calendar-link-help"><summary>아이폰 기본 캘린더에서 사용하기</summary>
                     <p>아이폰 설정 → 앱 → 캘린더 → 캘린더 계정 → 계정 추가 → Google에서 같은 계정을 연결하고 캘린더를 켜세요. 기본 캘린더 앱에서 <b>앱 전용 A/B/C조 캘린더</b>를 선택하면 보낸 근무표가 표시됩니다.</p>
-                    <p>근무 변경과 메모는 근무 루틴에서 수정하세요. Google·아이폰 캘린더의 변경은 근무 루틴에 반영되지 않습니다. 보고 있는 달의 근무표를 보내며, 자동 보내기를 켜면 앱에서 수정하거나 다른 달을 열 때 해당 달을 반영합니다.</p>
+                    <p>근무표나 메모를 바꿀 때는 근무 루틴에서 수정해 주세요. 지금 보고 있는 달의 근무표를 보낼 수 있어요. 자동 보내기를 켜면 내용을 수정하거나 다른 달을 열 때 해당 달의 근무표도 보내요.</p>
                 </details>
             </div>
 
         </div>
     </div>
 
-<div class="modal-overlay" id="modal-schedule-share" onclick="closeScheduleShare(event)"><div class="modal-sheet share-sheet" role="dialog" aria-modal="true" aria-labelledby="share-title" onclick="event.stopPropagation()"><div class="override-header"><div><h2 id="share-title">근무표 공유</h2><p id="share-month"></p></div><button type="button" class="override-close" aria-label="공유 닫기" onclick="closeScheduleShare()">✕</button></div><button class="share-row" onclick="shareScheduleImage()"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="2"/><path d="m3 17 5-5 4 4 4-6 5 7"/></svg></span><strong>이미지로 보내기<small>현재 달력을 이미지로 공유해요</small></strong><span aria-hidden="true">›</span></button><label class="share-memo-option" for="share-include-memos"><span>메모 포함</span><input type="checkbox" role="switch" id="share-include-memos"></label><p id="share-status" role="status"></p></div></div>
+<div class="modal-overlay" id="modal-schedule-share" onclick="closeScheduleShare(event)"><div class="modal-sheet share-sheet" role="dialog" aria-modal="true" aria-labelledby="share-title" onclick="event.stopPropagation()"><div class="override-header"><div><h2 id="share-title">근무표 공유</h2><p id="share-month"></p></div><button type="button" class="override-close" aria-label="공유 닫기" onclick="closeScheduleShare()">✕</button></div><button class="share-row" onclick="shareScheduleImage()"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="2"/><path d="m3 17 5-5 4 4 4-6 5 7"/></svg></span><strong>이미지로 보내기<small>보고 있는 달의 근무표를 이미지로 보내요</small></strong><span aria-hidden="true">›</span></button><label class="share-memo-option" for="share-include-memos"><span>메모 포함</span><input type="checkbox" role="switch" id="share-include-memos"></label><p id="share-status" role="status"></p></div></div>
     <!-- 모달: 근태 및 메모 변경 (반차 전/후 & 무급반차 전/후 포함) -->
     <div class="modal-overlay" id="modal-override" onclick="closeModal(event)">
         <div class="modal-sheet override-sheet" role="dialog" aria-modal="true" aria-labelledby="override-title" onclick="event.stopPropagation()">
             <div class="override-header">
                 <div><h2 id="override-title">근무 변경</h2><p id="modal-date-text"></p><div class="editor-day-summary"><div class="editor-current-shift"><span id="editor-current-badge" class="shift-badge"></span><span id="modal-orig-text" class="override-base"></span></div></div></div>
-                <button type="button" class="opt-btn reset override-reset" aria-label="기본 근무로 복구" onclick="switchEditorTab('work');setDayOverride(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/></svg><span>기본근무 복구</span></button>
+                <button type="button" class="opt-btn reset override-reset" aria-label="기본 근무로 되돌리기" onclick="switchEditorTab('work');setDayOverride(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/></svg><span>기본 근무로 되돌리기</span></button>
                 <button type="button" id="editor-sticker-preview" aria-label="날짜 스티커 선택" onclick="CalendarStickers.open()"></button>
                 <button type="button" id="editor-dismiss" aria-label="근무 변경 내리기" onclick="closeModalDirect()"><span aria-hidden="true"></span></button>
             </div>
@@ -2158,7 +2158,7 @@
             const end = new Date(Date.UTC(targetYear,11,31));
             const cutoff = today && today < end ? today : end;
             const empty = desc => ({leave:0, regular:0, monthly:0, monthlyGenerated:0, desc});
-            if (!hire || !today) return empty('정규직 전환일을 입력하면 회계연도 기준으로 자동 계산해요.');
+            if (!hire || !today) return empty('정규직 전환일을 입력하면 연차를 자동으로 계산해요.');
             if (hire > cutoff || cutoff < jan1) return empty('아직 연차 발생 전이에요.');
             const hy = hire.getUTCFullYear(), hm = hire.getUTCMonth(), hd = hire.getUTCDate();
             // A nonexistent anniversary date falls on the first day of the next month.
@@ -2291,7 +2291,7 @@
             const input = document.getElementById('input-total-leave');
             const value = Number(input.value);
             if (!Number.isFinite(value) || value < 0) {
-                alert('총 부여 연차는 0 이상의 숫자로 입력해 주세요.');
+                alert('총 연차를 0일 이상으로 입력해 주세요.');
                 updateLeaveStats();
                 return;
             }
@@ -2315,7 +2315,7 @@
 
         function manualSaveData() {
             saveWageConfig();
-            alert(window.AccountSync ? "입력값을 기기에 저장했습니다. 구글 계정 연결 시 자동으로 동기화합니다." : "입력값을 기기에 저장했습니다.");
+            alert(window.AccountSync ? "이 기기에 저장했어요. Google 계정을 연결하면 다른 기기에서도 이어서 쓸 수 있어요." : "이 기기에 저장했어요.");
         }
 
         function openOverrideModal(dateStr, dateObj, currentShift) {
@@ -2414,24 +2414,24 @@
             const [year, month, day] = dateStr.split('-').map(Number);
             const date = new Date(year, month - 1, day);
             const baseType = getBaseShift(date, currentGroup).type;
-            if(baseType==='OFF' && ['LEAVE','HALF_PRE','HALF_POST','HALF_LEAVE','UNPAID_OFF','UNPAID_HALF_PRE','UNPAID_HALF_POST','NO_OT'].includes(type))return '휴무일에는 연차·반차·무급휴무와 잔업 해제를 사용할 수 없습니다.';
+            if(baseType==='OFF' && ['LEAVE','HALF_PRE','HALF_POST','HALF_LEAVE','UNPAID_OFF','UNPAID_HALF_PRE','UNPAID_HALF_POST','NO_OT'].includes(type))return '쉬는 날에는 연차, 반차, 무급휴무를 쓰거나 잔업을 뺄 수 없어요.';
 
             if (type === 'SPECIAL_NIGHT' && baseType === 'DAY') {
-                return '주간 근무일에는 야간 특근을 지정할 수 없습니다.';
+                return '주간 근무일에는 야간 특근을 넣을 수 없어요.';
             }
             if (type === 'SPECIAL_DAY' && baseType === 'NIGHT') {
-                return '야간 근무일에는 주간 특근을 지정할 수 없습니다.';
+                return '야간 근무일에는 주간 특근을 넣을 수 없어요.';
             }
 
             const previousDate = new Date(year, month - 1, day - 1);
             if (type === 'SPECIAL_DAY' && isNightWork(getActualShift(previousDate, currentGroup))) {
-                return '전날 야간 근무가 끝난 직후에는 주간 특근을 지정할 수 없습니다.';
+                return '전날 야간 근무가 끝난 직후에는 주간 특근을 넣을 수 없어요.';
             }
             // 뒤늦게 전날을 야간 특근으로 바꾸어도 이미 지정된 다음 날 주간 특근을 보호한다.
             const nextDate = new Date(year, month - 1, day + 1);
             const nextKey = toDateKey(nextDate.getFullYear(), nextDate.getMonth(), nextDate.getDate());
             if (type === 'SPECIAL_NIGHT' && ['SPECIAL_DAY','SPECIAL_DAY_NO_OT'].includes(overrides[nextKey])) {
-                return '다음 날 주간 특근이 지정되어 있어 전날에 야간 특근을 지정할 수 없습니다.';
+                return '다음 날 주간 특근이 있어 야간 특근을 넣을 수 없어요.';
             }
 
             const units = unpaidUnits(type);
@@ -2442,7 +2442,7 @@
                     if (key.startsWith(monthPrefix) && key !== dateStr) used += unpaidUnits(value);
                 }
                 if (used + units > 2) {
-                    return '같은 달 무급 한도는 무급휴무 1회 또는 무급반차 2회입니다.';
+                    return '한 달에 무급휴무 1번 또는 무급반차 2번까지 쓸 수 있어요.';
                 }
             }
             return '';
@@ -2846,7 +2846,7 @@
                     const previous = JSON.parse(saved);
                     config = { ...config, ...previous };
                     // 이전 버전은 부여 연도를 저장하지 않았다. 2026년 기존 입력값만 보존한다.
-                    // 이후 연도는 입사일 기준으로 새로 계산하여 잔여 연차가 이월되지 않게 한다.
+                    // 이후 연도는 입사일 기준으로 새로 계산하여 남은 연차가 이월되지 않게 한다.
                     if (!Object.prototype.hasOwnProperty.call(previous, 'leaveByYear') &&
                         currentCalDate.getFullYear() === 2026 &&
                         Number.isFinite(Number(previous.totalLeave)) && Number(previous.totalLeave) >= 0) {
@@ -2953,7 +2953,7 @@
                 syncFromCalendar();
                 renderCalendar();
                 if(window.AccountSync)AccountSync.changed();
-                alert("🔄 초기화되었습니다.");
+                alert("입력한 값을 초기화했어요.");
             }
         }
 
@@ -3024,26 +3024,26 @@
             if (!window.ShiftOnboarding?.needsSetup()) checkPayslipPopup();
         };
     </script>
-    <script src="./payroll-sms.js?v=manual-tax-1"></script>
-    <script src="./payroll-estimate.js?v=friendly-copy-7"></script>
+    <script src="./payroll-sms.js?v=app-copy-20261107"></script>
+    <script src="./payroll-estimate.js?v=app-copy-20261107"></script>
     <script src="./calendar-integration.js?v=permissions-1"></script>
-    <script src="./schedule-share.js?v=3"></script>
+    <script src="./schedule-share.js?v=app-copy-20261107"></script>
     <script src="./google-sync-core.js?v=drive-export-1-6"></script>
     <script src="./account-data-core.js?v=holiday-pay-2"></script>
     <script src="./app-motion.js?v=2"></script>
     <script src="./calendar-ui.js?v=payroll-no-heading-5"></script>
     <script src="./group-schedule.js?v=8"></script>
     <script src="./calendar-stickers.js?v=7"></script>
-    <script src="./today-menu.js?v=meal-clean-footer-5"></script>
-<dialog id="account-login-dialog" class="account-login-dialog" data-connected="false" aria-labelledby="login-sheet-title"><div class="login-sheet-handle" aria-hidden="true"></div><button type="button" class="login-sheet-close" aria-label="로그인 창 닫기">×</button><section class="identity-card" aria-label="로그인 및 동기화"><div class="identity-heading"><div><h2 id="login-sheet-title">Google Drive에 저장하고 이어 쓰기</h2><p id="account-email">같은 Google 계정으로 로그인하면 이전 주소에 저장한 근무표·메모·설정을 불러와요.</p></div></div><p id="account-permission-notice" class="account-hint">Google Drive의 앱 전용 공간에 근무표·메모·급여·연차 설정을 저장해요. 일반 Drive 파일은 읽지 않으며, 캘린더 연결은 선택 사항이에요. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p><div class="identity-buttons"><a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1" aria-label="Google로 로그인" aria-describedby="account-permission-notice"><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#4285f4" d="M43.6 24.5c0-1.4-.1-2.7-.4-4H24v7.7h11a9.4 9.4 0 0 1-4.1 6.2v5h6.7c3.9-3.6 6-8.8 6-14.9Z"/><path fill="#34a853" d="M24 44c5.4 0 10-1.8 13.6-5l-6.7-5c-1.8 1.2-4.1 1.9-6.9 1.9-5.2 0-9.7-3.5-11.3-8.2H5.8v5.2A20 20 0 0 0 24 44Z"/><path fill="#fbbc05" d="M12.7 27.7a12 12 0 0 1 0-7.4v-5.2H5.8a20 20 0 0 0 0 17.8l6.9-5.2Z"/><path fill="#ea4335" d="M24 12.1c3 0 5.6 1 7.7 3l5.8-5.8A19.3 19.3 0 0 0 24 4 20 20 0 0 0 5.8 15.1l6.9 5.2c1.6-4.7 6.1-8.2 11.3-8.2Z"/></svg><span>Google로 로그인하고 저장하기</span></a><a id="apple-login" aria-disabled="true" class="apple-signin" href="/api/apple-account?action=login" aria-label="Apple로 로그인"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M17.1 12.3c0-2 1.6-3 1.7-3.1-1-1.5-2.5-1.7-3.1-1.7-1.3-.2-2.5.8-3.2.8-.7 0-1.8-.8-2.9-.8-1.5 0-2.8.9-3.5 2.1-1.5 2.5-.4 6.3 1 8.3.7 1 1.5 2.1 2.6 2 1.1 0 1.5-.7 2.8-.7 1.3 0 1.7.7 2.9.7 1.2 0 1.9-1 2.6-2 .8-1.1 1.1-2.2 1.1-2.3-.1 0-2-.8-2-3.3M14.8 6.2c.6-.8 1.1-1.8 1-2.9-1 .1-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.8 1.1.1 2.1-.6 2.8-1.4"/></svg>Apple 계정으로 계속하기</a></div><p id="apple-login-status" class="identity-note" role="status"></p><div id="account-sync-status" class="sync-feedback" role="status" aria-live="polite" aria-atomic="true"></div><div class="identity-actions"><button id="account-sync-now" type="button" class="btn-save" hidden>지금 동기화</button><button id="account-logout" type="button" class="btn-reset-data" hidden>로그아웃</button><button id="account-delete" type="button" class="btn-reset-data" hidden>계정 데이터 삭제</button></div></section></dialog>
+    <script src="./today-menu.js?v=app-copy-20261107"></script>
+<dialog id="account-login-dialog" class="account-login-dialog" data-connected="false" aria-labelledby="login-sheet-title"><div class="login-sheet-handle" aria-hidden="true"></div><button type="button" class="login-sheet-close" aria-label="로그인 창 닫기">×</button><section class="identity-card" aria-label="로그인 및 동기화"><div class="identity-heading"><div><h2 id="login-sheet-title">Google Drive에 저장하고 이어 쓰기</h2><p id="account-email">전에 쓰던 Google 계정으로 로그인하면 근무표, 메모, 설정을 불러와요.</p></div></div><p id="account-permission-notice" class="account-hint">Google Drive의 앱 전용 공간에 근무표·메모·급여·연차 설정을 저장해요. 일반 Drive 파일은 읽지 않으며, 캘린더 연결은 선택 사항이에요. <a href="./privacy.html">개인정보 이용·삭제 안내</a></p><div class="identity-buttons"><a id="account-login" class="account-login" href="/api/google-calendar?action=login&amp;storage=1" aria-label="Google로 로그인" aria-describedby="account-permission-notice"><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#4285f4" d="M43.6 24.5c0-1.4-.1-2.7-.4-4H24v7.7h11a9.4 9.4 0 0 1-4.1 6.2v5h6.7c3.9-3.6 6-8.8 6-14.9Z"/><path fill="#34a853" d="M24 44c5.4 0 10-1.8 13.6-5l-6.7-5c-1.8 1.2-4.1 1.9-6.9 1.9-5.2 0-9.7-3.5-11.3-8.2H5.8v5.2A20 20 0 0 0 24 44Z"/><path fill="#fbbc05" d="M12.7 27.7a12 12 0 0 1 0-7.4v-5.2H5.8a20 20 0 0 0 0 17.8l6.9-5.2Z"/><path fill="#ea4335" d="M24 12.1c3 0 5.6 1 7.7 3l5.8-5.8A19.3 19.3 0 0 0 24 4 20 20 0 0 0 5.8 15.1l6.9 5.2c1.6-4.7 6.1-8.2 11.3-8.2Z"/></svg><span>Google로 로그인하고 저장하기</span></a><a id="apple-login" aria-disabled="true" class="apple-signin" href="/api/apple-account?action=login" aria-label="Apple로 로그인"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M17.1 12.3c0-2 1.6-3 1.7-3.1-1-1.5-2.5-1.7-3.1-1.7-1.3-.2-2.5.8-3.2.8-.7 0-1.8-.8-2.9-.8-1.5 0-2.8.9-3.5 2.1-1.5 2.5-.4 6.3 1 8.3.7 1 1.5 2.1 2.6 2 1.1 0 1.5-.7 2.8-.7 1.3 0 1.7.7 2.9.7 1.2 0 1.9-1 2.6-2 .8-1.1 1.1-2.2 1.1-2.3-.1 0-2-.8-2-3.3M14.8 6.2c.6-.8 1.1-1.8 1-2.9-1 .1-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.8 1.1.1 2.1-.6 2.8-1.4"/></svg>Apple 계정으로 계속하기</a></div><p id="apple-login-status" class="identity-note" role="status"></p><div id="account-sync-status" class="sync-feedback" role="status" aria-live="polite" aria-atomic="true"></div><div class="identity-actions"><button id="account-sync-now" type="button" class="btn-save" hidden>지금 동기화</button><button id="account-logout" type="button" class="btn-reset-data" hidden>로그아웃</button><button id="account-delete" type="button" class="btn-reset-data" hidden>계정 데이터 삭제</button></div></section></dialog>
     <script src="./login-sheet.js?v=drive-1"></script>
     <script src="./app-menu.js?v=18"></script>
 <script src="./theme-header-layout.js?v=viewport-card-6"></script>
-<script src="./settings-page.js?v=drive-1"></script>
-    <script src="./settings-ui.js?v=friendly-copy-2"></script>
-    <script src="./account-sync.js?v=drive-1"></script>
-    <script src="./google-sync.js?v=drive-export-1"></script>
-<script src="planner-core.js?v=sms-confirm-1"></script><script src="shift-tools.js?v=designs-7"></script><script src="work-editor.js?v=4"></script>
+<script src="./settings-page.js?v=app-copy-20261107"></script>
+    <script src="./settings-ui.js?v=app-copy-20261107"></script>
+    <script src="./account-sync.js?v=app-copy-20261107"></script>
+    <script src="./google-sync.js?v=app-copy-20261107"></script>
+<script src="planner-core.js?v=sms-confirm-1"></script><script src="shift-tools.js?v=app-copy-20261107"></script><script src="work-editor.js?v=4"></script>
 
 
     <dialog id="today-weather" class="weather-card sms-dialog" aria-labelledby="weather-dialog-title">
@@ -3058,15 +3058,15 @@
 <script src="./bus-stop-locations.js?v=7"></script>
 <script src="./bus-factory-locations.js?v=1"></script>
 <script src="./bus-location-core.js?v=8"></script>
-<script src="./bus-discovery.js?v=8"></script>
-<script src="./bus-browser.js?v=factory-source-2"></script>
-<script src="./community-lab.js?v=friendly-copy-4"></script>
-<script src="./meal-rating.js?v=clean-notes-6"></script>
-<script src="./commute-parking.js?v=7"></script>
-<script src="./lost-found.js?v=status-contained-1"></script>
+<script src="./bus-discovery.js?v=app-copy-20261107"></script>
+<script src="./bus-browser.js?v=app-copy-20261107"></script>
+<script src="./community-lab.js?v=app-copy-20261107"></script>
+<script src="./meal-rating.js?v=app-copy-20261107"></script>
+<script src="./commute-parking.js?v=app-copy-20261107"></script>
+<script src="./lost-found.js?v=app-copy-20261107"></script>
 <script src="./bright-menu.js?v=friendly-copy-4"></script>
 <script src="./app-icons.js?v=3"></script>
-<script src="./bus-unified-search.js?v=8"></script>
+<script src="./bus-unified-search.js?v=app-copy-20261107"></script>
 <script src="./commute-page.js?v=8"></script>
 
 <section id="account-restore-screen" role="status" aria-live="polite"><strong>Google Drive에서 불러오고 있어요</strong><p>저장한 근무표·메모·설정을 확인하고 있어요.</p></section>
@@ -3077,13 +3077,13 @@
  </header>
  <main class="onboarding-main">
   <p id="onboarding-step-label" class="onboarding-step-label">1 / 3</p>
-  <div id="onboarding-heading" class="onboarding-heading" tabindex="-1" autofocus><h1 id="onboarding-title" class="onboarding-title">입사일을 알려주세요.</h1><p id="onboarding-description" class="onboarding-description">내 연차와 예상 급여를 계산하는 기준이에요.</p></div>
+  <div id="onboarding-heading" class="onboarding-heading" tabindex="-1" autofocus><h1 id="onboarding-title" class="onboarding-title">입사일을 알려 주세요</h1><p id="onboarding-description" class="onboarding-description">입사일을 기준으로 연차와 예상 급여를 계산해요.</p></div>
   <section class="onboarding-panel" aria-label="입사일 설정">
    <div class="onboarding-art" aria-hidden="true"></div>
-   <label id="onboarding-date-label" for="onboarding-date-open">입사년월일 · 정규직 기준</label>
+   <label id="onboarding-date-label" for="onboarding-date-open">입사일 (정규직 기준)</label>
    <input type="hidden" id="onboarding-date">
    <button type="button" id="onboarding-date-open" class="onboarding-date-open" aria-haspopup="dialog" aria-controls="onboarding-date-picker" aria-labelledby="onboarding-date-label onboarding-date-value" aria-describedby="onboarding-hire-help"><span id="onboarding-date-value">입사일을 선택해 주세요</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></button>
-   <p class="onboarding-tip" id="onboarding-hire-help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v6m0-10v1"/></svg><span>계약직은 현재 입사일을 선택하고, 정규직 전환 후 변경해 주세요. 입사일은 전체 → 연차 설정에서 바꿀 수 있어요.</span></p>
+   <p class="onboarding-tip" id="onboarding-hire-help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v6m0-10v1"/></svg><span>계약직이라면 처음 입사한 날을 골라 주세요. 정규직으로 전환되면 전체 → 연차 설정에서 날짜를 바꿀 수 있어요.</span></p>
   </section>
   <section class="onboarding-panel" aria-label="교대조 설정" hidden>
    <div class="onboarding-art" aria-hidden="true"></div>
@@ -3095,7 +3095,7 @@
   </section>
   <section class="onboarding-panel" aria-label="시급 설정" hidden>
    <div class="onboarding-art" aria-hidden="true"></div>
-   <div class="onboarding-import-card onboarding-wage-plan"><strong>하나씩 입력하면 돼요</strong><p>기본시급 → 통상시급 → 추가수당</p><small>추가수당이 있는 경우에만 금액을 입력해요.</small></div>
+   <div class="onboarding-import-card onboarding-wage-plan"><strong>하나씩 입력하면 돼요</strong><p>기본시급 → 통상시급 → 추가수당</p><small>받는 수당이 있을 때만 금액을 입력해 주세요.</small></div>
    <div id="onboarding-wage-summary" class="onboarding-wage-summary" hidden><div><span>기본시급</span><strong id="onboarding-base-wage" class="onboarding-base-wage"></strong></div><div><span>통상시급</span><strong id="onboarding-ordinary-wage" class="onboarding-ordinary-wage"></strong></div></div>
    <button type="button" id="onboarding-import-again" class="onboarding-import-again" hidden>시급 다시 설정하기</button>
   </section>
@@ -3105,7 +3105,7 @@
 <dialog id="onboarding-date-picker" aria-labelledby="onboarding-date-picker-title" aria-describedby="onboarding-date-picker-help">
  <button type="button" class="picker-close" aria-label="입사일 선택 닫기">닫기</button>
  <h2 id="onboarding-date-picker-title">입사일 선택</h2>
- <p id="onboarding-date-picker-help" class="onboarding-sr-only">연도, 월, 일을 위아래로 쓸어 선택하세요. 키보드 방향키로도 변경할 수 있어요.</p>
+ <p id="onboarding-date-picker-help" class="onboarding-sr-only">위아래로 넘겨 날짜를 골라 주세요. 키보드 방향키로도 바꿀 수 있어요.</p>
  <div class="onboarding-date-wheels" data-sheet-scroll>
   <div class="onboarding-date-wheel" data-date-part="year" role="spinbutton" tabindex="0" aria-label="연도" aria-valuemin="1900" aria-valuemax="2026" aria-valuenow="2026"></div>
   <div class="onboarding-date-wheel" data-date-part="month" role="spinbutton" tabindex="0" aria-label="월" aria-valuemin="1" aria-valuemax="12" aria-valuenow="1"></div>
@@ -3115,27 +3115,27 @@
 </dialog>
 <script src="./onboarding-date-picker.js?v=1"></script>
 <script src="./onboarding-flow-motion.js?v=reference-motion-1"></script>
-<script src="./onboarding-story.js?v=2"></script>
-<script src="./onboarding-allowances.js?v=allowance-steps-1"></script>
-<script src="./onboarding-wage.js?v=allowance-picker-2"></script>
-<script src="./onboarding.js?v=drive-1"></script>
+<script src="./onboarding-story.js?v=app-copy-20261107"></script>
+<script src="./onboarding-allowances.js?v=app-copy-20261107"></script>
+<script src="./onboarding-wage.js?v=app-copy-20261107"></script>
+<script src="./onboarding.js?v=app-copy-20261107"></script>
 <script src="./payslip-alert.js?v=3"></script>
 <script src="./memo-editor.js?v=13"></script>
 <script src="./day-editor-navigation.js?v=8"></script>
 <script src="./day-scheduler-core.js?v=3"></script>
-<script src="./day-scheduler.js?v=7"></script>
+<script src="./day-scheduler.js?v=app-copy-20261107"></script>
 <script src="./sheet-interactions.js?v=surface-motion-2"></script>
 <script src="./info-sheets.js?v=1"></script>
 <script src="./day-memos-core.js?v=1"></script>
 <script src="./day-entry-core.js?v=1"></script>
-<script src="./day-editor-designs.js?v=holiday-pay-11"></script>
-<script src="./memo-composer.js?v=surface-motion-2"></script>
+<script src="./day-editor-designs.js?v=app-copy-20261107"></script>
+<script src="./memo-composer.js?v=app-copy-20261107"></script>
 <script src="./settings-options.js?v=2"></script>
-<script src="./wage-import-ui.js?v=paired-imports-2"></script>
-<script src="./holiday-work-pay.js?v=1"></script>
-<script src="./app-i18n-data.js?v=friendly-copy-4"></script>
+<script src="./wage-import-ui.js?v=app-copy-20261107"></script>
+<script src="./holiday-work-pay.js?v=app-copy-20261107"></script>
+<script src="./app-i18n-data.js?v=app-copy-20261107"></script>
 <script src="./app-i18n-zh.js?v=friendly-copy-4"></script>
-<script src="./app-i18n.js?v=friendly-copy-10"></script>
+<script src="./app-i18n.js?v=app-copy-20261107"></script>
 <script src="./app-currency.js?v=2"></script>
 </body>
 </html>
