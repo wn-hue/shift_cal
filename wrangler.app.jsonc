@@ -6,5 +6,6 @@
  "compatibility_date":"2026-11-04",
  "workers_dev":true,
  "routes":[{"pattern":"20261104.xyz","custom_domain":true,"zone_id":"ed713843a1f0097623f7d02fbe1b9698"}],
+ "triggers":{"crons":["*/5 * * * *"]},
  "assets":{"directory":".cloudflare-assets","binding":"ASSETS","run_worker_first":true}
 }
