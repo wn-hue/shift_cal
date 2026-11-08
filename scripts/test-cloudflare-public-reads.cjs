@@ -57,8 +57,12 @@ async function main() {
         if (corrupt) signature[0] ^= 1;
         return new Request(PUBLISH_URL, {headers: {Authorization: 'Bearer ' + message + '.' + signature.toString('base64url')}});
     };
-    const options = {fetcher: async () => Response.json({keys: [{...publicKey.export({format: 'jwk'}), kid: 'test-key', use: 'sig'}]})};
+    const options = {fetcher: async (_url, {redirect}) => {
+        assert.equal(redirect, 'manual');
+        return Response.json({keys: [{...publicKey.export({format: 'jwk'}), kid: 'test-key', use: 'sig'}]});
+    }};
     assert.equal(await isPublisher(request(), options), true);
+    await assert.rejects(() => isPublisher(request(), {fetcher: async () => Response.redirect('https://outside.invalid')}), /MENU_PUBLISHER_KEYS_HTTP_302/);
     assert.equal(await isPublisher(request({}, true), options), false);
     assert.equal(await isPublisher(request({aud: 'https://outside.invalid'}), options), false);
     assert.equal(await isPublisher(request({workflow_ref: 'wn-hue/shift_cal/.github/workflows/other.yml@refs/heads/main'}), options), false);

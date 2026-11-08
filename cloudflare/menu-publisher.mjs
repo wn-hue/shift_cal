@@ -38,9 +38,9 @@ export async function isPublisher(request, {fetcher = fetch, now = Date.now()} =
         !Number.isFinite(claims.exp) || !Number.isFinite(claims.nbf) || claims.exp <= time ||
         claims.nbf > time + 30 || claims.exp - claims.nbf > 900) return false;
     const response = await fetcher(ISSUER + '/.well-known/jwks', {
-        redirect: 'error', signal: AbortSignal.timeout(5000)
+        redirect: 'manual', signal: AbortSignal.timeout(5000)
     });
-    if (!response.ok) throw new Error('MENU_PUBLISHER_KEYS');
+    if (!response.ok) throw new Error('MENU_PUBLISHER_KEYS_HTTP_' + response.status);
     const {keys} = await response.json();
     const jwk = keys.find(key => key.kid === header.kid && key.kty === 'RSA' && key.use === 'sig');
     if (!jwk) return false;
@@ -94,8 +94,9 @@ export async function publishMenu(request, env, ctx) {
             ctx.waitUntil(weekly.saveMenu(menu, store).catch(() => console.error('meal_vote_snapshot_failed')));
         }
         return reply(200, {dates: snapshot.menus.length, updated: !!result.meta.changes});
-    } catch {
-        console.error('prepared_menu_publication_failed');
+    } catch (error) {
+        console.error('prepared_menu_publication_failed',
+            /^MENU_PUBLISHER_KEYS_HTTP_\d+$/.test(error.message) ? error.message : error.name);
         return reply(503, {error: 'MENU_PUBLISHER_UNAVAILABLE'});
     }
 }
