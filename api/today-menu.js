@@ -43,8 +43,8 @@ async function downloadPdf(fetcher = fetch) {
     return parsePdf(buffer);
 }
 
-async function loadPdf() {
-    if (cached && Date.now() - cached.time < CACHE_MS) return cached;
+async function loadPdf(maxAge = CACHE_MS) {
+    if (cached && Date.now() - cached.time < maxAge) return cached;
     if (!pending) {
         pending = downloadPdf().then(data => {
             cached = {data, menus:extractSchedule(data), time:Date.now()};
@@ -55,6 +55,7 @@ async function loadPdf() {
 }
 
 async function handler(req, res) {
+    if (req.query?.feature === "keywords") return require("../lib/meal-keywords-handler")(req, res);
     res.setHeader('Cache-Control','no-store');
     res.setHeader('X-Content-Type-Options','nosniff');
     if (req.method !== 'GET') {res.setHeader('Allow','GET'); return res.status(405).json({status:'error', message:'GET 요청만 지원합니다.'});}
@@ -80,3 +81,5 @@ async function handler(req, res) {
 module.exports = handler;
 module.exports.parsePdf = parsePdf;
 module.exports.downloadPdf = downloadPdf;
+
+module.exports.loadPdf = loadPdf;
