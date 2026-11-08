@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "work-routine-public-reads",
+  "account_id": "32d1066203eb6fac428b7ddcb116eb58",
+  "main": "cloudflare/public-reads-worker.mjs",
+  "compatibility_date": "2026-11-04",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    {"pattern": "20261104.xyz/api/today-menu*", "zone_id": "ed713843a1f0097623f7d02fbe1b9698"},
+    {"pattern": "20261104.xyz/api/bus-places*", "zone_id": "ed713843a1f0097623f7d02fbe1b9698"},
+    {"pattern": "20261104.xyz/api/currency-rates*", "zone_id": "ed713843a1f0097623f7d02fbe1b9698"}
+  ],
+  "services": [{"binding": "APP", "service": "work-routine"}],
+  "d1_databases": [
+    {"binding": "STATE", "database_name": "work-routine-data", "database_id": "04df2bbb-6df2-4b28-9e20-aac5a867fa07"}
+  ],
+  "alias": {"@vercel/blob": "./cloudflare/blob-adapter.mjs"}
+}

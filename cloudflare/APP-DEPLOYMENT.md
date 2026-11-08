@@ -14,6 +14,14 @@ Existing Cloudflare address retained: https://work-routine.shift-cal.workers.dev
 
 For a cutover, keep the new bridge gated until the original production API has stopped accepting Blob writes. Drain in-flight writes, export and verify a fresh snapshot, then insert the activation row only after the D1 paths, bodies and versions match. During the gate, reads can use Blob and writes return a retryable error. After activation, a missing record or unavailable D1 returns the corresponding error. Restore only from a reconciled snapshot that preserves newer writes and account deletions.
 
+## Public reads at the custom domain
+
+`work-routine-public-reads` runs in front of `work-routine` on the three routes in `wrangler.public-reads.jsonc`. It serves the prepared meal menu from the active D1 database and handles public place searches and exchange rates. The existing app Worker handles other methods and queries, including meal-keyword actions, and takes over if a dependency fails or the prepared menu is more than two hours old.
+
+The GitHub Actions workflow checks the fixed menu PDF source hourly, reuses the parsed menu when the source returns HTTP 304, and publishes a single versioned snapshot in D1. Only the designated workflow on the default branch can publish. Vote history continues to use the existing record and its optimistic write protection.
+
+Run `node scripts/test-cloudflare-public-reads.cjs` before deploying with `wrangler deploy --config wrangler.public-reads.jsonc`. Confirm that each migrated read returns `X-Work-Routine-Backend: cloudflare` on `20261104.xyz`. To roll back, remove only the three routes for `work-routine-public-reads` and pause the menu workflow. Leave the custom domain and D1 records in place.
+
 ## Existing users
 
 The custom domain first shows a public app introduction with privacy/terms links; users choose to start or import before normal app initialization can create default settings. The existing workers.dev origin continues to open the migration screen on a first visit. Only the existing Vercel origin is offered for data import; no users used the intermediate workers.dev address before the custom domain, so there is no workers.dev data import choice. Users can copy existing Vercel data in a separate window, or save a JSON file from the original app and import it at the new address. Source data is never deleted. Import preserves existing destination keys unless the user explicitly selects replacement, and rolls back local writes on failure.
