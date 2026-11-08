@@ -49,6 +49,24 @@ async function main() {
   await call('POST',first.cookie,body);const second=await call('GET');await call('POST',second.cookie,body);
   assert.equal(Object.keys((await store.read()).items).length,1);
   assert.equal((await call('GET',first.cookie)).data.enabled,false);
+  const selectedMeals = ['중식', '석식', '야식'];
+  const workWindow = {start:'2026-11-07',days:'N0D' + '0'.repeat(88)};
+  const work = {...body,meals:selectedMeals,mode:'work',workWindow};
+  assert.equal((await call('POST',second.cookie,{...work,workWindow:{...workWindow,start:'2026-11-31'}})).status,400);
+  assert.equal((await call('POST',second.cookie,{...work,workWindow:undefined})).status,400);
+  assert.equal((await call('POST',second.cookie,work)).data.mode,'work');
+  const savedWork = Object.values((await store.read()).items)[0];
+  assert.equal(core.eligible(savedWork,{date:'2026-11-07',meal:'야식'}),true);
+  assert.equal(core.eligible(savedWork,{date:'2026-11-07',meal:'석식'}),false);
+  assert.equal(core.eligible(savedWork,{date:'2026-11-08',meal:'중식'}),false);
+  assert.equal(core.eligible(savedWork,{date:'2026-11-09',meal:'중식'}),true);
+  assert.equal(core.eligible(savedWork,{date:'2026-11-09',meal:'석식'}),true);
+  assert.equal(core.eligible(savedWork,{date:'2026-11-09',meal:'야식'}),false);
+  assert.equal(core.eligible(savedWork,{date:'2026-11-06',meal:'야식'}),false);
+  await send();assert.equal(sent.length,1,'work mode suppresses an actual off-day dispatch');
+  await call('POST',second.cookie,{...work,mode:'always'});
+  assert.equal(Object.values((await store.read()).items)[0].workWindow,undefined);
+  await send();assert.equal(sent.length,2,'always mode still sends on the same off day');
   // Deleted subscriptions, invalid APNs tokens, expired meal windows, and retries.
   const retryStore=memory();await retryStore.write(core.PATH,{items:{u:{subscription:token,keywords:['돈까스'],meals:['중식'],updatedAt:now}}});
   let attempts=0;const event=core.clock(now);
