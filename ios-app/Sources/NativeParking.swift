@@ -62,6 +62,11 @@ struct NativeParkingSnapshot: Decodable {
     let subscribed: Bool
     let subscriptionKind: String?
     let nativeAvailable: Bool?
+    func updatingSubscription(_ enabled: Bool, available: Bool?) -> Self {
+        Self(status: status, open: open, mine: mine, counts: counts, updatedAt: updatedAt,
+             lastReport: lastReport, subscribed: enabled, subscriptionKind: enabled ? "apns" : nil,
+             nativeAvailable: available ?? nativeAvailable)
+    }
     static func decode(_ response: [String: Any]) throws -> NativeParkingSnapshot {
         let value = try nativeServiceDecode(Self.self, response)
         guard ["free", "busy", "full", "unknown"].contains(value.status), value.updatedAt.isFinite, value.updatedAt > 0,
@@ -111,12 +116,14 @@ struct NativeParkingSnapshot: Decodable {
     @Published var message: String?
     @Published var permissionAllowed = true
     private let location = NativeParkingLocation()
+    private var lastRenewal: Date?
     @Published private(set) var resuming = false
     var wanted: Bool { UserDefaults.standard.bool(forKey: Self.preference) }
     var participating: Bool { snapshot?.subscribed == true && snapshot?.subscriptionKind == "apns" && permissionAllowed }
     var available: Bool { snapshot?.nativeAvailable == true }
-    func load() async {
+    func load(force: Bool = false) async {
         guard !loading, !changing, !reporting, !resuming else { return }
+        if !force, let snapshot, (0..<30).contains(Date().timeIntervalSince1970 - snapshot.updatedAt / 1000) { return }
         loading = true; error = nil; defer { loading = false }
         do { snapshot = try NativeParkingSnapshot.decode(await NativeAPI.shared.request(path: "/api/parking")) }
         catch { self.error = error.localizedDescription }
@@ -125,40 +132,52 @@ struct NativeParkingSnapshot: Decodable {
         guard !changing, !reporting, !resuming, !loading else { return }
         changing = true; error = nil; message = nil; defer { changing = false }
         do {
-            // A GET installs the anonymous first-party cookie required for writes.
-            snapshot = try NativeParkingSnapshot.decode(await NativeAPI.shared.request(path: "/api/parking"))
             if enabled {
                 guard available else { throw NativeFailure("iPhone 만차 알림을 준비 중이에요. 지금은 주차 현황을 확인할 수 있어요.") }
                 try await subscribe(requestPermission: true)
                 message = "제보에 참여하고 만차 알림을 받아요."
             } else {
-                _ = try await NativeAPI.shared.request(path: "/api/parking", method: "POST", body: ["action": "unsubscribe"])
+                try await changeSubscription(["action": "unsubscribe"], enabled: false)
                 UserDefaults.standard.set(false, forKey: Self.preference)
                 message = "제보 참여와 만차 알림을 껐어요."
             }
-            snapshot = try NativeParkingSnapshot.decode(await NativeAPI.shared.request(path: "/api/parking"))
         } catch { self.error = error.localizedDescription }
+    }
+    private func changeSubscription(_ body: [String: Any], enabled: Bool) async throws {
+        func send() async throws -> [String: Any] {
+            try await NativeAPI.shared.request(path: "/api/parking", method: "POST", body: body)
+        }
+        let result: [String: Any]
+        do { result = try await send() }
+        catch let failure as NativeHTTPError where failure.status == 401 {
+            // A fresh or expired cookie only needs a lightweight identity request.
+            _ = try await NativeAPI.shared.request(path: "/api/parking?bootstrap=1")
+            result = try await send()
+        }
+        guard result["subscribed"] as? Bool == enabled else {
+            throw NativeFailure("알림 연결을 확인하지 못했어요. 다시 시도해 주세요.")
+        }
+        snapshot = snapshot?.updatingSubscription(enabled, available: result["nativeAvailable"] as? Bool)
     }
     private func subscribe(requestPermission: Bool) async throws {
         let token = try await NativeParkingPush.shared.register(requestPermission: requestPermission)
         guard let environment = NativeParkingPush.environment else { throw NativeFailure("이 앱의 알림 연결을 준비 중이에요.") }
-        _ = try await NativeAPI.shared.request(path: "/api/parking", method: "POST", body: ["action": "native-subscribe", "subscription": ["kind": "apns", "token": token, "environment": environment]])
+        try await changeSubscription(["action": "native-subscribe", "subscription": ["kind": "apns", "token": token, "environment": environment]], enabled: true)
         UserDefaults.standard.set(true, forKey: Self.preference); permissionAllowed = true
+        lastRenewal = Date()
     }
-    // Re-register on launch/foreground to keep changing APNs tokens current.
-    // No periodic location requests or background GPS tracking are used.
+    // Check APNs on launch and at most daily while the process stays alive.
     func resumeParticipation() async {
         guard wanted, !resuming, !changing, !reporting, !loading else { return }
         resuming = true; defer { resuming = false }
+        let settings = await UNUserNotificationCenter.current().notificationSettings()
+        permissionAllowed = [.authorized, .provisional].contains(settings.authorizationStatus)
+        if permissionAllowed, let lastRenewal, (0..<86400).contains(Date().timeIntervalSince(lastRenewal)) { return }
         do {
-            snapshot = try NativeParkingSnapshot.decode(await NativeAPI.shared.request(path: "/api/parking"))
-            let settings = await UNUserNotificationCenter.current().notificationSettings()
-            permissionAllowed = [.authorized, .provisional].contains(settings.authorizationStatus)
             if !permissionAllowed {
-                _ = try await NativeAPI.shared.request(path: "/api/parking", method: "POST", body: ["action": "unsubscribe"])
+                try await changeSubscription(["action": "unsubscribe"], enabled: false)
                 UserDefaults.standard.set(false, forKey: Self.preference)
-                snapshot = try NativeParkingSnapshot.decode(await NativeAPI.shared.request(path: "/api/parking"))
-            } else if available { try await subscribe(requestPermission: false); snapshot = try NativeParkingSnapshot.decode(await NativeAPI.shared.request(path: "/api/parking")) }
+            } else { try await subscribe(requestPermission: false) }
         } catch { self.error = error.localizedDescription }
     }
     func report(_ vote: String, group: String) async {
@@ -209,10 +228,13 @@ struct NativeParkingView: View {
                 }
                 if let error = model.error { Label(LocalizedStringKey(error), systemImage: "exclamationmark.circle").font(.subheadline).foregroundStyle(.red).frame(maxWidth: .infinity, alignment: .leading) }
                 if let message = model.message { Label(LocalizedStringKey(message), systemImage: "checkmark.circle.fill").font(.subheadline).foregroundStyle(.green).frame(maxWidth: .infinity, alignment: .leading) }
-                Button { Task { await model.load() } } label: { Label("현황 새로고침", systemImage: "arrow.clockwise").frame(maxWidth: .infinity) }.buttonStyle(.borderedProminent).disabled(model.loading)
+                Button { Task { await model.load(force: true) } } label: { Label("현황 새로고침", systemImage: "arrow.clockwise").frame(maxWidth: .infinity) }.buttonStyle(.borderedProminent).disabled(model.loading)
             }.padding(16)
         }.background(Color(uiColor: .systemGroupedBackground)).navigationTitle("주차장")
-            .task { await model.load(); await model.resumeParticipation() }.refreshable { await model.load() }
+            .onChange(of: model.resuming) { _, active in
+                if !active && model.snapshot == nil { Task { await model.load() } }
+            }
+            .task { await model.load(); await model.resumeParticipation() }.refreshable { await model.load(force: true) }
     }
     private func count(_ label: String, _ value: Int, _ tint: Color) -> some View { VStack(spacing: 5) { Text("\(value)").font(.title2.bold()); Text(LocalizedStringKey(label)).font(.caption) }.foregroundStyle(tint).frame(maxWidth: .infinity).padding(.vertical, 10).background(tint.opacity(0.08), in: RoundedRectangle(cornerRadius: 14)) }
     private func voteButton(_ vote: String, _ title: String, _ tint: Color) -> some View {

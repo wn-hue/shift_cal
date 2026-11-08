@@ -1,6 +1,7 @@
 'use strict';
 const crypto=require('node:crypto');
-const {get,put,del,head,BlobNotFoundError}=require('@vercel/blob');
+const {BlobNotFoundError}=require('@vercel/blob');
+const {get,put,del,head,configured}=require('../lib/object-storage');
 const C=require('../account-data-core.js');
 const AccountErasure=require('../lib/account-erasure.js');
 const {notification}=require('../lib/apple-notification.js');
@@ -10,7 +11,7 @@ const nativeAuth=require('../lib/native-auth.js');
 const {seal,unseal,config:googleConfig}=require('./google-calendar.js')._test;
 const COOKIE='__Host-shiftcal-apple',FLOW='__Host-shiftcal-apple-flow';
 const APPLE_PATH='/api/apple-account';
-function config(){const env=process.env;return {...googleConfig(),client:env.APPLE_CLIENT_ID,team:env.APPLE_TEAM_ID,keyId:env.APPLE_KEY_ID,key:env.APPLE_PRIVATE_KEY?.replace(/\\n/g,'\n'),missing:['APPLE_CLIENT_ID','APPLE_TEAM_ID','APPLE_KEY_ID','APPLE_PRIVATE_KEY','GOOGLE_CALENDAR_SESSION_SECRET','APP_URL','BLOB_READ_WRITE_TOKEN'].filter(k=>!env[k]&&!(k==='BLOB_READ_WRITE_TOKEN'&&env.SHIFT_STORAGE_BACKEND==='d1')).concat(googleConfig().missing.filter(k=>k.startsWith('APP_URL')||k.startsWith('GOOGLE_CALENDAR_SESSION_SECRET')))};}
+function config(){const env=process.env;return {...googleConfig(),client:env.APPLE_CLIENT_ID,team:env.APPLE_TEAM_ID,keyId:env.APPLE_KEY_ID,key:env.APPLE_PRIVATE_KEY?.replace(/\\n/g,'\n'),missing:['APPLE_CLIENT_ID','APPLE_TEAM_ID','APPLE_KEY_ID','APPLE_PRIVATE_KEY','GOOGLE_CALENDAR_SESSION_SECRET','APP_URL'].filter(k=>!env[k]).concat(configured()?[]:['BLOB_READ_WRITE_TOKEN'],googleConfig().missing.filter(k=>k.startsWith('APP_URL')||k.startsWith('GOOGLE_CALENDAR_SESSION_SECRET')))};}
 function cookie(req,name,secret){const value=(req.headers.cookie||'').split(';').map(x=>x.trim()).find(x=>x.startsWith(name+'='))?.slice(name.length+1);return secret?unseal(value,secret):null;}
 function session(req){const s=cookie(req,COOKIE,process.env.GOOGLE_CALENDAR_SESSION_SECRET);return s?.provider==='apple'?s:null;}
 function setCookie(res,name,value,age,sameSite='Lax'){const old=res.getHeader('Set-Cookie')||[];res.setHeader('Set-Cookie',[...(Array.isArray(old)?old:[old]),`${name}=${value}; Path=/; Max-Age=${age}; HttpOnly; Secure; SameSite=${sameSite}`]);}

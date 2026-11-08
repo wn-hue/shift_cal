@@ -24,10 +24,13 @@ async function request(body){if(state.busy)return;const date=today();if(state.da
 const weekCard=node('details','meal-weekly');const weekSummary=node('summary','','지난주 식단 평가');weekCard.append(weekSummary);const weekBody=node('section','meal-weekly-body');weekCard.append(weekBody);document.querySelector('#view-menu .meal-date-card').after(weekCard);weekCard.hidden=true;
 function renderWeekly(report){if(!report||!/^\d{4}-\d{2}-\d{2}$/.test(report.week)||!Array.isArray(report.mostLiked)||!Array.isArray(report.mostDisliked))return;weekCard.hidden=false;weekSummary.textContent='식단 평가 모아보기';weekBody.replaceChildren();weekBody.append(node('p','meal-rating-note','지난주 식단 평가 · '+report.start.slice(5).replace('-','.')+'~'+report.end.slice(5).replace('-','.')));const entries=[['👍 좋아요 1위',report.mostLiked],['👎 싫어요 1위',report.mostDisliked]];for(const[label,rows]of entries){const section=node('section','meal-weekly-rank');section.append(node('h3','',label+(rows.length>1?' · 공동 1위 '+rows.length+'개':'')));if(!rows.length)section.append(node('p','','집계된 '+(label.startsWith('👍')?'좋아요':'싫어요')+' 표가 없어요.'));for(const r of rows){const item=node('article','meal-weekly-item');item.append(node('strong','',r.date+' · '+r.meal),node('p','meal-weekly-menu',r.items?.length?r.items.join(' · '):'이날 식단 이름이 아직 저장되지 않았어요.'),node('p','meal-weekly-votes','좋아요 '+r.up+' · 싫어요 '+r.down));section.append(item);}weekBody.append(section);}}
 function vote(meal,vote){if(state.date!==today()){request();return;}request({meal,vote});}
-function attach(){if(!cards().length)return;paint();if(!state.busy&&(!state.totals||state.date!==today()))request();}
+function loadWhenVisible(){
+ if(document.hidden||document.body.dataset.view!=='menu'||!cards().length)return;
+ if(state.date!==today()||Date.now()-lastRead>=300000)request();
+}
+function attach(){if(!cards().length)return;paint();loadWhenVisible();}
 new MutationObserver(attach).observe(root,{childList:true});
-new MutationObserver(()=>{if(document.body.dataset.view==='menu'){attach();if(Date.now()-lastRead>60000)request();}}).observe(document.body,{attributes:true,attributeFilter:['data-view']});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&document.body.dataset.view==='menu'&&cards().length)request();});
-setInterval(()=>{if(!document.hidden&&document.body.dataset.view==='menu'&&cards().length&&Date.now()-lastRead>60000)request();},60000);
+new MutationObserver(loadWhenVisible).observe(document.body,{attributes:true,attributeFilter:['data-view']});
+document.addEventListener('visibilitychange',loadWhenVisible);
 attach();
 })();

@@ -8,9 +8,11 @@ Existing Cloudflare address retained: https://work-routine.shift-cal.workers.dev
 
 - Cloudflare Worker `work-routine` serves the app and public assets using `wrangler.app.jsonc`.
 - The Worker forwards the explicit API allowlist to the existing Vercel production service. It validates the browser Origin before forwarding mutations, preserves HttpOnly cookies and CSRF checks, and disables caching of API responses.
-- **Vercel remains the active account/data service.** Its source data, environment secrets, production URL and session secret are retained. Both app addresses therefore use the same live server records, rather than diverging databases.
-- The D1 database recorded in DATA-COPY-RESULT.json is a verified snapshot, not the active writer in this release. Do not point a production Worker at that older snapshot without a fresh, verified cutover.
-- This release deploys the app to Cloudflare; it does not remove the Vercel backend dependency.
+- Vercel runs the existing API handlers and retains the login, push and session credentials. Its handlers read and write the same private D1 database for the iPhone app, PWA and legacy domain.
+- `wrangler.d1.jsonc` deploys the dedicated D1 bridge. The production API connects over HTTPS with `SHIFT_D1_BRIDGE_URL` and the server-only `SHIFT_D1_BRIDGE_SECRET`. Every bridge operation is authenticated and excluded from caches.
+- The D1 database recorded in DATA-COPY-RESULT.json is the historical copy. The production `work-routine-data` database is separate. Vercel Blob is retained as a migration backup.
+
+For a cutover, keep the new bridge gated until the original production API has stopped accepting Blob writes. Drain in-flight writes, export and verify a fresh snapshot, then insert the activation row only after the D1 paths, bodies and versions match. During the gate, reads can use Blob and writes return a retryable error. After activation, a missing record or unavailable D1 returns the corresponding error. Restore only from a reconciled snapshot that preserves newer writes and account deletions.
 
 ## Existing users
 

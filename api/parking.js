@@ -15,7 +15,11 @@ function handlerFor(store, opts = {}) {
             if (!['GET', 'POST'].includes(req.method)) return reply(405, {message: '지원하지 않는 요청입니다.'});
             const owner = core.identity(req, res, secret);
             if (!owner) return reply(401, {message: '주차장 화면을 새로고침해 주세요.'});
-            let record;
+            const publicKey = process.env.PARKING_VAPID_PUBLIC_KEY || null;
+            if (req.method === 'GET' && new URL(req.url || '/', 'https://app.invalid').searchParams.get('bootstrap') === '1') {
+                return reply(200, {ok: true, nativeAvailable, publicKey});
+            }
+            let record, registry;
             if (req.method === 'POST') {
                 if (!origin || req.headers.origin !== origin || !req.headers['content-type']?.startsWith('application/json')) return reply(403, {message: '앱에서 투표해 주세요.'});
                 let body = req.body;
@@ -32,6 +36,10 @@ function handlerFor(store, opts = {}) {
                         subscription = {endpoint: body.subscription.endpoint, keys: {p256dh: body.subscription.keys.p256dh, auth: body.subscription.keys.auth}};
                     }
                     await update(store, push.PATH, old => {
+                        const previous = old?.items?.[owner];
+                        if (body.action === 'unsubscribe' && !previous) return null;
+                        const sameTarget = JSON.stringify(previous?.subscription) === JSON.stringify(subscription);
+                        if (subscription && sameTarget && now >= previous.updatedAt && now - previous.updatedAt < 86400000) return null;
                         const items = Object.fromEntries(Object.entries(old?.items || {}).filter(([, item]) => active(item, now)));
                         if (body.action === 'unsubscribe') delete items[owner];
                         else {
@@ -40,7 +48,6 @@ function handlerFor(store, opts = {}) {
                                 if (id !== owner && item.subscription?.kind === 'apns' && item.subscription.token === subscription.token && item.subscription.environment === subscription.environment) delete items[id];
                             }
                             if (!items[owner] && Object.keys(items).length >= 500) throw Error('SUBSCRIPTION_LIMIT');
-                            const previous = items[owner], sameTarget = JSON.stringify(previous?.subscription) === JSON.stringify(subscription);
                             // Foreground renewals must not cancel an in-flight delivery lease.
                             items[owner] = {...(sameTarget ? previous : {}), subscription, updatedAt: now, lastEvent: previous?.lastEvent || null};
                         }
@@ -52,7 +59,8 @@ function handlerFor(store, opts = {}) {
                 if (!['free', 'busy', 'full', null].includes(body.vote) || !['A', 'B', 'C'].includes(body.group)) return reply(400, {message: '교대조와 주차 상태를 확인해 주세요.'});
                 const locationError = core.locationError(body.location, now);
                 if (locationError) return reply(403, {message: locationError});
-                const participant = (await store.read(push.PATH))?.items?.[owner];
+                registry = await store.read(push.PATH);
+                const participant = registry?.items?.[owner];
                 if (!active(participant, now) || (participant.subscription?.kind === 'apns' && !nativeAvailable)) return reply(403, {message: '제보 참여와 만차 알림을 먼저 켜 주세요.'});
                 record = await update(store, PATH, old => {
                     const date = core.clock(now).date, next = old?.date === date ? {date, votes: {...old.votes}, alert: old.alert || null} : {date, votes: {}, alert: null};
@@ -63,15 +71,16 @@ function handlerFor(store, opts = {}) {
                     if (core.summary(next, voter, now).status === 'full' && !next.alert) next.alert = {id: date, at: now};
                     return next;
                 });
-            } else record = await store.read(PATH);
+            } else [record, registry] = await Promise.all([store.read(PATH), store.read(push.PATH)]);
             const voter = require('node:crypto').createHash('sha256').update(core.clock(now).date + owner).digest('hex');
-            const result = core.summary(record, voter, now), registry = await store.read(push.PATH), participant = registry?.items?.[owner];
-            if (result.open && result.status === 'full' && record?.alert && now - record.alert.at < 600000 && (process.env.PARKING_VAPID_PRIVATE_KEY || nativeAvailable)) {
+            const result = core.summary(record, voter, now), participant = registry?.items?.[owner];
+            if (result.open && result.status === 'full' && record?.alert && now - record.alert.at < 600000 &&
+                (process.env.PARKING_VAPID_PRIVATE_KEY || nativeAvailable) && push.hasPending(registry, record.alert, now)) {
                 const job = push.dispatch(store, record.alert, opts.send || push.send, opts.now || Date.now).catch(() => {});
                 if (opts.defer) opts.defer(job); else require('@vercel/functions').waitUntil(job);
             }
             return reply(200, {...result, subscribed: active(participant, now), subscriptionKind: active(participant, now) ? participant.subscription?.kind === 'apns' ? 'apns' : 'web' : null,
-                nativeAvailable, publicKey: process.env.PARKING_VAPID_PUBLIC_KEY || null});
+                nativeAvailable, publicKey});
         } catch { return reply(503, {message: '주차장 정보를 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.'}); }
     };
 }
