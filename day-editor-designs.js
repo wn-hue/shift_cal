@@ -75,18 +75,22 @@
  attendanceButton.setAttribute('aria-haspopup', 'dialog');
  attendanceButton.setAttribute('aria-controls', 'attendance-picker');
  const picker = make('dialog', 'attendance-picker', `
-  <header><h2 id="attendance-picker-title">근태 · 휴가</h2><button type="button" aria-label="닫기">×</button></header>
-  <div class="attendance-picker-meta"><p id="attendance-picker-balance"></p><button type="button" id="attendance-picker-settings">연차 설정</button></div>
-  <div class="attendance-unpaid shift-scroll" role="group" aria-label="무급 근태 선택"></div>
-  <p id="attendance-picker-note" class="attendance-picker-note" hidden></p>
-  <p id="attendance-picker-error" class="design-save-error" role="alert" hidden></p>`);
+  <header><h2 id="attendance-picker-title">근태 · 휴가</h2><button type="button" aria-label="뒤로" autofocus>×</button></header>
+  <div class="attendance-picker-content">
+   <div class="attendance-picker-meta"><p id="attendance-picker-balance"></p><button type="button" id="attendance-picker-settings">연차 설정</button></div>
+   <div class="attendance-unpaid shift-scroll" role="group" aria-label="무급 근태 선택"></div>
+   <p id="attendance-picker-note" class="attendance-picker-note" hidden></p>
+   <p id="attendance-picker-error" class="design-save-error" role="alert" hidden></p>
+  </div>`);
  picker.id = 'attendance-picker';
  picker.setAttribute('aria-labelledby', 'attendance-picker-title');
  const unpaid = picker.querySelector('.attendance-unpaid');
  unpaid.before(attendance);
  const memoLink = make('button', 'design-memo-link');
  memoLink.type = 'button';
- main.after(extra, noExtras, attendanceButton, picker, memoLink);
+ main.after(extra, noExtras, attendanceButton, memoLink);
+ overlay.append(picker);
+ window.AppSheets?.attach(picker);
  for (const button of [...main.querySelectorAll('.opt-btn'), ...attendance.querySelectorAll('.opt-btn')]) {
   const type = button.dataset.override;
   const label = make('span', 'design-choice-label', labels[type]);
@@ -205,23 +209,38 @@
   content.scrollTop = 0;
   if (next === 'attendance') attendanceButton.click();
  }
- attendanceButton.onclick = () => {
-  if (attendanceButton.hidden || picker.open) return;
+ function canOpenAttendance() {
+  return overlay.classList.contains('active') && overlay.dataset.sheetClosing !== 'true' && !attendanceButton.hidden;
+ }
+ function openAttendance() {
+  if (!canOpenAttendance() || picker.open) return;
   clearErrors();
   update();
   picker.showModal();
- };
- $('attendance-picker-settings').onclick = () => {
-  picker.close();
-  $('leave-settings-dialog').addEventListener('close', () => {
-   if (overlay.classList.contains('active') && !attendanceButton.hidden) attendanceButton.click();
-  }, {once: true});
-  window.SettingsUI?.openLeave();
- };
+  picker.querySelector('.attendance-picker-content').scrollTop = 0;
+ }
+ attendanceButton.onclick = openAttendance;
  picker.querySelector('header button').onclick = () => picker.close();
- picker.addEventListener('click', event => {
-  if (event.target === picker) picker.close();
+ picker.addEventListener('close', () => {
+  if (!overlay.hasAttribute('data-attendance-settings') && canOpenAttendance()) attendanceButton.focus({preventScroll: true});
  });
+ $('attendance-picker-settings').onclick = () => {
+  if (!window.SettingsUI || overlay.hasAttribute('data-attendance-settings')) return;
+  const settings = $('leave-settings-dialog');
+  overlay.dataset.attendanceSettings = 'true';
+  picker.addEventListener('close', () => {
+   if (!canOpenAttendance()) {
+    delete overlay.dataset.attendanceSettings;
+    return;
+   }
+   settings.addEventListener('close', () => {
+    delete overlay.dataset.attendanceSettings;
+    openAttendance();
+   }, {once: true});
+   SettingsUI.openLeave();
+  }, {once: true});
+  picker.close();
+ };
 
  const switchTab = switchEditorTab;
  switchEditorTab = function(tab) {

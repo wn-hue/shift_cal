@@ -28,7 +28,7 @@
   const active=selectedType==='NO_OT'?base:selectedType.replace(/_NO_OT$/,'');
   const canShowAttendance=base!=='OFF'&&active!=='OFF';
   const {unpaidAvailable}=attendanceBalance(date);
-  for(const button of document.querySelectorAll('#work-panel .opt-btn, #attendance-picker .opt-btn')){
+  for(const button of document.querySelectorAll(':is(#work-panel,#attendance-picker) .opt-btn')){
    const type=button.dataset.override;
    if(!type)continue;
    let available;
@@ -46,7 +46,7 @@
    button.hidden=!available;
    button.disabled=!available;
   }
-  for(const row of document.querySelectorAll('#work-panel .shift-scroll')){
+  for(const row of document.querySelectorAll(':is(#work-panel,#attendance-picker) .shift-scroll')){
    const empty=![...row.querySelectorAll('button')].some(b=>!b.hidden);
    row.hidden=empty;
    if(row.previousElementSibling?.matches('h3'))row.previousElementSibling.hidden=empty;

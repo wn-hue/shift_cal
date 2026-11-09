@@ -30,6 +30,12 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design] > .over
   background: var(--ed-bg) !important;
   box-shadow: none;
 }
+#modal-override[data-editor-design]:is(:has(> #attendance-picker[open]), [data-attendance-settings]) {
+  background-color: transparent;
+}
+#modal-override[data-editor-design]:is(:has(> #attendance-picker[open]), [data-attendance-settings]) > .override-sheet {
+  visibility: hidden;
+}
 #modal-override[data-editor-design] :is([hidden], .override-header, .editor-tabs, #editor-swipe-space, .work-section-heading, #work-panel > .override-section-title) {
   display: none !important;
 }
@@ -226,7 +232,7 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-p
   font-size: 12px;
   line-height: 1.5;
 }
-body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .shift-scroll {
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] :is(#work-panel, #attendance-picker) .shift-scroll {
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -234,7 +240,7 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-p
   margin: 0;
   padding: 0;
 }
-body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .shift-scroll .opt-btn {
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] :is(#work-panel, #attendance-picker) .shift-scroll .opt-btn {
   display: flex;
   flex: 0 0 auto;
   flex-direction: row;
@@ -264,7 +270,7 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-p
   font-weight: inherit;
   overflow-wrap: anywhere;
 }
-body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .opt-btn:not([hidden]) ~ .opt-btn {
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] :is(#work-panel, #attendance-picker) .opt-btn:not([hidden]) ~ .opt-btn {
   border-top: 1px solid var(--ed-line) !important;
 }
 #modal-override[data-editor-design] .design-choice-icon {
@@ -291,7 +297,7 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-p
   height: 15px;
   vertical-align: middle;
 }
-body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .selection-check {
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] :is(#work-panel, #attendance-picker) .selection-check {
   position: static;
   display: grid;
   place-items: center;
@@ -312,7 +318,7 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-p
   height: 12px;
   visibility: hidden;
 }
-body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel [aria-pressed=true] .selection-check {
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] :is(#work-panel, #attendance-picker) [aria-pressed=true] .selection-check {
   border-color: #2879e8;
   background: #2879e8;
 }
@@ -351,21 +357,35 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-p
   color: #a92036;
   font-size: 13px;
 }
-#attendance-picker {
+body[data-pref-theme] #attendance-picker {
   position: fixed;
   inset: auto 0 0;
   box-sizing: border-box;
-  width: min(100%, 500px);
+  width: min(100%, 560px);
   max-width: 100%;
-  max-height: calc(100dvh - 24px);
+  max-height: min(82dvh, var(--sheet-limit, 82dvh)) !important;
   margin: 0 auto;
-  padding: 14px 16px max(18px, env(safe-area-inset-bottom));
+  padding: 0 16px max(16px, env(safe-area-inset-bottom)) !important;
   border: 0;
-  border-radius: 24px 24px 0 0;
+  border-radius: 28px 28px 0 0;
   background: var(--ed-bg);
   color: var(--ed-text);
-  overflow: auto;
+  overflow: hidden;
+}
+#attendance-picker[open] {
+  display: flex;
+  flex-direction: column;
+}
+body[data-pref-theme] #attendance-picker .sheet-dismiss-handle {
+  height: 22px;
+  min-height: 22px;
+  margin-bottom: 0;
+}
+.attendance-picker-content {
+  min-height: 0;
+  overflow-y: auto;
   overscroll-behavior: contain;
+  padding-bottom: 2px;
 }
 #attendance-picker:not([open]) { display: none !important; }
 #attendance-picker::backdrop { background: #0006; }
@@ -376,6 +396,7 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-p
   justify-content: space-between;
   gap: 8px;
 }
+#attendance-picker header { flex: none; }
 #attendance-picker h2 { margin: 0; font-size: 18px; }
 #attendance-picker header button,
 .attendance-picker-meta button {
@@ -390,16 +411,24 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-p
 }
 #attendance-picker header button { font-size: 22px; }
 .attendance-picker-meta { color: var(--ed-sub); font-size: 12px; }
-.attendance-picker-meta button { padding: 0 4px; color: var(--ed-blue); font-weight: 600; }
+.attendance-picker-meta button {
+  padding: 0 4px;
+  color: var(--ed-blue);
+  color: color-mix(in srgb, var(--ed-blue) 85%, var(--ed-text));
+  font-weight: 600;
+}
 .attendance-picker-meta p { margin: 0; }
 body[data-pref-theme] #modal-override#modal-override[data-editor-design] #attendance-picker .shift-scroll {
   border-radius: 14px;
   background: var(--ed-card);
   overflow: hidden;
 }
-body[data-pref-theme] #modal-override#modal-override[data-editor-design] #attendance-picker .opt-btn {
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #attendance-picker .shift-scroll .opt-btn {
   min-height: 46px;
   padding-inline: 14px;
+}
+body[data-pref-theme] #modal-override#modal-override[data-editor-design] #attendance-picker .opt-btn:not([aria-pressed=true]) .selection-check {
+  border-color: color-mix(in srgb, var(--ed-sub) 78%, var(--ed-card));
 }
 body[data-pref-theme] #modal-override#modal-override[data-editor-design] #attendance-picker .opt-btn[aria-pressed=true] {
   background: var(--ed-selected) !important;
