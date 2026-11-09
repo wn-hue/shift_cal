@@ -3,6 +3,63 @@ body[data-pref-theme][data-view=calendar]{--home-page:#f2f4f6;--home-card:#fff;b
 body[data-pref-theme=dark][data-view=calendar]{--home-page:#17191d;--home-card:#24272c}
 body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-view=calendar]{--home-page:var(--test-page);--home-card:var(--test-surface)}
 body[data-pref-theme][data-view=calendar] .reference-header{background:transparent!important}
+/* One clear glass surface for weather, sharing and statistics. */
+body[data-view=calendar] #header-calendar-actions:not([hidden]) {
+  --calendar-glass-fill: linear-gradient(rgb(255 255 255 / .28), rgb(255 255 255 / .10));
+  --calendar-glass-edge: rgb(255 255 255 / .65);
+  --calendar-glass-shadow: rgb(34 46 63 / .07);
+  --calendar-glass-press: rgb(68 84 108 / .09);
+  --calendar-weather-temp: 19px;
+  --calendar-weather-icon: 20px;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0;
+  padding: 0 2px;
+  border: 1px solid var(--calendar-glass-edge);
+  border-radius: 999px;
+  background: var(--calendar-glass-fill);
+  box-shadow: 0 1px 6px var(--calendar-glass-shadow);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  backdrop-filter: blur(14px) saturate(130%);
+}
+body[data-pref-theme=dark][data-view=calendar] #header-calendar-actions:not([hidden]) {
+  --calendar-glass-fill: linear-gradient(rgb(255 255 255 / .11), rgb(255 255 255 / .04));
+  --calendar-glass-edge: rgb(255 255 255 / .19);
+  --calendar-glass-shadow: transparent;
+  --calendar-glass-press: rgb(255 255 255 / .11);
+}
+body[data-pref-theme=test][data-view=calendar] #header-calendar-actions:not([hidden]) {
+  --calendar-weather-temp: 18px;
+  --calendar-weather-icon: 24px;
+}
+body:is([data-pref-theme=test1],[data-pref-theme=test3],[data-pref-theme=test4])[data-view=calendar] #header-calendar-actions:not([hidden]) {
+  --calendar-weather-temp: 16px;
+  --calendar-weather-icon: 20px;
+}
+body[data-view=calendar] #header-calendar-actions > .icon-button {
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+}
+body[data-view=calendar] #header-calendar-actions > .icon-button:not(.weather-trigger) { width: 44px; padding: 10px; }
+body[data-view=calendar] #header-calendar-actions > .icon-button:active { background: var(--calendar-glass-press); }
+@media (hover:hover) {
+  body[data-view=calendar] #header-calendar-actions > .icon-button:hover { background: var(--calendar-glass-press); }
+}
+body[data-pref-theme=dark][data-view=calendar] #header-calendar-actions > .icon-button { color: #ecedf1; }
+body[data-view=calendar] #header-calendar-actions #weather-temperature { font-size: var(--calendar-weather-temp); }
+body[data-view=calendar] #header-calendar-actions #weather-icon { font-size: var(--calendar-weather-icon); }
+@media (prefers-reduced-transparency: reduce) {
+  body[data-view=calendar] #header-calendar-actions:not([hidden]) {
+    background: var(--home-page);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
 body[data-pref-theme][data-view=calendar] #view-calendar{--surface:var(--home-card);padding-top:12px}
 body[data-pref-theme][data-view=calendar] #view-calendar .calendar-card{--calendar-row-count:5;display:flex;flex-direction:column;height:calc(100dvh - var(--calendar-card-top,calc(env(safe-area-inset-top) + var(--theme-header-height,76px) + 12px)) - var(--calendar-nav-space,calc(100px + env(safe-area-inset-bottom))));min-height:calc(var(--calendar-row-count)*88px + var(--calendar-weekday-space,36px) + var(--calendar-card-padding,20px));margin:0 0 8px;padding:8px 6px 12px;border:0!important;border-radius:24px;background:var(--home-card)!important;box-shadow:none;overflow:hidden}
 body[data-pref-theme][data-view=calendar] #view-calendar .calendar-card:has(.cal-grid>.cal-day:nth-child(36)){--calendar-row-count:6}
