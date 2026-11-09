@@ -6,7 +6,7 @@ const files=[...new Set([...execFileSync('git',['ls-files','-z'],{cwd:root,encod
 for(const file of files){
  const top=!file.includes('/')&&/\.(?:html|css|js|json|webmanifest|png|webp|jpg|jpeg|gif|svg|ico|shortcut|ics)$/i.test(file)&&!['package.json','package-lock.json','vercel.json'].includes(file);
  const asset=/^(?:assets|data|shortcuts)\//.test(file)&&!file.includes('..');
- if(!top&&!asset)continue;
+ if(!top&&!asset&&file!=='sitemap.xml')continue;
  const source=path.join(root,file);if(!fs.statSync(source).isFile())continue;
  const target=path.join(out,file);fs.mkdirSync(path.dirname(target),{recursive:true});fs.copyFileSync(source,target);count++;
 }

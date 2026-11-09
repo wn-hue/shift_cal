@@ -934,7 +934,7 @@
 <link rel="stylesheet" href="./commute-parking.css?v=1">
 <link rel="manifest" href="./manifest.webmanifest?v=work-routine-20261102">
 <link rel="stylesheet" href="./lost-found.css?v=1">
-<link rel="stylesheet" href="./bright-menu.css?v=1">
+<link rel="stylesheet" href="./bright-menu.css?v=guide-1">
 <link rel="stylesheet" href="./app-surfaces.css?v=6">
 <link rel="stylesheet" href="./screen-refinement.css?v=8">
 <link rel="stylesheet" href="./onboarding.css?v=reference-motion-1">
@@ -1261,6 +1261,11 @@
           <div id="menu-leave-settings"><button type="button" class="all-shortcut" onclick="SettingsUI.openLeave()"><span class="all-shortcut-icon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4m-9 10 3 3 5-6"/></svg></span><strong>연차 설정</strong><span class="all-shortcut-caption">남은 연차 <span id="quick-remain-leave">0</span>일</span></button></div>
           <div id="menu-salary-settings"><button type="button" id="payroll-sms-open" class="all-shortcut"><span class="all-shortcut-icon lavender"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><circle cx="12" cy="12" r="3"/></svg></span><strong>시급 설정</strong><span class="all-shortcut-caption">시급과 수당 입력</span></button></div>
         </div></section>
+        <a class="life-entry" id="shift-life-guide-open" href="https://20261104.xyz/shift-life-guide">
+            <span class="menu-service-icon menu-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6a8 8 0 0 0-8-2v14a8 8 0 0 1 8 2 8 8 0 0 1 8-2V4a8 8 0 0 0-8 2Zm0 0v14"/></svg></span>
+            <span class="menu-service-copy"><strong>교대생활 가이드</strong><small>출근 준비 · 휴게와 식사 시간</small></span>
+            <svg class="menu-service-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+        </a>
         <button type="button" id="onboarding-reopen" aria-haspopup="dialog" aria-controls="onboarding-dialog">처음 설정 다시 보기</button>
 
       </div>
@@ -1270,7 +1275,7 @@
 
 
 <section id="app-preferences-dialog" class="settings-page" hidden aria-label="설정"><section class="preferences-card"><h3>테마</h3><label>달력 스타일<select id="pref-theme"><option value="current" selected>1. 낮밤</option><option value="test" hidden disabled>2. 베이지</option><option value="toss">3. 블루컬러</option><option value="gpt">4. 그레이</option><option value="dark">5. 다크모드</option><option value="test1">6. 테스트1</option><option value="test3">7. 테스트2</option><option value="test4">8. 테스트3</option><option value="beige-round" hidden disabled>9. 베이지 라운드 (테스트)</option></select></label></section><section class="preferences-card"><h3>화면 표시</h3><label>이전 · 다음 달 근무<input type="checkbox" role="switch" id="pref-adjacent" checked></label><label>공휴일 이름<input type="checkbox" role="switch" id="pref-holidays" checked></label><label>달력 메모<input type="checkbox" role="switch" id="pref-memos" checked></label><label>근무 배지 모양<select id="pref-shape"><option value="circle" selected>원</option><option value="square">둥근 네모</option></select></label></section><section class="external-calendars"><h2>Google 캘린더에 근무표 보내기</h2><p>근무 변경·메모·급여·연차 설정은 Google Drive에 저장해요. 캘린더 연결은 원하는 경우에만 추가하세요.</p><p>앱 전용 Google 캘린더에 근무표와 날짜 메모를 보내요. Google에서 바꾼 내용은 앱에 가져오지 않아요.</p><button type="button" class="calendar-link-entry" onclick="openCalendarIntegration()">Google 캘린더에 근무표 보내기</button></section>        <section class="all-info-section" aria-labelledby="all-info-title"><h2 id="all-info-title">앱 안내</h2><div class="all-info-list">
-          <a href="./about.html"><span>앱 소개 · 문의</span><span aria-hidden="true">›</span></a>
+          <a href="https://20261104.xyz/about"><span>앱 소개 · 문의</span><span aria-hidden="true">›</span></a>
           <a href="./privacy.html"><span>개인정보처리방침</span><span aria-hidden="true">›</span></a>
           <a href="./terms.html"><span>서비스 이용약관</span><span aria-hidden="true">›</span></a>
           <a href="https://icons8.com/" target="_blank" rel="noopener noreferrer"><span>음식 아이콘 · Icons8</span><span aria-hidden="true">↗</span></a>
@@ -3121,7 +3126,7 @@
 <script src="./meal-rating.js?v=usage-20261109"></script>
 <script src="./commute-parking.js?v=usage-20261109"></script>
 <script src="./lost-found.js?v=app-copy-20261107"></script>
-<script src="./bright-menu.js?v=friendly-copy-4"></script>
+<script src="./bright-menu.js?v=guide-1"></script>
 <script src="./app-icons.js?v=3"></script>
 <script src="./bus-unified-search.js?v=app-copy-20261107"></script>
 <script src="./commute-page.js?v=8"></script>
