@@ -1,4 +1,4 @@
-/* A separate writing surface: the shift sheet never contains a focused memo field. */
+/* Quick notes and the full schedule editor share one persistence path. */
 (()=>{'use strict';
  const source=document.getElementById('modal-memo-input'),overlay=document.getElementById('modal-override');
  if(!source||!overlay)return;
@@ -13,9 +13,22 @@
  const context=document.createElement('p');context.id='memo-day-context';
  const heading=document.createElement('div');heading.className='memo-day-heading';const label=source.previousElementSibling;source.before(heading);heading.append(label,context);
  const dialog=document.createElement('dialog');dialog.id='memo-compose-dialog';dialog.setAttribute('aria-labelledby','memo-compose-title');
- dialog.innerHTML='<button type="button" id="memo-compose-dismiss" aria-label="메모 닫기"><span aria-hidden="true"></span></button><header class="memo-compose-header"><button type="button" id="memo-compose-back" aria-label="저장하고 돌아가기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><h2 id="memo-compose-title">메모</h2><button type="button" id="memo-compose-save" aria-label="변경사항 저장"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button></header><p id="memo-compose-date"></p><textarea id="memo-compose-input" maxlength="16000" placeholder="메모 입력" aria-labelledby="memo-compose-title" autofocus></textarea>';
- const content=document.createElement('div');content.id='memo-compose-content';
- content.append(dialog.querySelector('#memo-compose-input'));dialog.append(content);
+ const arrow='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg>';
+ function composerBar(inputId,saveId,optionsId,deleteId){
+  const bar=document.createElement('div');bar.className='memo-chat-bar';
+  bar.innerHTML=`<button type="button" class="memo-chat-plus" id="${optionsId}" aria-label="일정 옵션">+</button><textarea id="${inputId}" rows="1" maxlength="16000" placeholder="메모 입력" aria-label="메모 내용"></textarea><button type="button" class="memo-chat-delete" id="${deleteId}" hidden>삭제</button><button type="button" class="memo-chat-save" id="${saveId}" aria-label="메모 저장"><span>${arrow}</span></button>`;
+  const input=bar.querySelector('textarea');
+  function grow(){input.style.height='auto';const max=parseFloat(getComputedStyle(input).maxHeight);input.style.height=Math.min(input.scrollHeight,max)+'px';}
+  input.addEventListener('input',grow);return {bar,input,grow,save:bar.querySelector('.memo-chat-save'),remove:bar.querySelector('.memo-chat-delete'),options:bar.querySelector('.memo-chat-plus')};
+ }
+ dialog.innerHTML='<button type="button" id="memo-compose-dismiss" aria-label="메모 닫기"><span aria-hidden="true"></span></button><header class="memo-compose-header"><button type="button" id="memo-compose-back" aria-label="저장하고 돌아가기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><h2 id="memo-compose-title">메모</h2><span class="memo-header-spacer" aria-hidden="true"></span></header><p id="memo-compose-date"></p>';
+ const content=document.createElement('div');content.id='memo-compose-content';dialog.append(content);
+ const full=composerBar('memo-compose-input','memo-compose-save','memo-compose-options','memo-compose-delete');
+ const inline=composerBar('memo-inline-input','memo-inline-save','memo-inline-options','memo-inline-delete');
+ const inlineArea=document.createElement('section');inlineArea.className='memo-inline-area';
+ const inlineHistory=document.createElement('button');inlineHistory.type='button';inlineHistory.className='memo-inline-history';inlineHistory.hidden=true;
+ const inlineError=document.createElement('p');inlineError.className='memo-inline-error';inlineError.hidden=true;inlineError.setAttribute('role','alert');
+ inlineArea.append(inlineHistory,inlineError,inline.bar);overlay.querySelector('.design-memo-link').replaceWith(inlineArea);
  const description=document.createElement('textarea');description.id='memo-compose-details';description.maxLength=16000;description.rows=3;description.placeholder='내용을 더 적어 주세요 (선택)';
  const descriptionLabel=document.createElement('label');descriptionLabel.htmlFor=description.id;descriptionLabel.className='memo-field-label';descriptionLabel.textContent='내용';const bodySection=document.createElement('details');bodySection.id='memo-body-section';const bodySummary=document.createElement('summary');bodySummary.innerHTML='<span>내용 더 쓰기</span><span aria-hidden="true">＋</span>';bodySection.append(bodySummary,descriptionLabel,description);content.append(bodySection);
  const alarm=document.createElement('section');alarm.id='memo-alarm';alarm.innerHTML=`
@@ -30,7 +43,7 @@
  <div id="memo-repeat-until-row" hidden><label for="memo-alarm-until">반복 종료 (선택)</label><input id="memo-alarm-until" type="date"><p class="memo-alarm-help">비워두면 계속 반복해요. 반복 일정의 수정·삭제는 전체 반복에 적용돼요.</p></div>
  <p class="memo-alarm-help">앱 화면이 열려 있을 때 알려드려요. 잠금 화면 알림은 저장 후 휴대폰 캘린더로 내보내 설정해 주세요.</p>
  </div><p id="memo-compose-error" role="alert" hidden></p>`;
- content.append(alarm);document.body.append(dialog);
+ content.append(alarm);dialog.append(full.bar);document.body.append(dialog);
  for(const id of ['start','end','location','reminder','repeat']){const control=dialog.querySelector('#memo-alarm-'+id),label=control.previousElementSibling,row=document.createElement('div');row.className='memo-setting-row';label.before(row);row.append(label,control);}
  bodySection.addEventListener('toggle',()=>{bodySummary.querySelector('span').textContent=tr(description.value.trim()?'상세 내용':'내용 더 쓰기');scheduleFit();});
  const field=id=>dialog.querySelector('#memo-alarm-'+id),error=dialog.querySelector('#memo-compose-error');
@@ -47,7 +60,7 @@
  function scheduleValue(){if(!field('enabled').checked)return null;const allDay=field('all-day').checked;return {start:field('start').value.slice(0,allDay?10:16)+(allDay?'T00:00':''),end:field('end').value.slice(0,allDay?10:16)+(allDay?'T00:00':''),allDay,location:field('location').value.trim(),reminder:field('reminder').value===''?null:Number(field('reminder').value),...(field('repeat').value?{repeat:{frequency:field('repeat').value,until:field('until').value||null}}:{})};}
  function fullText(){return [input.value,description.value].filter(value=>value.trim()).join('\n\n');}
 
- const input=dialog.querySelector('#memo-compose-input'),viewport=window.visualViewport;
+ const input=full.input,viewport=window.visualViewport;
  const savedList=document.createElement('button');savedList.type='button';savedList.id='memo-compose-list';savedList.textContent='메모 목록 보기';const contextBar=document.createElement('div');contextBar.className='memo-compose-context';dialog.querySelector('.memo-compose-header').after(contextBar);contextBar.append(dialog.querySelector('#memo-compose-date'),savedList);savedList.onclick=()=>cancel(true,'list');
  let date='',initial='',initialDraft='',entrySource=null,entryVersion='',rendered='',opener=null,closing=false,drag=null,offset=0,returnAnimation=null,entrance=null,suppressClickUntil=0,frame=0,restingHeight=0,restingWidth=0,finishClose=null,closeTimer=0;
  const reduced=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -55,8 +68,58 @@
  function settle(){const from=offset;clearDrag();if(from&&!reduced())returnAnimation=dialog.animate([{transform:`translateY(${from}px)`},{transform:'translateY(0)'}],{duration:160,easing:'ease-out'});}
  function readState(){const get=key=>{try{return JSON.parse(localStorage.getItem(key)||'{}')||{}}catch{return {}}};return {memos:dayMemos,items:get(DayMemosCore.key),events:get(DaySchedulerCore.key)};}
  function readItems(){return DayEntryCore.notes(readState(),selectedDateStr);}
+ function newestMemo(){
+  if(!selectedDateStr)return null;
+  const state=readState(),note=Object.entries(readItems()).at(-1);
+  if(note){const [memoId,value]=note;return {source:{date:selectedDateStr,memoId,eventId:DayEntryCore.linked(state,selectedDateStr,memoId)?.[0]},value};}
+  const event=DaySchedulerCore.onDate(state.events,selectedDateStr).at(-1);
+  return event?{source:{date:event.date,eventId:event.id},value:DayEntryCore.eventText(state,event)}:null;
+ }
+ function refreshControls(){
+  const last=newestMemo();
+  inlineHistory.hidden=!last;inlineHistory.textContent=last?.value||'';
+  inline.remove.hidden=!last;full.remove.hidden=!entrySource&&!last;
+  inline.input.placeholder=tr('메모 입력');
+  inline.save.disabled=!inline.input.value.trim();
+  full.save.disabled=!entrySource&&!fullText().trim();
+ }
+ function setFullOptions(show){
+  content.hidden=!show;full.options.setAttribute('aria-expanded',String(show));
+ }
+ full.options.setAttribute('aria-controls',content.id);
+ full.options.onclick=()=>{input.blur();setFullOptions(content.hidden);scheduleFit();};
+ function dismissKeyboard(area){
+  area.addEventListener('click',event=>{
+   if(!event.target.closest('input,textarea,select,label,button,summary,[contenteditable]')&&area.contains(document.activeElement)&&document.activeElement.matches('textarea'))document.activeElement.blur();
+  });
+ }
+ dismissKeyboard(dialog);dismissKeyboard(overlay);
+ for(const control of [input,description,inline.input])control.addEventListener('input',refreshControls);
+ function openInlineFull(source,draft){
+  if(open(source,draft)){inline.input.value='';inline.grow();refreshControls();}
+ }
+ inlineHistory.onclick=()=>{if(saveInline())openInlineFull(newestMemo()?.source);};
+ inline.options.onclick=()=>openInlineFull(null,inline.input.value);
+ inline.save.onclick=()=>saveInline();
+ function resetInline(){inline.input.value='';inlineError.hidden=true;inline.grow();refreshControls();}
+ function saveInline(){
+  const value=inline.input.value.trim();if(!value)return true;
+  if(!persist(null,{text:value,date:selectedDateStr,schedule:null},{stayPane:true}))return false;
+  resetInline();inline.input.blur();return true;
+ }
+ inline.remove.onclick=()=>deleteLatest(newestMemo()?.source);
+ full.remove.onclick=()=>{
+  if(entrySource){if(deleteLatest(entrySource)){entrySource=null;entryVersion='';initialDraft=JSON.stringify({text:'',schedule:null});input.value='';description.value='';field('enabled').checked=false;alarmUI();full.grow();refreshControls();}}
+  else deleteLatest(newestMemo()?.source);
+ };
+ function deleteLatest(source){
+  if(!source)return false;
+  if(source.eventId&&readState().events[source.date]?.[source.eventId]?.repeat&&!confirm(tr('반복 일정과 메모를 모두 지울까요?')))return false;
+  return persist(source,{text:'',date:selectedDateStr,schedule:null},{stayPane:true});
+ }
  function refresh(){
   const state=readState(),items=DayEntryCore.notes(state,selectedDateStr),events=DaySchedulerCore.onDate(state.events,selectedDateStr);
+  refreshControls();
   const version=JSON.stringify([selectedDateStr,items,events,document.documentElement.lang]);if(version===rendered)return;rendered=version;list.replaceChildren();
   let index=0;
   function row(source,value,event){
@@ -77,14 +140,15 @@
   const empty=index===0;if(empty)row(null,'',null);add.hidden=empty;add.disabled=Object.keys(items).length>=50;
   if(selectedDateStr)context.textContent=new Intl.DateTimeFormat(document.documentElement.lang||'ko',{month:'long',day:'numeric',weekday:'long'}).format(new Date(selectedDateStr+'T12:00:00'));
  }
- function persist(source,draft){
+ function persist(source,draft,options={}){
   try{const state=readState(),next=DayEntryCore.plan(state,source,draft,crypto.randomUUID());
    const bundle={shift_day_memos:next.memos,shift_day_memo_items_v1:next.items,shift_day_events:next.events};
    AccountDataCore.normalize(bundle);
-   if(!window.DayEditorDesigns.save(next.memos[selectedDateStr]||'',{keepOpen:true,bundle})){error.textContent=document.getElementById('design-save-error')?.textContent||tr('저장하지 못했어요. 작성한 내용은 그대로 남아 있어요. 다시 시도해 주세요.');error.hidden=false;return false;}
+   if(!window.DayEditorDesigns.save(next.memos[selectedDateStr]||'',{keepOpen:true,bundle,...options})){error.textContent=document.getElementById('design-save-error')?.textContent||tr('저장하지 못했어요. 작성한 내용은 그대로 남아 있어요. 다시 시도해 주세요.');error.hidden=false;inlineError.textContent=error.textContent;inlineError.hidden=false;return false;}
+   inlineError.hidden=true;
    for(const day of new Set([...Object.keys(state.memos),...Object.keys(next.memos)]))if(day!==selectedDateStr&&state.memos[day]!==next.memos[day])window.GoogleSync?.changed(day);
    status.textContent=tr('저장했어요');status.hidden=false;refresh();return true;
-  }catch(e){if(dialog.open){error.textContent=e.message;error.hidden=false;}else{status.textContent=e.message;status.hidden=false;}return false;}
+  }catch(e){if(dialog.open){error.textContent=e.message;error.hidden=false;}else{status.textContent=e.message;status.hidden=false;inlineError.textContent=e.message;inlineError.hidden=false;}return false;}
  }
  function removeMemo(source){
   const recurring=source.eventId&&readState().events[source.date]?.[source.eventId]?.repeat;if(!confirm(tr(recurring?'반복 일정과 메모를 모두 지울까요?':'이 메모와 알림을 지울까요?')))return;
@@ -109,7 +173,7 @@
   closeTimer=setTimeout(()=>finishClose?.(),600);
  }
 
- function open(source){
+ function open(source,draftText){
   if(dialog.open||!selectedDateStr)return;
   if(source===undefined){const id=Object.keys(readItems())[0];source=id?{date:selectedDateStr,memoId:id,eventId:DayEntryCore.linked(readState(),selectedDateStr,id)?.[0]}:null;}
   savedList.hidden=!Object.keys(readItems()).length&&!DaySchedulerCore.onDate(readState().events,selectedDateStr).length;status.hidden=true;error.hidden=true;clearDrag();closing=false;date=selectedDateStr;entrySource=source;
@@ -119,12 +183,12 @@
   const split=initial.indexOf('\n\n');input.value=split<0?initial:initial.slice(0,split);description.value=split<0?'':initial.slice(split+2);bodySection.open=!!description.value;bodySummary.querySelector('span').textContent=tr(description.value.trim()?'상세 내용':'내용 더 쓰기');input.scrollTop=0;description.scrollTop=0;content.scrollTop=0;opener=document.activeElement;restingHeight=viewport?.height||innerHeight;restingWidth=viewport?.width||innerWidth;
   field('enabled').checked=!!event;field('start').type=field('end').type='datetime-local';field('start').value=event?.start||date+'T09:00';field('end').value=event?.end||oneHourAfter(field('start').value);field('start').dataset.time=event?.start.slice(11)||'09:00';field('end').dataset.time=event?.end.slice(11)||'10:00';field('all-day').checked=event?.allDay||false;field('location').value=event?.location||'';field('reminder').value=event?event.reminder===null?'':String(event.reminder):'0';field('repeat').value=event?.repeat?.frequency||'';field('until').value=event?.repeat?.until||'';alarmUI();initialDraft=JSON.stringify({text:fullText().trim(),schedule:scheduleValue()});
   dialog.dataset.design=overlay.dataset.editorDesign;const css=getComputedStyle(overlay);for(const key of ['--ed-card','--ed-text','--ed-sub','--ed-blue','--ed-line'])dialog.style.setProperty(key,css.getPropertyValue(key));
-  dialog.querySelector('#memo-compose-title').textContent=tr(event?'일정':'메모');input.placeholder=tr('어떤 내용을 남길까요?');
+  dialog.querySelector('#memo-compose-title').textContent=tr(event?'일정':'메모');input.placeholder=inline.input.placeholder=tr('메모 입력');setFullOptions(draftText!==undefined||!!event||!!description.value);if(draftText!==undefined)input.value=draftText;
   const locale={ko:'ko-KR',en:'en',zh:'zh-CN',ja:'ja'}[localStorage.getItem('shift_display_language')]||'ko-KR';
   dialog.querySelector('#memo-compose-date').textContent=new Intl.DateTimeFormat(locale,{month:'long',day:'numeric',weekday:'long'}).format(new Date((source?.date||date)+'T12:00:00'));
   overlay.dataset.memoComposing='true';document.body.classList.add('memo-composer-open');dialog.showModal();dialog.scrollTop=0;fit();
   if(!reduced())entrance=dialog.animate([{translate:'0 '+(Math.max(restingHeight,innerHeight)+24)+'px'},{translate:'0 0'}],{duration:360,easing:'cubic-bezier(.22,1,.36,1)'});
-  input.focus({preventScroll:true});scheduleFit();
+  full.grow();refreshControls();input.focus({preventScroll:true});scheduleFit();return true;
  }
 
  function close(animated=false,restoreFocus=true,destination='list'){if(closing)return;closing=true;dialog.dataset.closing='true';
@@ -132,7 +196,7 @@
   if(destination==='calendar')overlay.classList.remove('active');
   else if(destination==='work')DayEditorDesigns.showPane('work');
  const css=getComputedStyle(dialog);offset=(css.transform==='none'?0:new DOMMatrixReadOnly(css.transform).m42)+(parseFloat(css.translate.split(/\s+/)[1])||0);entrance?.cancel();entrance=null;returnAnimation?.cancel();returnAnimation=null;dialog.style.setProperty('--compose-drag',offset+'px');dialog.querySelectorAll('input,textarea,select').forEach(el=>el.blur());
-  const finish=()=>{if(animated)suppressClickUntil=performance.now()+400;dialog.close();clearDrag();dialog.style.removeProperty('opacity');delete dialog.dataset.closing;closing=false;delete overlay.dataset.memoComposing;document.body.classList.remove('memo-composer-open');refresh();if(destination==='calendar'){input.value='';description.value='';document.querySelector('.cal-day[data-date="'+date+'"] .day-num')?.focus({preventScroll:true});}else if(destination==='work'){input.value='';description.value='';const target=overlay.querySelector('.design-memo-link');(target?.getClientRects().length?target:overlay.querySelector('#design-back'))?.focus({preventScroll:true});}else if(restoreFocus&&overlay.classList.contains('active')&&opener?.isConnected)opener.focus({preventScroll:true});else if(restoreFocus&&overlay.classList.contains('active'))button.focus({preventScroll:true});window.dispatchEvent(new Event('resize'));};
+  const finish=()=>{if(animated)suppressClickUntil=performance.now()+400;dialog.close();clearDrag();dialog.style.removeProperty('opacity');delete dialog.dataset.closing;closing=false;delete overlay.dataset.memoComposing;document.body.classList.remove('memo-composer-open');refresh();if(destination==='calendar'){input.value='';description.value='';document.querySelector('.cal-day[data-date="'+date+'"] .day-num')?.focus({preventScroll:true});}else if(destination==='work'){input.value='';description.value='';const target=inline.options;(target?.getClientRects().length?target:overlay.querySelector('#design-back'))?.focus({preventScroll:true});}else if(restoreFocus&&overlay.classList.contains('active')&&opener?.isConnected)opener.focus({preventScroll:true});else if(restoreFocus&&overlay.classList.contains('active'))button.focus({preventScroll:true});window.dispatchEvent(new Event('resize'));};
   // Start the exit now; keyboard cleanup runs alongside it, never before it.
   // Keep the invisible modal's scroll lock until both operations finish.
   let animationDone=false,keyboardDone=false,finished=false;
@@ -207,5 +271,5 @@
  window.addEventListener('click',e=>{if(e.isTrusted&&performance.now()<suppressClickUntil){e.preventDefault();e.stopImmediatePropagation();}},true);
  viewport?.addEventListener('resize',scheduleFit);viewport?.addEventListener('scroll',scheduleFit);window.addEventListener('resize',scheduleFit);window.addEventListener('orientationchange',scheduleFit);window.addEventListener('pageshow',scheduleFit);input.addEventListener('focus',scheduleFit);description.addEventListener('focus',scheduleFit);
  new MutationObserver(refresh).observe(overlay,{attributes:true,attributeFilter:['class','data-editor-tab','data-design-pane']});source.addEventListener('input',refresh);
- window.MemoComposer={open,refresh,saveAndClose:save,enter:source=>{DayEditorDesigns.showPane('memo');open(source);},openEvent:event=>open(event?{date:event.date,eventId:event.id,memoId:event.memoId&&DayEntryCore.notes(readState(),event.date)[event.memoId]?event.memoId:null}:null)};document.getElementById('memo-tab').onclick=()=>MemoComposer.enter(null);refresh();
+ window.MemoComposer={open,refresh,saveInline,resetInline,saveAndClose:save,enter:source=>{if(saveInline()){DayEditorDesigns.showPane('memo');open(source);}},openEvent:event=>open(event?{date:event.date,eventId:event.id,memoId:event.memoId&&DayEntryCore.notes(readState(),event.date)[event.memoId]?event.memoId:null}:null)};document.getElementById('memo-tab').onclick=()=>MemoComposer.enter(null);refresh();
 })();

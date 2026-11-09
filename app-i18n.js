@@ -23,7 +23,7 @@
   if(!value&&(m=s.match(/^(\d+)년 (\d+)월 급여$/)))value={en:`Pay · ${m[1]}.${m[2]}`,zh:`${m[1]}年${m[2]}月工资`,ja:`${m[1]}年${m[2]}月の給与`}[language];
   if(!value&&(m=s.match(/^(\d+)월 (\d+)일 ([일월화수목금토])요일$/))){const y=typeof currentCalDate==='undefined'?new Date().getFullYear():currentCalDate.getFullYear();value=new Intl.DateTimeFormat(languages[language][0],{month:'long',day:'numeric',weekday:'long'}).format(new Date(y,Number(m[1])-1,Number(m[2])));}
   if(!value&&(m=s.match(/^(\d{4})년 (\d{1,2})월$/)))value=new Intl.DateTimeFormat(languages[language][0],{year:'numeric',month:'long'}).format(new Date(Number(m[1]),Number(m[2])-1,1));
-  if(!value&&(m=s.match(/^(\d{1,2})월$/)))value=new Intl.DateTimeFormat(languages[language][0],{month:'long'}).format(new Date(2026,Number(m[1])-1,1));
+  if(!value&&(m=s.match(/^(\d{1,2})월$/)))value=new Intl.DateTimeFormat(languages[language][0],{month:el?.matches?.('.payroll-recap-month')?'short':'long'}).format(new Date(2026,Number(m[1])-1,1));
   if(!value&&(m=s.match(/^(\d+)년$/)))value={en:m[1],zh:m[1]+'年',ja:m[1]+'年'}[language];
   if(!value&&(m=s.match(/^([+−-]?[\d,]+(?:\.\d+)?)\s*원$/)))value={en:'KRW '+m[1],zh:m[1]+'韩元',ja:m[1]+'ウォン'}[language];
   if(!value&&(m=s.match(/^(\d+(?:\.\d+)?)일$/)))value={en:m[1]+(m[1]==='1'?' day':' days'),zh:m[1]+'天',ja:m[1]+'日'}[language];
@@ -32,6 +32,8 @@
   if(!value&&(m=s.match(/^기본 (.+)$/)))value=t('기본')+' '+t(m[1]);
   if(!value&&(m=s.match(/^(.+) 스티커$/))&&dict[m[1]])value=t(m[1])+' '+t('스티커');
   const copy=(en,zh,ja)=>({en,zh,ja}[language]);
+  if(!value&&(m=s.match(/^(\d{4})년 급여 결산( 보기)?$/)))value=m[2]?copy(`View the ${m[1]} pay recap`,`查看${m[1]}年薪资回顾`,`${m[1]}年の給与まとめを見る`):copy(`${m[1]} pay recap`,`${m[1]}年薪资回顾`,`${m[1]}年の給与まとめ`);
+  if(!value&&(m=s.match(/^(\d{4})\. 1\. 1\.–12\. 31\.$/)))value=copy(`Jan 1–Dec 31, ${m[1]}`,`${m[1]}年1月1日至12月31日`,`${m[1]}年1月1日〜12月31日`);
   const date=(y,month,day)=>new Intl.DateTimeFormat(languages[language][0],{month:'long',day:'numeric',weekday:'short',...(y?{year:'numeric'}:{})}).format(new Date(Number(y)||2026,Number(month)-1,Number(day)));
   if(!value&&(m=s.match(/^(급여|상여): (문자 기준|기본 비율) ([\d.]+)%$/)))value=deductionLabels[m[1]][language]+copy(': ','：','：')+(m[2]==='문자 기준'?copy('message rate ','短信比例 ','メッセージの割合 '):copy('default rate ','默认比例 ','既定の割合 '))+m[3]+'%';
   if(!value&&(m=s.match(/^(급여|상여): 문자에 나온 세금·보험료 기준$/)))value=deductionLabels[m[1]][language]+copy(': taxes and insurance from your message','：短信中的税费和保险费','：メッセージの税金・保険料を使用');

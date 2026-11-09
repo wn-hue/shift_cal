@@ -77,6 +77,47 @@ body[data-pref-theme] #view-payroll #payroll-payment-details{padding:0 20px 4px;
 #view-payroll #payroll-payment-details>summary{border-top:0;min-height:48px;font-size:14px}
 #view-payroll .payroll-disclosure-state :is(.when-open,.when-closed){display:none}
 
+/* Seasonal gross-pay recap, placed just after the monthly salary card. */
+body[data-pref-theme] #view-payroll #payroll-recap-open{
+ display:flex;align-items:center;gap:12px;width:100%;padding:12px 16px;
+ color:var(--ui-ink);font:inherit;text-align:left;cursor:pointer
+}
+.payroll-recap-icon{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:11px;background:var(--ui-blue-soft);color:var(--ui-blue)}
+.payroll-recap-icon svg{width:20px;height:20px}
+.payroll-recap-entry-copy{display:grid;flex:1;min-width:0;gap:3px;line-height:1.4}
+.payroll-recap-entry-copy strong{font-size:14px;font-weight:650}
+.payroll-recap-entry-copy small{font-size:11px;color:var(--ui-muted)}
+.payroll-recap-chevron{flex:none;width:16px;height:16px;color:var(--ui-muted)}
+#payroll-recap-open:focus-visible,#payroll-recap-hide:focus-visible{outline:2px solid var(--ui-blue);outline-offset:2px}
+#payroll-recap-dialog .info-sheet-content{flex:1 1 auto}
+.payroll-recap-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+#payroll-recap-dialog h2{margin:0;font-size:17px}
+#payroll-recap-year-tag{flex:none;padding:4px 8px;border-radius:10px;background:var(--ui-blue-soft);color:var(--ui-blue);font-size:11px;font-weight:650}
+.payroll-recap-total{display:grid;gap:4px;margin-top:14px}
+#payroll-recap-gross{color:var(--ui-blue);font-size:clamp(24px,8vw,30px);font-weight:750;line-height:1.25;letter-spacing:-.6px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.payroll-recap-total>span{font-size:13px;font-weight:650}
+.payroll-recap-total>small{color:var(--ui-muted);font-size:11px}
+.payroll-recap-chart{margin:14px 0 0;padding:12px;border-radius:14px;background:var(--ui-field)}
+.payroll-recap-chart figcaption{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:12px}
+.payroll-recap-chart figcaption small{color:var(--ui-muted);font-size:10px}
+.payroll-recap-chart-grid{--plot-height:98px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px;margin-top:12px}
+.payroll-recap-scale{display:flex;flex-direction:column;justify-content:space-between;align-items:end;height:calc(var(--plot-height) + 10px);margin-top:-5px;color:var(--ui-muted);font-size:9px;line-height:10px}
+#payroll-recap-months{position:relative;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:2px;margin:0;padding:0;list-style:none}
+#payroll-recap-months::before{content:"";position:absolute;inset:0 0 auto;height:var(--plot-height);box-sizing:border-box;border-block:1px solid var(--ui-line);background:linear-gradient(to bottom,transparent calc(50% - .5px),var(--ui-line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));pointer-events:none}
+#payroll-recap-months li{display:grid;grid-template-rows:var(--plot-height) auto;justify-items:center;gap:4px;min-width:0;font-size:9px;line-height:1.4;color:var(--ui-muted)}
+.payroll-recap-track{position:relative;display:flex;align-items:flex-end;justify-content:center;width:100%;height:100%}
+.payroll-recap-track>span{width:75%;max-width:28px;border-radius:3px 3px 0 0;background:var(--ui-blue);opacity:.46}
+#payroll-recap-months li:last-child .payroll-recap-track>span{opacity:1}
+.payroll-recap-month{white-space:nowrap}
+.payroll-recap-month-amount{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.payroll-recap-note{display:flex;align-items:flex-start;gap:6px;margin:12px 0 0;color:var(--ui-muted);font-size:11px;line-height:1.6}
+.payroll-recap-note svg{flex:none;width:13px;height:13px;margin-top:2px}
+.payroll-recap-note p{margin:0;word-break:keep-all;overflow-wrap:anywhere}
+#payroll-recap-dialog .info-sheet-done{margin-top:16px}
+body[data-pref-theme] #payroll-recap-hide{flex:none;min-height:44px;padding:8px;border:0;border-radius:8px;background:transparent;color:var(--ui-copy);font:inherit;font-size:12px;font-weight:550;cursor:pointer}
+#payroll-recap-save-error{margin:4px 0 0;color:var(--ui-ink);font-size:12px;line-height:1.5}
+@media(max-width:360px){#payroll-recap-months li{font-size:8px}.payroll-recap-chart{padding-inline:9px}}
+
 /* Normal settings remain the same single draft; onboarding keeps its guided flow. */
 #payroll-sms-dialog:not([data-guided=true]) .wage-main-cards{grid-template-columns:1fr;gap:6px}
 #payroll-sms-dialog:not([data-guided=true]) .wage-main-cards>label{flex-direction:row;align-items:center;justify-content:space-between;gap:12px;min-height:56px;padding:8px 0;border:0;border-bottom:1px solid var(--ui-line);border-radius:0;background:transparent;font-size:15px}
@@ -127,3 +168,7 @@ body[data-pref-theme] #holiday-work-pay-done{flex:none;width:100%;min-height:52p
  #view-payroll .payroll-input-card .regular-days label{font-size:12px}
  #view-payroll .regular-days .work-day-count strong{font-size:15px}
 }
+
+#view-payroll .hero-pay-meta[hidden]{display:none!important}
+#view-payroll #payroll-payment-details>summary{font-size:14px;font-weight:600}
+#view-payroll #payroll-bonus-hint,#view-payroll .payroll-bonus-symbol{font-size:10px}

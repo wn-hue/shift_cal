@@ -381,3 +381,8 @@ body[data-pref-theme] #view-payroll :is(#hero-regular-pay,#hero-bonus-pay){font-
 #view-payroll .payroll-input-card :is(.regular-days,.special-days) .input-group{min-height:42px;padding:6px 8px}
 #view-payroll .payroll-input-card :is(.regular-days,.special-days) input[readonly]{font-size:17px;height:24px;min-height:24px;line-height:24px}
 #view-payroll .payroll-input-card :is(.regular-days,.special-days) .work-input-unit{line-height:24px}
+
+#view-all :is(.menu-service-copy strong,.all-shortcut strong,.group-summary-label){font-size:17px}
+#view-all :is(.menu-services,.all-menu-content) :is(.menu-service-icon,.all-shortcut-icon) svg,#view-all .group-summary-icon svg{width:27px;height:27px}
+#view-all :is(.menu-service-copy small,.all-shortcut-caption,#menu-group-current){font-size:10px;color:var(--ui-muted,#6b7684);font-weight:500}
+#view-all #onboarding-reopen{font-size:11px;min-height:44px}

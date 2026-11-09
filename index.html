@@ -929,7 +929,7 @@
 <link rel="stylesheet" href="./wage-leave-layout.css?v=2">
 <link rel="stylesheet" href="./navigation-special.css?v=3">
 <link rel="stylesheet" href="./community-lab.css?v=1">
-<link rel="stylesheet" href="./meal-rating.css?v=1">
+<link rel="stylesheet" href="./meal-rating.css?v=web-build30-1">
 <link rel="stylesheet" href="./bus-browser.css?v=factory-source-2">
 <link rel="stylesheet" href="./commute-parking.css?v=1">
 <link rel="manifest" href="./manifest.webmanifest?v=work-routine-20261102">
@@ -940,7 +940,7 @@
 <link rel="stylesheet" href="./onboarding.css?v=reference-motion-1">
 <link rel="stylesheet" href="./onboarding-story.css?v=2">
 <link rel="stylesheet" href="./onboarding-wage.css?v=allowance-steps-1">
-<link rel="stylesheet" href="./mobile-surfaces.css?v=payroll-disclosure-15">
+<link rel="stylesheet" href="./mobile-surfaces.css?v=web-build30-1">
 <link rel="stylesheet" href="./test-calendar.css?v=9">
 <link rel="stylesheet" href="./month-picker.css?v=1">
 <link rel="stylesheet" href="./memo-editor.css?v=3">
@@ -955,8 +955,8 @@
 <link rel="stylesheet" href="./app-i18n.css?v=1">
 <link rel="stylesheet" href="./sheet-interactions.css?v=surface-motion-2">
 <link rel="stylesheet" href="./day-editor-layout.css?v=4">
-<link rel="stylesheet" href="./day-editor-designs.css?v=8">
-<link rel="stylesheet" href="./memo-composer.css?v=surface-motion-2">
+<link rel="stylesheet" href="./day-editor-designs.css?v=web-build30-1">
+<link rel="stylesheet" href="./memo-composer.css?v=web-build30-1">
 <link rel="stylesheet" href="./app-currency.css?v=1">
 <link rel="stylesheet" href="./commute-page.css?v=heading-switch-1">
 <link rel="stylesheet" href="./lost-found-page.css?v=5">
@@ -966,10 +966,10 @@
 <link rel="stylesheet" href="./experimental-themes.css?v=5">
 <link rel="stylesheet" href="./beige-round-theme.css?v=1">
 <link rel="stylesheet" href="./viewport-lock.css?v=1">
-<link rel="stylesheet" href="./payroll-layout.css?v=shared-navigation-9">
+<link rel="stylesheet" href="./payroll-layout.css?v=web-build30-1">
 <link rel="stylesheet" href="./info-sheets.css?v=1">
 <link rel="stylesheet" href="./calendar-layout.css?v=viewport-card-3">
-<script src="./holiday-work-pay-core.js?v=1"></script>
+<script src="./holiday-work-pay-core.js?v=web-build30-1"></script>
 </head>
 <body data-view="calendar">
     <div class="container">
@@ -1044,7 +1044,7 @@
                         <input type="checkbox" id="payroll-gross-toggle" role="switch" aria-label="세후 예상 금액 보기" aria-controls="payroll-estimate-panel">
                     </label>
                 </div>
-                <p class="hero-pay-meta"><span id="hero-pay-basis">세전</span> · <span class="period-tag" id="pay-period-label">10.16–11.15 근무 기준</span></p>
+                <p class="hero-pay-meta" hidden><span id="hero-pay-basis">세전</span> · <span class="period-tag" id="pay-period-label">10.16–11.15 근무 기준</span></p>
                 <div class="hero-subgrid" hidden>
                     <div>
                         <div class="hero-label" id="hero-regular-label">월 급여 (세전)</div>
@@ -1077,6 +1077,11 @@
             </div>
 
             </div><!-- salary-month-viewport -->
+            <button type="button" id="payroll-recap-open" class="card" data-info-target="payroll-recap-dialog" aria-haspopup="dialog" aria-controls="payroll-recap-dialog" hidden>
+                <span class="payroll-recap-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 17v-5m5 5V7m5 10v-8"/></svg></span>
+                <span class="payroll-recap-entry-copy"><strong id="payroll-recap-open-title"></strong><small>달력 근무 기준</small></span>
+                <svg class="payroll-recap-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </button>
             <div class="card payroll-input-card">
                 <div class="card-header">
                     <span>근무 내역</span>
@@ -1085,25 +1090,24 @@
                         <button type="button" class="calendar-reflect-button" onclick="switchView('calendar')">달력에서 변경</button>
                     </div>
                 </div>
-                <p id="calendar-days-hint" class="calendar-days-hint">달력의 근무가 자동으로 반영돼요.</p>
                 <div class="two-cols regular-days">
                     <div class="input-group">
                         <label for="work-day-count"><svg viewBox="0 0 24 24" class="payroll-shift-icon day" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/></svg>주간 근무</label>
-                        <output class="work-day-count" id="work-day-count" aria-describedby="calendar-days-hint"><strong id="payroll-day-count">0</strong><span class="work-day-unit">일</span></output><input type="hidden" id="inp-day-days" value="0" readonly hidden>
+                        <output class="work-day-count" id="work-day-count"><strong id="payroll-day-count">0</strong><span class="work-day-unit">일</span></output><input type="hidden" id="inp-day-days" value="0" readonly hidden>
                     </div>
                     <div class="input-group">
                         <label for="work-night-count"><svg viewBox="0 0 24 24" class="payroll-shift-icon night" fill="currentColor" aria-hidden="true"><path d="M21 14.2A9.5 9.5 0 0 1 9.8 3 9.5 9.5 0 1 0 21 14.2Z"/></svg>야간 근무</label>
-                        <output class="work-day-count" id="work-night-count" aria-describedby="calendar-days-hint"><strong id="payroll-night-count">0</strong><span class="work-day-unit">일</span></output><input type="hidden" id="inp-night-days" value="0" readonly hidden>
+                        <output class="work-day-count" id="work-night-count"><strong id="payroll-night-count">0</strong><span class="work-day-unit">일</span></output><input type="hidden" id="inp-night-days" value="0" readonly hidden>
                     </div>
                 </div>
                 <div class="two-cols special-days">
                     <div class="input-group">
                         <label for="work-daysp-count"><svg viewBox="0 0 24 24" class="payroll-shift-icon day overtime" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 2-10 12h9l-1 8 10-12h-9l1-8Z"/></svg>주간 특근</label>
-                        <output class="work-day-count" id="work-daysp-count" aria-describedby="calendar-days-hint"><strong id="payroll-daysp-count">0</strong><span class="work-day-unit">일</span></output><input type="hidden" id="inp-daysp-days" value="0" readonly hidden>
+                        <output class="work-day-count" id="work-daysp-count"><strong id="payroll-daysp-count">0</strong><span class="work-day-unit">일</span></output><input type="hidden" id="inp-daysp-days" value="0" readonly hidden>
                     </div>
                     <div class="input-group">
                         <label for="work-nightsp-count"><svg viewBox="0 0 24 24" class="payroll-shift-icon night overtime" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 2-10 12h9l-1 8 10-12h-9l1-8Z"/></svg>야간 특근</label>
-                        <output class="work-day-count" id="work-nightsp-count" aria-describedby="calendar-days-hint"><strong id="payroll-nightsp-count">0</strong><span class="work-day-unit">일</span></output><input type="hidden" id="inp-nightsp-days" value="0" readonly hidden>
+                        <output class="work-day-count" id="work-nightsp-count"><strong id="payroll-nightsp-count">0</strong><span class="work-day-unit">일</span></output><input type="hidden" id="inp-nightsp-days" value="0" readonly hidden>
                     </div>
                 </div>
             </div>
@@ -1164,7 +1168,6 @@
                         <div><label for="disp-unpaid-deduction">무급으로 줄어드는 금액</label><input type="text" id="disp-unpaid-deduction" value="0원" readonly></div>
                         <div id="payroll-holiday-pay-row" hidden><span>명절근무수당</span><strong id="payroll-holiday-pay-total">0원</strong></div>
                     </div>
-                    <p class="adjustment-hint">달력에서 변경한 근무가 자동으로 반영돼요.</p>
                 </details>
                 <input type="hidden" id="inp-holiday-bonus" value="0">
                 <input type="hidden" id="inp-hire-date" aria-label="정규직 전환일 (연차·지원금 계산)">
@@ -1235,7 +1238,7 @@
     </section>
     <section id="view-all" class="view-page all-page" aria-labelledby="account-management-title">
       <div id="account-management-dialog" class="all-menu-content">
-        <div class="all-topline"><h1 id="account-management-title" class="all-page-title"><img class="menu-brand-icon" src="./work-routine-icon.png?v=20261102" width="32" height="32" alt=""><span class="menu-brand-name">근무 루틴</span></h1><button type="button" id="account-sheet-open" class="account-sheet-open" aria-haspopup="dialog" aria-controls="account-login-dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="9" r="3"/><path d="M5.5 18.3a7 7 0 0 1 13 0"/></svg><span id="account-sheet-label">로그인</span></button><button type="button" class="icon-button menu-preferences" aria-label="앱 환경" onclick="openAppPreferences()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><polygon points="12.00,4.00 13.56,4.15 15.83,2.76 17.56,3.69 17.66,6.34 18.65,7.56 21.24,8.17 21.81,10.05 20.00,12.00 19.85,13.56 21.24,15.83 20.31,17.56 17.66,17.66 16.44,18.65 15.83,21.24 13.95,21.81 12.00,20.00 10.44,19.85 8.17,21.24 6.44,20.31 6.34,17.66 5.35,16.44 2.76,15.83 2.19,13.95 4.00,12.00 4.15,10.44 2.76,8.17 3.69,6.44 6.34,6.34 7.56,5.35 8.17,2.76 10.05,2.19"/><circle cx="12" cy="12" r="3.2"/></svg></button></div>
+        <div class="all-topline"><h1 id="account-management-title" class="all-page-title"><img class="menu-brand-icon" src="./work-routine-icon.png?v=20261102" width="32" height="32" alt=""><span class="menu-brand-name">근무 루틴</span></h1><button type="button" id="account-sheet-open" class="account-sheet-open" aria-haspopup="dialog" aria-controls="account-login-dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 21v-2a7 7 0 0 1 14 0v2" stroke-linecap="round"/></svg><span id="account-sheet-label">로그인</span></button><button type="button" class="icon-button menu-preferences" aria-label="앱 환경" onclick="openAppPreferences()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><polygon points="12.00,4.00 13.56,4.15 15.83,2.76 17.56,3.69 17.66,6.34 18.65,7.56 21.24,8.17 21.81,10.05 20.00,12.00 19.85,13.56 21.24,15.83 20.31,17.56 17.66,17.66 16.44,18.65 15.83,21.24 13.95,21.81 12.00,20.00 10.44,19.85 8.17,21.24 6.44,20.31 6.34,17.66 5.35,16.44 2.76,15.83 2.19,13.95 4.00,12.00 4.15,10.44 2.76,8.17 3.69,6.44 6.34,6.34 7.56,5.35 8.17,2.76 10.05,2.19"/><circle cx="12" cy="12" r="3.2"/></svg></button></div>
         
 <section class="all-settings-section" aria-labelledby="all-settings-title"><h2 id="all-settings-title">내 근무 설정</h2>
         <div class="all-settings-card" id="menu-group-settings">
@@ -1343,6 +1346,37 @@
             </div>
         </div>
     </div>
+
+    <dialog id="payroll-recap-dialog" class="sms-dialog info-sheet" aria-labelledby="payroll-recap-title">
+        <div class="info-sheet-content">
+            <div class="payroll-recap-heading">
+                <h2 id="payroll-recap-title" tabindex="-1"></h2>
+                <span id="payroll-recap-year-tag"></span>
+            </div>
+            <div class="payroll-recap-total">
+                <strong id="payroll-recap-gross"></strong>
+                <span>연간 세전 합계</span>
+                <small id="payroll-recap-period"></small>
+            </div>
+            <figure class="payroll-recap-chart">
+                <figcaption><strong>월별 세전 예상</strong><small>단위 만 원</small></figcaption>
+                <div class="payroll-recap-chart-grid">
+                    <div class="payroll-recap-scale" id="payroll-recap-scale" aria-hidden="true"></div>
+                    <ol id="payroll-recap-months" role="list"></ol>
+                </div>
+            </figure>
+            <div class="payroll-recap-note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg>
+                <div>
+                    <p>달력의 근무일과 현재 시급·수당으로 계산한 예상 금액이에요.</p>
+                    <p id="payroll-recap-forecast" hidden>12월 말까지 예정된 근무도 반영해요.</p>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="info-sheet-done" data-info-close>확인</button>
+        <button type="button" id="payroll-recap-hide">앞으로 결산 숨기기</button>
+        <p id="payroll-recap-save-error" role="alert" hidden>숨기기 설정을 저장하지 못했어요. 다시 시도해 주세요.</p>
+    </dialog>
 
     <dialog id="payroll-deductions-dialog" class="sms-dialog info-sheet" aria-labelledby="payroll-deductions-title">
         <button type="button" class="sms-close-btn" data-info-close aria-label="공제 내역 닫기">×</button>
@@ -2194,8 +2228,7 @@
             return {leave, regular, monthly, monthlyGenerated:tenureYears<=1?grants.length:0, desc};
         }
 
-        function getGrantedLeave(year) {
-            const automatic = calculateFiscalYearLeave(config.hireDate, year);
+        function getGrantedLeave(year, automatic = calculateFiscalYearLeave(config.hireDate, year)) {
             if (Object.prototype.hasOwnProperty.call(config.leaveByYear, year)) {
                 // Old payroll saves also pinned an automatically calculated zero.
                 const legacyZero = config.leaveByYear[year] === 0 && !config.leaveManualYears?.[year] && automatic.monthlyGenerated > 0;
@@ -2240,18 +2273,20 @@
             onHireDateChange();
         }
 
-        function updateLeaveStats() {
+        function getUsedLeave(year, excludingDate) {
             let used = 0;
-            const year = currentCalDate.getFullYear();
-            const currentYearStr = year.toString();
-
-            Object.entries(overrides).forEach(([dateStr, val]) => {
-                if (dateStr.startsWith(currentYearStr + '-')) {
+            for (const [dateStr, val] of Object.entries(overrides)) {
+                if (dateStr.startsWith(year + '-') && dateStr !== excludingDate) {
                     if (val === 'LEAVE') used += 1.0;
                     else if (val === 'HALF_PRE' || val === 'HALF_POST' || val === 'HALF_LEAVE') used += 0.5;
                 }
-            });
+            }
+            return used;
+        }
 
+        function updateLeaveStats() {
+            const year = currentCalDate.getFullYear();
+            const used = getUsedLeave(year);
             const total = getGrantedLeave(year);
             const automatic = calculateFiscalYearLeave(config.hireDate, year);
             const manuallySet = Object.prototype.hasOwnProperty.call(config.leaveByYear, year) &&
@@ -2427,6 +2462,8 @@
 
             const units = unpaidUnits(type);
             if (units) {
+                const asOf = calculateFiscalYearLeave(config.hireDate, year, dateStr);
+                if (getGrantedLeave(year, asOf) > getUsedLeave(year, dateStr)) return '연차를 모두 쓰면 무급 항목을 선택할 수 있어요.';
                 const monthPrefix = dateStr.slice(0, 7) + '-';
                 let used = 0;
                 for (const [key, value] of Object.entries(overrides)) {
@@ -2563,6 +2600,7 @@
             document.getElementById('inp-bonus-check').checked = (payMonthNum % 2 === 0);
             calculatePayrollFromInputs();
             updateLeaveStats();
+            window.PayrollRecap?.refresh();
         }
 
         /* 급여 계산 엔진 (문법 에러 완벽 제거) */
@@ -3030,11 +3068,11 @@
     <script src="./login-sheet.js?v=drive-1"></script>
     <script src="./app-menu.js?v=18"></script>
 <script src="./theme-header-layout.js?v=viewport-card-6"></script>
-<script src="./settings-page.js?v=app-copy-20261107"></script>
+<script src="./settings-page.js?v=web-build30-1"></script>
     <script src="./settings-ui.js?v=app-copy-20261107"></script>
     <script src="./account-sync.js?v=apple-notification-20261108"></script>
     <script src="./google-sync.js?v=app-copy-20261107"></script>
-<script src="planner-core.js?v=sms-confirm-1"></script><script src="shift-tools.js?v=app-copy-20261107"></script><script src="work-editor.js?v=4"></script>
+<script src="planner-core.js?v=sms-confirm-1"></script><script src="shift-tools.js?v=web-build30-1"></script><script src="work-editor.js?v=web-build30-1"></script>
 
 
     <dialog id="today-weather" class="weather-card sms-dialog" aria-labelledby="weather-dialog-title">
@@ -3119,15 +3157,16 @@
 <script src="./info-sheets.js?v=1"></script>
 <script src="./day-memos-core.js?v=1"></script>
 <script src="./day-entry-core.js?v=1"></script>
-<script src="./day-editor-designs.js?v=app-copy-20261107"></script>
-<script src="./memo-composer.js?v=app-copy-20261107"></script>
+<script src="./day-editor-designs.js?v=web-build30-1"></script>
+<script src="./memo-composer.js?v=web-build30-1"></script>
 <script src="./settings-options.js?v=2"></script>
 <script src="./wage-import-ui.js?v=app-copy-20261107"></script>
-<script src="./holiday-work-pay.js?v=app-copy-20261107"></script>
-<script src="./app-i18n-data.js?v=app-copy-20261107-2"></script>
+<script src="./holiday-work-pay.js?v=web-build30-1"></script>
+<script src="./app-i18n-data.js?v=web-build30-1"></script>
 <script src="./app-i18n-zh.js?v=friendly-copy-4"></script>
-<script src="./app-i18n.js?v=app-copy-20261107-2"></script>
+<script src="./app-i18n.js?v=web-build30-1"></script>
 <script src="./app-currency.js?v=2"></script>
+<script src="./payroll-recap.js?v=1"></script>
 </body>
 </html>
 

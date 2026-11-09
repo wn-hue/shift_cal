@@ -164,3 +164,29 @@ const withoutBonus=ctx.PayrollEstimate.forParts({regular:1700000,support:300000,
 ctx.PayrollEstimate.update(3000000,{regular:2000000,support:0,bonus:1000000});
 assert.equal(elem('estimate-regular-row').hidden,false);assert.equal(elem('estimate-bonus-row').hidden,false);assert.match(elem('payroll-estimate-basis').textContent,/급여:.*상여:/);
 console.log('PASS one overall deduction for salary/support without bonus, distinct bonus breakdown when present, and unchanged totals');
+
+const recap = require('../payroll-recap.js');
+const december = new Date(2026, 11, 1), january = new Date(2027, 0, 1);
+assert.equal(recap.annualRecapYear(december, new Date('2026-11-30T14:59:59Z')), null);
+assert.equal(recap.annualRecapYear(december, new Date('2026-11-30T15:00:00Z')), 2026);
+assert.equal(recap.annualRecapYear(january, new Date('2026-12-31T15:00:00Z')), 2026);
+assert.equal(recap.annualRecapYear(new Date(2026, 0, 1), new Date('2026-12-31T15:00:00Z')), null);
+assert.equal(recap.annualRecapYear(january, new Date('2027-01-31T15:00:00Z')), null);
+
+const recapConfig = {hireDate:'2021-01-01',baseHourly:10000,ordinaryHourly:15000,holidayWorkPay:{C:{'2026-02-17':50000}}};
+const recapHolidays = {'2026-02-17':{name:'설날'}};
+const recapBaseline = recap.estimate(2026,recapConfig,'C',recapHolidays,()=>({type:'OFF'}),120000);
+const recapShifts = {'2025-12-31':'SPECIAL_NIGHT','2026-01-01':'SPECIAL_DAY_NO_OT','2026-02-17':'SPECIAL_DAY_NO_OT','2026-12-31':'SPECIAL_NIGHT','2027-01-01':'SPECIAL_NIGHT'};
+const recapChanged = recap.estimate(2026,recapConfig,'C',recapHolidays,date=>({type:recapShifts[ctx.ShiftPlannerCore.key(date)]||'OFF'}),120000);
+assert.equal(recapBaseline.gross,31350000+120000);
+assert.deepEqual(recapChanged.months.map(item=>item.month),[1,2,3,4,5,6,7,8,9,10,11,12]);
+assert.equal(recapChanged.months[0].gross-recapBaseline.months[0].gross,180000);
+assert.equal(recapChanged.months[1].gross-recapBaseline.months[1].gross,230000);
+assert.equal(recapChanged.months[11].gross-recapBaseline.months[11].gross,307500);
+assert.equal(recapChanged.gross-recapBaseline.gross,717500);
+
+const firstYear = recap.estimate(2024,{hireDate:'2024-02-15',baseHourly:10000,ordinaryHourly:0,dutyPay:29000,seniorityPayOverride:58000},'C',{},()=>({type:'OFF'}));
+assert.equal(firstYear.months[0].gross,0);
+assert.equal(firstYear.months[1].gross,1281206);
+assert.equal(firstYear.months[2].gross,2477000);
+console.log('PASS Korean-time recap season, calendar-year gross, shift and holiday allowances, January settlement, and leap-month proration');

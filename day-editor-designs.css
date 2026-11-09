@@ -227,3 +227,21 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design=toss] #w
 @media(prefers-reduced-motion:reduce){#design-ot-toggle::before,#design-ot-toggle>span{transition:none}}
 
 #modal-override#modal-override[data-editor-design] .design-save-error{color:#b52f46;background:#fff0f2;border-radius:12px;padding:12px;font-size:13px;line-height:1.5;margin:0 0 12px}
+
+#modal-override#modal-override[data-editor-design] button.design-attendance{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:8px 14px;font:inherit;color:var(--ed-text);text-align:left;cursor:pointer}
+#modal-override#modal-override[data-editor-design] button.design-attendance[hidden]{display:none!important}
+.design-attendance strong{font-size:15px}
+.design-attendance small{margin-inline-start:auto;color:var(--ed-sub);font-size:12px}
+#attendance-picker{position:fixed;inset:auto 0 0;width:min(100%,500px);max-width:100%;max-height:calc(100dvh - 30px);box-sizing:border-box;margin:0 auto;padding:14px 16px max(18px,env(safe-area-inset-bottom));border:0;border-radius:24px 24px 0 0;background:var(--ed-bg,#f2f4f6);color:var(--ed-text,#191f28);overflow:auto;overscroll-behavior:contain}
+#attendance-picker:not([open]){display:none!important}
+#attendance-picker::backdrop{background:#0006}
+#attendance-picker header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+#attendance-picker h2{margin:0;font-size:18px}
+#attendance-picker header button{min-width:44px;min-height:44px;border:0;border-radius:22px;background:transparent;color:inherit;font:inherit;font-size:22px;cursor:pointer}
+#modal-override#modal-override[data-editor-design] #work-panel #attendance-picker .attendance-choices{display:flex;flex-direction:column;gap:0;padding:0;margin:0;border-radius:16px;background:var(--ed-card);overflow:hidden}
+#modal-override#modal-override[data-editor-design] #work-panel #attendance-picker .opt-btn{display:flex;justify-content:flex-start;min-height:46px;border-radius:0!important;border-bottom:1px solid var(--ed-line)!important}
+#modal-override#modal-override[data-editor-design] #work-panel #attendance-picker .opt-btn[hidden]{display:none!important}
+#modal-override#modal-override[data-editor-design] #work-panel #attendance-picker .selection-check{position:static;margin-inline-start:auto}
+.attendance-picker-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px;color:var(--ed-sub);font-size:12px}
+.attendance-picker-meta p{margin:0}
+.attendance-picker-meta button{min-height:44px;padding:0 4px;border:0;background:none;color:var(--ed-blue);font:inherit;font-weight:600;cursor:pointer}

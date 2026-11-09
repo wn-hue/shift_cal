@@ -50,7 +50,7 @@
  $('settings-reset').onclick=()=>{
   window.SettingsOptions.confirm('앱 설정 초기화','화면 테마와 표시 방식, 언어, 통화를 처음 설정으로 되돌려요. 근무표, 급여 설정, 메모와 일정은 그대로 남아요.',()=>{
    for(const name of ['theme','shape','adjacent','holidays','memos']){const el=$('pref-'+name);if(name==='theme')el.value='current';else if(name==='shape')el.value='circle';else el.checked=true;el.dispatchEvent(new Event('change',{bubbles:true}));}
-   window.AppI18n?.setLanguage('ko');window.AppCurrency?.set('KRW');
+   window.AppI18n?.setLanguage('ko');window.AppCurrency?.set('KRW');window.PayrollRecap?.resetPreference();
   });
  };
  fetch('./open-source-notices.json').then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{

@@ -20,7 +20,7 @@
   else if(box.top<frame.top+8)content.scrollTop-=frame.top-box.top+8;
  })).observe(content);
  const edit=document.createElement('button');edit.id='holiday-work-pay-edit';edit.type='button';edit.hidden=true;edit.setAttribute('aria-haspopup','dialog');edit.setAttribute('aria-controls',sheet.id);
- overlay.querySelector('.design-memo-link').before(edit);
+ overlay.querySelector('.memo-inline-area').before(edit);
  function selected(){if(!selectedDateStr)return null;const p=ShiftTools.pending();return p?.date===selectedDateStr?ShiftTools.shiftAt(selectedDateStr,{[selectedDateStr]:p.type}):getActualShift(new Date(selectedDateStr+'T12:00'),currentGroup);}
  const eligible=()=>!!selectedDateStr&&!!core.festival(selectedDateStr,HOLIDAYS)&&core.working(selected());
  const current=()=>draft?.date===selectedDateStr&&draft.group===currentGroup?draft.amount:core.amount(config,currentGroup,selectedDateStr);

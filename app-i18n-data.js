@@ -1,5 +1,15 @@
 /* UI-only translations. User notes, event names, meals and source documents stay untouched. */
 window.AppTranslations=Object.fromEntries(`
+달력 근무 기준|Based on your work calendar|根据排班日历|勤務カレンダーに基づく
+올해|This year|今年|今年
+지난해|Last year|去年|昨年
+연간 세전 합계|Annual gross pay|年度税前合计|年間税引前の合計
+월별 세전 예상|Estimated gross pay by month|每月税前预估|月別の税引前見込み
+단위 만 원|Unit: ₩10,000|单位：万韩元|単位：万ウォン
+달력의 근무일과 현재 시급·수당으로 계산한 예상 금액이에요.|This estimate uses the shifts on your calendar and your current hourly pay and allowances.|这是根据日历上的排班和当前时薪及津贴计算的预估金额。|勤務カレンダーと現在の時給・手当をもとにした見積もりです。
+12월 말까지 예정된 근무도 반영해요.|Scheduled shifts through the end of December are included.|也计入截至12月底的计划排班。|12月末までの勤務予定も含みます。
+앞으로 결산 숨기기|Hide future pay recaps|以后隐藏薪资回顾|今後の給与まとめを非表示
+숨기기 설정을 저장하지 못했어요. 다시 시도해 주세요.|Couldn’t save your preference. Please try again.|无法保存隐藏设置，请重试。|非表示の設定を保存できませんでした。もう一度お試しください。
 시급과 수당이 맞나요?|Are these amounts correct?|这些时薪和津贴金额正确吗？|時給と手当は正しいですか？
 금액을 확인하면 설정이 끝나요.|Confirm the amounts to finish setup.|确认金额后即可完成设置。|金額を確認すると設定が完了します。
 예, 맞아요|Yes, save|是的，保存|はい、保存する

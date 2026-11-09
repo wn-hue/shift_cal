@@ -29,20 +29,39 @@
  const extra=make('details','design-extra','<summary><span class="design-row-icon">'+icons.NO_OT+'</span><span><strong>특근 설정</strong><small>추가 근무 선택</small></span><span class="design-chevron" aria-hidden="true">›</span></summary><div class="shift-scroll design-extra-choices" role="group" aria-label="특근과 잔업 고르기"></div>');
  const overtime=make('div','design-overtime','<div><strong id="design-ot-label">O.T (잔업)</strong><small id="design-ot-hint">이 날짜에만 적용돼요</small></div><span id="design-ot-state" aria-hidden="true">ON</span><button type="button" id="design-ot-toggle" role="switch" aria-checked="true" aria-labelledby="design-ot-label" aria-describedby="design-ot-hint"><span></span></button>');
  const dateRow=make('div','design-date-row','');hero.prepend(dateRow);dateRow.append($('design-date'),dateNav,overtime);
- const attend=make('details','design-attendance','<summary><span class="design-row-icon">'+icons.OFF+'</span><span><strong>근태 · 휴가</strong><small id="design-attendance-value">선택 안 함</small></span><span class="design-chevron" aria-hidden="true">›</span></summary>');
- main.after(extra,attend);attend.append(attendance);
+ const attend=make('button','design-attendance',`<span class="design-row-icon">${icons.OFF}</span><strong>근태 · 휴가</strong><small id="design-attendance-value">선택 안 함</small><span class="design-chevron" aria-hidden="true">›</span>`);
+ attend.type='button';attend.setAttribute('aria-haspopup','dialog');attend.setAttribute('aria-controls','attendance-picker');
+ const attendancePicker=make('dialog','attendance-picker','<header><h2 id="attendance-picker-title">근태 · 휴가</h2><button type="button" aria-label="닫기">×</button></header><div class="attendance-picker-meta"><p id="attendance-picker-balance"></p><button type="button" id="attendance-picker-settings">연차 설정</button></div>');
+ attendancePicker.id='attendance-picker';attendancePicker.setAttribute('aria-labelledby','attendance-picker-title');
+ attendancePicker.append(attendance);
+ main.after(extra,attend,attendancePicker);
+ attend.onclick=()=>{
+  if(attend.hidden||attendancePicker.open)return;
+  const year=Number(selectedDateStr.slice(0,4));
+  const accrued=calculateFiscalYearLeave(config.hireDate,year,selectedDateStr);
+  const remaining=Math.max(0,getGrantedLeave(year,accrued)-getUsedLeave(year));
+  text('attendance-picker-balance','남은 연차 '+remaining+'일');
+  WorkEditor.filterOptions(selectedDateStr);
+  attendancePicker.showModal();
+ };
+ $('attendance-picker-settings').onclick=()=>{attendancePicker.close();window.SettingsUI?.openLeave();};
+ attendancePicker.querySelector('header button').onclick=()=>attendancePicker.close();
+ attendancePicker.addEventListener('click',event=>{
+  if(event.target===attendancePicker){attendancePicker.close();return;}
+  const type=event.target.closest('[data-override]')?.dataset.override;
+  if(type&&ShiftTools.pending()?.type===type)attendancePicker.close();
+ });
  const memoLink=make('button','design-memo-link',`<span class="design-row-icon">${svg('<path d="M5 3h14v18H5zM9 8h6m-6 4h6m-6 4h3"/>')}</span><span><strong>메모 · 일정</strong><small id="design-note-value">메모나 일정 남기기</small></span><span class="design-chevron" aria-hidden="true">›</span>`);memoLink.type='button';memoLink.onclick=()=>window.MemoComposer?MemoComposer.enter(null):switchEditorTab('memo');attend.after(memoLink);
  const reset=$('modal-override').querySelector('.override-reset');reset.classList.add('design-reset');memoLink.after(reset);reset.querySelector('span').textContent='기본 근무로 되돌리기';
  const footer=make('footer','design-footer','<button type="button" id="design-cancel">닫기</button>');
  sheet.append(footer);footer.append($('apply-preview'));
- const preview=$('change-preview');const pay=make('details','design-pay','<summary>예상 급여 변화</summary>');preview.before(pay);pay.append(preview);const payEmpty=make('p','kakao-pay-empty','근무를 선택하면 예상 급여 변화를 확인할 수 있어요.');pay.append(payEmpty);
  // Keep the original buttons, validators and palette hooks; only their visual children change.
  const options=[...work.querySelectorAll('.shift-scroll .opt-btn')];
  for(const b of options){const type=b.dataset.override,label=labels[type];const badge=document.createElement('span');badge.className='design-choice-badge';badge.textContent=shorts[type]||'−';const icon=make('span','design-choice-icon',icons[type]||icons[type.includes('NIGHT')?'NIGHT':'DAY']);const text=document.createElement('span');text.className='design-choice-label';text.textContent=label;const check=b.querySelector('.selection-check');b.replaceChildren(badge,icon,text,check);b.setAttribute('aria-label',label);if(!['DAY','NIGHT','OFF'].includes(type)&&main.contains(b))extra.querySelector('.shift-scroll').append(b);}
  // Expand/collapse from the painted height so rapid taps never snap to an old state.
  const detailMotion=new WeakMap();
  function settleDetails(detail){const state=detailMotion.get(detail);if(state){state.animation.cancel();detailMotion.delete(detail);}detail.style.removeProperty('overflow');}
- for(const detail of [extra,attend,pay])detail.querySelector('summary').addEventListener('click',event=>{
+ for(const detail of [extra])detail.querySelector('summary').addEventListener('click',event=>{
   event.preventDefault();const active=detailMotion.get(detail),expand=active?!active.expand:!detail.open,from=detail.getBoundingClientRect().height;
   settleDetails(detail);
   if(matchMedia('(prefers-reduced-motion:reduce)').matches||!detail.animate){detail.open=expand;return;}
@@ -60,7 +79,7 @@
  function memoDirty(){return $('modal-memo-input').value.trim()!==(dayMemos[selectedDateStr]||'').trim();}
  function dirty(){return saveFailed||!!ShiftTools.pending()||memoDirty();}
  function failSave(message){saveFailed=true;saveError.textContent=tr(message);saveError.hidden=false;saveError.scrollIntoView({block:'nearest'});return false;}
- function flush(){return save(undefined,{keepOpen:true,stayPane:true});}
+ function flush(){if(window.MemoComposer&&!MemoComposer.saveInline())return false;return save(undefined,{keepOpen:true,stayPane:true});}
  function goDate(key){if(key===selectedDateStr)return;if(!flush())return;const d=dateObj(key);currentCalDate=new Date(d.getFullYear(),d.getMonth(),1);renderCalendar();openOverrideModal(key,d,getActualShift(d,currentGroup));}
  function week(){const host=hero.querySelector('.design-week');host.replaceChildren();const d=dateObj(selectedDateStr),start=new Date(d);start.setDate(d.getDate()-(design()==='kakao'?(d.getDay()+6)%7:d.getDay()));for(let i=0;i<7;i++){const day=new Date(start);day.setDate(start.getDate()+i);const key=toDateKey(day.getFullYear(),day.getMonth(),day.getDate()),shift=getActualShift(day,currentGroup);const b=make('button','design-week-day','<small></small><strong></strong><span class="design-week-shift"></span>');b.type='button';b.querySelector('small').textContent=new Intl.DateTimeFormat(locale(),{weekday:'short'}).format(day);b.querySelector('strong').textContent=day.getDate();const shownType=regularType(shift.type,getBaseShift(day,currentGroup).type);b.querySelector('span').textContent=shorts[shownType]||shift.name;b.querySelector('span').dataset.shift=shownType;b.setAttribute('aria-label',dateLabel(day));b.setAttribute('aria-pressed',String(key===selectedDateStr));b.dataset.date=key;b.onclick=()=>goDate(key);host.append(b);}}
  // Overtime uses the existing per-date override types, keeping payroll and sync consistent.
@@ -77,21 +96,21 @@
   for(const button of [...main.querySelectorAll('.opt-btn'),...extra.querySelectorAll('.opt-btn')])button.setAttribute('aria-pressed',String(button.dataset.override===type));
  }
  function update(){if(!selectedDateStr)return;const variant=design();
-  if(nav.dataset.variant!==variant){nav.dataset.variant=variant;nav.innerHTML=(variant==='kakao'?[['work','근무'],['memo','메모'],['pay','급여']]:[['work','근무'],['attendance','근태 · 휴가'],['memo','메모']]).map(([key,label])=>`<button type="button" data-pane="${key}" aria-pressed="false">${label}</button>`).join('');}overlay.dataset.editorDesign=variant;overlay.dataset.designPane=pane;const d=dateObj(selectedDateStr),base=getBaseShift(d,currentGroup),pending=ShiftTools.pending(),type=selectedShift().type,displayType=regularType(type,base.type),label=labels[displayType]||getActualShift(d,currentGroup).name;
-  text('design-date',dateLabel(d));text('design-base-name',labels[base.type]);text('design-title',variant==='kakao'?'나의 하루':pane==='memo'?'메모':pane==='attendance'?'근태 · 휴가':'근무 변경');text('design-bubble-date',dateLabel(d));text('design-bubble-shift',pending?' → '+tr(label):label);text('design-attendance-value',labels[type]&&!shorts[type]?label:'선택 안 함');text('design-note-value',$('modal-memo-input').value.trim()?'메모가 있어요':'메모나 일정 남기기');
-  text('apply-preview',dirty()?'변경사항 저장':'닫기');$('design-done').disabled=false;pay.hidden=variant==='kakao'?pane!=='pay':!pending;preview.hidden=!pending;payEmpty.hidden=!!pending||variant!=='kakao';if(variant==='kakao'&&pane==='pay')pay.open=true;
+  if(nav.dataset.variant!==variant){nav.dataset.variant=variant;nav.innerHTML=([['work','근무'],['memo','메모']]).map(([key,label])=>`<button type="button" data-pane="${key}" aria-pressed="false">${label}</button>`).join('');}overlay.dataset.editorDesign=variant;overlay.dataset.designPane=pane;const d=dateObj(selectedDateStr),base=getBaseShift(d,currentGroup),pending=ShiftTools.pending(),type=selectedShift().type,displayType=regularType(type,base.type),label=labels[displayType]||getActualShift(d,currentGroup).name;
+  text('design-date',dateLabel(d));text('design-base-name',labels[base.type]);text('design-title',variant==='kakao'?'나의 하루':pane==='memo'?'메모':'근무 변경');text('design-bubble-date',dateLabel(d));text('design-bubble-shift',pending?' → '+tr(label):label);text('design-attendance-value',labels[type]&&!shorts[type]?label:'선택 안 함');
+  text('apply-preview',dirty()?'변경사항 저장':'닫기');$('design-done').disabled=false;
   text('kakao-date',dateLabel(d));text('kakao-base-label',labels[base.type]);text('kakao-base-badge',shorts[base.type]);$('kakao-base-badge').dataset.shift=base.type;
   daySummary.querySelector('.kakao-selection-bubble').hidden=!pending&&!overrides[selectedDateStr];text('kakao-selection-caption',pending?'변경할 근무':'현재 근무');text('kakao-selection-label',label);text('kakao-selection-badge',shorts[displayType]||'✓');$('kakao-selection-badge').dataset.shift=displayType;
   text('kakao-change-copy',pending?tr(labels[base.type])+' → '+tr(label):'');$('kakao-change-copy').hidden=!pending;text('kakao-save-state',dirty()?'아직 저장하지 않았어요.':'저장된 근무');
-  if(variant==='kakao'){attend.hidden=attendance.hidden;memoLink.querySelector('strong').textContent='이날 메모 남기기';}else{attend.hidden=false;memoLink.querySelector('strong').textContent='메모';}
+  attend.hidden=base.type==='OFF'||displayType==='OFF';
   updateOT(base.type);
   for(const b of nav.children)b.setAttribute('aria-pressed',String(b.dataset.pane===pane));
  }
- function showPane(next){if(next!=='memo'&&!$('event-form').hidden){if(!DayScheduler.canLeave())return;DayScheduler.open(selectedDateStr);}pane=next;switchEditorTab(next==='memo'?'memo':'work');if(next==='attendance')attend.open=true;content.scrollTop=0;update();}
+ function showPane(next){if(next!=='memo'&&!$('event-form').hidden){if(!DayScheduler.canLeave())return;DayScheduler.open(selectedDateStr);}pane=next==='memo'?'memo':'work';switchEditorTab(pane);content.scrollTop=0;update();if(next==='attendance')attend.click();}
  for(const [id,delta]of [['kakao-prev-day',-1],['kakao-next-day',1]])$(id).onclick=()=>{const d=dateObj(selectedDateStr);d.setDate(d.getDate()+delta);goDate(toDateKey(d.getFullYear(),d.getMonth(),d.getDate()));};
  nav.addEventListener('click',e=>{const b=e.target.closest('button');if(b){if(b.dataset.pane==='memo'&&window.MemoComposer)MemoComposer.enter(null);else showPane(b.dataset.pane);}});
  const switchTab=switchEditorTab;switchEditorTab=function(tab){if(!opening&&tab==='work'&&!$('event-form').hidden){if(!DayScheduler.canLeave())return;DayScheduler.open(selectedDateStr);}switchTab(tab);if(tab==='stickers')return;if(tab==='memo')pane='memo';else if(pane==='memo')pane='work';update();};
- const open=openOverrideModal;openOverrideModal=function(...args){pane='work';saveFailed=false;saveError.hidden=true;[extra,attend,pay].forEach(settleDetails);overlay.dataset.editorDesign=design();extra.open=true;attend.open=design()==='kakao';pay.open=false;opening=true;try{open(...args);}finally{opening=false;}week();update();};
+ const open=openOverrideModal;openOverrideModal=function(...args){pane='work';saveFailed=false;saveError.hidden=true;settleDetails(extra);overlay.dataset.editorDesign=design();extra.open=true;opening=true;try{open(...args);}finally{opening=false;}window.MemoComposer?.resetInline();week();update();};
  const choose=setDayOverride;setDayOverride=function(type){
   const shift=selectedShift(),base=getBaseShift(dateObj(selectedDateStr),currentGroup).type;
   if(['DAY','NIGHT','SPECIAL_DAY','SPECIAL_NIGHT'].includes(type)&&canToggleOT(shift,base)&&shift.hasOt===false)type=withOT(type,false);
@@ -132,12 +151,12 @@
    window.AccountSync?.changed();window.GoogleSync?.changed(selectedDateStr);renderCalendar();if(holidayConfig){syncFromCalendar();window.HolidayWorkPay?.didSave();}if(options.keepOpen){week();if(options.stayPane)update();else showPane('memo');}else closeModalDirect();return true;
   }catch(error){rollback();return failSave('저장하지 못했어요. 작성한 내용은 그대로 남아 있어요. 다시 시도해 주세요.');}finally{saving=false;}
  }
- $('apply-preview').onclick=save;$('design-done').onclick=save;saveMemoDirect=save;
+ $('apply-preview').onclick=()=>closeModalDirect();$('design-done').onclick=()=>closeModalDirect();saveMemoDirect=save;
  const close=closeModalDirect;closeModalDirect=function(){if($('memo-compose-dialog')?.open)return window.MemoComposer?.saveAndClose('calendar');if(!saving&&!flush())return false;close();return true;};
  $('design-back').onclick=()=>pane!=='work'?showPane('work'):closeModalDirect();$('design-cancel').onclick=()=>closeModalDirect();
  $('modal-memo-input').addEventListener('input',update);
  let lastTheme=document.body.dataset.prefTheme,lastLanguage=document.body.dataset.uiLanguage;
- new MutationObserver(()=>{const theme=document.body.dataset.prefTheme,language=document.body.dataset.uiLanguage;if(theme===lastTheme&&language===lastLanguage)return;const themeChanged=theme!==lastTheme;lastTheme=theme;lastLanguage=language;if(overlay.classList.contains('active')){if(themeChanged){[extra,attend,pay].forEach(settleDetails);extra.open=true;attend.open=design()==='kakao';overlay.dataset.editorDesign=design();WorkEditor.filterOptions(selectedDateStr);}update();week();}}).observe(document.body,{attributes:true,attributeFilter:['data-pref-theme','data-ui-language']});
+ new MutationObserver(()=>{const theme=document.body.dataset.prefTheme,language=document.body.dataset.uiLanguage;if(theme===lastTheme&&language===lastLanguage)return;const themeChanged=theme!==lastTheme;lastTheme=theme;lastLanguage=language;if(overlay.classList.contains('active')){if(themeChanged){settleDetails(extra);extra.open=true;overlay.dataset.editorDesign=design();WorkEditor.filterOptions(selectedDateStr);}update();week();}}).observe(document.body,{attributes:true,attributeFilter:['data-pref-theme','data-ui-language']});
  new MutationObserver(()=>{overlay.dataset.designEvent=String(!$('event-form').hidden)}).observe($('event-form'),{attributes:true,attributeFilter:['hidden']});
  window.DayEditorDesigns={save,flush,showPane};
 })();
