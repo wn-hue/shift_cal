@@ -1,27 +1,127 @@
 'use strict';
-const {webkit,chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');const assert=require('node:assert/strict');
-(async()=>{for(const engine of [webkit,chromium]){const browser=await engine.launch();for(const [width,theme]of [[320,'test'],[390,'test'],[390,'current'],[320,'test1'],[320,'test3'],[320,'test4']]){
- const page=await browser.newPage({viewport:{width,height:844},timezoneId:'Asia/Seoul',reducedMotion:'reduce'});const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.clock.setFixedTime(new Date('2026-10-25T12:00:00+09:00'));
- await page.addInitScript(theme=>{if(localStorage.getItem('shift_active_group'))return;localStorage.setItem('shift_active_group','C');localStorage.setItem('shift_display_theme',theme);localStorage.setItem('shift_onboarding_v1',JSON.stringify({status:'existing'}));localStorage.setItem('shift_salary_config_master',JSON.stringify({hireDate:'2015-06-16',baseHourly:10320,ordinaryHourly:11000}));},theme);
- await page.route('**/api/**',r=>r.fulfill({json:{configured:false}}));await page.goto(process.env.TEST_URL||'http://localhost:8768/');
- const date='.cal-day[data-date="2026-10-03"]';await page.locator(date).click();await page.getByRole('button',{name:'날짜 스티커 선택',exact:true}).click();assert.equal(await page.locator('#sticker-dialog').evaluate(e=>e.open),true);assert.equal(await page.locator('#calendar-sticker-options button').count(),13);
- for(const id of ['soju','beer','kimchi-stew','pork-belly','chicken','gukbap']){
- await page.locator(`[data-sticker="${id}"]`).click();assert.equal(await page.locator('#editor-sticker-preview img').count(),0);assert.equal(await page.locator('#editor-sticker-preview svg').count(),1);assert.equal(await page.locator('#editor-sticker-preview').getAttribute('aria-label'),'날짜 스티커 선택');assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_day_stickers'))['2026-10-03']),id);assert.equal(await page.locator(`${date} .calendar-sticker`).getAttribute('src'),`./assets/stickers/${id}.svg?v=2`);assert.equal(await page.locator(`[data-sticker="${id}"]`).getAttribute('aria-pressed'),'true');
- }
- // Selecting the same sticker toggles it off, including persisted selections after reload.
- await page.locator('[data-sticker="gukbap"]').click();assert.equal(await page.locator(`${date} .calendar-sticker`).count(),0);assert.equal(await page.locator('[data-sticker="gukbap"]').getAttribute('aria-pressed'),'false');assert.equal(await page.locator('#calendar-sticker-clear').isDisabled(),true);assert.match(await page.locator('#calendar-sticker-status').textContent(),/지웠/);await page.reload();assert.equal(await page.locator(`${date} .calendar-sticker`).count(),0);await page.locator(date).click();await page.locator('#editor-sticker-preview').click();await page.locator('[data-sticker="gukbap"]').click();assert.equal(await page.locator(`${date} .calendar-sticker`).getAttribute('alt'),'국밥 스티커');
- await page.locator('#calendar-sticker-options img').evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode())));assert(await page.locator('#calendar-sticker-options img').evaluateAll(imgs=>imgs.every(img=>img.naturalWidth>0)));
- if(width===390&&theme==='test')await page.screenshot({path:`/tmp/calendar-sticker-picker-${engine.name()}.png`,animations:'disabled'});
- await page.getByRole('button',{name:'완료',exact:true}).click();await page.reload();assert.equal(await page.locator(`${date} .calendar-sticker`).getAttribute('alt'),'국밥 스티커');
- const cellBox=await page.locator(date).boundingBox(),iconBox=await page.locator(`${date} .calendar-sticker`).boundingBox(),shift=await page.locator(`${date} .shift-badge`).boundingBox();assert(iconBox.y>=shift.y+shift.height&&iconBox.x>=cellBox.x&&iconBox.x+iconBox.width<=cellBox.x+cellBox.width+1);
- // The cloud restore entry point reloads the same validated sticker key.
- await page.evaluate(()=>{const d=AccountDataCore.normalize({shift_day_stickers:{'2026-10-03':'soju','2026-10-10':'chicken'}});localStorage.setItem('shift_day_stickers',JSON.stringify(d.shift_day_stickers));refreshAccountData()});assert.equal(await page.locator(`${date} .calendar-sticker`).getAttribute('alt'),'소주 스티커');
- await page.locator(date).click();await page.getByRole('tab',{name:'메모',exact:true}).click();await page.locator('#modal-memo-input').fill('메모와 스티커 같이 저장');await page.locator('#editor-sticker-preview').click();await page.locator('[data-sticker="beer"]').click();await page.locator('[data-sticker="beer"]').click();assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shift_day_stickers'))['2026-10-10']),'chicken');await page.locator('[data-sticker="beer"]').click();await page.getByRole('button',{name:'스티커 닫기',exact:true}).click();await page.getByRole('tab',{name:'메모',exact:true}).click();assert.equal(await page.locator('#modal-memo-input').inputValue(),'메모와 스티커 같이 저장');await page.getByRole('button',{name:'메모 저장',exact:true}).click();
- if(width===390&&theme==='test'){await page.evaluate(()=>document.fonts.ready);await page.screenshot({path:`/tmp/calendar-stickers-${engine.name()}.png`,animations:'disabled'});}
- await page.locator(`${date} .day-num`).click();await page.locator('#editor-sticker-preview').click();await page.locator('#calendar-sticker-clear').click();assert.equal(await page.locator(`${date} .calendar-sticker`).count(),0);await page.getByRole('button',{name:'완료',exact:true}).click();await page.reload();assert.equal(await page.locator(`${date} .calendar-sticker`).count(),0);assert.equal(await page.locator(`${date} .memo-tag`).textContent(),'메모와 스티커 같이 저장');
- await page.setViewportSize({width,height:360});await page.locator(`${date} .day-num`).click();await page.locator('#editor-sticker-preview').click();await page.locator('[data-sticker="gukbap"]').scrollIntoViewIfNeeded();const last=await page.locator('[data-sticker="gukbap"]').boundingBox();assert(last.y>=0&&last.y+last.height<=360);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
- await page.getByRole('button',{name:'스티커 닫기',exact:true}).click();await page.getByRole('button',{name:'근무 변경 내리기',exact:true}).click();await page.setViewportSize({width,height:568});
- await page.evaluate(()=>{currentCalDate=new Date(2026,4,1);overrides['2026-05-01']='LEAVE';dayMemos['2026-05-01']='스티커와 메모 함께';localStorage.setItem('shift_day_stickers',JSON.stringify({'2026-05-01':'beer'}));renderCalendar()});
- const bounds=await page.locator('.cal-day[data-date="2026-05-01"]').evaluate(e=>{const r=e.getBoundingClientRect(),a=e.querySelector('.attendance-pill').getBoundingClientRect(),s=e.querySelector('.calendar-sticker').getBoundingClientRect(),m=e.querySelector('.memo-tag').getBoundingClientRect();return {cellBottom:r.bottom,attendanceBottom:a.bottom,stickerTop:s.top,stickerBottom:s.bottom,memoTop:m.top,memoBottom:m.bottom}});assert(bounds.stickerTop>=bounds.attendanceBottom&&bounds.memoTop>=bounds.stickerBottom&&bounds.memoBottom<=bounds.cellBottom,JSON.stringify(bounds));
- assert.deepEqual(errors,[]);console.log(engine.name(),width,theme,'PASS 13 SVGs, add/replace/remove, reload, account restore, memo preservation, short screen');await page.close();
- }await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});
+
+const assert = require('node:assert/strict');
+const { webkit, chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const url = process.env.TEST_URL || 'http://localhost:8768/';
+const date = '2026-10-03';
+
+async function verify(engine, browser, width, theme) {
+    const page = await browser.newPage({ viewport: { width, height: 844 }, timezoneId: 'Asia/Seoul', reducedMotion: 'reduce' });
+    try {
+        const errors = [];
+        page.on('pageerror', error => errors.push(error.message));
+        await page.clock.setFixedTime(new Date('2026-10-25T12:00:00+09:00'));
+        await page.addInitScript(theme => {
+            localStorage.setItem('shift_origin_ready_v1', '1');
+            if (localStorage.getItem('shift_active_group')) return;
+            localStorage.setItem('shift_active_group', 'C');
+            localStorage.setItem('shift_display_theme', theme);
+            localStorage.setItem('shift_onboarding_v1', JSON.stringify({ status: 'existing' }));
+            localStorage.setItem('shift_salary_config_master', JSON.stringify({ hireDate: '2015-06-16', baseHourly: 10320, ordinaryHourly: 11000 }));
+        }, theme);
+        await page.route('**/api/**', route => route.fulfill({ json: { configured: false } }));
+        await page.goto(url);
+
+        const day = page.locator(`.cal-day[data-date="${date}"]`);
+        const sticker = day.locator('.calendar-sticker');
+        const trigger = page.getByRole('button', { name: '날짜 스티커 선택', exact: true });
+        const picker = page.locator('#sticker-dialog');
+        const options = picker.locator('#calendar-sticker-options');
+        const choice = id => options.locator(`[data-sticker="${id}"]`);
+        const clear = picker.locator('#calendar-sticker-clear');
+        const draft = page.locator('#memo-inline-input');
+        const openPicker = async () => {
+            await trigger.click();
+            await picker.waitFor({ state: 'visible' });
+        };
+        const select = async id => {
+            await choice(id).click();
+            await picker.waitFor({ state: 'hidden' });
+        };
+
+        await day.locator('.day-num').click();
+        await openPicker();
+        assert.equal(await options.getByRole('button').count(), 14);
+        const assets = await options.locator('img').evaluateAll(async images => {
+            await Promise.all(images.map(image => image.decode()));
+            return images.every(image => image.naturalWidth > 0);
+        });
+        assert(assets);
+        assert(await clear.isDisabled());
+        await select('soju');
+        assert.equal(await trigger.locator('img').getAttribute('src'), './assets/stickers/soju.svg?v=2');
+        assert.equal(await sticker.getAttribute('alt'), '소주 스티커');
+
+        await openPicker();
+        assert.equal(await choice('soju').getAttribute('aria-pressed'), 'true');
+        await select('soju');
+        assert.equal(await sticker.getAttribute('alt'), '소주 스티커');
+
+        await draft.fill('메모와 스티커 같이 저장');
+        await openPicker();
+        await select('cake');
+        assert.equal(await sticker.getAttribute('aria-label'), '케이크 스티커');
+        assert.equal(await sticker.locator('text').textContent(), '🎂');
+        assert.equal(await draft.inputValue(), '메모와 스티커 같이 저장');
+        assert.equal(await page.evaluate(date => JSON.parse(localStorage.getItem('shift_day_stickers'))[date], date), undefined);
+        await page.locator('#memo-inline-save').click();
+
+        await page.reload();
+        assert.equal(await sticker.getAttribute('aria-label'), '케이크 스티커');
+        await page.evaluate(() => {
+            localStorage.setItem('shift_account_owner_v1', 'test-account');
+            CalendarStickers.ownerChanged();
+        });
+        assert.equal(await sticker.count(), 0);
+        await page.evaluate(() => {
+            localStorage.removeItem('shift_account_owner_v1');
+            CalendarStickers.ownerChanged();
+        });
+        assert.equal(await sticker.getAttribute('aria-label'), '케이크 스티커');
+
+        await day.locator('.day-num').click();
+        await openPicker();
+        await clear.click();
+        await picker.waitFor({ state: 'hidden' });
+        assert.equal(await sticker.count(), 0);
+        assert.equal(await day.locator('.memo-tag').textContent(), '메모와 스티커 같이 저장');
+
+        await page.setViewportSize({ width, height: 360 });
+        await openPicker();
+        const last = choice('jjamppong');
+        await last.scrollIntoViewIfNeeded();
+        const lastBounds = await last.boundingBox();
+        assert(lastBounds.y >= 0 && lastBounds.y + lastBounds.height <= 360);
+        assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+        await select('jjamppong');
+
+        await page.reload();
+        assert.equal(await sticker.getAttribute('alt'), '짬뽕 스티커');
+        const bounds = await day.evaluate(cell => {
+            const shift = cell.querySelector('.shift-badge').getBoundingClientRect();
+            const sticker = cell.querySelector('.calendar-sticker').getBoundingClientRect();
+            return { cell: cell.getBoundingClientRect().toJSON(), shift: shift.toJSON(), sticker: sticker.toJSON() };
+        });
+        assert(bounds.sticker.top >= bounds.shift.bottom && bounds.sticker.left >= bounds.cell.left && bounds.sticker.right <= bounds.cell.right + 1);
+        assert.deepEqual(errors, []);
+        console.log(engine.name(), width, theme, 'passed sticker selection, persistence, account isolation and memo preservation');
+    } finally {
+        await page.close();
+    }
+}
+
+(async () => {
+    for (const engine of [webkit, chromium]) {
+        const browser = await engine.launch();
+        try {
+            for (const [width, theme] of [[320, 'test'], [390, 'current'], [320, 'test1'], [320, 'test3'], [320, 'test4']]) {
+                await verify(engine, browser, width, theme);
+            }
+        } finally {
+            await browser.close();
+        }
+    }
+})().catch(error => {
+    console.error(error);
+    process.exitCode = 1;
+});

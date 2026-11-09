@@ -94,6 +94,13 @@ window.AppTranslations=Object.fromEntries(`
 근무를 선택하면 예상 급여 변화를 확인할 수 있어요.|Select a shift to preview the estimated pay change.|选择班次后可查看预计工资变化。|勤務を選択すると給与の変化を確認できます。
 이전 날짜|Previous day|前一天|前の日
 다음 날짜|Next day|后一天|次の日
+근무 변경 닫기|Close shift editor|关闭班次编辑|勤務変更を閉じる
+남은 연차 {days}일|Annual leave left: {days} d|剩余年假：{days}天|残りの有休：{days}日
+무급 근태 선택|Choose unpaid leave|选择无薪休假|無給休暇を選択
+연차를 모두 쓰면 무급 항목을 선택할 수 있어요.|Unpaid options are available after you use your annual leave.|用完年假后可选择无薪休假。|有休を使い切ると無給休暇を選べます。
+이날 쓴 연차를 취소하면 잔여 연차가 다시 생겨요.|Cancel this day's paid leave to restore your balance.|取消当天的带薪休假即可恢复余额。|この日の有休を取り消すと残りの有休が戻ります。
+연속 근무를 고려해 선택할 수 있는 특근이 없어요.|No extra shift is available with the surrounding schedule.|因前后班次安排，没有可选的加班班次。|前後の勤務の都合で選べる特別勤務がありません。
+케이크|Cake|蛋糕|ケーキ
 특근 설정|Extra shifts|加班设置|特別勤務の設定
 추가 근무 선택|Choose an extra shift|选择加班班次|追加勤務を選択
 O.T (잔업)|Overtime|延时加班|残業

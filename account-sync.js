@@ -100,6 +100,7 @@
     }
     function clearWorkingData() {
         restore(C.normalize({}));localStorage.removeItem(ownerKey);
+        window.CalendarStickers?.ownerChanged?.();
     }
     function finishDisconnect() {
         ++epoch;clearTimeout(timer);pending=null;baseline=null;
@@ -119,6 +120,7 @@
                 clearWorkingData();
             }
         } finally {
+            window.CalendarStickers?.clearLocal?.(account);
             localStorage.removeItem(cachePrefix+account);
             localStorage.removeItem(basePrefix+account);
             let links;
@@ -267,6 +269,7 @@
                 restore(saved);
             }
             localStorage.setItem(ownerKey,auth.user.id);
+            if(owner!==auth.user.id)window.CalendarStickers?.ownerChanged?.();
             // Guest edits made after logout are a new branch. Do not treat them
             // as deletions of the previous signed-in account's data.
             if(saved && (owner || !C.meaningful(local)))baseline=C.normalize(saved);

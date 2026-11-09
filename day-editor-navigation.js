@@ -3,15 +3,8 @@
  const $=id=>document.getElementById(id),overlay=$('modal-override'),sheet=overlay.querySelector('.override-sheet'),content=overlay.querySelector('.editor-content');
  const reduced=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
  function move(direction){
-  if(!overlay.classList.contains('active')||$('sticker-dialog').open)return;
-  const tab=overlay.dataset.editorTab;
-  if(direction>0&&tab==='work'){switchEditorTab('memo');return;}
-  if(direction<0&&tab==='memo'){switchEditorTab('work');return;}
-  if(window.DayEditorDesigns&&!DayEditorDesigns.flush())return;
-  const [y,m,d]=selectedDateStr.split('-').map(Number),next=new Date(y,m-1,d+direction,12),key=toDateKey(next.getFullYear(),next.getMonth(),next.getDate());
-  currentCalDate=new Date(next.getFullYear(),next.getMonth(),1);renderCalendar();
-  openOverrideModal(key,next,getActualShift(next,currentGroup));
-  switchEditorTab(direction>0?'work':'memo');
+  if(!overlay.classList.contains('active')||document.querySelector('dialog[open]'))return;
+  window.DayEditorDesigns?.moveDate(direction);
  }
  function advance(direction){
   overlay.dataset.editorSwiping='true';
@@ -22,12 +15,12 @@
    content.animate([{opacity:.65,transform:`translateX(${direction*24}px)`},{opacity:1,transform:'translateX(0)'}],{duration:180,easing:'ease-out'});
   }
  }
- // Match calendar/payroll/menu: finger moves LEFT to advance work -> memo -> next day's work.
+ // A swipe on blank space changes the date, leaving the memo and work controls together.
  let start=null,axis='',suppressUntil=0;
  const reset=()=>{start=null;axis='';content.style.transform='';};
  sheet.addEventListener('touchstart',e=>{
-  reset();if(e.touches.length!==1||$('sticker-dialog').open||sheet.dataset.sheetClosing==='true')return;
-  if(e.target.closest('button,a,input,textarea,select,label,[contenteditable=true],.shift-scroll,.editor-tabs'))return;
+  reset();if(e.touches.length!==1||document.querySelector('dialog[open]')||sheet.dataset.sheetClosing==='true')return;
+  if(e.target.closest('button,a,input,textarea,select,label,summary,[contenteditable=true],.shift-scroll,.editor-tabs,.memo-inline-area'))return;
   start={x:e.touches[0].clientX,y:e.touches[0].clientY};
  },{passive:true});
  sheet.addEventListener('touchmove',e=>{

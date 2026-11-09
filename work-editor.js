@@ -15,16 +15,36 @@
   }finally{cell.remove()}
   for(const row of document.querySelectorAll('#work-panel .shift-scroll'))row.scrollLeft=0;
  }
- function filterOptions(date){
+ function attendanceBalance(date){
+  const year=Number(date.slice(0,4));
+  const automatic=calculateFiscalYearLeave(config.hireDate,year,date);
+  const granted=getGrantedLeave(year,automatic);
+  const remaining=Math.max(0,granted-getUsedLeave(year));
+  const availableToReplace=Math.max(0,granted-getUsedLeave(year,date));
+  return {remaining,availableToReplace,unpaidAvailable:availableToReplace===0};
+ }
+ function filterOptions(date,selectedType=getActualShift(new Date(date+'T12:00:00'),currentGroup).type){
   const base=getBaseShift(new Date(date+'T12:00:00'),currentGroup).type;
-  for(const button of document.querySelectorAll('#work-panel .opt-btn')){
-   const type=button.dataset.override||null;
-   // Basic choices reflect only the scheduled shift; overtime is controlled separately.
-   // Existing overrides remain readable and are never rewritten by opening this editor.
-   const otherBase=['DAY','NIGHT','OFF'].includes(type)&&type!==base;
-   const overtimeChoice=['NO_OT','SPECIAL_DAY_NO_OT','SPECIAL_NIGHT_NO_OT'].includes(type);
-   const unavailable=otherBase||overtimeChoice||!!validateDayOverride(date,type);
-   button.hidden=unavailable;button.disabled=unavailable;
+  const active=selectedType==='NO_OT'?base:selectedType.replace(/_NO_OT$/,'');
+  const canShowAttendance=base!=='OFF'&&active!=='OFF';
+  const {unpaidAvailable}=attendanceBalance(date);
+  for(const button of document.querySelectorAll('#work-panel .opt-btn, #attendance-picker .opt-btn')){
+   const type=button.dataset.override;
+   if(!type)continue;
+   let available;
+   if(['SPECIAL_DAY','SPECIAL_NIGHT'].includes(type)){
+    available=type!==active&&!validateDayOverride(date,type);
+   }else if(['LEAVE','HALF_PRE','HALF_POST'].includes(type)){
+    available=canShowAttendance;
+   }else if(type.startsWith('UNPAID_')){
+    // Keep the three unpaid choices together. The monthly cap is checked when tapped.
+    available=canShowAttendance&&unpaidAvailable;
+   }else{
+    // The date summary presents the scheduled shift and the O.T switch handles its variants.
+    available=false;
+   }
+   button.hidden=!available;
+   button.disabled=!available;
   }
   for(const row of document.querySelectorAll('#work-panel .shift-scroll')){
    const empty=![...row.querySelectorAll('button')].some(b=>!b.hidden);
@@ -32,5 +52,5 @@
    if(row.previousElementSibling?.matches('h3'))row.previousElementSibling.hidden=empty;
   }
  }
- window.WorkEditor={syncColors,filterOptions};
+ window.WorkEditor={syncColors,filterOptions,attendanceBalance};
 })();

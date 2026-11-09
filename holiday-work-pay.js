@@ -27,7 +27,10 @@
  function refresh(){edit.hidden=!eligible();if(!edit.hidden){const n=current();edit.textContent='명절근무수당 · '+(n===null?'금액 선택':n.toLocaleString('ko-KR')+'원')+'  ›';}}
  function mark(custom){choice=custom?'custom':'preset';$('holiday-work-pay-preset').setAttribute('aria-pressed',String(!custom));$('holiday-work-pay-custom').setAttribute('aria-pressed',String(custom));field.hidden=!custom;error.textContent='';}
  function open(){if(sheet.open||!eligible())return;const n=current();mark(n!==null&&n!==50000);input.value=n===null||n===0?'':n.toLocaleString('ko-KR');input.removeAttribute('aria-invalid');$('holiday-work-pay-description').textContent=Number(selectedDateStr.slice(5,7))+'월 '+Number(selectedDateStr.slice(8,10))+'일 · '+core.festival(selectedDateStr,HOLIDAYS)+' 근무수당';sheet.showModal();}
- function offer(){refresh();const p=ShiftTools.pending();if(p?.date===selectedDateStr&&eligible()&&current()===null)open();}
+ function offer(previousType){
+  refresh();
+  if(overlay.classList.contains('active')&&previousType!==selected()?.type&&eligible()&&current()===null)open();
+ }
  $('holiday-work-pay-preset').onclick=()=>{if(window.AppSheets?.resize)AppSheets.resize(sheet,()=>mark(false));else mark(false);};
  $('holiday-work-pay-custom').onclick=()=>{if(window.AppSheets?.resize)AppSheets.resize(sheet,()=>mark(true));else mark(true);input.focus({preventScroll:true});input.select();field.scrollIntoView({block:'nearest'});};
  $('holiday-work-pay-close').onclick=()=>sheet.close();
@@ -38,8 +41,17 @@
  }
  $('holiday-work-pay-done').onclick=apply;input.oninput=()=>{if(/^\d+$/.test(input.value))input.value=input.value.replace(/^0+(?=\d)/,'');error.textContent='';input.removeAttribute('aria-invalid');};input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();apply();}};
  edit.onclick=open;
- const choose=setDayOverride;setDayOverride=function(...args){const result=choose(...args);offer();return result;};
- $('design-ot-toggle').addEventListener('click',offer);
+ const choose=setDayOverride;
+ setDayOverride=function(...args){
+  const previousType=selected()?.type;
+  const result=choose(...args);
+  offer(previousType);
+  return result;
+ };
+ const overtime=$('design-ot-toggle');
+ let beforeToggle;
+ overtime.addEventListener('click',()=>{beforeToggle=selected()?.type;},true);
+ overtime.addEventListener('click',()=>offer(beforeToggle));
  const openDay=openOverrideModal;openOverrideModal=function(...args){if(draft&&(draft.date!==args[0]||draft.group!==currentGroup))draft=null;const result=openDay(...args);refresh();return result;};
  window.HolidayWorkPay={
   draftConfig(key){if(!draft||draft.date!==key||draft.group!==currentGroup)return null;return {...config,holidayWorkPay:{...config.holidayWorkPay,[currentGroup]:{...config.holidayWorkPay?.[currentGroup],[key]:draft.amount}}};},

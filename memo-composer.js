@@ -26,9 +26,16 @@
  const full=composerBar('memo-compose-input','memo-compose-save','memo-compose-options','memo-compose-delete');
  const inline=composerBar('memo-inline-input','memo-inline-save','memo-inline-options','memo-inline-delete');
  const inlineArea=document.createElement('section');inlineArea.className='memo-inline-area';
- const inlineHistory=document.createElement('button');inlineHistory.type='button';inlineHistory.className='memo-inline-history';inlineHistory.hidden=true;
+ const inlineHistory=document.createElement('div');inlineHistory.className='memo-inline-history';inlineHistory.hidden=true;
+ const inlineNew=document.createElement('button');inlineNew.type='button';inlineNew.className='memo-inline-new';inlineNew.hidden=true;inlineNew.textContent='새 메모';
+ const inlineSettings=document.createElement('div');inlineSettings.id='memo-inline-settings';inlineSettings.hidden=true;
+ const inlineExport=document.createElement('button');inlineExport.type='button';inlineExport.className='memo-inline-export';inlineExport.hidden=true;inlineExport.textContent='휴대폰 캘린더로 내보내기';inlineSettings.append(inlineExport);
+ const inlineDock=document.createElement('div');inlineDock.className='memo-inline-dock';
+ const inlineSchedule=document.createElement('button');inlineSchedule.type='button';inlineSchedule.className='memo-inline-schedule';inlineSchedule.hidden=true;inlineSchedule.textContent='일정으로 설정';
  const inlineError=document.createElement('p');inlineError.className='memo-inline-error';inlineError.hidden=true;inlineError.setAttribute('role','alert');
- inlineArea.append(inlineHistory,inlineError,inline.bar);overlay.querySelector('.design-memo-link').replaceWith(inlineArea);
+ inlineArea.append(inlineNew,inlineHistory,inlineSettings);overlay.querySelector('.design-memo-link').replaceWith(inlineArea);
+ inlineDock.append(inlineError,inlineSchedule,inline.bar);overlay.querySelector('.editor-content').after(inlineDock);
+ inline.remove.before(document.getElementById('editor-sticker-preview'));
  const description=document.createElement('textarea');description.id='memo-compose-details';description.maxLength=16000;description.rows=3;description.placeholder='내용을 더 적어 주세요 (선택)';
  const descriptionLabel=document.createElement('label');descriptionLabel.htmlFor=description.id;descriptionLabel.className='memo-field-label';descriptionLabel.textContent='내용';const bodySection=document.createElement('details');bodySection.id='memo-body-section';const bodySummary=document.createElement('summary');bodySummary.innerHTML='<span>내용 더 쓰기</span><span aria-hidden="true">＋</span>';bodySection.append(bodySummary,descriptionLabel,description);content.append(bodySection);
  const alarm=document.createElement('section');alarm.id='memo-alarm';alarm.innerHTML=`
@@ -46,41 +53,74 @@
  content.append(alarm);dialog.append(full.bar);document.body.append(dialog);
  for(const id of ['start','end','location','reminder','repeat']){const control=dialog.querySelector('#memo-alarm-'+id),label=control.previousElementSibling,row=document.createElement('div');row.className='memo-setting-row';label.before(row);row.append(label,control);}
  bodySection.addEventListener('toggle',()=>{bodySummary.querySelector('span').textContent=tr(description.value.trim()?'상세 내용':'내용 더 쓰기');scheduleFit();});
- const field=id=>dialog.querySelector('#memo-alarm-'+id),error=dialog.querySelector('#memo-compose-error');
+ const field=id=>alarm.querySelector('#memo-alarm-'+id),error=dialog.querySelector('#memo-compose-error');
  function alarmUI(){
-  dialog.querySelector('#memo-alarm-fields').hidden=!field('enabled').checked;dialog.dataset.alarm=String(field('enabled').checked);dialog.querySelector('#memo-compose-title').textContent=tr(field('enabled').checked?'일정':'메모');
+  alarm.querySelector('#memo-alarm-fields').hidden=!field('enabled').checked;dialog.dataset.alarm=String(field('enabled').checked);dialog.querySelector('#memo-compose-title').textContent=tr(field('enabled').checked?'일정':'메모');
   const allDay=field('all-day').checked;field('reminder').querySelector('[value="0"]').textContent=allDay?'당일 오전 9시':'일정 시작할 때';
   for(const [id,time]of [['start','09:00'],['end','10:00']]){const control=field(id),value=control.value,type=allDay?'date':'datetime-local';if(control.type!==type){if(allDay)control.dataset.time=value.slice(11)||time;control.type=type;control.value=allDay?value.slice(0,10):value.slice(0,10)+'T'+(control.dataset.time||time);}}
-  dialog.querySelector('#memo-repeat-until-row').hidden=!field('repeat').value;scheduleFit();
+  alarm.querySelector('#memo-repeat-until-row').hidden=!field('repeat').value;scheduleFit();
  }
  field('repeat').onchange=alarmUI;
- field('enabled').onchange=()=>{input.blur();alarmUI();};field('all-day').onchange=alarmUI;
+ field('enabled').onchange=()=>{(dialog.open?input:inline.input).blur();alarmUI();refreshControls();};field('all-day').onchange=alarmUI;
  field('start').onchange=()=>{if(!field('end').value||field('end').value<=field('start').value)field('end').value=field('all-day').checked?field('start').value:oneHourAfter(field('start').value);};
  function oneHourAfter(value){const d=new Date(value);if(!Number.isFinite(d.getTime()))return value;d.setHours(d.getHours()+1);return DaySchedulerCore.stamp(d)+'T'+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
  function scheduleValue(){if(!field('enabled').checked)return null;const allDay=field('all-day').checked;return {start:field('start').value.slice(0,allDay?10:16)+(allDay?'T00:00':''),end:field('end').value.slice(0,allDay?10:16)+(allDay?'T00:00':''),allDay,location:field('location').value.trim(),reminder:field('reminder').value===''?null:Number(field('reminder').value),...(field('repeat').value?{repeat:{frequency:field('repeat').value,until:field('until').value||null}}:{})};}
+ function loadSchedule(event,day){
+  field('enabled').checked=!!event;
+  field('start').type=field('end').type='datetime-local';
+  field('start').value=event?.start||day+'T09:00';
+  field('end').value=event?.end||oneHourAfter(field('start').value);
+  field('start').dataset.time=event?.start.slice(11)||'09:00';
+  field('end').dataset.time=event?.end.slice(11)||'10:00';
+  field('all-day').checked=event?.allDay||false;
+  field('location').value=event?.location||'';
+  field('reminder').value=event?.reminder==null?'':String(event.reminder);
+  field('repeat').value=event?.repeat?.frequency||'';
+  field('until').value=event?.repeat?.until||'';
+  alarmUI();
+ }
  function fullText(){return [input.value,description.value].filter(value=>value.trim()).join('\n\n');}
 
  const input=full.input,viewport=window.visualViewport;
  const savedList=document.createElement('button');savedList.type='button';savedList.id='memo-compose-list';savedList.textContent='메모 목록 보기';const contextBar=document.createElement('div');contextBar.className='memo-compose-context';dialog.querySelector('.memo-compose-header').after(contextBar);contextBar.append(dialog.querySelector('#memo-compose-date'),savedList);savedList.onclick=()=>cancel(true,'list');
  let date='',initial='',initialDraft='',entrySource=null,entryVersion='',rendered='',opener=null,closing=false,drag=null,offset=0,returnAnimation=null,entrance=null,suppressClickUntil=0,frame=0,restingHeight=0,restingWidth=0,finishClose=null,closeTimer=0;
+ let inlineSource=null,inlineVersion='',inlineInitial='',inlineRendered='',latestSaved='';
  const reduced=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
  function clearDrag(){returnAnimation?.cancel();returnAnimation=null;drag=null;offset=0;dialog.style.removeProperty('--compose-drag');}
  function settle(){const from=offset;clearDrag();if(from&&!reduced())returnAnimation=dialog.animate([{transform:`translateY(${from}px)`},{transform:'translateY(0)'}],{duration:160,easing:'ease-out'});}
  function readState(){const get=key=>{try{return JSON.parse(localStorage.getItem(key)||'{}')||{}}catch{return {}}};return {memos:dayMemos,items:get(DayMemosCore.key),events:get(DaySchedulerCore.key)};}
  function readItems(){return DayEntryCore.notes(readState(),selectedDateStr);}
- function newestMemo(){
-  if(!selectedDateStr)return null;
-  const state=readState(),note=Object.entries(readItems()).at(-1);
-  if(note){const [memoId,value]=note;return {source:{date:selectedDateStr,memoId,eventId:DayEntryCore.linked(state,selectedDateStr,memoId)?.[0]},value};}
-  const event=DaySchedulerCore.onDate(state.events,selectedDateStr).at(-1);
-  return event?{source:{date:event.date,eventId:event.id},value:DayEntryCore.eventText(state,event)}:null;
+ function entryKey(source){return source?[source.date,source.eventId||source.memoId].join(':'):'';}
+ function entries(state){
+  const day=selectedDateStr;
+  if(!day)return [];
+  const items=DayEntryCore.notes(state,day),linked=new Set();
+  const result=DaySchedulerCore.onDate(state.events,day).map(event=>{
+   const memoId=event.memoId&&DayEntryCore.notes(state,event.date)[event.memoId]?event.memoId:null;
+   if(memoId&&event.date===day)linked.add(memoId);
+   return {source:{date:event.date,memoId,eventId:event.id},value:DayEntryCore.eventText(state,event),event};
+  });
+  for(const [memoId,value]of Object.entries(items))if(!linked.has(memoId))result.push({source:{date:day,memoId},value});
+  return result.sort((left,right)=>{
+   const a=entryKey(left.source),b=entryKey(right.source);
+   if(a===latestSaved)return b===latestSaved?0:-1;
+   if(b===latestSaved)return 1;
+   return (left.event?.start||day).localeCompare(right.event?.start||day)||a.localeCompare(b);
+  });
+ }
+ function inlineDraft(){
+  return {text:inline.input.value.trim(),date:inlineSource?.date||selectedDateStr,schedule:scheduleValue()};
  }
  function refreshControls(){
-  const last=newestMemo();
-  inlineHistory.hidden=!last;inlineHistory.textContent=last?.value||'';
-  inline.remove.hidden=!last;full.remove.hidden=!entrySource&&!last;
+  inlineNew.hidden=!inlineSource;
+  inline.remove.hidden=inlineHistory.hidden&&!inlineSource;
+  full.remove.hidden=!entrySource&&inlineHistory.hidden;
   inline.input.placeholder=tr('메모 입력');
-  inline.save.disabled=!inline.input.value.trim();
+  if(!dialog.open){
+   const draft=inlineDraft();
+   inline.save.disabled=JSON.stringify(draft)===inlineInitial||(!draft.text&&!inlineSource);
+   inlineSchedule.hidden=!draft.schedule||!inlineSettings.hidden;
+  }
   full.save.disabled=!entrySource&&!fullText().trim();
  }
  function setFullOptions(show){
@@ -94,31 +134,131 @@
   });
  }
  dismissKeyboard(dialog);dismissKeyboard(overlay);
- for(const control of [input,description,inline.input])control.addEventListener('input',refreshControls);
- function openInlineFull(source,draft){
-  if(open(source,draft)){inline.input.value='';inline.grow();refreshControls();}
+ for(const control of [input,description,inline.input,alarm])control.addEventListener('input',refreshControls);
+ alarm.addEventListener('change',refreshControls);
+ function setInlineOptions(show){
+  inlineSettings.hidden=!show;
+  inline.options.setAttribute('aria-expanded',String(show));
+  inline.options.textContent=show?'×':'+';
+  refreshControls();
+  if(show)inlineSettings.scrollIntoView({block:'end',behavior:reduced()?'auto':'smooth'});
  }
- inlineHistory.onclick=()=>{if(saveInline())openInlineFull(newestMemo()?.source);};
- inline.options.onclick=()=>openInlineFull(null,inline.input.value);
- inline.save.onclick=()=>saveInline();
- function resetInline(){inline.input.value='';inlineError.hidden=true;inline.grow();refreshControls();}
+ inline.options.setAttribute('aria-controls',inlineSettings.id);
+ inline.options.onclick=()=>{inline.input.blur();setInlineOptions(inlineSettings.hidden);};
+ inlineSchedule.onclick=()=>setInlineOptions(true);
+ inlineExport.onclick=()=>{
+  if(!inlineSource?.eventId)return;
+  const {date,eventId:id}=inlineSource,event=readState().events[date]?.[id];
+  if(event)DayScheduler.exportEvent({date,id,...event});
+ };
+ inline.save.onclick=()=>{if(saveInline()){inline.input.blur();setInlineOptions(false);}};
+ inlineNew.onclick=()=>selectInline(null);
+ function configureInline(entry){
+  const state=readState();
+  inlineSource=entry?.source||null;
+  inlineVersion=DayEntryCore.signature(state,inlineSource);
+  inline.input.value=entry?.value||'';
+  if(!dialog.open){
+   inlineExport.before(alarm);
+   const event=inlineSource?.eventId?state.events[inlineSource.date]?.[inlineSource.eventId]:null;
+   inlineExport.hidden=!event;
+   loadSchedule(event,selectedDateStr||'');
+   inlineInitial=JSON.stringify(inlineDraft());
+  }
+  inlineError.hidden=true;
+  inline.grow();
+  setInlineOptions(false);
+  refresh();
+ }
+ function resetInline(){latestSaved='';configureInline(null);}
+ function selectInline(entry){
+  const key=entryKey(entry?.source);
+  if(key!==entryKey(inlineSource)){
+   if(!saveInline())return;
+   configureInline(entries(readState()).find(item=>entryKey(item.source)===key));
+  }
+  inline.input.focus({preventScroll:true});
+ }
  function saveInline(){
-  const value=inline.input.value.trim();if(!value)return true;
-  if(!persist(null,{text:value,date:selectedDateStr,schedule:null},{stayPane:true}))return false;
-  resetInline();inline.input.blur();return true;
+  if(dialog.open||!selectedDateStr)return true;
+  const draft=inlineDraft();
+  if(JSON.stringify(draft)===inlineInitial||(!draft.text&&!inlineSource))return true;
+  if(DayEntryCore.signature(readState(),inlineSource)!==inlineVersion){
+   inlineError.textContent=tr('다른 곳에서 이 메모를 바꿨어요. 지금 쓴 내용을 복사한 뒤 메모를 다시 열어 주세요.');
+   inlineError.hidden=false;
+   return false;
+  }
+  if(!draft.text)draft.schedule=null;
+  const saved=persist(inlineSource,draft,{stayPane:true});
+  if(!saved)return false;
+  latestSaved=entryKey(saved.source);
+  configureInline(saved.source?{source:saved.source,value:draft.text}:null);
+  if(saved.source)inlineArea.scrollIntoView({block:'nearest'});
+  return true;
  }
- inline.remove.onclick=()=>deleteLatest(newestMemo()?.source);
+ inline.remove.onclick=()=>deleteInline(inlineSource||entries(readState())[0]?.source);
  full.remove.onclick=()=>{
   if(entrySource){if(deleteLatest(entrySource)){entrySource=null;entryVersion='';initialDraft=JSON.stringify({text:'',schedule:null});input.value='';description.value='';field('enabled').checked=false;alarmUI();full.grow();refreshControls();}}
-  else deleteLatest(newestMemo()?.source);
+  else deleteLatest(entries(readState())[0]?.source);
  };
+ function deleteInline(source){
+  if(!deleteLatest(source))return;
+  if(entryKey(source)===entryKey(inlineSource))configureInline(null);
+  if(entryKey(source)===latestSaved)latestSaved='';
+  refresh();
+ }
  function deleteLatest(source){
   if(!source)return false;
   if(source.eventId&&readState().events[source.date]?.[source.eventId]?.repeat&&!confirm(tr('반복 일정과 메모를 모두 지울까요?')))return false;
   return persist(source,{text:'',date:selectedDateStr,schedule:null},{stayPane:true});
  }
+ function refreshInline(state){
+  const history=entries(state),selection=entryKey(inlineSource);
+  const version=JSON.stringify([history,selection,document.documentElement.lang]);
+  if(version===inlineRendered)return;
+  inlineRendered=version;
+  inlineHistory.replaceChildren();
+  inlineHistory.hidden=!history.length;
+  for(const entry of history){
+   const row=document.createElement('div');row.className='memo-inline-row';
+   const edit=document.createElement('button');edit.type='button';edit.className='memo-inline-edit';
+   const selected=entryKey(entry.source)===selection;
+   edit.setAttribute('aria-pressed',String(selected));
+   const icon=document.createElement('span');icon.className='memo-inline-icon';icon.setAttribute('aria-hidden','true');
+   icon.innerHTML=entry.event
+    ?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="6" width="16" height="14" rx="3"/><path d="M8 4v4m8-4v4M4 10h16"/></svg>'
+    :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M8 10h8m-8 4h6"/></svg>';
+   const copy=document.createElement('span');copy.className='memo-inline-copy';
+   const value=document.createElement('span');value.className='memo-inline-value';value.textContent=entry.value;value.dataset.noI18n='';copy.append(value);
+   if(entry.event){
+    const meta=document.createElement('small');
+    meta.textContent=[entry.event.allDay?tr('하루 종일'):entry.event.start.slice(11,16),entry.event.reminder!=null&&tr('알림'),entry.event.repeat&&tr('반복')].filter(Boolean).join(' · ');
+    copy.append(meta);
+   }
+   const indicator=document.createElement('span');indicator.className='memo-inline-indicator';indicator.setAttribute('aria-hidden','true');
+   indicator.textContent=selected?'✎':'›';
+   let swipe,suppressClickUntil=0;
+   edit.append(icon,copy,indicator);
+   edit.onclick=event=>{if(!event.detail||performance.now()>=suppressClickUntil)selectInline(entry);};
+   row.append(edit);
+   const remove=document.createElement('button');remove.type='button';remove.className='memo-inline-row-delete';remove.hidden=true;remove.textContent=tr('삭제');
+   remove.onclick=()=>deleteInline(entry.source);row.append(remove);
+   edit.addEventListener('pointerdown',event=>{if(event.isPrimary)swipe={x:event.clientX,y:event.clientY};});
+   edit.addEventListener('pointerup',event=>{
+    if(!swipe)return;
+    const x=event.clientX-swipe.x,y=event.clientY-swipe.y;swipe=null;
+    if(Math.abs(x)>45&&Math.abs(x)>Math.abs(y)*1.5){
+     remove.hidden=x>0;
+     suppressClickUntil=performance.now()+350;
+    }
+   });
+   edit.addEventListener('pointercancel',()=>{swipe=null;});
+   inlineHistory.append(row);
+  }
+ }
  function refresh(){
   const state=readState(),items=DayEntryCore.notes(state,selectedDateStr),events=DaySchedulerCore.onDate(state.events,selectedDateStr);
+  refreshInline(state);
   refreshControls();
   const version=JSON.stringify([selectedDateStr,items,events,document.documentElement.lang]);if(version===rendered)return;rendered=version;list.replaceChildren();
   let index=0;
@@ -141,13 +281,17 @@
   if(selectedDateStr)context.textContent=new Intl.DateTimeFormat(document.documentElement.lang||'ko',{month:'long',day:'numeric',weekday:'long'}).format(new Date(selectedDateStr+'T12:00:00'));
  }
  function persist(source,draft,options={}){
-  try{const state=readState(),next=DayEntryCore.plan(state,source,draft,crypto.randomUUID());
+  try{const state=readState(),newId=crypto.randomUUID(),next=DayEntryCore.plan(state,source,draft,newId);
    const bundle={shift_day_memos:next.memos,shift_day_memo_items_v1:next.items,shift_day_events:next.events};
    AccountDataCore.normalize(bundle);
    if(!window.DayEditorDesigns.save(next.memos[selectedDateStr]||'',{keepOpen:true,bundle,...options})){error.textContent=document.getElementById('design-save-error')?.textContent||tr('저장하지 못했어요. 작성한 내용은 그대로 남아 있어요. 다시 시도해 주세요.');error.hidden=false;inlineError.textContent=error.textContent;inlineError.hidden=false;return false;}
    inlineError.hidden=true;
    for(const day of new Set([...Object.keys(state.memos),...Object.keys(next.memos)]))if(day!==selectedDateStr&&state.memos[day]!==next.memos[day])window.GoogleSync?.changed(day);
-   status.textContent=tr('저장했어요');status.hidden=false;refresh();return true;
+   status.textContent=tr('저장했어요');status.hidden=false;refresh();
+   if(!draft.text.trim())return {source:null};
+   const date=draft.schedule?.start.slice(0,10)||draft.date;
+   const items=DayEntryCore.notes(next,date),memoId=Object.hasOwn(items,newId)?newId:source?.memoId;
+   return {source:{date,memoId,eventId:DayEntryCore.linked(next,date,memoId)?.[0]}};
   }catch(e){if(dialog.open){error.textContent=e.message;error.hidden=false;}else{status.textContent=e.message;status.hidden=false;inlineError.textContent=e.message;inlineError.hidden=false;}return false;}
  }
  function removeMemo(source){
@@ -181,7 +325,7 @@
   entryVersion=DayEntryCore.signature(state,source);
   initial=source?.memoId?DayEntryCore.notes(state,source.date)[source.memoId]||'':event?DayEntryCore.eventText(state,{date:source.date,...event}):'';
   const split=initial.indexOf('\n\n');input.value=split<0?initial:initial.slice(0,split);description.value=split<0?'':initial.slice(split+2);bodySection.open=!!description.value;bodySummary.querySelector('span').textContent=tr(description.value.trim()?'상세 내용':'내용 더 쓰기');input.scrollTop=0;description.scrollTop=0;content.scrollTop=0;opener=document.activeElement;restingHeight=viewport?.height||innerHeight;restingWidth=viewport?.width||innerWidth;
-  field('enabled').checked=!!event;field('start').type=field('end').type='datetime-local';field('start').value=event?.start||date+'T09:00';field('end').value=event?.end||oneHourAfter(field('start').value);field('start').dataset.time=event?.start.slice(11)||'09:00';field('end').dataset.time=event?.end.slice(11)||'10:00';field('all-day').checked=event?.allDay||false;field('location').value=event?.location||'';field('reminder').value=event?event.reminder===null?'':String(event.reminder):'0';field('repeat').value=event?.repeat?.frequency||'';field('until').value=event?.repeat?.until||'';alarmUI();initialDraft=JSON.stringify({text:fullText().trim(),schedule:scheduleValue()});
+  content.append(alarm);loadSchedule(event,date);initialDraft=JSON.stringify({text:fullText().trim(),schedule:scheduleValue()});
   dialog.dataset.design=overlay.dataset.editorDesign;const css=getComputedStyle(overlay);for(const key of ['--ed-card','--ed-text','--ed-sub','--ed-blue','--ed-line'])dialog.style.setProperty(key,css.getPropertyValue(key));
   dialog.querySelector('#memo-compose-title').textContent=tr(event?'일정':'메모');input.placeholder=inline.input.placeholder=tr('메모 입력');setFullOptions(draftText!==undefined||!!event||!!description.value);if(draftText!==undefined)input.value=draftText;
   const locale={ko:'ko-KR',en:'en',zh:'zh-CN',ja:'ja'}[localStorage.getItem('shift_display_language')]||'ko-KR';
@@ -196,7 +340,7 @@
   if(destination==='calendar')overlay.classList.remove('active');
   else if(destination==='work')DayEditorDesigns.showPane('work');
  const css=getComputedStyle(dialog);offset=(css.transform==='none'?0:new DOMMatrixReadOnly(css.transform).m42)+(parseFloat(css.translate.split(/\s+/)[1])||0);entrance?.cancel();entrance=null;returnAnimation?.cancel();returnAnimation=null;dialog.style.setProperty('--compose-drag',offset+'px');dialog.querySelectorAll('input,textarea,select').forEach(el=>el.blur());
-  const finish=()=>{if(animated)suppressClickUntil=performance.now()+400;dialog.close();clearDrag();dialog.style.removeProperty('opacity');delete dialog.dataset.closing;closing=false;delete overlay.dataset.memoComposing;document.body.classList.remove('memo-composer-open');refresh();if(destination==='calendar'){input.value='';description.value='';document.querySelector('.cal-day[data-date="'+date+'"] .day-num')?.focus({preventScroll:true});}else if(destination==='work'){input.value='';description.value='';const target=inline.options;(target?.getClientRects().length?target:overlay.querySelector('#design-back'))?.focus({preventScroll:true});}else if(restoreFocus&&overlay.classList.contains('active')&&opener?.isConnected)opener.focus({preventScroll:true});else if(restoreFocus&&overlay.classList.contains('active'))button.focus({preventScroll:true});window.dispatchEvent(new Event('resize'));};
+  const finish=()=>{if(animated)suppressClickUntil=performance.now()+400;dialog.close();clearDrag();dialog.style.removeProperty('opacity');delete dialog.dataset.closing;closing=false;delete overlay.dataset.memoComposing;document.body.classList.remove('memo-composer-open');configureInline(null);if(destination==='calendar'){input.value='';description.value='';document.querySelector('.cal-day[data-date="'+date+'"] .day-num')?.focus({preventScroll:true});}else if(destination==='work'){input.value='';description.value='';const target=inline.options;(target?.getClientRects().length?target:overlay.querySelector('#design-back'))?.focus({preventScroll:true});}else if(restoreFocus&&overlay.classList.contains('active')&&opener?.isConnected)opener.focus({preventScroll:true});else if(restoreFocus&&overlay.classList.contains('active'))button.focus({preventScroll:true});window.dispatchEvent(new Event('resize'));};
   // Start the exit now; keyboard cleanup runs alongside it, never before it.
   // Keep the invisible modal's scroll lock until both operations finish.
   let animationDone=false,keyboardDone=false,finished=false;
@@ -271,5 +415,5 @@
  window.addEventListener('click',e=>{if(e.isTrusted&&performance.now()<suppressClickUntil){e.preventDefault();e.stopImmediatePropagation();}},true);
  viewport?.addEventListener('resize',scheduleFit);viewport?.addEventListener('scroll',scheduleFit);window.addEventListener('resize',scheduleFit);window.addEventListener('orientationchange',scheduleFit);window.addEventListener('pageshow',scheduleFit);input.addEventListener('focus',scheduleFit);description.addEventListener('focus',scheduleFit);
  new MutationObserver(refresh).observe(overlay,{attributes:true,attributeFilter:['class','data-editor-tab','data-design-pane']});source.addEventListener('input',refresh);
- window.MemoComposer={open,refresh,saveInline,resetInline,saveAndClose:save,enter:source=>{if(saveInline()){DayEditorDesigns.showPane('memo');open(source);}},openEvent:event=>open(event?{date:event.date,eventId:event.id,memoId:event.memoId&&DayEntryCore.notes(readState(),event.date)[event.memoId]?event.memoId:null}:null)};document.getElementById('memo-tab').onclick=()=>MemoComposer.enter(null);refresh();
+ window.MemoComposer={open,refresh,saveInline,resetInline,saveAndClose:save,enter:source=>{if(saveInline()){DayEditorDesigns.showPane('memo');open(source);}},openEvent:event=>open(event?{date:event.date,eventId:event.id,memoId:event.memoId&&DayEntryCore.notes(readState(),event.date)[event.memoId]?event.memoId:null}:null)};document.getElementById('memo-tab').onclick=()=>MemoComposer.enter(null);resetInline();
 })();
