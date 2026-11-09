@@ -236,6 +236,8 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-p
 }
 body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .shift-scroll .opt-btn {
   display: flex;
+  flex: 0 0 auto;
+  flex-direction: row;
   align-items: center;
   justify-content: flex-start;
   gap: 8px;
@@ -255,11 +257,19 @@ body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-p
   text-align: start;
   white-space: normal;
 }
+#modal-override#modal-override[data-editor-design] .opt-btn > .design-choice-label {
+  min-width: 0;
+  color: inherit;
+  font-size: inherit !important;
+  font-weight: inherit;
+  overflow-wrap: anywhere;
+}
 body[data-pref-theme] #modal-override#modal-override[data-editor-design] #work-panel .opt-btn:not([hidden]) ~ .opt-btn {
   border-top: 1px solid var(--ed-line) !important;
 }
 #modal-override[data-editor-design] .design-choice-icon {
   display: grid;
+  flex: 0 0 24px;
   place-items: center;
   width: 24px;
   height: 24px;
