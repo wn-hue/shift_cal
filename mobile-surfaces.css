@@ -239,7 +239,7 @@ body[data-pref-theme="dark"] #view-payroll .btn-save { color:#17191d!important; 
   #view-payroll .workday-adjustments small { font-size:10px; }
   #view-payroll .workday-summary input[readonly] { font-size:12px; }
   #view-menu .meal-date-row h1 { font-size:20px; }
-  #view-menu .meal-rating-button { font-size:12px; gap:5px; }
+  #view-menu .meal-rating-button { gap:5px; }
   #view-all :is(.all-shortcuts,.life-section) { padding:20px 18px 8px; }
   #view-all .all-shortcut { gap:10px; grid-template-columns:34px minmax(0,1fr) auto; }
   #view-all .all-shortcut-icon { width:34px; height:36px; }
@@ -268,7 +268,7 @@ body[data-pref-theme="dark"] #view-payroll .btn-save { color:#17191d!important; 
 #view-menu .meal-extras{margin-top:12px;padding-top:10px}
 #view-menu .meal-rating{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin-top:14px;padding-top:10px}
 #view-menu .meal-rating-actions{display:flex;gap:8px;flex:1}
-#view-menu .meal-rating-button{min-height:44px;min-width:88px;padding:8px 10px;border-radius:12px}
+#view-menu .meal-rating-button{min-height:44px;min-width:0;padding:5px 9px;border-radius:12px;font-size:11px}
 #view-menu .meal-rating-count{margin-left:auto;font-size:11px;white-space:nowrap}
 #view-menu .meal-rating-status:empty{display:none}
 #view-menu .meal-rating-status:not(:empty){flex-basis:100%;text-align:left}
@@ -382,7 +382,7 @@ body[data-pref-theme] #view-payroll :is(#hero-regular-pay,#hero-bonus-pay){font-
 #view-payroll .payroll-input-card :is(.regular-days,.special-days) input[readonly]{font-size:17px;height:24px;min-height:24px;line-height:24px}
 #view-payroll .payroll-input-card :is(.regular-days,.special-days) .work-input-unit{line-height:24px}
 
-#view-all :is(.menu-service-copy strong,.all-shortcut strong,.group-summary-label){font-size:17px}
+#view-all :is(.menu-services,.all-menu-content) .menu-service-copy strong,#view-all .all-shortcut strong,#view-all .group-summary-label{font-size:17px}
 #view-all :is(.menu-services,.all-menu-content) :is(.menu-service-icon,.all-shortcut-icon) svg,#view-all .group-summary-icon svg{width:27px;height:27px}
 #view-all :is(.menu-service-copy small,.all-shortcut-caption,#menu-group-current){font-size:10px;color:var(--ui-muted,#6b7684);font-weight:500}
 #view-all #onboarding-reopen{font-size:11px;min-height:44px}
