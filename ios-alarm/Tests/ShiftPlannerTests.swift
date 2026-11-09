@@ -63,4 +63,9 @@ final class ShiftPlannerTests: XCTestCase {
             XCTAssertEqual(ShiftPlanner.plans(events: [event("A조 주간", notes: notes)], now: now).count, 1)
         }
     }
+    func testConflictingDayNightOrLeaveOnSameDateDoNotRing() {
+        let now = date("2026-10-01T00:00:00+09:00")
+        XCTAssertTrue(ShiftPlanner.plans(events: [event("A조 주간"), event("A조 야간")], now: now).isEmpty)
+        XCTAssertTrue(ShiftPlanner.plans(events: [event("A조 주간"), event("A조 연차")], now: now).isEmpty)
+    }
 }
