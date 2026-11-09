@@ -4,6 +4,16 @@ const cfg={baseHourly:10000,ordinaryHourly:12000,hireDate:'2020-01-01',dutyPay:1
 const a=C.counts([{type:'DAY'},{type:'NIGHT'}]),b=C.counts([{type:'LEAVE'},{type:'NIGHT'}]);assert.equal(C.gross(b,cfg,'2026-11-15')-C.gross(a,cfg,'2026-11-15'),-45000);
 assert.equal(C.gross(C.counts([{type:'NO_OT',origType:'NIGHT'}]),cfg,'2026-11-15')-C.gross(C.counts([{type:'NIGHT'}]),cfg,'2026-11-15'),-45000);
 assert.equal(C.counts([{type:'UNPAID_HALF_PRE',origType:'NIGHT'}]).night,.5);
+const adjustmentConfig={baseHourly:10000,ordinaryHourly:12000,hireDate:'2017-01-01',seniorityPayOverride:0};
+assert.deepEqual(C.workAdjustments([{type:'UNPAID_HALF_POST',origType:'NIGHT'}],adjustmentConfig,'2026-10-15'),{
+ unpaidDays:.5,noOTDays:1,unpaidDeduction:58054,noOTDeduction:49500
+},'An unpaid afternoon half day separates salary deductions from all lost OT, including the legacy night supplement');
+assert.deepEqual(C.workAdjustments([{type:'SPECIAL_NIGHT_NO_OT'}],adjustmentConfig,'2026-10-15'),{
+ unpaidDays:0,noOTDays:1,unpaidDeduction:0,noOTDeduction:72000
+},'A special night shift without OT uses the holiday rate and the legacy night supplement');
+assert.deepEqual(C.workAdjustments([{type:'UNPAID_OFF'},{type:'NO_OT',origType:'DAY'}],{},'2026-11-15'),{
+ unpaidDays:1,noOTDays:1,unpaidDeduction:0,noOTDeduction:0
+},'Without configured wages, attendance changes do not claim a monetary deduction');
 const days=[{key:'2026-10-10',rest:true},{key:'2026-10-11',rest:false,eligible:true},{key:'2026-10-12',rest:true}];assert.equal(C.vacations(days,1)[0].days,3);assert.equal(C.vacations(days,0).length,0);assert.equal(C.vacations(days.map(d=>({...d,eligible:false})),1).length,0);
 const api=require('../api/live-schedule.js')._test;assert.throws(()=>api.normalize({group:'D'}));const valid=api.normalize({group:'C',month:'2026-10',days:Array.from({length:31},()=>({type:'OFF',label:'secret memo',salary:100}))});assert.equal(valid.days[0].salary,undefined);assert.equal(valid.days[0].label,'');
 const records=new Map();process.env.APP_URL='https://test.invalid';process.env.GOOGLE_CALENDAR_SESSION_SECRET='x'.repeat(32);const seal=require('../api/google-calendar.js')._test.seal;

@@ -3,12 +3,13 @@
  const $=id=>document.getElementById(id),core=HolidayWorkPayCore,overlay=$('modal-override');
  let draft=null,choice='preset';
  const sheet=document.createElement('dialog');sheet.id='holiday-work-pay-dialog';sheet.className='sms-dialog';sheet.setAttribute('aria-labelledby','holiday-work-pay-title');
- sheet.innerHTML=`<button type="button" class="sms-close-btn" id="holiday-work-pay-close" aria-label="명절근무수당 닫기">×</button>
- <div class="holiday-pay-content"><h2 id="holiday-work-pay-title">명절근무수당을 선택해요</h2><p id="holiday-work-pay-description"></p>
- <div class="holiday-pay-options" role="group" aria-label="명절근무수당 금액">
+ sheet.innerHTML=`<button type="button" class="sms-close-btn" id="holiday-work-pay-close" aria-label="명절 격려금 닫기">×</button>
+ <div class="holiday-pay-content"><h2 id="holiday-work-pay-title">명절 격려금을 선택해요</h2>
+ <p id="holiday-work-pay-description"><time data-no-i18n></time> · <span id="holiday-work-pay-festival"></span></p>
+ <div class="holiday-pay-options" role="group" aria-label="명절 격려금">
  <button type="button" id="holiday-work-pay-preset" aria-pressed="true"><strong>5만원</strong><small>50,000원</small><i aria-hidden="true">✓</i></button>
  <button type="button" id="holiday-work-pay-custom" aria-pressed="false"><strong>기타 금액</strong><small>직접 입력</small><i aria-hidden="true">✓</i></button></div>
- <label id="holiday-work-pay-field" hidden>수당 금액<span><input id="holiday-work-pay-input" type="text" inputmode="numeric" autocomplete="off" maxlength="13" placeholder="금액 입력" aria-describedby="holiday-work-pay-error"><small>원</small></span></label>
+ <label id="holiday-work-pay-field" hidden>격려금 금액<span><input id="holiday-work-pay-input" type="text" inputmode="numeric" autocomplete="off" maxlength="13" placeholder="금액 입력" aria-describedby="holiday-work-pay-error"><small>원</small></span></label>
  <p id="holiday-work-pay-error" role="alert"></p></div><button type="button" id="holiday-work-pay-done">선택 완료</button>`;
  document.body.append(sheet);window.AppSheets?.attach(sheet);
  const input=$('holiday-work-pay-input'),field=$('holiday-work-pay-field'),error=$('holiday-work-pay-error');
@@ -20,13 +21,34 @@
   else if(box.top<frame.top+8)content.scrollTop-=frame.top-box.top+8;
  })).observe(content);
  const edit=document.createElement('button');edit.id='holiday-work-pay-edit';edit.type='button';edit.hidden=true;edit.setAttribute('aria-haspopup','dialog');edit.setAttribute('aria-controls',sheet.id);
+ edit.innerHTML='<span>명절 격려금</span> · <span id="holiday-work-pay-edit-value"></span> <span aria-hidden="true">›</span>';
  overlay.querySelector('.memo-inline-area').before(edit);
  function selected(){if(!selectedDateStr)return null;const p=ShiftTools.pending();return p?.date===selectedDateStr?ShiftTools.shiftAt(selectedDateStr,{[selectedDateStr]:p.type}):getActualShift(new Date(selectedDateStr+'T12:00'),currentGroup);}
- const eligible=()=>!!selectedDateStr&&!!core.festival(selectedDateStr,HOLIDAYS)&&core.working(selected());
+ function eligible(){
+  if(!selectedDateStr)return false;
+  const date=new Date(selectedDateStr+'T12:00');
+  return isFestivalRestDay(selectedDateStr,getBaseShift(date,currentGroup).type)&&selected()?.type.startsWith('SPECIAL_');
+ }
  const current=()=>draft?.date===selectedDateStr&&draft.group===currentGroup?draft.amount:core.amount(config,currentGroup,selectedDateStr);
- function refresh(){edit.hidden=!eligible();if(!edit.hidden){const n=current();edit.textContent='명절근무수당 · '+(n===null?'금액 선택':n.toLocaleString('ko-KR')+'원')+'  ›';}}
+ function refresh(){
+  edit.hidden=!eligible();
+  if(edit.hidden)return;
+  const n=current();
+  $('holiday-work-pay-edit-value').textContent=n===null?'금액 선택':n.toLocaleString('ko-KR')+'원';
+ }
  function mark(custom){choice=custom?'custom':'preset';$('holiday-work-pay-preset').setAttribute('aria-pressed',String(!custom));$('holiday-work-pay-custom').setAttribute('aria-pressed',String(custom));field.hidden=!custom;error.textContent='';}
- function open(){if(sheet.open||!eligible())return;const n=current();mark(n!==null&&n!==50000);input.value=n===null||n===0?'':n.toLocaleString('ko-KR');input.removeAttribute('aria-invalid');$('holiday-work-pay-description').textContent=Number(selectedDateStr.slice(5,7))+'월 '+Number(selectedDateStr.slice(8,10))+'일 · '+core.festival(selectedDateStr,HOLIDAYS)+' 근무수당';sheet.showModal();}
+ function open(){
+  if(sheet.open||!eligible())return;
+  const n=current();
+  mark(n!==null&&n!==50000);
+  input.value=n===null||n===0?'':n.toLocaleString('ko-KR');
+  input.removeAttribute('aria-invalid');
+  const date=sheet.querySelector('time');
+  date.dateTime=selectedDateStr;
+  date.textContent=new Intl.DateTimeFormat(document.documentElement.lang||'ko',{month:'long',day:'numeric'}).format(new Date(selectedDateStr+'T12:00'));
+  $('holiday-work-pay-festival').textContent=core.festival(selectedDateStr,HOLIDAYS);
+  sheet.showModal();
+ }
  function offer(previousType){
   refresh();
   if(overlay.classList.contains('active')&&previousType!==selected()?.type&&eligible()&&current()===null)open();
@@ -48,10 +70,6 @@
   offer(previousType);
   return result;
  };
- const overtime=$('design-ot-toggle');
- let beforeToggle;
- overtime.addEventListener('click',()=>{beforeToggle=selected()?.type;},true);
- overtime.addEventListener('click',()=>offer(beforeToggle));
  const openDay=openOverrideModal;openOverrideModal=function(...args){if(draft&&(draft.date!==args[0]||draft.group!==currentGroup))draft=null;const result=openDay(...args);refresh();return result;};
  window.HolidayWorkPay={
   draftConfig(key){if(!draft||draft.date!==key||draft.group!==currentGroup)return null;return {...config,holidayWorkPay:{...config.holidayWorkPay,[currentGroup]:{...config.holidayWorkPay?.[currentGroup],[key]:draft.amount}}};},

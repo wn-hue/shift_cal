@@ -1158,17 +1158,19 @@
                 <details class="wage-help"><summary>시급과 수당은 어떻게 반영되나요?</summary><p id="wage-sms-hint" class="account-hint">시급과 수당은 직접 입력해요. 근속수당은 입사일을 기준으로 계산하고, 직접 바꿀 수도 있어요. 급여 문자는 세금과 보험료를 예상할 때만 써요.</p></details>
 
             </div>
-            <div class="payroll-tools">
+            <div class="payroll-tools" id="payroll-work-adjustment-card" hidden>
                 <details class="workday-calculations" id="workday-adjustments">
-                    <summary><span>근무 계산·조정<small id="workday-adjustment-value">연장·무급·잔업 제외</small></span><span class="workday-chevron" aria-hidden="true">⌄</span></summary>
+                    <summary><span>근무 계산·조정<small id="workday-adjustment-value"></small></span><span class="workday-chevron" aria-hidden="true">⌄</span></summary>
                     <div class="workday-summary" aria-label="캘린더 계산 결과">
-                        <div><label for="disp-ot-hours">연장시간 · 1.5배</label><input type="text" id="disp-ot-hours" value="0.0h" readonly></div>
-                        <div><label for="inp-no-ot-days">잔업을 뺀 날</label><input type="text" id="inp-no-ot-days" value="0" readonly></div>
-                        <div><label for="disp-unpaid-days">무급 일수</label><input type="text" id="disp-unpaid-days" value="0일" readonly></div>
-                        <div><label for="disp-unpaid-deduction">무급으로 줄어드는 금액</label><input type="text" id="disp-unpaid-deduction" value="0원" readonly></div>
-                        <div id="payroll-holiday-pay-row" hidden><span>명절근무수당</span><strong id="payroll-holiday-pay-total">0원</strong></div>
+                        <div id="payroll-ot-hours-row" hidden><label for="disp-ot-hours">연장시간 · 1.5배</label><input type="text" id="disp-ot-hours" value="0.0h" readonly></div>
+                        <div id="payroll-no-ot-days-row" hidden><label for="disp-no-ot-days">잔업을 뺀 날</label><input type="text" id="disp-no-ot-days" value="0일" readonly></div>
+                        <div id="payroll-no-ot-deduction-row" hidden><label for="disp-no-ot-deduction">잔업 제외로 줄어드는 금액</label><input type="text" id="disp-no-ot-deduction" value="0원" readonly></div>
+                        <div id="payroll-unpaid-days-row" hidden><label for="disp-unpaid-days">무급 일수</label><input type="text" id="disp-unpaid-days" value="0일" readonly></div>
+                        <div id="payroll-unpaid-deduction-row" hidden><label for="disp-unpaid-deduction">무급으로 줄어드는 금액</label><input type="text" id="disp-unpaid-deduction" value="0원" readonly></div>
+                        <div id="payroll-holiday-pay-row" hidden><span>명절 격려금</span><strong id="payroll-holiday-pay-total">0원</strong></div>
                     </div>
                 </details>
+                <input type="hidden" id="inp-no-ot-days" value="0" readonly>
                 <input type="hidden" id="inp-holiday-bonus" value="0">
                 <input type="hidden" id="inp-hire-date" aria-label="정규직 전환일 (연차·지원금 계산)">
 
@@ -1201,7 +1203,7 @@
                             <td class="num" id="row-other-pay">0</td>
                         </tr>
                         <tr id="tr-holiday-bonus" hidden>
-                            <td>명절근무수당</td>
+                            <td>명절 격려금</td>
                             <td class="num" id="row-holiday-bonus">0</td>
                         </tr>
                         <tr style="background:#fdf2f8; display:none;" id="tr-entry-bonus">
@@ -1746,6 +1748,7 @@
         let overrides = {};
         let dayMemos = {};
         let syncedUnpaidDays = 0, syncedNightNoOT = 0, syncedSpecialDayNoOT = 0, syncedSpecialNightNoOT = 0;
+        let syncedPayrollDays = [];
 
         let configLoaded = false;
         let config = {
@@ -1830,7 +1833,10 @@
             const holiday = HOLIDAYS[dateStr] || null;
 
             if (groupOverrides[dateStr]) {
-                const ov = groupOverrides[dateStr];
+                const savedType = groupOverrides[dateStr];
+                const ov = isFestivalRestDay(dateStr, base.type) && ['DAY', 'NIGHT'].includes(savedType)
+                    ? 'SPECIAL_' + savedType
+                    : savedType;
                 if(['DAY','NIGHT','OFF'].includes(ov))return {type:ov,name:ov==='DAY'?'주간':ov==='NIGHT'?'야간':'휴무',hasOt:ov!=='OFF',isOff:ov==='OFF',holidayName:holiday?holiday.name:''};
                 if (ov === 'SPECIAL_DAY_NO_OT') return { type: ov, name: '주특 잔업X', subName:'잔업X', isSpecial:true, hasOt:false, holidayName:holiday?holiday.name:'' };
                 if (ov === 'SPECIAL_NIGHT_NO_OT') return { type: ov, name: '야특 잔업X', subName:'잔업X', isSpecial:true, hasOt:false, holidayName:holiday?holiday.name:'' };
@@ -2434,6 +2440,10 @@
                  shift.origType === 'NIGHT');
         }
 
+        function isFestivalRestDay(dateKey, baseType) {
+            return baseType === 'OFF' && !!HolidayWorkPayCore.festival(dateKey, HOLIDAYS);
+        }
+
         function validateDayOverride(dateStr, type) {
             if (type === null) return '';
             type=type==='SPECIAL_DAY_NO_OT'?'SPECIAL_DAY':type==='SPECIAL_NIGHT_NO_OT'?'SPECIAL_NIGHT':type;
@@ -2450,14 +2460,18 @@
             }
 
             const previousDate = new Date(year, month - 1, day - 1);
-            if (type === 'SPECIAL_DAY' && isNightWork(getActualShift(previousDate, currentGroup))) {
+            const festivalRest = isFestivalRestDay(dateStr, baseType);
+            if (!festivalRest && type === 'SPECIAL_DAY' && isNightWork(getActualShift(previousDate, currentGroup))) {
                 return '전날 야간 근무가 끝난 직후에는 주간 특근을 넣을 수 없어요.';
             }
             // 뒤늦게 전날을 야간 특근으로 바꾸어도 이미 지정된 다음 날 주간 특근을 보호한다.
             const nextDate = new Date(year, month - 1, day + 1);
             const nextKey = toDateKey(nextDate.getFullYear(), nextDate.getMonth(), nextDate.getDate());
-            if (type === 'SPECIAL_NIGHT' && ['SPECIAL_DAY','SPECIAL_DAY_NO_OT'].includes(overrides[nextKey])) {
-                return '다음 날 주간 특근이 있어 야간 특근을 넣을 수 없어요.';
+            if (!festivalRest && type === 'SPECIAL_NIGHT' && overrides[nextKey]) {
+                const nextType = getActualShift(nextDate, currentGroup).type;
+                if (['SPECIAL_DAY','SPECIAL_DAY_NO_OT'].includes(nextType)) {
+                    return '다음 날 주간 특근이 있어 야간 특근을 넣을 수 없어요.';
+                }
             }
 
             const units = unpaidUnits(type);
@@ -2542,10 +2556,12 @@
 
             let E2 = 0, E3 = 0, E4 = 0, E5 = 0, noOtDays = 0, unpaidCount = 0;
             syncedNightNoOT=0;syncedSpecialDayNoOT=0;syncedSpecialNightNoOT=0;
+            syncedPayrollDays = [];
 
             let curr = new Date(startDate.getTime());
             while (curr <= endDate) {
                 const shift = getActualShift(curr, currentGroup);
+                syncedPayrollDays.push(shift);
                 if (shift.type === 'DAY') {
                     E2++;
                 } else if (shift.type === 'NIGHT') {
@@ -2616,16 +2632,7 @@
             const noOtDays = parseFloat(document.getElementById('inp-no-ot-days').value) || 0;
             const holidayBonus = HolidayWorkPayCore.total(config, currentGroup, currentPayDate.getFullYear(), currentPayDate.getMonth(), HOLIDAYS, date => getActualShift(date, currentGroup));
             document.getElementById('inp-holiday-bonus').value = holidayBonus;
-            document.getElementById('payroll-holiday-pay-row').hidden = !(holidayBonus > 0);
-            document.getElementById('payroll-holiday-pay-total').textContent = fmt(holidayBonus) + '원';
             const hasBonusCheck = document.getElementById('inp-bonus-check').checked;
-            const adjustmentSummary = document.getElementById('workday-adjustment-value');
-            if (adjustmentSummary) {
-                const adjustments = [];
-                if (noOtDays > 0) adjustments.push(`연장 제외 ${noOtDays}일`);
-                if (holidayBonus > 0) adjustments.push(`명절 ${holidayBonus.toLocaleString('ko-KR')}원`);
-                adjustmentSummary.textContent = adjustments.join(' · ') || '연장·무급·잔업 제외';
-            }
 
             const B7 = config.baseHourly;
             const B8 = config.ordinaryHourly;
@@ -2633,7 +2640,8 @@
 
             const rawBasicPay = Math.trunc(B7 * baseHours);
             const rawDutyPay = config.dutyPay;
-            const rawSeniorityPay = ShiftPlannerCore.resolveSeniorityPay(config, `${currentPayDate.getFullYear()}-${String(currentPayDate.getMonth()+1).padStart(2,'0')}-15`);
+            const payEndKey = toDateKey(currentPayDate.getFullYear(), currentPayDate.getMonth(), 15);
+            const rawSeniorityPay = ShiftPlannerCore.resolveSeniorityPay(config, payEndKey);
             document.getElementById('input-seniority-pay').value=rawSeniorityPay.toLocaleString('ko-KR')+'원';
             document.getElementById('seniority-pay-setting').hidden=!(rawSeniorityPay>0);
             document.getElementById('wage-allowance-settings').hidden=!(rawDutyPay>0||rawSeniorityPay>0);
@@ -2735,14 +2743,8 @@
                 if (trEntry) trEntry.style.display = 'none';
             }
 
-            const dispDays = document.getElementById('disp-unpaid-days');
-            if (dispDays) {
-                dispDays.value = `${syncedUnpaidDays}일`;
-            }
-            const dispUnpaid = document.getElementById('disp-unpaid-deduction');
-            if (dispUnpaid) {
-                dispUnpaid.value = syncedUnpaidDays > 0 ? `-${fmt(totalUnpaidDeduction)}원` : '0원';
-            }
+            const adjustments = ShiftPlannerCore.workAdjustments(syncedPayrollDays, config, payEndKey);
+            renderPayrollWorkAdjustments(adjustments, holidayBonus);
 
             const regularGross = basicPay + dutyPay + seniorityPay + otPay + nightPay + holPay + holOtPay + holNightPay + otherPay + holidayBonus;
             const grandGross = regularGross + bonusPay + entryBonus;
@@ -2771,6 +2773,31 @@
             document.getElementById('row-entry-bonus').innerText = fmt(entryBonus);
             document.getElementById('row-gross-pay').innerText = fmt(grandGross);
             if (window.PayrollEstimate) window.PayrollEstimate.update(grandGross, {regular:regularGross,bonus:bonusPay,support:entryBonus});
+        }
+
+        function renderPayrollWorkAdjustments(adjustments, holidayBonus) {
+            const {unpaidDays, noOTDays, unpaidDeduction, noOTDeduction} = adjustments;
+            const hasUnpaid = unpaidDeduction > 0;
+            const hasOvertime = noOTDeduction > 0;
+            const hasFestival = holidayBonus > 0;
+            document.getElementById('payroll-work-adjustment-card').hidden = !(hasUnpaid || hasOvertime || hasFestival);
+            if (!(hasUnpaid || hasOvertime || hasFestival)) document.getElementById('workday-adjustments').open = false;
+            document.getElementById('payroll-ot-hours-row').hidden = !hasOvertime;
+            document.getElementById('payroll-no-ot-days-row').hidden = !hasOvertime;
+            document.getElementById('payroll-no-ot-deduction-row').hidden = !hasOvertime;
+            document.getElementById('disp-no-ot-days').value = `${noOTDays}일`;
+            document.getElementById('disp-no-ot-deduction').value = `−${fmt(noOTDeduction)}원`;
+            document.getElementById('payroll-unpaid-days-row').hidden = !hasUnpaid;
+            document.getElementById('payroll-unpaid-deduction-row').hidden = !hasUnpaid;
+            document.getElementById('disp-unpaid-days').value = `${unpaidDays}일`;
+            document.getElementById('disp-unpaid-deduction').value = `−${fmt(unpaidDeduction)}원`;
+            document.getElementById('payroll-holiday-pay-row').hidden = !hasFestival;
+            document.getElementById('payroll-holiday-pay-total').textContent = fmt(holidayBonus) + '원';
+            const summary = [];
+            if (hasUnpaid) summary.push(`무급 ${unpaidDays}일`);
+            if (hasOvertime) summary.push(`잔업 제외 ${noOTDays}일`);
+            if (hasFestival) summary.push(`명절 격려금 ${fmt(holidayBonus)}원`);
+            document.getElementById('workday-adjustment-value').textContent = summary.join(' · ');
         }
 
         let payslipAlertContext = null;
@@ -3073,7 +3100,7 @@
     <script src="./settings-ui.js?v=app-copy-20261107"></script>
     <script src="./account-sync.js?v=native-work-change-1"></script>
     <script src="./google-sync.js?v=app-copy-20261107"></script>
-<script src="planner-core.js?v=sms-confirm-1"></script><script src="shift-tools.js?v=native-work-change-1"></script><script src="work-editor.js?v=native-work-change-1"></script>
+<script src="planner-core.js?v=holiday-adjustments-1"></script><script src="shift-tools.js?v=native-work-change-1"></script><script src="work-editor.js?v=native-work-change-1"></script>
 
 
     <dialog id="today-weather" class="weather-card sms-dialog" aria-labelledby="weather-dialog-title">
@@ -3162,8 +3189,8 @@
 <script src="./memo-composer.js?v=native-work-change-1"></script>
 <script src="./settings-options.js?v=2"></script>
 <script src="./wage-import-ui.js?v=app-copy-20261107"></script>
-<script src="./holiday-work-pay.js?v=native-work-change-1"></script>
-<script src="./app-i18n-data.js?v=native-work-change-1"></script>
+<script src="./holiday-work-pay.js?v=holiday-adjustments-1"></script>
+<script src="./app-i18n-data.js?v=holiday-adjustments-1"></script>
 <script src="./app-i18n-zh.js?v=friendly-copy-4"></script>
 <script src="./app-i18n.js?v=web-build30-1"></script>
 <script src="./app-currency.js?v=2"></script>

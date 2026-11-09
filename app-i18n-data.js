@@ -438,6 +438,10 @@ Apple 계정으로 계속하기|Continue with Apple|使用 Apple 继续|Appleで
 상여금|Bonus|奖金|賞与
 기타|Other|其他|その他
 명절근무수당|Holiday work allowance|节日出勤津贴|祝日勤務手当
+명절 격려금|Holiday incentive|节日出勤奖励|祝日出勤奨励金
+명절 격려금을 선택해요|Choose a holiday incentive|选择节日出勤奖励|祝日出勤奨励金を選択
+명절 격려금 닫기|Close holiday incentive|关闭节日出勤奖励|祝日出勤奨励金を閉じる
+격려금 금액|Incentive amount|奖励金额|奨励金額
 근태공제|Attendance deductions|考勤扣除|勤怠控除
 급여 안내|Pay information|工资说明|給与案内
 예상 총 지급액 (세전)|Estimated gross pay|预估税前总收入|予想総支給額（税引前）
@@ -617,6 +621,7 @@ Apple 계정으로 계속하기|Continue with Apple|使用 Apple 继续|Appleで
 세후 예상 금액 보기|Show estimated take-home pay|查看预估实发金额|予想手取り額を表示
 시급과 수당은 직접 입력해요. 근속수당은 입사일을 기준으로 계산하고, 직접 바꿀 수도 있어요. 급여 문자는 세금과 보험료를 예상할 때만 써요.|Enter hourly pay and allowances yourself. The seniority allowance is calculated from your start date and can be edited. Pay messages are only used to estimate taxes and insurance.|请手动输入时薪和津贴。工龄津贴按入职日期计算，也可以手动修改。工资短信仅用于估算税费和保险费。|時給と手当は手入力します。勤続手当は入社日をもとに計算され、手動で変更することもできます。給与メッセージは税金と保険料の見積もりにのみ使います。
 잔업을 뺀 날|Days without overtime|取消延时加班的天数|残業を外した日数
+잔업 제외로 줄어드는 금액|Estimated overtime reduction|取消延时加班后的预估减少金额|残業を外した場合の見込み減額
 무급으로 줄어드는 금액|Estimated unpaid deduction|无薪休假预估扣款|無給による見込み減額
 정규직 전환일 (연차·지원금 계산)|Permanent employment start date (leave and support payment)|转正日期（计算年假和补助金）|正社員への転換日（有休・支援金の計算）
 저장한 내용 이어 쓰기|Continue with saved data|继续使用已保存的记录|保存した内容を引き継ぐ

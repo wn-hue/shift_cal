@@ -15,8 +15,34 @@ let other=0;if(hy>0&&hy<2018)other=Math.trunc(ordinary*1.5*.5*Math.max(0,c.night
 const support=under?300000:0;const bonus=under?0:Number(end.slice(5,7))%2===0?net(Math.trunc(base*.5)+seniority):0;
 return {support,bonus,regular:net(base)+net(duty)+net(seniority)+Math.trunc(ordinary*1.5*Math.max(0,c.day+c.night-c.noOT)*2.5)+Math.trunc(ordinary*.5*7*c.night)+Math.trunc(ordinary*1.5*8*(c.spDay+c.spNight))+Math.trunc(ordinary*2*2.5*Math.max(0,c.spDay+c.spNight-(c.spDayNoOT||0)-(c.spNightNoOT||0)))+Math.trunc(ordinary*.5*7*c.spNight)+other};}
 function gross(c,cfg,end){const p=payments(c,cfg,end);return p.regular+p.bonus+p.support;}
+const overtimeRestoredType = {
+ NO_OT: null, SPECIAL_DAY_NO_OT: 'SPECIAL_DAY', SPECIAL_NIGHT_NO_OT: 'SPECIAL_NIGHT',
+ HALF_POST: 'HALF_PRE', HALF_LEAVE: 'HALF_PRE',
+ UNPAID_HALF_POST: 'UNPAID_HALF_PRE', UNPAID_HALF: 'UNPAID_HALF_PRE'
+};
+function workAdjustments(days, config, end, actual = payments(counts(days), config, end)) {
+ const worked = counts(days);
+ const unpaidDays = worked.unpaid;
+ let noOTDays = 0;
+ const restoredDays = days.map(shift => {
+  if (!Object.hasOwn(overtimeRestoredType, shift.type)) return shift;
+  noOTDays++;
+  const type = shift.type === 'NO_OT' ? (shift.origType === 'NIGHT' ? 'NIGHT' : 'DAY') : overtimeRestoredType[shift.type];
+  return {...shift, type};
+ });
+ let unpaidDeduction = 0, noOTDeduction = 0;
+ if (unpaidDays > 0) {
+  const paid = payments({...worked, unpaid: 0}, config, end);
+  unpaidDeduction = Math.max(0, (paid.regular - actual.regular) + (paid.bonus - actual.bonus));
+ }
+ if (noOTDays > 0) {
+  const withOvertime = payments(counts(restoredDays), config, end);
+  noOTDeduction = Math.max(0, withOvertime.regular - actual.regular);
+ }
+ return {unpaidDays, noOTDays, unpaidDeduction, noOTDeduction};
+}
 function period(k){const d=date(k),month=d.getMonth()+(d.getDate()>15?1:0);const end=new Date(d.getFullYear(),month,15,12),start=new Date(d.getFullYear(),month-1,16,12);return{start:key(start),end:key(end)};}
 function range(start,end){const a=[];for(let d=date(start);key(d)<=end;d.setDate(d.getDate()+1))a.push(key(d));return a;}
 function vacations(days,budget){const result=[];for(let start=0;start<days.length;start++){let spend=0,needed=[];for(let end=start;end<days.length;end++){const d=days[end];if(!d.rest){if(!d.eligible)break;spend++;needed.push(d.key);}if(spend>budget)break;if(spend>0&&end-start+1>spend)result.push({start:days[start].key,end:d.key,days:end-start+1,leave:[...needed]});}}return result.sort((a,b)=>b.days-a.days||a.leave.length-b.leave.length||a.start.localeCompare(b.start)).filter((r,i,a)=>a.findIndex(x=>x.leave.join()==r.leave.join())===i).slice(0,5);}
-const api={seniorityPay,resolveSeniorityPay,payments,isUnderOneYear,counts,gross,period,range,vacations,date,key};if(typeof module!=='undefined')module.exports=api;root.ShiftPlannerCore=api;
+const api={seniorityPay,resolveSeniorityPay,payments,isUnderOneYear,counts,gross,workAdjustments,period,range,vacations,date,key};if(typeof module!=='undefined')module.exports=api;root.ShiftPlannerCore=api;
 })(typeof window==='undefined'?globalThis:window);
