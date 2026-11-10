@@ -1,3 +1,5 @@
+import { localFood, localFoodWeek } from './local-food.mjs';
+
 const SOURCE='https://h-lyart-ten.vercel.app';
 const APIS=new Set(['account','google-calendar','apple-account','native-account','live-schedule','parking','lost-found','meal-votes','today-menu','bus-places','currency-rates','origin-transfer','meal-keywords']);
 const MENU_CACHE_CONTROL='public, max-age=600';
@@ -15,6 +17,9 @@ export default {
   // First-round meals: 11:30, 17:00, and 00:50 KST. Retry unpublished menus
   // every five minutes only until that meal starts. No credentials in URLs/logs.
   const date=new Date(event.scheduledTime+9*3600000),m=date.getUTCHours()*60+date.getUTCMinutes();
+  if(env.LOCAL_FOOD&&date.getUTCDay()===1&&m===690){
+   ctx.waitUntil(env.LOCAL_FOOD.prepare('DELETE FROM local_food_votes WHERE week < ?').bind(localFoodWeek(event.scheduledTime,-7).start).run());
+  }
   if(!env.MEAL_KEYWORDS_CRON_SECRET||!((m>=690&&m<720)||(m>=1020&&m<1050)||(m>=50&&m<80)))return;
   ctx.waitUntil(fetch(SOURCE+'/api/today-menu?feature=keywords&action=dispatch',{method:'POST',headers:{Authorization:'Bearer '+env.MEAL_KEYWORDS_CRON_SECRET,'Content-Type':'application/json'},body:'{}',signal:AbortSignal.timeout(60000)}).then(r=>{if(!r.ok)throw Error('Meal dispatch failed: '+r.status);}));
  },
@@ -23,6 +28,7 @@ export default {
  const firstVisit=url.pathname==='/'&&!/(?:^|;\s*)__Host-work-routine-ready=1(?:;|$)/.test(request.headers.get('Cookie')||'');
  if(firstVisit&&url.hostname!=='20261104.xyz')return new Response(null,{status:302,headers:{Location:'/origin-transfer.html','Cache-Control':'no-store'}});
  if(url.pathname==='/api/hosting-status')return Response.json({hosting:'cloudflare',dataService:'vercel',originalRetained:true},{headers:{'Cache-Control':'no-store'}});
+ if(url.pathname==='/api/local-food')return localFood(request,env);
  if(url.pathname.startsWith('/api/')){
   if(!APIS.has(url.pathname.slice(5)))return new Response('Not found',{status:404});
   const origin=request.headers.get('Origin');

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>동네 맛집 · 근무 루틴</title>
+<meta name="description" content="안산·시화·배곧의 식당, 배달, 회식 장소를 찾아보고 이번 주 이용자 추천을 확인하세요.">
+<link rel="canonical" href="https://20261104.xyz/local-food">
+<link rel="icon" href="/work-routine-icon.png">
+<link rel="stylesheet" href="/local-food.css">
+<script src="/local-food.js" defer></script>
+</head>
+<body>
+<header class="top"><a href="/#all">‹ 전체</a><strong>근무 루틴</strong></header>
+<main>
+  <h1>동네 맛집</h1>
+  <p class="intro">안산·시화·배곧에서 먹어본 곳을 추천해 주세요.</p>
+  <div class="choices">
+    <label>지역<select id="food-region"><option value="ansan">안산</option><option value="sihwa">시화</option><option value="baegot">배곧</option></select></label>
+    <label>용도<select id="food-occasion"><option value="dining">맛집</option><option value="delivery">배달</option><option value="group">회식</option></select></label>
+  </div>
+  <form id="food-search" class="search" role="search">
+    <label class="sr" for="food-query">가게 이름이나 음식 종류</label>
+    <input id="food-query" type="search" maxlength="50" placeholder="가게 이름이나 음식 종류 검색">
+    <button type="submit">검색</button>
+  </form>
+  <p id="food-context-note" class="context-note" hidden></p>
+  <p id="food-message" class="status" role="status" aria-live="polite"></p>
+  <section class="panel" id="food-ranking" aria-labelledby="food-rank-title">
+    <div class="panel-head">
+      <h2 id="food-rank-title" tabindex="-1">이용자 추천 순위</h2>
+      <label><span class="sr">집계 기간</span><select id="food-period"><option value="this">이번 주</option><option value="last">지난주</option></select></label>
+    </div>
+    <p id="food-week" class="muted">매주 월요일 오전 3시 새 집계</p>
+    <ol id="food-rank" class="items"></ol>
+    <p id="food-rank-empty" class="muted"></p>
+  </section>
+  <section class="panel" id="food-results" aria-labelledby="food-map-title">
+    <h2 id="food-map-title">가게 찾기</h2>
+    <p id="food-map-note" class="muted">찾은 가게에 좋아요를 누르면 이번 주 순위에 올라가요.</p>
+    <a id="food-external" class="external" href="https://map.kakao.com/?q=%EC%95%88%EC%82%B0%20%EB%A7%9B%EC%A7%91" target="_blank" rel="noopener">카카오맵에서 검색 ↗</a>
+    <a id="food-jump" class="external jump" href="#food-ranking" hidden>주간 순위 보기 ↓</a>
+    <ol id="food-places" class="items"></ol>
+  </section>
+  <p class="fine">좋아요가 많은 순이며, 동률이면 싫어요가 적은 곳이 앞서요. 가게마다 주 1표를 줄 수 있고, 같은 버튼을 다시 누르면 취소돼요. <a href="/privacy">개인정보처리방침</a></p>
+  <p class="fine">가게 정보: <a href="https://www.data.go.kr/data/15083033/fileData.do" target="_blank" rel="noopener">소상공인시장진흥공단 상가 정보</a> (2026년 9월 기준). 영업 여부는 방문 전에 확인해 주세요.</p>
+</main>
+</body>
+</html>
