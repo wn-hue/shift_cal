@@ -7,155 +7,180 @@
 <meta name="description" content="교대근무 출근 준비와 통근버스 정류장 검색, 주간·야간 휴게 및 식사 시간, 퇴근 후 휴식 팁을 확인하세요.">
 <link rel="canonical" href="https://20261104.xyz/shift-life-guide">
 <link rel="icon" href="/work-routine-icon.png">
+<link rel="stylesheet" href="/life-feature.css?v=1">
 <style>
-:root {
-  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
-  color: #191f28; background: #f4f5f7;
-  --surface: #fff; --secondary: #566172; --blue: #1760bb;
-  --line: #ebedf1; --radius: 24px; --gutter: clamp(16px, 4vw, 28px);
+main { padding-block: 20px 28px; }
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(78px, 30%);
+  align-items: center;
+  gap: 6px;
+  padding: 22px 17px 22px 20px;
+  border-radius: var(--radius);
+  background: var(--tint);
 }
-* { box-sizing: border-box; }
-body { margin: 0; word-break: keep-all; }
-a { color: inherit; text-decoration: none; }
-a:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; border-radius: 4px; }
-header { border-bottom: 1px solid #e9ebef; background: #f8f9fa; }
-.header-inner, main, footer { width: min(100% - var(--gutter) * 2, 620px); margin-inline: auto; }
-.header-inner { height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.brand { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 650; }
-.brand img { width: 28px; height: 28px; border-radius: 7px; }
-.site { font-size: 12px; color: var(--secondary); }
-main { padding-block: 25px 20px; }
-.page-title { margin: 0 0 14px; font-size: 22px; letter-spacing: -.55px; line-height: 1.3; font-weight: 650; }
-.affiliate-disclosure { margin: -5px 0 14px; color: var(--secondary); font-size: 12px; line-height: 1.55; }
-.hero { position: relative; overflow: hidden; padding: 22px; border-radius: var(--radius); background: #172945; color: #fff; isolation: isolate; }
-.hero p, .hero h2 { margin: 0; }
-.hero h2 { font-size: clamp(25px, 6.6vw, 32px); line-height: 1.18; letter-spacing: -.9px; font-weight: 700; }
-.hero .intro { margin-top: 12px; color: #e0eafa; font-size: 13px; line-height: 1.5; }
-.hero-art { position: absolute; right: 1px; top: 50%; translate: 0 -50%; z-index: -1; width: min(42%, 176px); height: auto; }
-.steps { background: var(--surface); border-radius: var(--radius); margin-top: 14px; padding: 4px 18px; }
-.step { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; padding: 15px 0; }
+.hero-art { width: 100%; height: auto; max-width: 156px; justify-self: end; }
+.hero .intro { max-width: 20ch; }
+.affiliate-disclosure { margin: 10px 4px 14px; color: var(--quiet); font-size: .75rem; line-height: 1.55; }
+
+.steps, .affiliate { background: var(--surface); border-radius: var(--radius); }
+.steps { padding-inline: 18px; }
+.step {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 18px 0;
+}
 .step + .step { border-top: 1px solid var(--line); }
-.step-icon { display: grid; place-items: center; background: #edf4ff; color: var(--blue); border-radius: 11px; width: 34px; height: 34px; }
-.step-icon svg { width: 18px; height: 18px; }
-.step h3 { margin: 0 0 3px; font-size: 15px; line-height: 1.4; font-weight: 650; }
-.step p { margin: 0; font-size: 13px; line-height: 1.55; color: var(--secondary); }
-.step p + p { margin-top: 7px; }
-.step .route { margin-top: 4px; }
-.route a { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--blue); font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
-.schedule { margin-top: 5px; }
-.schedule summary { display: flex; min-height: 44px; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer; list-style: none; color: var(--blue); font-size: 13px; font-weight: 650; }
+.step-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--control);
+  background: var(--page);
+  color: var(--blue);
+}
+.step h2 { margin-bottom: 4px; }
+.step p, .affiliate p { color: var(--sub); font-size: .875rem; line-height: 1.6; }
+.step p + p { margin-top: 5px; }
+.step .route, .schedule { margin-top: 10px; }
+.route a, .schedule summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: var(--control);
+  background: var(--tint);
+  color: var(--blue);
+  font-size: .875rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+.schedule summary { list-style: none; cursor: pointer; }
 .schedule summary::-webkit-details-marker { display: none; }
-.schedule summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 4px; }
 .schedule[open] .chevron { rotate: 180deg; }
-.break-times { display: grid; gap: 8px; margin-bottom: 8px; }
-.break-panel { background: #f1f6fd; border-radius: 14px; padding: 9px 12px; }
-.break-panel table { width: 100%; border-collapse: collapse; font-size: 12px; }
-.break-panel th, .break-panel td { padding-block: 5px; text-align: right; white-space: nowrap; }
+.schedule:not([open]) .summary-close, .schedule[open] .summary-open { display: none; }
+.break-times { display: grid; gap: 8px; margin-top: 10px; }
+.break-panel { min-width: 0; background: var(--page); border-radius: var(--control); padding: 9px 10px; }
+.break-panel table { width: 100%; border-collapse: collapse; font-size: .8125rem; }
+.break-panel th, .break-panel td { padding-block: 5px; text-align: right; }
 .break-panel tr > :first-child { text-align: left; }
-.break-panel thead th { color: var(--secondary); font-weight: 600; }
-.break-panel thead th:first-child { color: #191f28; font-size: 13px; font-weight: 650; }
+.break-panel thead th { color: var(--sub); font-weight: 650; }
+.break-panel thead th:first-child { color: var(--ink); }
 .break-panel tbody th { font-weight: 500; }
 .break-panel td { font-variant-numeric: tabular-nums; }
-.break-panel tbody tr { border-top: 1px solid #dce6f4; }
-.break-panel p { margin-top: 5px; font-size: 11px; }
-.affiliate { margin-top: 14px; padding: 15px 18px; border-radius: var(--radius); background: var(--surface); }
-.affiliate h2 { margin: 0; font-size: 15px; line-height: 1.4; font-weight: 650; }
-.affiliate p { margin: 4px 0 0; color: var(--secondary); font-size: 13px; line-height: 1.55; }
-.affiliate a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 3px; color: var(--blue); font-size: 13px; font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
-footer { border-top: 1px solid #e0e4eb; padding-block: 13px 20px; color: var(--secondary); font-size: 12px; display: flex; justify-content: space-between; gap: 12px; }
-@media(min-width: 650px) {
-  main { padding-block: 35px 24px; }
-  .hero { padding: 27px; }
-  .hero-art { right: 17px; }
-  .steps { padding-inline: 22px; }
+.break-panel tbody tr { border-top: 1px solid #dfe5eb; }
+.break-panel p, .step .schedule-note { margin-top: 7px; font-size: .75rem; color: var(--quiet); }
+.affiliate { margin-top: 12px; padding: 16px 18px 12px; }
+.affiliate h2 { font-size: 1rem; }
+.affiliate p { margin-top: 4px; }
+.affiliate a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font-size: .8125rem;
+  font-weight: 650;
+}
+footer { padding-bottom: 20px; color: var(--quiet); font-size: .75rem; }
+@media (hover: hover) {
+  .route a:hover, .schedule summary:hover { background: #dcecff; }
+}
+@media (min-width: 640px) {
+  main { padding-top: 30px; }
+  .hero { padding: 24px; }
+  .steps, .affiliate { padding-inline: 24px; }
   .break-times { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
 }
 </style>
 </head>
 <body>
-<header><div class="header-inner">
-  <a class="brand" href="/#all" aria-label="근무 루틴 전체 메뉴"><img src="/work-routine-icon.png" width="28" height="28" alt="">근무 루틴</a>
-  <span class="site">20261104.xyz</span>
+<header class="top"><div class="shell top-inner">
+  <a class="back" href="/#all"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>전체</a>
+  <span class="top-title">교대생활 가이드</span>
+  <img class="brand-icon" src="/work-routine-icon.png" width="24" height="24" alt="근무 루틴">
 </div></header>
-<main>
-  <h1 class="page-title">교대생활 가이드</h1>
-  <p class="affiliate-disclosure">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
-  <article aria-labelledby="shift-checklist-title">
-    <div class="hero">
-      <h2 id="shift-checklist-title">교대근무 준비<br>체크리스트</h2>
-      <p class="intro">주간·야간, 출근 전부터 퇴근 후까지.</p>
-      <svg class="hero-art" width="164" height="154" viewBox="0 0 164 154" fill="none" aria-hidden="true">
-        <circle cx="94" cy="77" r="52" fill="#213b61"/>
-        <circle cx="94" cy="77" r="67" stroke="#395577" stroke-opacity=".56"/>
-        <circle cx="94" cy="77" r="81" stroke="#395577" stroke-opacity=".3"/>
-        <path d="M105 46c-17.6 1.7-31 16.3-31 33.9 0 18.8 15.3 34.1 34.1 34.1 8.6 0 16.5-3.2 22.5-8.5-11.4-.2-22.5-5.9-29-16.3-9-14.3-7.2-31.8 3.4-43.2Z" fill="#fbd889"/>
-        <circle cx="58" cy="47" r="8" fill="#fbd889"/>
-        <path d="M58 33v3m0 22v3M44 47h3m22 0h3m-24-10 2 2m16 16 2 2m0-20-2 2M50 55l-2 2" stroke="#fbd889" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M127 61v14m-7-7h14M52 101v8m-4-4h8" stroke="#b9d8ff" stroke-width="1.7" stroke-linecap="round"/>
-        <circle cx="140" cy="87" r="2" fill="#b9d8ff"/><circle cx="69" cy="118" r="1.5" fill="#b9d8ff"/>
-      </svg>
+<main class="shell">
+  <div class="hero">
+    <div>
+      <h1>출근부터<br>퇴근까지</h1>
+      <p class="intro">통근버스, 휴게·식사 시간<br>퇴근 후 휴식까지 한눈에.</p>
     </div>
-    <section class="steps" aria-label="교대근무 체크리스트">
-      <div class="step">
-        <span class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M9 7V5a3 3 0 0 1 6 0v2M4 13h16m-9 0v2h2v-2"/></svg></span>
-        <div>
-          <h3>출근 전 · 가방과 정류장 확인</h3>
-          <p>사원증과 텀블러를 챙기고, 근무화 깔창도 확인해요.</p>
-          <p class="route"><a href="/?open=bus-search">통근버스 정류장 찾기 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></a></p>
-        </div>
+    <svg class="hero-art" width="120" height="112" viewBox="0 0 120 112" fill="none" aria-hidden="true">
+      <circle cx="60" cy="57" r="49" fill="#d3e7ff"/>
+      <path d="M17 80c18 12 55 5 78-15 9-7 13-15 12-21" stroke="#a3c9f8" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 6"/>
+      <circle cx="44" cy="43" r="17" fill="#ffca59"/>
+      <path d="M44 19v-4m0 56v-4M20 43h-4m56 0h-4M27 26l-3-3m40 40-3-3m0-34 3-3M27 60l-3 3" stroke="#eeaa30" stroke-width="2" stroke-linecap="round"/>
+      <path d="M81 49a24 24 0 1 0 20 34A24 24 0 0 1 81 49Z" fill="#3679e6"/>
+      <path d="M97 38v10m-5-5h10" stroke="#4089eb" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="104" cy="61" r="3" fill="#fff"/><circle cx="32" cy="85" r="3" fill="#fff"/>
+    </svg>
+  </div>
+  <p class="affiliate-disclosure">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+  <section class="steps" aria-label="교대근무 하루 안내">
+    <div class="step">
+      <span class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M9 7V5a3 3 0 0 1 6 0v2M4 13h16m-9 0v2h2v-2"/></svg></span>
+      <div>
+        <h2>출근 전</h2>
+        <p>사원증과 텀블러를 챙기고, 근무화 깔창도 확인해요.</p>
+        <p class="route"><a href="/?open=bus-search">통근버스 정류장 찾기 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></a></p>
       </div>
-      <div class="step" id="break-schedule">
-        <span class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3 2"/></svg></span>
-        <div>
-          <h3>근무 중 · 식사와 휴게 챙기기</h3>
-          <p>물과 간식을 챙겨요. 커피를 가져간다면 디카페인도 좋아요.</p>
-          <p>평소 먹는 비타민·마그네슘·유산균이 있다면 출근 전에 미리 챙겨두세요.</p>
-          <details class="schedule">
-            <summary>휴게·식사 시간표 보기 <svg class="chevron" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></summary>
-            <div class="break-times">
-              <div class="break-panel">
-                <table aria-label="주간 휴게·식사 시작 시간">
-                  <thead><tr><th scope="col">주간</th><th scope="col">1차</th><th scope="col">2차</th></tr></thead>
-                  <tbody>
-                    <tr><th scope="row">쉬는 시간 1</th><td>10:30</td><td>10:45</td></tr>
-                    <tr><th scope="row">점심</th><td>12:00</td><td>12:50</td></tr>
-                    <tr><th scope="row">쉬는 시간 2</th><td>15:30</td><td>15:45</td></tr>
-                    <tr><th scope="row">석식</th><td>17:30</td><td>18:00</td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="break-panel">
-                <table aria-label="야간 휴게·식사 시작 시간" aria-describedby="night-next-day">
-                  <thead><tr><th scope="col">야간</th><th scope="col">1차</th><th scope="col">2차</th></tr></thead>
-                  <tbody>
-                    <tr><th scope="row">쉬는 시간 1</th><td>23:00</td><td>23:20</td></tr>
-                    <tr><th scope="row">야식</th><td>01:20</td><td>02:00</td></tr>
-                    <tr><th scope="row">쉬는 시간 2</th><td>04:30</td><td>04:50</td></tr>
-                    <tr><th scope="row">쉬는 시간 3</th><td>06:30</td><td>06:50</td></tr>
-                  </tbody>
-                </table>
-                <p id="night-next-day">자정 이후는 다음 날 시간이에요.</p>
-              </div>
+    </div>
+    <div class="step" id="break-schedule">
+      <span class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3 2"/></svg></span>
+      <div>
+        <h2>근무 중</h2>
+        <p>물과 간식을 챙겨요. 커피를 가져간다면 디카페인도 좋아요.</p>
+        <p>평소 먹는 비타민·마그네슘·유산균이 있다면 출근 전에 미리 챙겨두세요.</p>
+        <details class="schedule">
+          <summary><span class="summary-open">휴게·식사 시간표 보기</span><span class="summary-close">휴게·식사 시간표 접기</span> <svg class="chevron" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></summary>
+          <div class="break-times">
+            <div class="break-panel">
+              <table aria-label="주간 휴게·식사 시작 시간">
+                <thead><tr><th scope="col">주간</th><th scope="col">1차</th><th scope="col">2차</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">쉬는 시간 1</th><td>10:30</td><td>10:45</td></tr>
+                  <tr><th scope="row">점심</th><td>12:00</td><td>12:50</td></tr>
+                  <tr><th scope="row">쉬는 시간 2</th><td>15:30</td><td>15:45</td></tr>
+                  <tr><th scope="row">석식</th><td>17:30</td><td>18:00</td></tr>
+                </tbody>
+              </table>
             </div>
-            <p class="route">표는 실제 시작 시간이에요. 아이폰 앱에서는 <strong>전체 → 근무 알람 → 휴게·식사 알람</strong>에서 알람을 설정할 수 있어요.</p>
-          </details>
-        </div>
+            <div class="break-panel">
+              <table aria-label="야간 휴게·식사 시작 시간" aria-describedby="night-next-day">
+                <thead><tr><th scope="col">야간</th><th scope="col">1차</th><th scope="col">2차</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">쉬는 시간 1</th><td>23:00</td><td>23:20</td></tr>
+                  <tr><th scope="row">야식</th><td>01:20</td><td>02:00</td></tr>
+                  <tr><th scope="row">쉬는 시간 2</th><td>04:30</td><td>04:50</td></tr>
+                  <tr><th scope="row">쉬는 시간 3</th><td>06:30</td><td>06:50</td></tr>
+                </tbody>
+              </table>
+              <p id="night-next-day">자정 이후는 다음 날 시간이에요.</p>
+            </div>
+          </div>
+          <p class="schedule-note">표는 실제 시작 시간이에요. 아이폰 앱에서는 <strong>전체 → 근무 알람 → 휴게·식사 알람</strong>에서 알람을 설정할 수 있어요.</p>
+        </details>
       </div>
-      <div class="step">
-        <span class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 15a8.9 8.9 0 0 1-11.6-11A8.9 8.9 0 1 0 20.5 15Z"/></svg></span>
-        <div>
-          <h3>퇴근 후 · 쉴 공간 정리</h3>
-          <p>다음 근무를 확인하고 쉴 시간을 챙겨요. 야간근무 뒤 낮에 잘 때는 암막커튼이나 안대로 빛을 줄여요.</p>
-        </div>
+    </div>
+    <div class="step">
+      <span class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 15a8.9 8.9 0 0 1-11.6-11A8.9 8.9 0 1 0 20.5 15Z"/></svg></span>
+      <div>
+        <h2>퇴근 후</h2>
+        <p>다음 근무를 확인하고 쉴 시간을 챙겨요. 야간근무 뒤 낮에 잘 때는 암막커튼이나 안대로 빛을 줄여요.</p>
       </div>
-    </section>
-  </article>
+    </div>
+  </section>
   <aside class="affiliate" aria-labelledby="affiliate-title">
     <h2 id="affiliate-title">쿠팡 파트너스 제휴 안내</h2>
     <p id="affiliate-note">아래 링크로 구매하면 근무 루틴이 쿠팡으로부터 수수료를 받을 수 있어요.</p>
     <a href="https://link.coupang.com/a/iyjEakjRqC" rel="sponsored" aria-describedby="affiliate-note">쿠팡 홈 열기 <span aria-hidden="true">↗</span></a>
   </aside>
 </main>
-<footer><span>근무 루틴</span><span>교대생활 가이드</span></footer>
+<footer class="shell">근무 루틴</footer>
 </body>
 </html>
