@@ -1,6 +1,7 @@
 /* Dedicated bus screen. Existing route search, shift matching and favorites are shared. */
 (()=>{'use strict';
  const page=document.getElementById('commute-dialog'),body=page.querySelector('.commute-page-body');let active=false,showing=false,locked=[],returnScroll=0;
+ const directEntry=location.pathname==='/'&&new URLSearchParams(location.search).get('open')==='bus-search';
  function show(){
   if(showing)return;showing=true;
   if(!active){active=true;returnScroll=scrollY;document.body.style.setProperty('--commute-scroll-top',-returnScroll+'px');locked=[...document.querySelectorAll('body>.container,body>.bottom-nav')].map(el=>[el,el.inert]);locked.forEach(([el])=>el.inert=true);ShiftBusBrowser.mount(body);body.scrollTop=0;}
@@ -11,9 +12,27 @@
   AppMotion.page(page,false,()=>{active=false;page.hidden=true;document.body.classList.remove('commute-page-open');document.body.style.removeProperty('--commute-scroll-top');locked.forEach(([el,value])=>el.inert=value);window.scrollTo({top:returnScroll,behavior:'instant'});document.getElementById('commute-open').focus({preventScroll:true});});
  }
  function open(){if(active)return;history.pushState({...history.state,shiftCommute:true,shiftBusSearch:false,shiftBusResults:false},'','#commute');show();}
- document.getElementById('commute-back').onclick=()=>{if(history.state?.shiftCommute)history.back();else{history.replaceState({...history.state,shiftCommute:false},'',location.pathname+location.search);hide();}};
+ document.getElementById('commute-back').onclick=()=>{
+  if(directEntry&&!history.state?.shiftBusResults){location.replace('/shift-life-guide');return;}
+  if(history.state?.shiftCommute)history.back();
+  else{history.replaceState({...history.state,shiftCommute:false},'',location.pathname+location.search);hide();}
+ };
  AppMotion.bindSwipeDismiss(page,()=>document.getElementById('commute-back').onclick(),{header:'.commute-topbar',canStart:()=>showing&&!window.BusUnifiedSearch?.isOpen});
  window.addEventListener('popstate',()=>{if(history.state?.shiftCommute)show();else hide();window.ShiftBusBrowser?.syncHistory();window.BusUnifiedSearch?.syncHistory();});
- if(location.hash==='#commute'){history.replaceState({...history.state,shiftCommute:true,shiftBusSearch:false,shiftBusResults:false},'');show();}
- window.CommutePage={open};
+ if(directEntry){
+  if(history.state?.shiftCommute){
+   show();
+   window.ShiftBusBrowser.syncHistory();
+   window.BusUnifiedSearch.syncHistory();
+  }else{
+   // Search needs a parent history entry so selecting a stop restores the commute form.
+   history.replaceState({...history.state,shiftCommute:true,shiftBusSearch:false,shiftBusResults:false},'','#commute');
+   show();
+   window.BusUnifiedSearch.open();
+  }
+ }else if(location.hash==='#commute'){
+  history.replaceState({...history.state,shiftCommute:true,shiftBusSearch:false,shiftBusResults:false},'');
+  show();
+ }
+ window.CommutePage={open,isDirectEntry:directEntry};
 })();

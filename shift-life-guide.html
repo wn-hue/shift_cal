@@ -40,7 +40,8 @@ main { padding-block: 25px 20px; }
 .step h3 { margin: 0 0 3px; font-size: 15px; line-height: 1.4; font-weight: 650; }
 .step p { margin: 0; font-size: 13px; line-height: 1.55; color: var(--secondary); }
 .step p + p { margin-top: 7px; }
-.step .route { margin-top: 6px; font-size: 12px; }
+.step .route { margin-top: 4px; }
+.route a { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--blue); font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
 .schedule { margin-top: 5px; }
 .schedule summary { display: flex; min-height: 44px; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer; list-style: none; color: var(--blue); font-size: 13px; font-weight: 650; }
 .schedule summary::-webkit-details-marker { display: none; }
@@ -100,7 +101,7 @@ footer { border-top: 1px solid #e0e4eb; padding-block: 13px 20px; color: var(--s
         <div>
           <h3>출근 전 · 가방과 정류장 확인</h3>
           <p>사원증과 텀블러를 챙기고, 근무화 깔창도 확인해요.</p>
-          <p class="route">첫 출근이라면 <strong>전체 → 통근버스 → 정류장 검색</strong>에서 타는 곳과 시간을 확인해요.</p>
+          <p class="route"><a href="/?open=bus-search">통근버스 정류장 찾기 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></a></p>
         </div>
       </div>
       <div class="step" id="break-schedule">

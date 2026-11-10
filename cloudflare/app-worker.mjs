@@ -25,7 +25,8 @@ export default {
  },
  async fetch(request,env,ctx){
  const url=new URL(request.url);
- const firstVisit=url.pathname==='/'&&!/(?:^|;\s*)__Host-work-routine-ready=1(?:;|$)/.test(request.headers.get('Cookie')||'');
+ const opensBusSearch=url.searchParams.get('open')==='bus-search';
+ const firstVisit=url.pathname==='/'&&!opensBusSearch&&!/(?:^|;\s*)__Host-work-routine-ready=1(?:;|$)/.test(request.headers.get('Cookie')||'');
  if(firstVisit&&url.hostname!=='20261104.xyz')return new Response(null,{status:302,headers:{Location:'/origin-transfer.html','Cache-Control':'no-store'}});
  if(url.pathname==='/api/hosting-status')return Response.json({hosting:'cloudflare',dataService:'vercel',originalRetained:true},{headers:{'Cache-Control':'no-store'}});
  if(url.pathname==='/api/local-food')return localFood(request,env);

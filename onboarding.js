@@ -100,6 +100,10 @@
  window.addEventListener('shift-payroll-applied',()=>{if(active&&step===2){if(!finish()){$('onboarding-error').textContent='기본시급과 통상시급을 모두 설정해 주세요.';}}});
  window.ShiftOnboarding={open:()=>open(true),needsSetup:()=>state.status==='in_progress',refresh(){if(active&&!saving&&!navigating&&!manual&&!$('payroll-sms-dialog').open&&ready())finish();}};
  function start(){
+  if(window.CommutePage?.isDirectEntry){
+   document.documentElement.removeAttribute('data-onboarding-pending');
+   return;
+  }
   if(waitingForAccount)return;
   if(state.status==='in_progress'){
    loadConfig();
