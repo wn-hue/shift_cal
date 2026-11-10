@@ -15,11 +15,11 @@ main { padding-block: 20px 28px; }
   grid-template-columns: minmax(0, 1fr) minmax(78px, 30%);
   align-items: center;
   gap: 6px;
-  padding: 22px 17px 22px 20px;
+  padding: 20px 16px 20px 20px;
   border-radius: var(--radius);
   background: var(--tint);
 }
-.hero-art { width: 100%; height: auto; max-width: 156px; justify-self: end; }
+.hero-art { width: 100%; height: auto; max-width: 132px; justify-self: end; }
 .hero .intro { max-width: 20ch; }
 .affiliate-disclosure { margin: 10px 4px 14px; color: var(--quiet); font-size: .75rem; line-height: 1.55; }
 
@@ -30,7 +30,7 @@ main { padding-block: 20px 28px; }
   grid-template-columns: 36px minmax(0, 1fr);
   gap: 12px;
   align-items: start;
-  padding: 18px 0;
+  padding: 16px 0;
 }
 .step + .step { border-top: 1px solid var(--line); }
 .step-icon {
@@ -45,7 +45,8 @@ main { padding-block: 20px 28px; }
 .step h2 { margin-bottom: 4px; }
 .step p, .affiliate p { color: var(--sub); font-size: .875rem; line-height: 1.6; }
 .step p + p { margin-top: 5px; }
-.step .route, .schedule { margin-top: 10px; }
+.step .route { margin-top: 10px; }
+.schedule { margin-top: 4px; }
 .route a, .schedule summary {
   display: flex;
   justify-content: space-between;
@@ -60,11 +61,16 @@ main { padding-block: 20px 28px; }
   font-weight: 650;
   text-decoration: none;
 }
-.schedule summary { list-style: none; cursor: pointer; }
+.schedule summary {
+  padding-inline: 0 3px;
+  background: transparent;
+  list-style: none;
+  cursor: pointer;
+}
 .schedule summary::-webkit-details-marker { display: none; }
 .schedule[open] .chevron { rotate: 180deg; }
 .schedule:not([open]) .summary-close, .schedule[open] .summary-open { display: none; }
-.break-times { display: grid; gap: 8px; margin-top: 10px; }
+.break-times { display: grid; gap: 8px; margin-top: 4px; }
 .break-panel { min-width: 0; background: var(--page); border-radius: var(--control); padding: 9px 10px; }
 .break-panel table { width: 100%; border-collapse: collapse; font-size: .8125rem; }
 .break-panel th, .break-panel td { padding-block: 5px; text-align: right; }
@@ -88,11 +94,13 @@ main { padding-block: 20px 28px; }
 }
 footer { padding-bottom: 20px; color: var(--quiet); font-size: .75rem; }
 @media (hover: hover) {
-  .route a:hover, .schedule summary:hover { background: #dcecff; }
+  .route a:hover { background: #dcecff; }
+  .schedule summary:hover span { text-decoration: underline; text-underline-offset: 3px; }
 }
 @media (min-width: 640px) {
   main { padding-top: 30px; }
-  .hero { padding: 24px; }
+  .hero { padding: 20px 24px; }
+  .hero-break { display: none; }
   .steps, .affiliate { padding-inline: 24px; }
   .break-times { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
 }
@@ -107,7 +115,7 @@ footer { padding-bottom: 20px; color: var(--quiet); font-size: .75rem; }
 <main class="shell">
   <div class="hero">
     <div>
-      <h1>출근부터<br>퇴근까지</h1>
+      <h1>출근부터 <br class="hero-break">퇴근까지</h1>
       <p class="intro">통근버스, 휴게·식사 시간<br>퇴근 후 휴식까지 한눈에.</p>
     </div>
     <svg class="hero-art" width="120" height="112" viewBox="0 0 120 112" fill="none" aria-hidden="true">
@@ -134,8 +142,8 @@ footer { padding-bottom: 20px; color: var(--quiet); font-size: .75rem; }
       <span class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3 2"/></svg></span>
       <div>
         <h2>근무 중</h2>
-        <p>물과 간식을 챙겨요. 커피를 가져간다면 디카페인도 좋아요.</p>
-        <p>평소 먹는 비타민·마그네슘·유산균이 있다면 출근 전에 미리 챙겨두세요.</p>
+        <p>물과 간식을 챙겨요. 커피는 디카페인도 좋아요.</p>
+        <p>평소 먹는 비타민·마그네슘·유산균은 미리 챙겨두세요.</p>
         <details class="schedule">
           <summary><span class="summary-open">휴게·식사 시간표 보기</span><span class="summary-close">휴게·식사 시간표 접기</span> <svg class="chevron" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></summary>
           <div class="break-times">

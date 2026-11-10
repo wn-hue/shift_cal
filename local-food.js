@@ -145,7 +145,7 @@
     byId('ranking').hidden = finding;
     byId('search').hidden = !finding;
     byId('clear').hidden = !query.value;
-    byId('map-title').textContent = search ? '검색 결과' : '둘러보기';
+    byId('map-title').textContent = search ? '검색 결과' : '가게 목록';
     byId('map-note').textContent = search ? scope + ' · ' + search : scope;
     byId('week').textContent = data ? scope + ' · ' + weekLabel(data.week) : scope;
     byId('external').href = 'https://map.kakao.com/?q=' + encodeURIComponent(region[1] + ' ' + (finding && search ? search : occasion[1]));
