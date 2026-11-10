@@ -336,8 +336,8 @@ body[data-pref-theme=dark] #view-all .all-shortcut-icon[data-app-icon=calendar]{
 body[data-pref-theme=dark] #view-all .all-shortcut-icon[data-app-icon=wage]{color:#8bb8ff!important}
 
 /* Neutral icon containers: color belongs to the artwork, not its surrounding tile. */
-body[data-pref-theme] #view-all :is(.all-shortcut-icon,.menu-service-icon,.group-summary-icon)[data-app-icon]{background:#f3f4f6!important;border:0!important;box-shadow:none!important}
-body[data-pref-theme=dark] #view-all :is(.all-shortcut-icon,.menu-service-icon,.group-summary-icon)[data-app-icon]{background:#30343b!important}
+body[data-pref-theme] #view-all :is(.all-shortcut-icon,.menu-service-icon,.group-summary-icon):is([data-app-icon],.menu-guide-icon){background:#f3f4f6!important;border:0!important;box-shadow:none!important}
+body[data-pref-theme=dark] #view-all :is(.all-shortcut-icon,.menu-service-icon,.group-summary-icon):is([data-app-icon],.menu-guide-icon){background:#30343b!important}
 
 #view-all .all-page-title{min-width:0;gap:8px;font-size:clamp(18px,5.8vw,24px)}
 #view-all .menu-brand-name{white-space:nowrap;letter-spacing:-.8px;line-height:1.3}
