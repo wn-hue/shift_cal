@@ -393,6 +393,7 @@ body:not([data-pref-theme=dark])[data-view=all]{background:#f7f9fb}
 #view-all .all-shortcut strong{grid-column:1;grid-row:1;font-size:14px;font-weight:650;line-height:1.5}
 #view-all .all-shortcut-caption{grid-column:1/-1;grid-row:2;text-align:left;max-width:none;font-size:11px;line-height:1.6}
 #view-all .menu-services{background:var(--menu-card);border:1px solid var(--menu-line);border-radius:20px;padding:17px 18px 5px}
+#view-all .menu-services.support-card{padding-block:0;margin-bottom:16px}
 #view-all .menu-services>h2{margin:0 0 4px;font-size:12px}
 #view-all .menu-services .life-entry{min-height:77px;border-radius:0;gap:13px;padding:14px 0}
 #view-all .menu-services .life-entry+.life-entry{border-top:1px solid var(--menu-line)}
