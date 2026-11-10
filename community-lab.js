@@ -12,7 +12,7 @@ const group=()=>typeof currentGroup==='string'?currentGroup:'C';
 const dialog=el('dialog');dialog.id='community-lab';dialog.setAttribute('aria-label','새 기능 체험');dialog.innerHTML='<div class="lab-header"><h2>새 기능 체험</h2><button type="button" aria-label="새 기능 체험 닫기">×</button></div><p class="lab-note">여기서 쓴 글과 설정은 이 기기에만 저장돼요. 다른 이용자에게 보내지 않아요. 식단 평가는 오늘 메뉴에서, 통근버스·주차장·분실물은 전체 메뉴에서 이용할 수 있어요.</p><div class="lab-tabs" role="tablist" aria-label="테스트 기능"></div><label class="lab-preview"><input type="checkbox" id="lab-preview">예시 보기 (작성 시간 제한 없이)</label><div id="lab-panel"></div><p id="lab-status" class="lab-status" role="status"></p><section class="lab-decision"><strong>이 기능을 어떻게 할까요?</strong><div id="lab-decisions" class="lab-actions"></div><div class="lab-actions"><button id="lab-export">검토 결과 저장</button><button id="lab-clear">테스트 기록 지우기</button></div></section>';document.body.append(dialog);
 dialog.querySelector('.lab-header button').onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
 const entry=el('button','새 기능 체험  ›');entry.className='lab-entry';entry.type='button';let opener=entry;entry.onclick=()=>{opener=entry;render();dialog.showModal();dialog.scrollTop=0;};
-document.querySelector('#view-all .all-menu-content').append(entry);
+$('onboarding-reopen').before(entry);
 dialog.addEventListener('close',()=>opener.focus());
 
 for(const [key,label]of features){const b=el('button',label);b.type='button';b.setAttribute('role','tab');b.id='lab-tab-'+key;b.onclick=()=>{active=key;render();};dialog.querySelector('.lab-tabs').append(b);}
