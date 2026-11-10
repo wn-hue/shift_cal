@@ -7,43 +7,105 @@
 <meta name="description" content="안산·시화·배곧의 식당, 배달, 회식 장소를 찾아보고 이번 주 이용자 추천을 확인하세요.">
 <link rel="canonical" href="https://20261104.xyz/local-food">
 <link rel="icon" href="/work-routine-icon.png">
-<link rel="stylesheet" href="/local-food.css">
-<script src="/local-food.js" defer></script>
+<link rel="stylesheet" href="/local-food.css?v=2">
+<script src="/local-food.js?v=2" defer></script>
 </head>
 <body>
-<header class="top"><a href="/#all">‹ 전체</a><strong>근무 루틴</strong></header>
-<main>
-  <h1>동네 맛집</h1>
-  <p class="intro">안산·시화·배곧에서 먹어본 곳을 추천해 주세요.</p>
-  <div class="choices">
-    <label>지역<select id="food-region"><option value="ansan">안산</option><option value="sihwa">시화</option><option value="baegot">배곧</option></select></label>
-    <label>용도<select id="food-occasion"><option value="dining">맛집</option><option value="delivery">배달</option><option value="group">회식</option></select></label>
+<header class="top">
+  <div class="shell top-inner">
+    <a href="/#all" class="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>전체</a>
+    <span class="brand"><img src="/work-routine-icon.png" width="22" height="22" alt="">근무 루틴</span>
   </div>
-  <form id="food-search" class="search" role="search">
-    <label class="sr" for="food-query">가게 이름이나 음식 종류</label>
-    <input id="food-query" type="search" maxlength="50" placeholder="가게 이름이나 음식 종류 검색">
-    <button type="submit">검색</button>
-  </form>
+</header>
+<main class="shell">
+  <h1>동네 맛집</h1>
+  <p class="intro">안산·시화·배곧에서 가볼 곳을 찾고, 다녀온 곳을 추천해요.</p>
+
+  <nav class="views" aria-label="동네 맛집 메뉴">
+    <button id="food-find-tab" type="button" aria-controls="food-results" aria-pressed="true">가게 찾기</button>
+    <button id="food-rank-tab" type="button" aria-controls="food-ranking" aria-pressed="false">주간 순위</button>
+  </nav>
+
+  <div class="filters">
+    <fieldset>
+      <legend>지역</legend>
+      <div class="options">
+        <label><input type="radio" name="region" value="ansan" checked><span>안산</span></label>
+        <label><input type="radio" name="region" value="sihwa"><span>시화</span></label>
+        <label><input type="radio" name="region" value="baegot"><span>배곧</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>용도</legend>
+      <div class="options">
+        <label><input type="radio" name="occasion" value="dining" checked><span>맛집</span></label>
+        <label><input type="radio" name="occasion" value="delivery"><span>배달</span></label>
+        <label><input type="radio" name="occasion" value="group"><span>회식</span></label>
+      </div>
+    </fieldset>
+    <form id="food-search" class="search" role="search">
+      <label class="sr" for="food-query">가게 이름이나 음식 종류</label>
+      <div class="search-field">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 4 4"/></svg>
+        <input id="food-query" type="search" maxlength="50" placeholder="가게 이름, 음식 종류" enterkeyhint="search">
+        <button id="food-clear" class="clear" type="button" aria-label="검색어 지우기" hidden>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <button type="submit" class="search-submit">검색</button>
+    </form>
+  </div>
   <p id="food-context-note" class="context-note" hidden></p>
-  <p id="food-message" class="status" role="status" aria-live="polite"></p>
-  <section class="panel" id="food-ranking" aria-labelledby="food-rank-title">
+
+  <section id="food-results" class="panel" aria-labelledby="food-map-title">
     <div class="panel-head">
-      <h2 id="food-rank-title" tabindex="-1">이용자 추천 순위</h2>
-      <label><span class="sr">집계 기간</span><select id="food-period"><option value="this">이번 주</option><option value="last">지난주</option></select></label>
+      <div>
+        <h2 id="food-map-title" tabindex="-1">둘러보기</h2>
+        <p id="food-map-note" class="muted">안산 · 맛집</p>
+      </div>
+      <span id="food-count" class="result-count" hidden></span>
     </div>
-    <p id="food-week" class="muted">매주 월요일 오전 3시 새 집계</p>
-    <ol id="food-rank" class="items"></ol>
-    <p id="food-rank-empty" class="muted"></p>
+    <ul id="food-places" class="items" role="list"></ul>
   </section>
-  <section class="panel" id="food-results" aria-labelledby="food-map-title">
-    <h2 id="food-map-title">가게 찾기</h2>
-    <p id="food-map-note" class="muted">찾은 가게에 좋아요를 누르면 이번 주 순위에 올라가요.</p>
-    <a id="food-external" class="external" href="https://map.kakao.com/?q=%EC%95%88%EC%82%B0%20%EB%A7%9B%EC%A7%91" target="_blank" rel="noopener">카카오맵에서 검색 ↗</a>
-    <a id="food-jump" class="external jump" href="#food-ranking" hidden>주간 순위 보기 ↓</a>
-    <ol id="food-places" class="items"></ol>
+
+  <section id="food-ranking" class="panel" aria-labelledby="food-rank-title" hidden>
+    <div class="panel-head">
+      <div>
+        <h2 id="food-rank-title" tabindex="-1">주간 추천 순위</h2>
+        <p id="food-week" class="muted"></p>
+      </div>
+      <label class="period">
+        <span class="sr">집계 기간</span>
+        <select id="food-period"><option value="this">이번 주</option><option value="last">지난주</option></select>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+      </label>
+    </div>
+    <ol id="food-rank" class="items" role="list"></ol>
+    <p class="rank-note">좋아요가 많은 순으로 보여줘요. 동률이면 싫어요가 적은 곳이 앞서요. 매주 월요일 오전 3시에 새 집계가 시작돼요.</p>
   </section>
-  <p class="fine">좋아요가 많은 순이며, 동률이면 싫어요가 적은 곳이 앞서요. 가게마다 주 1표를 줄 수 있고, 같은 버튼을 다시 누르면 취소돼요. <a href="/privacy">개인정보처리방침</a></p>
-  <p class="fine">가게 정보: <a href="https://www.data.go.kr/data/15083033/fileData.do" target="_blank" rel="noopener">소상공인시장진흥공단 상가 정보</a> (2026년 9월 기준). 영업 여부는 방문 전에 확인해 주세요.</p>
+
+  <div id="food-state" class="list-state" hidden></div>
+  <p id="food-announcement" class="sr" role="status" aria-atomic="true"></p>
+  <div id="food-feedback" class="feedback" hidden>
+    <p id="food-message" role="status" aria-atomic="true"></p>
+    <button id="food-feedback-action" type="button" hidden></button>
+    <button id="food-feedback-close" class="feedback-close" type="button" aria-label="알림 닫기">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+
+  <footer>
+    <a id="food-external" href="https://map.kakao.com/?q=%EC%95%88%EC%82%B0%20%EB%A7%9B%EC%A7%91" target="_blank" rel="noopener">카카오맵에서 더 찾아보기</a>
+    <details>
+      <summary>가게 정보 및 투표 안내</summary>
+      <p><a href="https://www.data.go.kr/data/15083033/fileData.do" target="_blank" rel="noopener">소상공인시장진흥공단 상가 정보</a> (2026년 9월 기준). 영업 여부는 방문 전에 확인해 주세요.</p>
+      <p>가게마다 주 1표를 줄 수 있어요. 선택한 버튼을 다시 누르면 취소돼요. <a href="/privacy">개인정보처리방침</a></p>
+    </details>
+  </footer>
 </main>
+
+<template id="food-vote-icon">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v11H3V10h4Zm0 0 5-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2l-1 8a2 2 0 0 1-2 2H7"/></svg>
+</template>
 </body>
 </html>
