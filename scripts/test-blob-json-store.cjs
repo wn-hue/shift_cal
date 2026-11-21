@@ -12,6 +12,8 @@ const{handlerFor}=require('../api/meal-votes')._test;
  let attempts=0,saved=null;const now=Date.parse('2026-10-15T12:00:00+09:00');
  const handler=handlerFor({async read(){return{date:'2026-10-15',votes:{other:{'중식':'down'}},_etag:'canonical'};},async write(path,data,etag){assert.equal(etag,'canonical');if(++attempts===1)throw conflict;saved=data;}},{secret:'test',origin:'https://app.test',now:()=>now});
  async function request(method,cookie,body){let data,status;const headers={};await handler({method,headers:{cookie,origin:'https://app.test','content-type':'application/json'},body},{setHeader(k,v){headers[k]=v;},set statusCode(v){status=v;},end(s){data=JSON.parse(s);}});return{data,status,cookie:headers['Set-Cookie']?.split(';')[0]};}
- const a=await request('GET');const result=await request('POST',a.cookie,{date:'2026-10-15',meal:'중식',vote:'up'});assert.equal(result.status,200);assert.equal(attempts,2);assert.deepEqual(result.data.totals['중식'],{up:1,down:1});assert.equal(saved.votes.other['중식'],'down');
+ process.env.GOOGLE_CALENDAR_SESSION_SECRET='test';
+ const token=require('../api/google-calendar')._test.seal({sub:'fixture',csrf:'test-csrf',exp:Date.now()+60000},'test');
+ const result=await request('POST','__Host-shiftcal-google='+token,{date:'2026-10-15',meal:'중식',vote:'up'});assert.equal(result.status,200);assert.equal(attempts,2);assert.deepEqual(result.data.totals['중식'],{up:1,down:1});assert.equal(saved.votes.other['중식'],'down');
  console.log('PASS canonical metadata / stale content retry / quoted response ETags / actual SDK conflict class / preserve other votes / no metadata in saved JSON');
 })().catch(e=>{console.error(e);process.exit(1);});
