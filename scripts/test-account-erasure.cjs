@@ -119,6 +119,33 @@ global.fetch=async(value,options={})=>{
 async function run(){
     const googleOnly=makeUser('google','google-only',{drive:false});
     const other=makeUser('google','other-account',{drive:false});
+    const picture = require('node:fs').readFileSync(require('node:path').join(__dirname,'fixtures/profile-imageio-256.jpg')).toString('base64');
+    const profileRead = user => call(account,route('account','profile-read'),{user});
+    const profileWrite = (user,photo,expectedRevision) => call(account,route('account','profile-write'),{user,body:{photo,expectedRevision}});
+    assert.equal((await profileRead(undefined)).statusCode,401);
+    assert.equal((await call(account,route('account','profile-write'),{user:googleOnly,extra:{'x-shift-csrf':'wrong'}})).statusCode,403);
+    assert.equal((await profileWrite(googleOnly,'not-jpeg',null)).statusCode,400);
+    assert.equal((await profileWrite(googleOnly,'a'.repeat(50000),null)).statusCode,413);
+    assert.deepEqual((await profileRead(googleOnly)).data,{photo:null,revision:null});
+    const uploaded = await profileWrite(googleOnly,picture,null);
+    assert.equal(uploaded.statusCode,200);
+    const normalized = Buffer.from(uploaded.data.photo,'base64');
+    assert(normalized.length && normalized.length < Buffer.from(picture,'base64').length);
+    assert(!normalized.includes(Buffer.from('Exif')));
+    assert(!normalized.includes(Buffer.from('ICC_PROFILE')));
+    assert.equal((await profileRead(googleOnly)).data.photo,uploaded.data.photo);
+    assert.deepEqual((await profileRead(other)).data,{photo:null,revision:null});
+    const applePhotoOwner = makeUser('apple','apple:photo-owner');
+    const nativePhoto = (action,body) => call(native,route('native-account',action),{extra:{authorization:bearer(applePhotoOwner)},body});
+    const nativeUpload = await nativePhoto('profile-write',{photo:picture,expectedRevision:null});
+    assert.equal(nativeUpload.statusCode,200);
+    assert.deepEqual((await profileRead(applePhotoOwner)).data,nativeUpload.data);
+    assert.equal((await nativePhoto('profile-write',{photo:null,expectedRevision:null})).statusCode,409);
+    const reset = await nativePhoto('profile-write',{photo:null,expectedRevision:nativeUpload.data.revision});
+    assert.equal(reset.statusCode,200);
+    assert.equal(reset.data.photo,null);
+    assert.notEqual(reset.data.revision,nativeUpload.data.revision);
+    assert.deepEqual((await nativePhoto('profile-read',{})).data,reset.data);
     const gPost=await newPost(googleOnly),otherPost=await newPost(other);
     assert.equal(gPost.statusCode,200);assert.equal(otherPost.statusCode,200);
     const gLink=await newLink(googleOnly),otherLink=await newLink(other);
@@ -148,6 +175,9 @@ async function run(){
     assert.equal((await call(native,route('native-account','web-session'),{extra:{authorization:bearer(googleOnly)}})).statusCode,401);
     const fresh={...googleOnly,issuedAt:deleted.data.deletionEpoch+1};
     assert.equal((await status(fresh)).data.deletionEpoch,deleted.data.deletionEpoch);
+    assert.equal((await profileRead(googleOnly)).statusCode,401);
+    assert.deepEqual((await profileRead(fresh)).data,{photo:null,revision:null});
+    assert(![...documents.values()].some(row => row.data.photo === uploaded.data.photo));
     const freshPost=await newPost(fresh);assert.equal(freshPost.statusCode,200);
     const expiredRead=await call(lost,'/api/lost-found',{method:'GET',user:googleOnly});
     assert.equal(expiredRead.statusCode,200);
@@ -251,6 +281,7 @@ async function run(){
 
     // Pause writes immediately before committing, after they passed the initial cutoff check.
     for(const [name,makeWrite,match]of[
+        ['profile',user=>profileWrite(user,picture,null),path=>path.startsWith('account-photos/')],
         ['share',newLink,path=>path.startsWith('schedules/')],
         ['board',newPost,path=>path===core.PATH]
     ]){
