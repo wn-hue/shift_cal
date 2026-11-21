@@ -22,9 +22,22 @@ function voterFor(secret, feature, period, user) {
     .update(JSON.stringify([feature, period, user.provider, user.sub])).digest('hex');
 }
 
-function summary(record, voter, date) {
+const guestCookie = '__Host-shift-meal';
+function guestId(header, secret) {
+  const value = (header || '').split(';').map(part => part.trim()).find(part => part.startsWith(guestCookie + '='));
+  const match = /^([a-f0-9]{32})\.([a-f0-9]{64})$/.exec(value?.slice(guestCookie.length + 1) || '');
+  if (!match) return null;
+  const expected = crypto.createHmac('sha256', secret).update(match[1]).digest();
+  return crypto.timingSafeEqual(expected, Buffer.from(match[2], 'hex')) ? match[1] : null;
+}
+function issueGuestCookie(res, secret) {
+  const id = crypto.randomBytes(16).toString('hex');
+  const proof = crypto.createHmac('sha256', secret).update(id).digest('hex');
+  res.setHeader('Set-Cookie', guestCookie + '=' + id + '.' + proof + '; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=2592000');
+}
+function summary(record, voter, date, guest) {
   const current = record?.date === date ? record : {};
-  return {date, totals: totals(current), mine: voter ? current.votes?.[voter] || {} : {}, weekly: weekly(record, date)};
+  return {date, totals: totals(current), mine: {...current.votes?.[guest], ...current.votes?.[voter]}, weekly: weekly(record, date)};
 }
 
 function handlerFor(storage, options = {}) {
@@ -44,7 +57,7 @@ function handlerFor(storage, options = {}) {
       if (localFood && req.method !== 'GET') throw fail(405, '지원하지 않는 요청입니다.');
 
       const user = session(req);
-      if (!user && (localFood || req.method === 'POST')) throw fail(401, '투표하려면 로그인해 주세요.');
+      if (!user && localFood) throw fail(401, '투표하려면 로그인해 주세요.');
       if (user) await requireActive(user, secret);
       const date = mealDate(options.now ? options.now() : Date.now());
       if (localFood) {
@@ -54,11 +67,21 @@ function handlerFor(storage, options = {}) {
         return reply(200, {week, voter: voterFor(secret, 'local-food', week, user)});
       }
 
-      const voter = user ? voterFor(secret, 'meal', date, user) : null;
-      if (req.method === 'GET') return reply(200, summary(await storage.read(PATH), voter, date));
+      const device = guestId(req.headers.cookie, secret);
+      // Reuse the original device/date key so older guest votes remain editable.
+      const guest = device ? crypto.createHmac('sha256', secret).update(date + ':' + device).digest('hex') : null;
+      const voter = user ? voterFor(secret, 'meal', date, user) : guest;
+      if (req.method === 'GET') {
+        if (!voter) issueGuestCookie(res, secret);
+        return reply(200, summary(await storage.read(PATH), voter, date, guest));
+      }
       const origin = options.origin || process.env.APP_URL?.replace(/\/$/, '');
       if (!origin || req.headers.origin !== origin || !req.headers['content-type']?.startsWith('application/json')) {
         throw fail(403, '앱에서 투표해 주세요.');
+      }
+      if (!voter) {
+        issueGuestCookie(res, secret);
+        return reply(409, {error: 'VOTE_SESSION_REFRESH', message: '투표 목록을 다시 열고 투표해 주세요.'});
       }
       let body = req.body;
       if (typeof body === 'string') {
@@ -72,6 +95,12 @@ function handlerFor(storage, options = {}) {
       for (let attempt = 0; attempt < 8; attempt++) {
         const existing = await storage.read(PATH);
         const record = roll(existing, date);
+        if (user && guest && record.votes[guest]?.[body.meal]) {
+          const guestChoices = {...record.votes[guest]};
+          delete guestChoices[body.meal];
+          if (Object.keys(guestChoices).length) record.votes[guest] = guestChoices;
+          else delete record.votes[guest];
+        }
         const choices = {...record.votes[voter]};
         if (body.vote === null) delete choices[body.meal];
         else choices[body.meal] = body.vote;
@@ -79,9 +108,9 @@ function handlerFor(storage, options = {}) {
         else delete record.votes[voter];
         if (Object.keys(record.votes).length > 10000) throw fail(503, '테스트 참여 한도에 도달했습니다.');
         try {
-          await requireActive(user, secret);
+          if (user) await requireActive(user, secret);
           await storage.write(PATH, record, existing?._etag);
-          return reply(200, summary(record, voter, date));
+          return reply(200, summary(record, voter, date, guest));
         } catch (error) {
           if (!isConflict(error)) throw error;
         }
