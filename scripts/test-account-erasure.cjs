@@ -149,6 +149,12 @@ async function run(){
     const fresh={...googleOnly,issuedAt:deleted.data.deletionEpoch+1};
     assert.equal((await status(fresh)).data.deletionEpoch,deleted.data.deletionEpoch);
     const freshPost=await newPost(fresh);assert.equal(freshPost.statusCode,200);
+    const expiredRead=await call(lost,'/api/lost-found',{method:'GET',user:googleOnly});
+    assert.equal(expiredRead.statusCode,200);
+    assert.equal(expiredRead.data.connected,false);
+    assert.equal(expiredRead.data.csrf,undefined);
+    assert.equal(expiredRead.data.items.find(post=>post.id===freshPost.data.item.id)?.canManage,false);
+
     assert.equal((await remove(googleOnly)).data.deletionEpoch,deleted.data.deletionEpoch);
     assert(read(core.PATH).posts.some(p=>p.id===freshPost.data.item.id),'Old delete retry cannot delete a new account session’s posts');
     revocationOutcome='lost-response';
@@ -165,8 +171,15 @@ async function run(){
     assert.equal(unavailable.data.deletionCheckUnavailable,true);
     assert.equal((await newPost(other)).statusCode,503);
     assert.equal((await newLink(other)).statusCode,503);
-    assert.equal((await call(lost,'/api/lost-found',{method:'GET'})).statusCode,401);
-    assert.equal((await call(lost,'/api/lost-found',{method:'GET',user:other})).statusCode,503);
+    for(const user of [undefined,other]){
+        const publicList=await call(lost,'/api/lost-found',{method:'GET',user});
+        assert.equal(publicList.statusCode,200);
+        assert.equal(publicList.data.connected,false);
+        assert.equal(publicList.data.csrf,undefined);
+        assert.equal(publicList.data.blockedCount,0);
+        assert(publicList.data.items.some(post=>post.id===otherPost.data.item.id));
+        assert(publicList.data.items.every(post=>!post.canManage&&!post.reported));
+    }
     markerUnavailable=false;
     assert.equal((await newLink(other)).statusCode,200);
 
