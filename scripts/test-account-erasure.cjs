@@ -165,7 +165,8 @@ async function run(){
     assert.equal(unavailable.data.deletionCheckUnavailable,true);
     assert.equal((await newPost(other)).statusCode,503);
     assert.equal((await newLink(other)).statusCode,503);
-    assert.equal((await call(lost,'/api/lost-found',{method:'GET'})).statusCode,200);
+    assert.equal((await call(lost,'/api/lost-found',{method:'GET'})).statusCode,401);
+    assert.equal((await call(lost,'/api/lost-found',{method:'GET',user:other})).statusCode,503);
     markerUnavailable=false;
     assert.equal((await newLink(other)).statusCode,200);
 
