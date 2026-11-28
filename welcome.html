@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="google-site-verification" content="8lue-CrOnUQ3qFfL84QdCd7v6IBQR3rApQ8LUYji0M8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f5f7fa">
+  <meta name="theme-color" content="#ffffff">
   <meta name="description" content="근무 루틴에서 A·B·C조 교대 근무표와 일정, 예상 급여와 남은 연차를 확인하세요. 서비스 소개, 개인정보처리방침과 이용약관을 공개합니다.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="근무 루틴">
@@ -17,7 +17,7 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/work-routine-icon.png?v=20261102">
   <link rel="apple-touch-icon" href="/work-routine-touch-icon.png?v=20261102">
   <link rel="manifest" href="/manifest.webmanifest">
-  <link rel="stylesheet" href="/public-home.css?v=public-review-2">
+  <link rel="stylesheet" href="/public-home.css?v=desk-calendar-1">
   <title>근무 루틴 · 교대 달력과 급여</title>
 </head>
 <body>
@@ -25,14 +25,13 @@
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="#home" aria-label="근무 루틴 홈">
-        <img src="/work-routine-icon.png?v=20261102" width="36" height="36" alt="">
+        <svg class="brand-mark" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10.5h18"/>
+        </svg>
         <span>근무 루틴</span>
       </a>
       <nav class="site-nav" aria-label="주요 메뉴">
-        <a class="nav-features" href="#features">기능 소개</a>
-        <a class="nav-themes" href="#themes">달력 테마</a>
-        <a class="nav-help" href="https://apps.apple.com/kr/app/id6832033312">앱 받기</a>
-        <a class="button button-soft nav-login" href="#login">로그인</a>
+        <a class="nav-login" href="#login">로그인</a>
       </nav>
     </div>
   </header>
@@ -41,83 +40,22 @@
     <div id="home-pager" class="home-pager">
       <div class="home-panel" id="home" data-home-page="처음" tabindex="-1">
         <section class="hero" aria-labelledby="hero-title">
-          <div class="container hero-inner">
+          <div class="hero-inner">
             <div class="hero-copy">
-              <h1 id="hero-title">교대 근무표와<br>예상 급여를 한눈에</h1>
-              <p>내 조의 근무를 확인하고 바뀐 근무와 메모를 날짜별로 남겨요.</p>
+              <h1 id="hero-title">교대근무, 한눈에.</h1>
+              <p>근무표부터 예상 급여까지.</p>
               <div class="hero-actions">
-                <a class="button button-primary" href="#login">웹에서 로그인</a>
-                <a class="button button-quiet" href="https://apps.apple.com/kr/app/id6832033312">
-                  iPhone 앱 받기
+                <a class="hero-start" href="#login">웹에서 시작하기</a>
+                <a class="hero-store" href="https://apps.apple.com/kr/app/id6832033312">iPhone 앱 받기
+                  <svg width="9" height="14" viewBox="0 0 9 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 2 5 5-5 5"/></svg>
                 </a>
               </div>
             </div>
-
-            <figure class="hero-visual" aria-labelledby="preview-caption">
-              <figcaption class="preview-heading" id="preview-caption">
-                <strong>2026년 11월</strong>
-                <span>C조 근무표 예시</span>
-              </figcaption>
-              <table class="preview-calendar" aria-hidden="true">
-                <thead>
-                  <tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="preview-day">1</span><span class="preview-shift is-day">주</span></td>
-                    <td><span class="preview-day">2</span><span class="preview-shift is-day">주</span></td>
-                    <td><span class="preview-day">3</span><span class="preview-shift is-off">휴</span></td>
-                    <td><span class="preview-day">4</span><span class="preview-shift is-off">휴</span></td>
-                    <td><span class="preview-day">5</span><span class="preview-shift is-night">야</span></td>
-                    <td><span class="preview-day">6</span><span class="preview-shift is-night">야</span></td>
-                    <td><span class="preview-day">7</span><span class="preview-shift is-night">야</span></td>
-                  </tr>
-                  <tr>
-                    <td><span class="preview-day">8</span><span class="preview-shift is-night">야</span></td>
-                    <td><span class="preview-day">9</span><span class="preview-shift is-off">휴</span></td>
-                    <td><span class="preview-day">10</span><span class="preview-shift is-off">휴</span></td>
-                    <td><span class="preview-day">11</span><span class="preview-shift is-day">주</span></td>
-                    <td><span class="preview-day">12</span><span class="preview-shift is-day">주</span></td>
-                    <td><span class="preview-day">13</span><span class="preview-shift is-day">주</span></td>
-                    <td><span class="preview-day">14</span><span class="preview-shift is-day">주</span></td>
-                  </tr>
-                  <tr>
-                    <td><span class="preview-day">15</span><span class="preview-shift is-off">휴</span></td>
-                    <td><span class="preview-day">16</span><span class="preview-shift is-off">휴</span></td>
-                    <td><span class="preview-day">17</span><span class="preview-shift is-night">야</span></td>
-                    <td><span class="preview-day">18</span><span class="preview-shift is-night">야</span></td>
-                    <td><span class="preview-day">19</span><span class="preview-shift is-night">야</span></td>
-                    <td><span class="preview-day">20</span><span class="preview-shift is-night">야</span></td>
-                    <td><span class="preview-day">21</span><span class="preview-shift is-off">휴</span></td>
-                  </tr>
-                  <tr>
-                    <td><span class="preview-day">22</span><span class="preview-shift is-off">휴</span></td>
-                    <td><span class="preview-day">23</span><span class="preview-shift is-day">주</span></td>
-                    <td class="preview-selected"><span class="preview-day">24</span><span class="preview-shift is-day">주</span></td>
-                    <td><span class="preview-day">25</span><span class="preview-shift is-day">주</span></td>
-                    <td><span class="preview-day">26</span><span class="preview-shift is-day">주</span></td>
-                    <td><span class="preview-day">27</span><span class="preview-shift is-off">휴</span></td>
-                    <td><span class="preview-day">28</span><span class="preview-shift is-off">휴</span></td>
-                  </tr>
-                  <tr>
-                    <td><span class="preview-day">29</span><span class="preview-shift is-night">야</span></td>
-                    <td><span class="preview-day">30</span><span class="preview-shift is-night">야</span></td>
-                    <td class="preview-adjacent"><span class="preview-day">1</span><span class="preview-shift is-night">야</span></td>
-                    <td class="preview-adjacent"><span class="preview-day">2</span><span class="preview-shift is-night">야</span></td>
-                    <td class="preview-adjacent"><span class="preview-day">3</span><span class="preview-shift is-off">휴</span></td>
-                    <td class="preview-adjacent"><span class="preview-day">4</span><span class="preview-shift is-off">휴</span></td>
-                    <td class="preview-adjacent"><span class="preview-day">5</span><span class="preview-shift is-day">주</span></td>
-                  </tr>
-                </tbody>
-              </table>
-              <div class="preview-detail">
-                <div>
-                  <strong>주간 근무</strong>
-                  <span>11월 24일 화요일</span>
-                </div>
-                <span class="preview-hours">08:30–20:30</span>
-              </div>
-            </figure>
+            <img class="hero-calendar" src="/assets/welcome/desk-calendar-1200.webp"
+              srcset="/assets/welcome/desk-calendar-640.webp 640w, /assets/welcome/desk-calendar-1200.webp 1200w"
+              sizes="(max-width: 560px) 115vw, (max-width: 1000px) 94vw, 960px"
+              width="1200" height="540" fetchpriority="high"
+              alt="2026년 11월 C조 근무표 예시. 22일 휴무, 23일부터 26일까지 주간, 27일과 28일 휴무, 29일 야간.">
           </div>
         </section>
 

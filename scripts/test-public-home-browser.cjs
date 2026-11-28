@@ -70,8 +70,30 @@ async function checkPager(page, width) {
 
   await atPanel('home');
   assert(await previous.isDisabled());
-  assert.equal(await page.locator('.preview-calendar td').count(), 35, 'calendar preview stays on the first panel');
-  assert.match(await page.getByRole('link', { name: 'iPhone 앱 받기' }).getAttribute('href'), /apps\.apple\.com/);
+  const home = page.locator('#home');
+  assert(await home.getByRole('heading', { level: 1, name: '교대근무, 한눈에.', exact: true }).isVisible());
+  assert(await home.getByText('근무표부터 예상 급여까지.', { exact: true }).isVisible());
+  assert.equal(await home.getByRole('link', { name: '웹에서 시작하기' }).getAttribute('href'), '#login');
+  assert.equal(await home.getByRole('link', { name: 'iPhone 앱 받기' }).getAttribute('href'), 'https://apps.apple.com/kr/app/id6832033312');
+
+  const art = home.locator('img.hero-calendar');
+  assert(await art.isVisible());
+  const alt = await art.getAttribute('alt');
+  for (const label of ['C조', '22', '28', '주간', '휴무']) assert(alt.includes(label), `calendar image describes ${label}`);
+  const rendered = await art.evaluate(async image => {
+    await image.decode();
+    const rect = image.getBoundingClientRect();
+    const panel = document.getElementById('home').getBoundingClientRect();
+    const candidates = image.srcset.split(',').map(item =>
+      new URL(item.trim().split(/\s+/)[0], document.baseURI).href);
+    return {
+      loaded: image.naturalWidth > 0 && image.naturalHeight > 0,
+      matchingSource: candidates.length > 1 && candidates.includes(image.currentSrc),
+      centerOffset: Math.abs((rect.left + rect.right - panel.left - panel.right) / 2),
+    };
+  });
+  assert(rendered.loaded && rendered.matchingSource, `calendar artwork loads at ${width}px`);
+  assert(rendered.centerOffset <= 8, `calendar artwork is centered at ${width}px`);
   // A visitor who has not clicked the page yet can still use keyboard navigation.
   await page.keyboard.press('ArrowRight');
   await atPanel('features');
@@ -217,7 +239,7 @@ async function checkBrowser(engine, width) {
     assert.equal(new URL(page.url()).searchParams.get('entry'), 'shared-schedule');
     assert.equal(new URL(page.url()).hash, sharedHash, 'keep the public share token in the browser fragment');
     assert.equal(await page.evaluate(() => scrollY), 0);
-    await page.getByRole('link', { name: '웹에서 로그인' }).click();
+    await page.getByRole('link', { name: '웹에서 시작하기' }).click();
     assert.equal(new URL(page.url()).hash, sharedHash, 'homepage section links do not erase the share token');
     assert.equal(await page.locator('[data-home-go][aria-current=step]').getAttribute('data-home-go'), 'login');
 
