@@ -34,6 +34,13 @@ async function main() {
   }
   for(const time of ['00:49','01:20','11:29','12:00','16:59','17:30','23:59']) assert.equal(core.clock(Date.parse('2026-11-08T'+time+':00+09:00')),null);
   assert.equal(core.clock(Date.parse('2027-01-01T00:50:00+09:00')).date,'2026-12-31');
+  const breakfastStart = Date.parse('2026-11-08T06:50:00+09:00');
+  const breakfastEnd = Date.parse('2026-11-08T07:20:00+09:00');
+  assert.equal(core.clock(breakfastStart),null,'native clock does not dispatch breakfast');
+  assert.equal(core.clock(breakfastStart - 1,true),null);
+  assert.deepEqual(core.clock(breakfastStart,true),{date:menu.date,meal:'조식',expiresAt:breakfastEnd});
+  assert.equal(core.clock(breakfastEnd - 1,true).expiresAt,breakfastEnd);
+  assert.equal(core.clock(breakfastEnd,true),null);
   const store=memory(), sent=[];
   const handler=handlerFor(store,{now:()=>now,secret:'test-owner-key',cronSecret:'cron-test',available:()=>true,origin:'https://test.example',loadMenus:async()=>[menu],send:async(s,p)=>sent.push({s,p})});
   const call = (...args) => request(handler, ...args);
@@ -86,7 +93,7 @@ async function main() {
   const browserCall = (method,cookie,data,headers) => request(both,method,cookie,data,headers,{transport:'web'});
   const browser = await browserCall('GET');
   assert(browser.cookie);
-  assert.deepEqual(browser.data,{available:true,publicKey:config.publicKey,enabled:false,keywords:[],meals:core.MEALS,mode:'always'});
+  assert.deepEqual(browser.data,{available:true,publicKey:config.publicKey,enabled:false,keywords:[],meals:['조식','중식','석식','야식'],mode:'always'});
   assert.equal((await request(both,'POST',browser.cookie,body)).data.enabled,true);
   const add = {action:'addKeyword',transport:'web',subscription:web,keyword:'제육볶음',...{
     mode:'work',meals:['중식'],workWindow:{start:'2026-11-08',days:'D'.repeat(91)}
@@ -143,6 +150,30 @@ async function main() {
   assert.equal(core.webConfiguration({APP_URL:config.subject,PARKING_VAPID_PUBLIC_KEY:config.publicKey}),null);
   await core.sendWeb(web,{expiresAt:now-1},{config,now:()=>now,sendNotification:(...args)=>sends.push(args)});
   assert.equal(sends.length,1,'expired Web Push is never attempted');
+
+  const breakfastStore = memory(), breakfastWebPush = [];
+  const menuWithBreakfast = {...menu,meals:[...menu.meals,{name:'조식',groups:[{items:['제육 볶음']}]}]};
+  const breakfastHandler = handlerFor({
+    ...breakfastStore,
+    async read(path) {
+      assert.notEqual(path,core.PATH,'the breakfast dispatch must not access the APNs registry');
+      return breakfastStore.read(path);
+    }
+  },{now:()=>breakfastStart,secret:'test-owner-key',cronSecret:'cron-test',available:()=>true,
+    webConfiguration:()=>config,origin:'https://test.example',loadMenus:async()=>[menuWithBreakfast],
+    send:async()=>assert.fail('APNs must not dispatch breakfast'),sendWeb:async(_subscription,payload)=>breakfastWebPush.push(payload)});
+  const breakfastCookie = (await request(breakfastHandler,'GET',null,{}, {}, {transport:'web'})).cookie;
+  const breakfastPrefs = {action:'subscribe',transport:'web',subscription:web,keywords:['제육볶음'],mode:'work',
+    meals:core.WEB_MEALS,workWindow:{start:menu.date,days:'N'+'D'.repeat(90)}};
+  await request(breakfastHandler,'POST',breakfastCookie,breakfastPrefs,{}, {transport:'web'});
+  const runBreakfast = () => request(breakfastHandler,'POST',null,{}, {authorization:'Bearer cron-test'}, {action:'dispatch'});
+  assert.equal((await runBreakfast()).data.sent,0,'night shifts do not qualify for breakfast in work mode');
+  const breakfastSaved = await request(breakfastHandler,'POST',breakfastCookie,{...breakfastPrefs,workWindow:{...breakfastPrefs.workWindow,days:'D'.repeat(91)}}, {}, {transport:'web'});
+  assert.deepEqual(breakfastSaved.data.meals,core.WEB_MEALS);
+  assert.equal((await runBreakfast()).data.sent,1);
+  assert.equal((await runBreakfast()).data.sent,0,'breakfast notification dispatches once');
+  assert.equal(breakfastWebPush[0].meal,'조식');
+  assert.equal(breakfastWebPush[0].expiresAt,breakfastEnd);
   // Deleted subscriptions, invalid APNs tokens, expired meal windows, and retries.
   const retryStore=memory();await retryStore.write(core.PATH,{items:{u:{subscription:token,keywords:['돈까스'],meals:['중식'],updatedAt:now}}});
   let attempts=0;const event=core.clock(now);
@@ -151,6 +182,6 @@ async function main() {
   now+=300000;await core.dispatch(retryStore,menu,event,async()=>{throw Object.assign(Error(),{statusCode:410});},()=>now);
   assert.deepEqual((await retryStore.read()).items,{});
   now=event.expiresAt;await core.dispatch(store,menu,event,async()=>{throw Error('must not send');},()=>now);
-  console.log('Meal keyword scheduling, timezone rollover, matching, consent, transport isolation, atomic web preferences, privacy, Web Push TTL and retries passed.');
+  console.log('Meal keyword scheduling, timezone rollover, matching, consent, transport isolation, web breakfast and atomic preferences, privacy, Web Push TTL and retries passed.');
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});
