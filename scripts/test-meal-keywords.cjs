@@ -6,10 +6,23 @@ const token = {kind:'apns', token:'ab'.repeat(32), environment:'sandbox'};
 let now = Date.parse('2026-11-08T11:30:00+09:00');
 const menu = {status:'ok',date:'2026-11-08',meals:[{name:'중식',groups:[{items:['제육 볶음','김치']},{items:['돈까스 정식']}]}]};
 function memory() {
-  let record = null, version = 0;
-  return {async read(){return record ? {...structuredClone(record),_etag:String(version)} : null;},
-    async write(path,next,etag){if(etag !== (record ? String(version) : undefined)){const e=Error();e.name='BlobPreconditionFailedError';throw e;}record=structuredClone(next);version++;},
-    async remove(){record=null;version++;}};
+  const records = new Map();
+  return {
+    async read(path = core.PATH) { return structuredClone(records.get(path) || null); },
+    async write(path, next, etag) {
+      if (etag !== records.get(path)?._etag) {
+        const error = Error();
+        error.name = 'BlobPreconditionFailedError';
+        throw error;
+      }
+      records.set(path, {...structuredClone(next), _etag: String(Number(etag || 0) + 1)});
+    }
+  };
+}
+async function request(handler, method, cookie, body, headers={}, query={}) {
+  const res = {headers:{}, setHeader(key,value){this.headers[key]=value;}, end(raw){this.data=JSON.parse(raw);}};
+  await handler({method, query, body, headers:{cookie:cookie||'', origin:'https://test.example', 'content-type':'application/json', ...headers}},res);
+  return {status:res.statusCode, data:res.data, cookie:res.headers['Set-Cookie']?.split(';')[0]};
 }
 async function main() {
   assert.deepEqual(core.keywords([' 제육볶음 ','제육 볶음','DON']),['제육 볶음','DON']);
@@ -23,11 +36,7 @@ async function main() {
   assert.equal(core.clock(Date.parse('2027-01-01T00:50:00+09:00')).date,'2026-12-31');
   const store=memory(), sent=[];
   const handler=handlerFor(store,{now:()=>now,secret:'test-owner-key',cronSecret:'cron-test',available:()=>true,origin:'https://test.example',loadMenus:async()=>[menu],send:async(s,p)=>sent.push({s,p})});
-  async function call(method,cookie,body,headers={},query={}) {
-    const res={headers:{},setHeader(k,v){this.headers[k]=v;},end(raw){this.data=JSON.parse(raw);}};
-    await handler({method,query,body,headers:{cookie:cookie||'',origin:'https://test.example','content-type':'application/json',...headers}},res);
-    return {status:res.statusCode,data:res.data,cookie:res.headers['Set-Cookie']?.split(';')[0]};
-  }
+  const call = (...args) => request(handler, ...args);
   const first=await call('GET');assert.equal(first.status,200);assert(first.cookie);
   const body={action:'subscribe',keywords:['제육볶음'],meals:['중식'],subscription:token};
   assert.equal((await call('POST',null,body)).status,401);
@@ -67,6 +76,73 @@ async function main() {
   await call('POST',second.cookie,{...work,mode:'always'});
   assert.equal(Object.values((await store.read()).items)[0].workWindow,undefined);
   await send();assert.equal(sent.length,2,'always mode still sends on the same off day');
+
+  const webStore = memory(), deliveries = [];
+  const config = {subject:'https://test.example', publicKey:'B'+'a'.repeat(86), privateKey:'b'.repeat(43)};
+  const web = {endpoint:'https://web.push.apple.com/synthetic-test', keys:{p256dh:'c'.repeat(87), auth:'d'.repeat(22)}};
+  const both = handlerFor(webStore,{now:()=>now,secret:'test-owner-key',cronSecret:'cron-test',available:()=>true,
+    webConfiguration:()=>config,origin:'https://test.example',loadMenus:async()=>[menu],
+    send:async (s,p)=>deliveries.push({s,p,native:true}), sendWeb:async (s,p)=>deliveries.push({s,p,native:false})});
+  const browserCall = (method,cookie,data,headers) => request(both,method,cookie,data,headers,{transport:'web'});
+  const browser = await browserCall('GET');
+  assert(browser.cookie);
+  assert.deepEqual(browser.data,{available:true,publicKey:config.publicKey,enabled:false,keywords:[],meals:core.MEALS,mode:'always'});
+  assert.equal((await request(both,'POST',browser.cookie,body)).data.enabled,true);
+  const add = {action:'addKeyword',transport:'web',subscription:web,keyword:'제육볶음',...{
+    mode:'work',meals:['중식'],workWindow:{start:'2026-11-08',days:'D'.repeat(91)}
+  }};
+  assert.equal((await browserCall('POST',browser.cookie,add,{origin:'https://other.example'})).status,403);
+  assert.equal((await browserCall('POST',browser.cookie,{...add,transport:'apns'})).status,400);
+  assert.equal((await browserCall('POST',browser.cookie,{...add,subscription:{...web,endpoint:'https://private.internal/token'}})).status,400);
+  const concurrent = await Promise.all([
+    browserCall('POST',browser.cookie,add),
+    browserCall('POST',browser.cookie,{...add,keyword:'돈까스'})
+  ]);
+  assert(concurrent.every(response=>response.status===200));
+  await browserCall('POST',browser.cookie,{...add,keyword:'제육 볶음',mode:'always'});
+  const current = await browserCall('GET',browser.cookie);
+  assert.deepEqual([...current.data.keywords].sort(),['돈까스','제육볶음']);
+  assert.equal(current.data.mode,'work','adding a keyword preserves the existing work preference');
+  assert(!JSON.stringify(current.data).includes(web.endpoint));
+  assert(!JSON.stringify(current.data).includes(config.privateKey));
+  assert.deepEqual((await browserCall('GET')).data.keywords,[],'another cookie cannot read saved terms');
+  const refresh = {action:'refreshWorkWindow',transport:'web',workWindow:{start:'2026-11-07',days:'D'.repeat(91)}};
+  assert.equal((await browserCall('POST',browser.cookie,{...refresh,workWindow:{...refresh.workWindow,days:'D'}})).status,400);
+  assert.equal((await browserCall('POST',browser.cookie,refresh)).status,200);
+  const webItem = async () => Object.values((await webStore.read(core.WEB_PATH)).items)[0];
+  assert.deepEqual((await webItem()).workWindow,refresh.workWindow);
+  await Promise.all([
+    browserCall('POST',browser.cookie,{action:'updatePreferences',transport:'web',mode:'always',meals:['중식']}),
+    browserCall('POST',browser.cookie,{action:'removeKeyword',transport:'web',keyword:'돈까스'}),
+    browserCall('POST',browser.cookie,{...refresh,workWindow:add.workWindow})
+  ]);
+  const configured = (await browserCall('GET',browser.cookie)).data;
+  assert.deepEqual(configured.keywords,['제육볶음']);
+  assert.equal(configured.mode,'always');
+  assert.equal((await webItem()).workWindow,undefined,'refresh cannot reactivate work mode');
+  assert.equal((await request(both,'GET',browser.cookie)).data.enabled,true,'browser settings do not replace APNs settings');
+  const bothDispatch = () => request(both,'POST',null,{}, {authorization:'Bearer cron-test'}, {action:'dispatch'});
+  await Promise.all([bothDispatch(),bothDispatch()]);
+  assert.equal(deliveries.length,2,'each transport sends once even with overlapping dispatch');
+  assert.deepEqual(deliveries.map(delivery=>delivery.native).sort(), [false,true]);
+  const removed = await browserCall('POST',browser.cookie,{action:'removeKeyword',transport:'web',keyword:'제육 볶음'});
+  assert.equal(removed.data.enabled,false,'removing the last keyword unsubscribes the browser from meal alerts');
+  assert.equal((await browserCall('POST',browser.cookie,refresh)).data.enabled,false,'refresh cannot reactivate a removed subscription');
+  assert.equal((await request(both,'GET',browser.cookie)).data.enabled,true,'browser opt-out does not disable native alerts');
+  assert.equal((await browserCall('POST',browser.cookie,{action:'updatePreferences',mode:'always'})).status,409);
+
+  const retired = memory();
+  await retired.write(core.WEB_PATH,{items:{web:{subscription:web,keywords:['제육볶음'],meals:['중식'],updatedAt:now}}});
+  await core.dispatch(retired,menu,core.clock(now),async()=>{throw Object.assign(Error(),{statusCode:404});},()=>now,true);
+  assert.deepEqual((await retired.read(core.WEB_PATH)).items,{},'retired browser endpoints are purged');
+  const sends = [];
+  await core.sendWeb(web,{expiresAt:now+12345,title:'Test'},{config,now:()=>now,sendNotification:(...args)=>sends.push(args)});
+  assert.equal(sends[0][2].TTL,12);
+  assert.equal(sends[0][2].topic,'meal-keywords');
+  assert.equal(JSON.parse(sends[0][1]).url,'/app?meal=1');
+  assert.equal(core.webConfiguration({APP_URL:config.subject,PARKING_VAPID_PUBLIC_KEY:config.publicKey}),null);
+  await core.sendWeb(web,{expiresAt:now-1},{config,now:()=>now,sendNotification:(...args)=>sends.push(args)});
+  assert.equal(sends.length,1,'expired Web Push is never attempted');
   // Deleted subscriptions, invalid APNs tokens, expired meal windows, and retries.
   const retryStore=memory();await retryStore.write(core.PATH,{items:{u:{subscription:token,keywords:['돈까스'],meals:['중식'],updatedAt:now}}});
   let attempts=0;const event=core.clock(now);
@@ -75,6 +151,6 @@ async function main() {
   now+=300000;await core.dispatch(retryStore,menu,event,async()=>{throw Object.assign(Error(),{statusCode:410});},()=>now);
   assert.deepEqual((await retryStore.read()).items,{});
   now=event.expiresAt;await core.dispatch(store,menu,event,async()=>{throw Error('must not send');},()=>now);
-  console.log('Meal keyword scheduling, timezone rollover, matching, consent, deduplication, privacy and retries passed.');
+  console.log('Meal keyword scheduling, timezone rollover, matching, consent, transport isolation, atomic web preferences, privacy, Web Push TTL and retries passed.');
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});
