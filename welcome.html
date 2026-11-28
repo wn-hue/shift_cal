@@ -17,7 +17,7 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/work-routine-icon.png?v=20261102">
   <link rel="apple-touch-icon" href="/work-routine-touch-icon.png?v=20261102">
   <link rel="manifest" href="/manifest.webmanifest">
-  <link rel="stylesheet" href="/public-home.css?v=slide-home-1">
+  <link rel="stylesheet" href="/public-home.css?v=public-review-2">
   <title>근무 루틴 · 교대 달력과 급여</title>
 </head>
 <body>
@@ -50,10 +50,6 @@
                 <a class="button button-quiet" href="https://apps.apple.com/kr/app/id6832033312">
                   iPhone 앱 받기
                 </a>
-              </div>
-              <div class="hero-actions" id="welcome-feedback" hidden>
-                <p class="login-status" id="welcome-login-status" role="status" aria-live="polite" aria-atomic="true"></p>
-                <button class="button button-quiet retry" type="button" id="welcome-retry" hidden>다시 확인</button>
               </div>
             </div>
 
@@ -242,10 +238,11 @@
             </li>
             <li class="theme-item theme-pastel-ribbon">
               <h3>파스텔 리본</h3>
-              <div class="theme-sample" aria-hidden="true">
-                <span class="theme-date">26<span class="theme-swatch is-day">주</span></span>
-                <span class="theme-date">27<span class="theme-swatch is-off">휴</span></span>
-                <span class="theme-date">29<span class="theme-swatch is-night">야</span></span>
+              <div class="theme-sample ribbon-sample" role="img" aria-label="2일 주간, 3일과 4일은 하나로 이어진 휴무, 5일 야간">
+                <span>2</span><span>3</span><span>4</span><span>5</span>
+                <span class="theme-swatch is-day">주</span>
+                <span class="theme-swatch is-off">휴무</span>
+                <span class="theme-swatch is-night">야</span>
               </div>
             </li>
             <li class="theme-item theme-mono-gray">
@@ -265,13 +262,18 @@
           <div class="login-layout">
             <div class="login-copy">
               <h2 id="login-title">내 근무표 열기</h2>
-              <p>Google 또는 Apple 계정으로 로그인하면 웹에서 근무표와 기록을 볼 수 있어요.</p>
+              <p>앱에서 쓰던 계정으로 로그인해 근무표를 열어 보세요.</p>
               <details class="login-existing">
                 <summary>이전에 저장한 기록이 있나요?</summary>
-                <p>전에 쓴 계정으로 로그인하세요. Google Drive 저장 권한이 필요하면 ‘내 계정’에서 다시 연결할 수 있어요. <a href="/origin-transfer">이전 웹 주소의 브라우저 기록 가져오기</a></p>
+                <p>계정에 저장한 기록은 같은 계정으로 불러올 수 있어요. 이전 브라우저에만 남아 있다면 그 기기에서 가져오세요.</p>
+                <p><a href="/origin-transfer">이전 웹 주소의 브라우저 기록 가져오기</a></p>
               </details>
             </div>
             <div class="login-controls">
+              <div class="login-feedback" id="welcome-feedback" hidden>
+                <p class="login-status" id="welcome-login-status" role="status" aria-live="polite" aria-atomic="true"></p>
+                <button class="button button-quiet retry" type="button" id="welcome-retry" hidden>다시 확인</button>
+              </div>
               <a class="provider provider-google" href="/api/google-calendar?action=login" id="welcome-google-login" aria-label="Google로 로그인">
                 <span class="google-mark" aria-hidden="true"></span>
                 <span>Google로 로그인</span>
@@ -296,10 +298,10 @@
           <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 5-5 5 5 5"/></svg>
         </button>
         <div class="home-pager-dots">
-          <button class="home-pager-dot" type="button" data-home-go="home" aria-label="처음" aria-current="step"></button>
-          <button class="home-pager-dot" type="button" data-home-go="features" aria-label="기능 소개"></button>
-          <button class="home-pager-dot" type="button" data-home-go="themes" aria-label="달력 테마"></button>
-          <button class="home-pager-dot" type="button" data-home-go="login" aria-label="로그인"></button>
+          <button class="home-pager-dot" type="button" data-home-go="home" aria-label="처음" aria-current="step">처음</button>
+          <button class="home-pager-dot" type="button" data-home-go="features" aria-label="기능 소개">기능</button>
+          <button class="home-pager-dot" type="button" data-home-go="themes" aria-label="달력 테마">테마</button>
+          <button class="home-pager-dot" type="button" data-home-go="login" aria-label="로그인">로그인</button>
         </div>
         <button class="home-pager-arrow" type="button" id="home-pager-next" aria-label="다음 화면">
           <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 5 5-5 5"/></svg>
@@ -325,7 +327,7 @@
       </nav>
     </div>
   </footer>
-  <script src="/home-pager.js?v=1" defer></script>
+  <script src="/home-pager.js?v=2" defer></script>
   <script src="/origin-bridge.js?v=guest-home-1" defer></script>
   <script src="/origin-welcome.js?v=slide-home-1" defer></script>
 </body>

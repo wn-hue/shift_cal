@@ -53,8 +53,8 @@ async function checkLegalLinks(page) {
 
 async function checkPager(page, width) {
   const current = page.locator('[data-home-go][aria-current="step"]');
-  const next = page.getByRole('button', { name: '다음 화면' });
-  const previous = page.getByRole('button', { name: '이전 화면' });
+  const next = page.locator('#home-pager-next');
+  const previous = page.locator('#home-pager-prev');
   const pager = page.locator('#home-pager');
   async function atPanel(id) {
     await page.waitForFunction(id => {
@@ -72,6 +72,11 @@ async function checkPager(page, width) {
   assert(await previous.isDisabled());
   assert.equal(await page.locator('.preview-calendar td').count(), 35, 'calendar preview stays on the first panel');
   assert.match(await page.getByRole('link', { name: 'iPhone 앱 받기' }).getAttribute('href'), /apps\.apple\.com/);
+  // A visitor who has not clicked the page yet can still use keyboard navigation.
+  await page.keyboard.press('ArrowRight');
+  await atPanel('features');
+  await page.keyboard.press('ArrowLeft');
+  await atPanel('home');
   await next.click();
   await atPanel('features');
   const guide = page.getByRole('link', { name: '교대생활 가이드 보기' });
@@ -93,19 +98,82 @@ async function checkPager(page, width) {
 
   // Trackpads and mobile swipes both use the same native scroll-snap track.
   await pager.hover({ position: { x: 60, y: 60 } });
-  await page.mouse.wheel(width, 0);
+  await page.mouse.wheel(Math.round(width * 0.55), 0);
   await atPanel('features');
+  await page.waitForFunction(() => location.hash === '#features');
+  await page.reload();
+  await atPanel('features');
+  await page.locator('[data-home-go="themes"]').click();
+  await atPanel('themes');
+  await page.reload();
+  await atPanel('themes');
   await page.goto(base + '/#themes');
   await atPanel('themes');
   await page.goto(base + '/#login');
   await atPanel('login');
-  await page.getByText('이전에 저장한 기록이 있나요?', { exact: true }).click();
-  assert.equal(await page.getByRole('link', { name: '이전 웹 주소의 브라우저 기록 가져오기' }).getAttribute('href'), '/origin-transfer');
+  const oldRecords = page.locator('#login a[href="/origin-transfer"]');
+  const existingDetails = page.locator('#login details');
+  if (await existingDetails.count()) await existingDetails.locator('summary').click();
+  assert(await oldRecords.isVisible(), 'old records recovery is discoverable from the login panel');
+}
+
+// The source window contains only test records. The exchange endpoint is stubbed
+// so the test exercises browser messaging and the real restore UI without a live account.
+async function checkTransferResults(browser) {
+  const source = 'https://old-records.example';
+  const cases = [
+    { values: {}, expected: /기록을 찾지 못/ },
+    { values: { shift_origin_ready_v1: '1' }, expected: /기록을 찾지 못/ },
+    { values: { shift_active_group: 'A' }, expected: /모두 새 주소/ },
+    { values: { shift_active_group: 'A', shift_transfer_sample: 'fixture' }, expected: /1개 항목/ },
+  ];
+  for (const { values, expected } of cases) {
+    const context = await browser.newContext();
+    try {
+      const page = await context.newPage();
+      await page.route('**/origin-migration-config.json', route => route.fulfill({
+        json: { source, target: base, sources: [source] }
+      }));
+      let exchanges = 0;
+      await page.route('**/api/origin-transfer?action=exchange', route => {
+        exchanges++;
+        return route.fulfill({ json: { ok: true } });
+      });
+      await context.route(source + '/**', route => route.fulfill({
+        contentType: 'text/html; charset=utf-8', body: '<button>복사하기</button>'
+      }));
+      await page.goto(base + '/origin-transfer');
+      await page.evaluate(() => localStorage.setItem('shift_active_group', 'C'));
+      const opened = page.waitForEvent('popup');
+      await page.locator('#transfer:enabled').click();
+      const popup = await opened;
+      await popup.waitForURL(source + '/origin-transfer.html#**');
+      await popup.evaluate(({ base, values }) => {
+        const state = new URLSearchParams(location.hash.slice(1)).get('state');
+        document.querySelector('button').onclick = () => {
+          const message = { type: 'work-routine-transfer', state, ticket: 'fixture', data: { version: 1, values } };
+          window.opener.postMessage(message, base);
+          window.opener.postMessage(message, base);
+        };
+      }, { base, values });
+      await popup.getByRole('button', { name: '복사하기' }).click();
+      await page.locator('#status').filter({ hasText: expected }).waitFor();
+      assert.equal(exchanges, 1, 'repeated source message triggers one transfer');
+      assert.equal(new URL(page.url()).pathname, '/origin-transfer', 'result stays visible until acknowledged');
+      assert.equal(await page.evaluate(() => localStorage.getItem('shift_active_group')), 'C');
+      assert.equal(await page.evaluate(() => localStorage.getItem('shift_origin_ready_v1')), null);
+      assert.equal(await page.evaluate(() => localStorage.getItem('shift_transfer_sample')), values.shift_transfer_sample ?? null);
+      await page.locator('#start').click();
+      await page.waitForURL(base + '/?cloud=connect#login');
+    } finally {
+      await context.close();
+    }
+  }
 }
 
 async function checkBrowser(engine, width) {
   const browser = await engine.launch({ headless: true });
-    const context = await browser.newContext({ viewport: { width, height: 850 }, locale: 'ko-KR', extraHTTPHeaders: versionHeaders });
+  const context = await browser.newContext({ viewport: { width, height: 850 }, locale: 'ko-KR', extraHTTPHeaders: versionHeaders });
   try {
     const homepage = await readGuestPage(context, '/');
     for (const cookie of guestCookies) {
@@ -153,6 +221,17 @@ async function checkBrowser(engine, width) {
     assert.equal(new URL(page.url()).hash, sharedHash, 'homepage section links do not erase the share token');
     assert.equal(await page.locator('[data-home-go][aria-current=step]').getAttribute('data-home-go'), 'login');
 
+    for (const suffix of ['?google=denied#login', '?apple=denied', '?login=unavailable']) {
+      await page.goto(base + '/welcome' + suffix);
+      const message = page.locator('#welcome-login-status');
+      await message.waitFor({ state: 'visible' });
+      assert.equal(await page.locator('[aria-current="step"]').getAttribute('data-home-go'), 'login');
+      assert(await message.evaluate(el => !el.closest('[inert]')), 'login feedback is available to assistive technology');
+      const rect = await message.boundingBox();
+      assert(rect && rect.x >= 0 && rect.x + rect.width <= width + 1, 'login feedback is onscreen');
+      if (suffix.endsWith('unavailable')) assert(await page.locator('#welcome-retry').isVisible());
+    }
+
     await page.goto(base + '/login');
     const google = page.locator('#welcome-google-login');
     await google.waitFor({ state: 'visible' });
@@ -174,6 +253,17 @@ async function checkBrowser(engine, width) {
     await page.locator('#transfer:enabled').waitFor();
     assert.equal(await page.locator('input[type=file], #file-area, #source-file, #overwrite').count(), 0);
     assert(await page.locator('#cloud-login').isVisible(), 'Google recovery stays available');
+    await page.route('**/origin-migration-config.json', route => route.fulfill({ status: 503, body: '' }), { times: 1 });
+    await page.reload();
+    await page.locator('#retry-transfer:visible').waitFor();
+    assert(await page.locator('#start').isEnabled(), 'return to login when the old address cannot be loaded');
+    assert(await page.locator('#cloud-login').isVisible());
+    await page.locator('#retry-transfer').click();
+    await page.locator('#transfer:enabled').waitFor();
+    assert(await page.locator('#retry-transfer').isHidden());
+    assert.deepEqual(errors, []);
+
+    if (engine === chromium && width === 1280) await checkTransferResults(browser);
 
     const noScripts = await browser.newContext({ javaScriptEnabled: false, viewport: { width, height: 850 }, extraHTTPHeaders: versionHeaders });
     try {

@@ -10,6 +10,8 @@
   --soft-blue: #e9f2ff;
   --radius: 1.5rem;
   --header-size: 4.1rem;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
   --pager-size: 3.8rem;
   font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   background: var(--paper);
@@ -47,6 +49,7 @@ a { color: var(--brand); text-underline-offset: .22em; }
 .site-header {
   position: sticky;
   top: 0;
+  padding-block-start: var(--safe-top);
   z-index: 2;
   background: var(--paper);
   border-block-end: 1px solid var(--line);
@@ -110,7 +113,7 @@ a { color: var(--brand); text-underline-offset: .22em; }
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 100%;
-  block-size: max(20rem, calc(100svh - var(--header-size) - var(--pager-size) - 1px));
+  block-size: max(10rem, calc(100svh - var(--header-size) - var(--pager-size) - var(--safe-top) - var(--safe-bottom) - 1px));
   overflow: auto hidden;
   overscroll-behavior-inline: contain;
   scroll-snap-type: x mandatory;
@@ -122,10 +125,16 @@ a { color: var(--brand); text-underline-offset: .22em; }
   min-inline-size: 0;
   overflow: hidden auto;
   scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 .home-pager-ready #home { background: var(--page); }
 .home-pager-ready #home .hero { display: grid; align-items: center; min-block-size: 100%; }
-.home-pager-ready .home-panel:focus { outline-offset: -4px; }
+/* URL fragments can focus a whole panel. Show keyboard focus on its heading. */
+.home-pager-ready .home-panel:focus { outline: none; }
+.home-panel.focus-from-keyboard:focus-visible :is(h1, h2):first-child {
+  border-inline-start: 3px solid var(--brand);
+  padding-inline-start: .55rem;
+}
 .home-pager-ready .features, .home-pager-ready .theme-section {
   margin-block-start: 0;
   padding-block: clamp(1.7rem, 6vw, 4.6rem);
@@ -138,7 +147,11 @@ a { color: var(--brand); text-underline-offset: .22em; }
   font-size: .9rem;
   font-weight: 650;
 }
-.home-pager-controls { background: var(--paper); border-block-start: 1px solid var(--line); }
+.home-pager-controls {
+  background: var(--paper);
+  border-block-start: 1px solid var(--line);
+  padding-block-end: var(--safe-bottom);
+}
 .home-pager-controls-inner, .home-pager-dots {
   display: flex;
   align-items: center;
@@ -160,16 +173,22 @@ a { color: var(--brand); text-underline-offset: .22em; }
 .home-pager-arrow { background: var(--soft-blue); }
 .home-pager-arrow:hover:not(:disabled) { background: #dce8ff; }
 .home-pager-arrow:disabled { color: #77869a; background: var(--page); cursor: default; }
-.home-pager-dot:hover { background: var(--page); }
-.home-pager-dot::before {
-  content: "";
-  inline-size: .47rem;
-  block-size: .47rem;
-  border-radius: 100px;
-  background: #7b899a;
+.home-pager-dots { gap: 0; }
+.home-pager-dot {
+  border-radius: .7rem;
+  min-inline-size: 2.75rem;
+  padding-inline: .35rem;
+  color: var(--muted);
+  font: inherit;
+  font-size: .83rem;
+  font-weight: 550;
 }
-.home-pager-dot[aria-current="step"]::before { inline-size: 1.15rem; background: var(--brand); }
-
+.home-pager-dot:hover { background: var(--page); }
+.home-pager-dot[aria-current="step"] {
+  color: var(--brand-hover);
+  background: var(--soft-blue);
+  font-weight: 700;
+}
 .hero { background: var(--page); }
 
 .hero-inner {
@@ -514,6 +533,17 @@ a { color: var(--brand); text-underline-offset: .22em; }
 
 .login { padding-block: clamp(3.2rem, 7vw, 5.4rem); }
 
+.ribbon-sample {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  text-align: center;
+  font-size: .72rem;
+  font-weight: 670;
+  font-variant-numeric: tabular-nums;
+}
+.ribbon-sample .theme-swatch { border-radius: 1rem; }
+.ribbon-sample .is-off { grid-column: span 2; }
+
 .login-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, .87fr);
@@ -555,6 +585,15 @@ a { color: var(--brand); text-underline-offset: .22em; }
 .provider-apple:hover { background: #2f3540; }
 .provider[aria-disabled="true"] { cursor: default; opacity: .63; }
 .login-status { color: var(--ink); font-size: .87rem; line-height: 1.55; }
+.login-feedback {
+  display: grid;
+  gap: .35rem;
+  padding: .8rem .95rem;
+  border-radius: .75rem;
+  background: var(--paper);
+  border-inline-start: 3px solid var(--brand);
+}
+.login-existing p + p { margin-block-start: .5rem; }
 .login-status:empty { display: none; }
 .login-help { color: var(--muted); font-size: .79rem; line-height: 1.65; text-align: center; }
 .retry { justify-self: center; }
